@@ -288,7 +288,7 @@
       .about,
       .contact {
         width: min(1200px, 94%);
-         margin: 0 auto;
+        margin: 0 auto;
       }
 
       .work-block {
@@ -315,7 +315,6 @@
         height: 44px;
         font-size: 22px;
         top: 38%;
-         margin: 0 auto;
       }
 
       .hero-arrow.left {
@@ -418,7 +417,7 @@
 
       .work-image {
         width: 76%;
-         margin: 0 auto;
+        margin: 0 auto;
       }
 
       .about,
@@ -455,30 +454,13 @@
 
   <section class="hero">
     <div class="hero-slider" id="heroSlider">
-      <div class="hero-track" id="heroTrack">
-        <div class="hero-slide">
-          <img src="images/main-01.jpg" alt="Hero 1" />
-          <div class="hero-overlay"></div>
-        </div>
-        <div class="hero-slide">
-          <img src="images/main-02.jpg" alt="Hero 2" />
-          <div class="hero-overlay"></div>
-        </div>
-        <div class="hero-slide">
-          <img src="images/main-03.jpg" alt="Hero 3" />
-          <div class="hero-overlay"></div>
-        </div>
-      </div>
+      <div class="hero-track" id="heroTrack"></div>
     </div>
 
     <button class="hero-arrow left" id="prevBtn">&#10094;</button>
     <button class="hero-arrow right" id="nextBtn">&#10095;</button>
 
-    <div class="hero-dots" id="heroDots">
-      <button class="active" data-index="0"></button>
-      <button data-index="1"></button>
-      <button data-index="2"></button>
-    </div>
+    <div class="hero-dots" id="heroDots"></div>
 
     <div class="hero-inner">
       <div class="hero-sub">small things become</div>
@@ -550,40 +532,80 @@
   </section>
 
   <script>
-    const track = document.getElementById('heroTrack');
-    const dots = document.querySelectorAll('#heroDots button');
+    const heroTrack = document.getElementById('heroTrack');
+    const heroDots = document.getElementById('heroDots');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const heroSlider = document.getElementById('heroSlider');
 
+    // 여기 숫자만 바꾸면 슬라이드 개수가 자동으로 바뀜
+    const SLIDE_COUNT = 5;
+
     let currentIndex = 0;
-    const totalSlides = 3;
+    let dots = [];
+
+    function buildSlides() {
+      heroTrack.innerHTML = '';
+      heroDots.innerHTML = '';
+
+      for (let i = 1; i <= SLIDE_COUNT; i++) {
+        const fileNumber = String(i).padStart(2, '0');
+
+        const slide = document.createElement('div');
+        slide.className = 'hero-slide';
+
+        const img = document.createElement('img');
+        img.src = `images/main-${fileNumber}.jpg`;
+        img.alt = `Hero ${i}`;
+
+        const overlay = document.createElement('div');
+        overlay.className = 'hero-overlay';
+
+        slide.appendChild(img);
+        slide.appendChild(overlay);
+        heroTrack.appendChild(slide);
+
+        const dot = document.createElement('button');
+        dot.dataset.index = i - 1;
+
+        if (i === 1) {
+          dot.classList.add('active');
+        }
+
+        dot.addEventListener('click', () => {
+          currentIndex = i - 1;
+          updateSlider(currentIndex);
+        });
+
+        heroDots.appendChild(dot);
+      }
+
+      dots = Array.from(document.querySelectorAll('#heroDots button'));
+    }
 
     function updateSlider(index) {
-      track.style.transform = `translateX(-${index * 100}%)`;
+      heroTrack.style.transform = `translateX(-${index * 100}%)`;
       dots.forEach(dot => dot.classList.remove('active'));
-      dots[index].classList.add('active');
+      if (dots[index]) {
+        dots[index].classList.add('active');
+      }
     }
 
     function showPrevSlide() {
-      currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
+      currentIndex = (currentIndex - 1 + SLIDE_COUNT) % SLIDE_COUNT;
       updateSlider(currentIndex);
     }
 
     function showNextSlide() {
-      currentIndex = (currentIndex + 1) % totalSlides;
+      currentIndex = (currentIndex + 1) % SLIDE_COUNT;
       updateSlider(currentIndex);
     }
 
+    buildSlides();
+    updateSlider(currentIndex);
+
     prevBtn.addEventListener('click', showPrevSlide);
     nextBtn.addEventListener('click', showNextSlide);
-
-    dots.forEach(dot => {
-      dot.addEventListener('click', () => {
-        currentIndex = Number(dot.dataset.index);
-        updateSlider(currentIndex);
-      });
-    });
 
     let touchStartX = 0;
     let touchStartY = 0;
