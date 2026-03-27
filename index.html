@@ -16,36 +16,41 @@
       line-height: 1.4;
     }
 
-    a { color: inherit; text-decoration: none; }
-    img { display: block; width: 100%; }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
     .topbar {
       position: fixed;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       width: 100%;
       z-index: 1000;
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 24px 32px;
-      background: rgba(0,0,0,0.25);
+      background: rgba(0, 0, 0, 0.25);
     }
 
-    .logo { font-size: 26px; font-weight: 700; }
-
-    .menu { display: none; }
+    .logo {
+      font-size: 26px;
+      font-weight: 700;
+    }
 
     .menu-btn {
       display: block;
-      font-size: 28px;
+      font-size: 32px;
+      line-height: 1;
       cursor: pointer;
+      user-select: none;
+      z-index: 1002;
     }
 
     .mobile-menu {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100vh;
+      inset: 0;
       background: #000;
       display: flex;
       flex-direction: column;
@@ -53,43 +58,50 @@
       justify-content: center;
       gap: 30px;
       transform: translateY(-100%);
-      transition: 0.3s;
+      transition: transform 0.3s ease;
+      z-index: 1001;
+      pointer-events: none;
     }
 
     .mobile-menu.active {
       transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .mobile-menu a {
+      font-size: 28px;
     }
   </style>
 </head>
-
 <body>
 
-<header class="topbar">
-  <div class="logo">DKsequence</div>
-  <div class="menu-btn" id="menuBtn">☰</div>
+  <header class="topbar">
+    <div class="logo">DKsequence</div>
+    <div class="menu-btn" id="menuBtn">☰</div>
+  </header>
 
   <nav class="mobile-menu" id="mobileMenu">
     <a href="#about">About</a>
     <a href="#contact">Contact</a>
   </nav>
-</header>
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const menuBtn = document.getElementById("menuBtn");
-  const mobileMenu = document.getElementById("mobileMenu");
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const menuBtn = document.getElementById("menuBtn");
+      const mobileMenu = document.getElementById("mobileMenu");
 
-  if (menuBtn && mobileMenu) {
-    menuBtn.onclick = function (e) {
-          e.stopPropagation();
-      mobileMenu.classList.toggle("active");
-    };
+      menuBtn.onclick = function (e) {
+        e.stopPropagation();
+        mobileMenu.classList.toggle("active");
+        menuBtn.textContent = mobileMenu.classList.contains("active") ? "✕" : "☰";
+      };
+
       mobileMenu.onclick = function () {
-  mobileMenu.classList.remove("active");
-            };
-  }
-});
-</script>
+        mobileMenu.classList.remove("active");
+        menuBtn.textContent = "☰";
+      };
+    });
+  </script>
 
 </body>
 </html>
