@@ -43,19 +43,13 @@
       align-items: center;
       padding: 24px 32px;
       background: rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(6px);
     }
 
     .logo {
       font-size: 26px;
       font-weight: 700;
       letter-spacing: 0.5px;
-    }
-
-    .menu {
-      display: none;
-      gap: 50px;
-      font-size: 15px;
-      text-transform: none;
     }
 
     .menu-btn {
@@ -134,8 +128,8 @@
       inset: 0;
       background: linear-gradient(
         to bottom,
-        rgba(0,0,0,0.35),
-        rgba(0,0,0,0.55)
+        rgba(0, 0, 0, 0.35),
+        rgba(0, 0, 0, 0.58)
       );
     }
 
@@ -144,19 +138,20 @@
       z-index: 2;
       text-align: center;
       max-width: 1100px;
+      padding: 0 20px;
     }
 
     .hero-sub {
       font-size: clamp(34px, 4vw, 64px);
       font-style: italic;
-      font-weight: 150;
+      font-weight: 300;
       margin-bottom: 10px;
     }
 
     .hero-title {
       font-size: clamp(56px, 8vw, 120px);
       font-weight: 400;
-      line-height: 0.8;
+      line-height: 0.85;
       text-transform: none;
     }
 
@@ -167,8 +162,8 @@
       z-index: 3;
       width: 54px;
       height: 54px;
-      border: 1px solid rgba(255,255,255,0.5);
-      background: rgba(0,0,0,0.35);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      background: rgba(0, 0, 0, 0.28);
       color: #fff;
       font-size: 28px;
       cursor: pointer;
@@ -197,7 +192,7 @@
       height: 12px;
       border-radius: 50%;
       border: 0;
-      background: rgba(255,255,255,0.35);
+      background: rgba(255, 255, 255, 0.35);
       cursor: pointer;
     }
 
@@ -211,10 +206,16 @@
       padding-top: 40px;
     }
 
+    #portfolio > h2 {
+      font-size: 28px;
+      margin-bottom: 50px;
+      font-weight: 700;
+    }
+
     .work-block {
       display: grid;
-      grid-template-columns: 300px 700px;
-      gap: 90px;
+      grid-template-columns: 380px 620px;
+      gap: 70px;
       align-items: center;
       margin-bottom: 120px;
       color: inherit;
@@ -225,6 +226,10 @@
       opacity: 0.95;
     }
 
+    .work-text {
+      min-width: 0;
+    }
+
     .work-text .num {
       font-size: 42px;
       font-style: italic;
@@ -232,20 +237,23 @@
     }
 
     .work-text h2 {
-      font-size: clamp(38px, 4vw, 68px);
+      font-size: clamp(34px, 3.2vw, 58px);
       line-height: 1.02;
       margin-bottom: 18px;
       font-weight: 800;
+      word-break: keep-all;
+      overflow-wrap: break-word;
     }
 
     .work-text p {
       font-size: 18px;
       color: #d0d0d0;
-      max-width: 250px;
+      max-width: 300px;
     }
 
     .work-image {
       width: 100%;
+      min-width: 0;
     }
 
     .work-image img {
@@ -259,7 +267,7 @@
       width: min(1400px, 92%);
       margin: 0 auto 120px;
       padding-top: 40px;
-      border-top: 1px solid rgba(255,255,255,0.15);
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
     }
 
     .about h2,
@@ -273,6 +281,23 @@
       max-width: 760px;
       color: #d0d0d0;
       font-size: 18px;
+    }
+
+    @media (max-width: 1200px) {
+      .content,
+      .about,
+      .contact {
+        width: min(1200px, 94%);
+      }
+
+      .work-block {
+        grid-template-columns: 340px 1fr;
+        gap: 50px;
+      }
+
+      .work-text h2 {
+        font-size: clamp(32px, 3.8vw, 52px);
+      }
     }
 
     @media (max-width: 900px) {
@@ -314,6 +339,12 @@
 
       .content {
         width: min(100%, 94%);
+        margin-bottom: 100px;
+      }
+
+      #portfolio > h2 {
+        margin-bottom: 36px;
+        font-size: 24px;
       }
 
       .work-block {
@@ -323,37 +354,85 @@
       }
 
       .work-text {
-        position: relative;
-        z-index: 2;
-        max-width: 72%;
+        max-width: 100%;
+      }
+
+      .work-text .num {
+        font-size: 34px;
+        margin-bottom: 16px;
+      }
+
+      .work-text h2 {
+        font-size: clamp(30px, 10vw, 48px);
+        margin-bottom: 14px;
       }
 
       .work-text p {
         max-width: 100%;
+        font-size: 17px;
       }
 
       .work-image {
-        position: relative;
-        width: 82%;
-        margin-left: auto;
-        margin-right: 0;
-        transform: translateX(18px);
-        z-index: 1;
+        width: 78%;
+        margin: 0 0 0 auto;
       }
     }
 
     @media (max-width: 640px) {
+      .hero {
+        padding: 100px 16px 50px;
+      }
+
       .hero-arrow {
         top: 34%;
       }
 
-      .work-text {
-        max-width: 68%;
+      .hero-dots {
+        bottom: 24px;
+      }
+
+      .content {
+        width: 100%;
+        padding: 24px 14px 0;
+      }
+
+      .work-block {
+        gap: 14px;
+        margin-bottom: 64px;
+      }
+
+      .work-text .num {
+        font-size: 30px;
+      }
+
+      .work-text h2 {
+        font-size: clamp(28px, 12vw, 42px);
+      }
+
+      .work-text p {
+        font-size: 16px;
+        line-height: 1.5;
       }
 
       .work-image {
-        width: 80%;
-        transform: translateX(22px);
+        width: 76%;
+      }
+
+      .about,
+      .contact {
+        width: 100%;
+        padding: 34px 14px 0;
+        margin-bottom: 80px;
+      }
+
+      .about h2,
+      .contact h2 {
+        font-size: 30px;
+      }
+
+      .about p,
+      .contact p {
+        font-size: 16px;
       }
     }
   </style>
@@ -406,7 +485,7 @@
 
   <main class="content">
     <section id="portfolio">
-      <h2>#Scene No. </h2>
+      <h2>#Scene No.</h2>
 
       <a href="gallery/index.html" class="work-block">
         <div class="work-text">
@@ -457,14 +536,14 @@
   <section class="about" id="about">
     <h2>About</h2>
     <p>
-      DK Sequence is a group for visual creative experiences direction, a creative gathering focused on photography, motion graphics, most project-based experiencs and storytelling.
+      DK Sequence is a group for visual creative experiences direction, a creative gathering focused on photography, motion graphics, project-based experiences, and storytelling.
     </p>
   </section>
 
   <section class="contact" id="contact">
     <h2>Contact</h2>
     <p>dkseq4@gmail.com</p>
-    <p>Jeju island, South Korea</p>
+    <p>Jeju Island, South Korea</p>
   </section>
 
   <script>
@@ -529,18 +608,18 @@
       }
     }, { passive: true });
 
-    document.addEventListener("DOMContentLoaded", function () {
-      const menuBtn = document.getElementById("menuBtn");
-      const mobileMenu = document.getElementById("mobileMenu");
+    document.addEventListener('DOMContentLoaded', function () {
+      const menuBtn = document.getElementById('menuBtn');
+      const mobileMenu = document.getElementById('mobileMenu');
 
       if (menuBtn && mobileMenu) {
         menuBtn.onclick = function (e) {
           e.stopPropagation();
-          mobileMenu.classList.toggle("active");
+          mobileMenu.classList.toggle('active');
         };
 
         mobileMenu.onclick = function () {
-          mobileMenu.classList.remove("active");
+          mobileMenu.classList.remove('active');
         };
       }
     });
