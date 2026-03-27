@@ -107,6 +107,7 @@
       inset: 0;
       overflow: hidden;
       z-index: 1;
+      touch-action: pan-y;
     }
 
     .hero-track {
@@ -161,7 +162,7 @@
 
     .hero-arrow {
       position: absolute;
-      top: 30%;
+      top: 50%;
       transform: translateY(-50%);
       z-index: 3;
       width: 54px;
@@ -212,8 +213,8 @@
 
     .work-block {
       display: grid;
-      grid-template-columns: 340px 620px;
-      gap: 60px;
+      grid-template-columns: 300px 700px;
+      gap: 90px;
       align-items: center;
       margin-bottom: 120px;
       color: inherit;
@@ -241,6 +242,10 @@
       font-size: 18px;
       color: #d0d0d0;
       max-width: 250px;
+    }
+
+    .work-image {
+      width: 100%;
     }
 
     .work-image img {
@@ -283,16 +288,72 @@
         width: 44px;
         height: 44px;
         font-size: 22px;
+        top: 38%;
+      }
+
+      .hero-arrow.left {
+        left: 12px;
+      }
+
+      .hero-arrow.right {
+        right: 12px;
+      }
+
+      .hero-inner {
+        max-width: 92%;
+      }
+
+      .hero-sub {
+        font-size: clamp(24px, 8vw, 42px);
+      }
+
+      .hero-title {
+        font-size: clamp(44px, 12vw, 72px);
+        line-height: 0.9;
+      }
+
+      .content {
+        width: min(100%, 94%);
       }
 
       .work-block {
         grid-template-columns: 1fr;
-        gap: 22px;
+        gap: 18px;
         margin-bottom: 80px;
+      }
+
+      .work-text {
+        position: relative;
+        z-index: 2;
+        max-width: 72%;
       }
 
       .work-text p {
         max-width: 100%;
+      }
+
+      .work-image {
+        position: relative;
+        width: 82%;
+        margin-left: auto;
+        margin-right: 0;
+        transform: translateX(18px);
+        z-index: 1;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero-arrow {
+        top: 34%;
+      }
+
+      .work-text {
+        max-width: 68%;
+      }
+
+      .work-image {
+        width: 80%;
+        transform: translateX(22px);
       }
     }
   </style>
@@ -311,7 +372,7 @@
   </nav>
 
   <section class="hero">
-    <div class="hero-slider">
+    <div class="hero-slider" id="heroSlider">
       <div class="hero-track" id="heroTrack">
         <div class="hero-slide">
           <img src="images/main-01.jpg" alt="Hero 1" />
@@ -344,9 +405,9 @@
   </section>
 
   <main class="content">
-    
     <section id="portfolio">
       <h2>#Scene No. </h2>
+
       <a href="gallery/index.html" class="work-block">
         <div class="work-text">
           <div class="num">01</div>
@@ -391,7 +452,6 @@
         </div>
       </a>
     </section>
-
   </main>
 
   <section class="about" id="about">
@@ -412,6 +472,7 @@
     const dots = document.querySelectorAll('#heroDots button');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
+    const heroSlider = document.getElementById('heroSlider');
 
     let currentIndex = 0;
     const totalSlides = 3;
@@ -422,15 +483,18 @@
       dots[index].classList.add('active');
     }
 
-    prevBtn.addEventListener('click', () => {
+    function showPrevSlide() {
       currentIndex = (currentIndex - 1 + totalSlides) % totalSlides;
       updateSlider(currentIndex);
-    });
+    }
 
-    nextBtn.addEventListener('click', () => {
+    function showNextSlide() {
       currentIndex = (currentIndex + 1) % totalSlides;
       updateSlider(currentIndex);
-    });
+    }
+
+    prevBtn.addEventListener('click', showPrevSlide);
+    nextBtn.addEventListener('click', showNextSlide);
 
     dots.forEach(dot => {
       dot.addEventListener('click', () => {
@@ -438,6 +502,32 @@
         updateSlider(currentIndex);
       });
     });
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+
+    heroSlider.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    heroSlider.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].clientX;
+      touchEndY = e.changedTouches[0].clientY;
+
+      const diffX = touchEndX - touchStartX;
+      const diffY = touchEndY - touchStartY;
+
+      if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY)) {
+        if (diffX < 0) {
+          showNextSlide();
+        } else {
+          showPrevSlide();
+        }
+      }
+    }, { passive: true });
 
     document.addEventListener("DOMContentLoaded", function () {
       const menuBtn = document.getElementById("menuBtn");
