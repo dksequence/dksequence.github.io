@@ -245,6 +245,13 @@
       max-width: 300px;
     }
 
+    .thanks-text {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 15px;
+      color: #bdbdbd;
+    }
+
     .work-image {
       width: 100%;
       min-width: 0;
@@ -348,11 +355,14 @@
       justify-content: center;
       background: #5a5a5a;
       color: #d8d8d8;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: none;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
       transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease;
       opacity: 0.9;
       pointer-events: none;
       cursor: default;
+      overflow: hidden;
+      position: relative;
     }
 
     .team-link svg {
@@ -360,6 +370,7 @@
       height: 18px;
       fill: currentColor;
       display: block;
+      flex-shrink: 0;
     }
 
     .team-link-label {
@@ -373,6 +384,7 @@
       pointer-events: auto;
       cursor: pointer;
       opacity: 1;
+      box-shadow: none;
     }
 
     .team-link.active:hover {
@@ -500,6 +512,10 @@
         font-size: 17px;
       }
 
+      .thanks-text {
+        font-size: 14px;
+      }
+
       .work-image {
         width: 100%;
         margin: 0;
@@ -555,6 +571,10 @@
       .work-text p {
         font-size: 16px;
         line-height: 1.5;
+      }
+
+      .thanks-text {
+        font-size: 13px;
       }
 
       .work-image {
@@ -675,7 +695,7 @@
         <div class="work-text">
           <div class="num">Sequence #02</div>
           <h2>Portrait<br>in Sequence</h2>
-          <p>Portrait photography captures more than appearance. It records mood, presence, and the quiet tension between a person and a place.<br>Special thanks to Her jinho &amp; Kim hyungwoo</p>
+          <p>Portrait photography captures more than appearance. It records mood, presence, and the quiet tension between a person and a place.<br><span class="thanks-text">Special thanks to Her jinho &amp; Kim hyungwoo</span></p>
         </div>
         <div class="work-image">
           <img src="images/image-02.jpg" alt="Macro Photography" />
@@ -697,7 +717,7 @@
         <div class="work-text">
           <div class="num">Sequence #04</div>
           <h2>A Living Record<br>of Heritage. 승무(僧舞)</h2>
-          <p>Seungmu(승무&lt;僧舞&gt;)'s Heirs to Korean Intangible Cultural Property. we organized a 1:1 scale of traditional performances The Cultural Heritage Restoration Project preserves the cultural value of the work It delivers a legacy to future generations.<br>Special thanks to professor Park jinho</p>
+          <p>Seungmu(승무&lt;僧舞&gt;)'s Heirs to Korean Intangible Cultural Property. we organized a 1:1 scale of traditional performances The Cultural Heritage Restoration Project preserves the cultural value of the work It delivers a legacy to future generations.<br><span class="thanks-text">Special thanks to professor Park jinho</span></p>
         </div>
         <div class="work-image">
           <img src="images/image-04.jpg" alt="Drone Works" />
@@ -708,7 +728,7 @@
         <div class="work-text">
           <div class="num">Sequence #05</div>
           <h2>Immersive Archive<br>of World Heritage</h2>
-          <p>Introduces the UNESCO World Heritage Site to the present Through digital restoration, spatial images, Provides an immersive cultural storytelling experience.<br>Special thanks to Creative Director Park Minwoo</p>
+          <p>Introduces the UNESCO World Heritage Site to the present Through digital restoration, spatial images, Provides an immersive cultural storytelling experience.<br><span class="thanks-text">Special thanks to Creative Director Park Minwoo</span></p>
         </div>
         <div class="work-image">
           <img src="images/image-05.jpg" alt="Drone Works" />
@@ -719,7 +739,7 @@
         <div class="work-text">
           <div class="num">Sequence #06</div>
           <h2>Brand Experience<br>Maxwell House</h2>
-          <p>Designed as a promotional event for Maxwell House, this digital vending machine created face-to-face experiences with singer and entertainer. More than 140,000 people engaged with this event promotion, leaving with familiar yet fresh brand impressions and memorable experiences of Maxwell House<br>Special thanks to You`ve got idea</p>
+          <p>Designed as a promotional event for Maxwell House, this digital vending machine created face-to-face experiences with singer and entertainer. More than 140,000 people engaged with this event promotion, leaving with familiar yet fresh brand impressions and memorable experiences of Maxwell House<br><span class="thanks-text">Special thanks to You`ve got idea</span></p>
         </div>
         <div class="work-image">
           <img src="images/image-06.jpg" alt="Drone Works" />
@@ -730,7 +750,7 @@
         <div class="work-text">
           <div class="num">Sequence #07</div>
           <h2>UV Experience in Real Time<br>see what happened</h2>
-          <p>Do sunscreens really protect our skin from UV rays? This project answered that question through live public experience, It visually reveals the difference between sunscreen and bare skin<br>Thanks to Green Pinger</p>
+          <p>Do sunscreens really protect our skin from UV rays? This project answered that question through live public experience, It visually reveals the difference between sunscreen and bare skin<br><span class="thanks-text">Thanks to Green Pinger</span></p>
         </div>
         <div class="work-image">
           <img src="images/image-07.jpg" alt="Drone Works" />
@@ -741,7 +761,7 @@
         <div class="work-text">
           <div class="num">Sequence #08</div>
           <h2>The Value <br>of Luxury brand</h2>
-          <p>Expressing the elegance of a luxury brand is a demanding task. True branding reflects both the client’s vision and the customer’s experience, creating encounters that allow the brand to extend beyond a product and into new cultural and emotional spaces<br>Special thanks to watch designer Christian BÉDAT</p>
+          <p>Expressing the elegance of a luxury brand is a demanding task. True branding reflects both the client’s vision and the customer’s experience, creating encounters that allow the brand to extend beyond a product and into new cultural and emotional spaces<br><span class="thanks-text">Special thanks to watch designer Christian BÉDAT</span></p>
         </div>
         <div class="work-image">
           <img src="images/image-08.jpg" alt="Drone Works" />
@@ -752,7 +772,7 @@
         <div class="work-text">
           <div class="num">Sequence #09</div>
           <h2>Seeing the World <br>from Elsewhere</h2>
-          <p>Drone photographs and videos reveal the hidden order of the world. From the sky, nature is reconstructed, The world you used to know becomes a new place<br>Special thanks to Director Moses Jung</p>
+          <p>Drone photographs and videos reveal the hidden order of the world. From the sky, nature is reconstructed, The world you used to know becomes a new place<br><span class="thanks-text">Special thanks to Director Moses Jung</span></p>
         </div>
         <div class="work-image">
           <img src="images/image-09.jpg" alt="Drone Works" />
@@ -763,26 +783,23 @@
         <div class="work-text">
           <div class="num">Sequence #10</div>
           <h2>Value of meeting<br>and learning</h2>
-          <p>To lecture is to share experience, but also to receive new perspectives. Each encounter becomes a rewarding moment of growth<br>Special thanks to DAXIB</p>
+          <p>To lecture is to share experience, but also to receive new perspectives. Each encounter becomes a rewarding moment of growth<br><span class="thanks-text">Special thanks to DAXIB</span></p>
         </div>
         <div class="work-image">
           <img src="images/image-10.jpg" alt="Drone Works" />
         </div>
       </a>
 
-       <a href="drone/index.html" class="work-block">
+      <a href="drone/index.html" class="work-block">
         <div class="work-text">
           <div class="num">Sequence #11</div>
           <h2>Translating <br>the World into Data</h2>
-          <p>Building digital twin spatial information is the work of translating the world we live in into digital form.
-By acquiring point cloud data that contains real location information, this project opened endless possibilities for analysis, simulation, and future use.
-Over three years, we successfully constructed the topography of the entire Jeju Island through digital twin data<br>Special thanks to Dohee Hwang</p>
+          <p>Building digital twin spatial information is the work of translating the world we live in into digital form. By acquiring point cloud data that contains real location information, this project opened endless possibilities for analysis, simulation, and future use. Over three years, we successfully constructed the topography of the entire Jeju Island through digital twin data<br><span class="thanks-text">Special thanks to Dohee Hwang</span></p>
         </div>
         <div class="work-image">
           <img src="images/image-11.jpg" alt="Drone Works" />
         </div>
       </a>
-      
     </section>
   </main>
 
@@ -885,7 +902,7 @@ Over three years, we successfully constructed the topography of the entire Jeju 
           </a>
           <a class="team-link ig" href="#" aria-label="Instagram">
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2.2A2.8 2.8 0 0 0 4.2 7v10A2.8 2.8 0 0 0 7 19.8h10a2.8 2.8 0 0 0 2.8-2.8V7A2.8 2.8 0 0 0 17 4.2H7zm10.5 1.6a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2.2A2.8 2.8 0 1 0 12 14.8 2.8 2.8 0 0 0 12 9.2z"/>
+              <path d="M7 2h10a5 5 0 0 1 5 5v10A5 5 0 0 1 17 22H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2.2A2.8 2.8 0 0 0 4.2 7v10A2.8 2.8 0 0 0 7 19.8h10A2.8 2.8 0 0 0 19.8 17V7A2.8 2.8 0 0 0 17 4.2H7zm10.5 1.6a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2.2A2.8 2.8 0 1 0 12 14.8 2.8 2.8 0 0 0 12 9.2z"/>
             </svg>
           </a>
           <a class="team-link fb" href="#" aria-label="Facebook">
