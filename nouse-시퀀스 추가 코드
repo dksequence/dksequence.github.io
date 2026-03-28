@@ -1,3 +1,5 @@
+-- 시퀀스 추가 코드 
+
 <a href="newpage/index.html" class="work-block">
   <div class="work-text">
     <div class="num">Sequence #05</div>
@@ -10,4 +12,13 @@
 </a>
 
 
-메인 백그라운드 슬라이스 이미지는 images 폴더에 main-01 연번순으로 업데이트만 하면 됨.
+-- 메인 백그라운드 슬라이스 이미지는 images 폴더에 main-01 연번순으로 업데이트만 하면 됨.
+
+-- 스탭 소개
+images/staff-01.jpg
+images/staff-02.jpg
+images/staff-03.jpg
+
+<div class="team-name">Danny</div>
+<div class="team-role">Creative Director</div>
+<div class="team-desc">...</div>
