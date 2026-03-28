@@ -1,0 +1,10 @@
+<a href="newpage/index.html" class="work-block">
+  <div class="work-text">
+    <div class="num">Sequence #05</div>
+    <h2>New<br>Sequence</h2>
+    <p>Your new description goes here.</p>
+  </div>
+  <div class="work-image">
+    <img src="images/image-05.jpg" alt="New Sequence" />
+  </div>
+</a>
