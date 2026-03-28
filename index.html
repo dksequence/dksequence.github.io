@@ -206,12 +206,6 @@
       padding-top: 40px;
     }
 
-    #portfolio > h2 {
-      font-size: 28px;
-      margin-bottom: 50px;
-      font-weight: 700;
-    }
-
     .work-block {
       display: grid;
       grid-template-columns: 380px minmax(0, 1fr);
@@ -284,6 +278,54 @@
       font-size: 18px;
     }
 
+    .about-team {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 40px;
+      margin-top: 42px;
+      align-items: start;
+    }
+
+    .team-member {
+      text-align: center;
+    }
+
+    .team-photo {
+      width: min(180px, 100%);
+      aspect-ratio: 1 / 1;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #111;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .team-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .team-name {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .team-role {
+      font-size: 15px;
+      color: #b5b5b5;
+      margin-bottom: 12px;
+    }
+
+    .team-desc {
+      max-width: 320px;
+      margin: 0 auto;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #d0d0d0;
+    }
+
     @media (max-width: 1200px) {
       .content,
       .about,
@@ -344,11 +386,6 @@
         margin-bottom: 100px;
       }
 
-      #portfolio > h2 {
-        margin-bottom: 36px;
-        font-size: 24px;
-      }
-
       .work-block {
         grid-template-columns: 1fr;
         gap: 18px;
@@ -381,6 +418,11 @@
 
       .work-image img {
         width: 100%;
+      }
+
+      .about-team {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 34px;
       }
     }
 
@@ -445,6 +487,24 @@
       .contact p {
         font-size: 16px;
       }
+
+      .about-team {
+        grid-template-columns: 1fr;
+        gap: 38px;
+      }
+
+      .team-photo {
+        width: 160px;
+      }
+
+      .team-name {
+        font-size: 20px;
+      }
+
+      .team-desc {
+        max-width: 100%;
+        font-size: 15px;
+      }
     }
   </style>
 </head>
@@ -479,7 +539,7 @@
 
   <main class="content">
     <section id="portfolio">
-    <a href="gallery/index.html" class="work-block">
+      <a href="gallery/index.html" class="work-block">
         <div class="work-text">
           <div class="num">Sequence #01</div>
           <h2>The Poetry<br>of Detail</h2>
@@ -494,9 +554,7 @@
         <div class="work-text">
           <div class="num">Sequence #02</div>
           <h2>Portrait<br>in Sequence</h2>
-          <p>Portrait photography captures more than appearance.
-It records mood, presence, and the quiet tension
-between a person and a place.<br>Special thanks to Her jinho & Kim hyungwoo</p>
+          <p>Portrait photography captures more than appearance. It records mood, presence, and the quiet tension between a person and a place.<br>Special thanks to Her jinho &amp; Kim hyungwoo</p>
         </div>
         <div class="work-image">
           <img src="images/image-02.jpg" alt="Macro Photography" />
@@ -506,12 +564,8 @@ between a person and a place.<br>Special thanks to Her jinho & Kim hyungwoo</p>
       <a href="experience/index.html" class="work-block">
         <div class="work-text">
           <div class="num">Sequence #03</div>
-          <h2>Beyond<br>the Frame
-</h2>
-          <p>Digital composition expands the image
-beyond what is seen.
-It turns ideas, motion, and graphic elements
-into a new visual world</p>
+          <h2>Beyond<br>the Frame</h2>
+          <p>Digital composition expands the image beyond what is seen. It turns ideas, motion, and graphic elements into a new visual world</p>
         </div>
         <div class="work-image">
           <img src="images/image-03.jpg" alt="Portrait Experience" />
@@ -522,30 +576,23 @@ into a new visual world</p>
         <div class="work-text">
           <div class="num">Sequence #04</div>
           <h2>A Living Record<br>of Heritage. 승무(僧舞)</h2>
-          <p>Seungmu(승무<僧舞>)'s Heirs to Korean Intangible Cultural Property. we organized a 1:1 scale of traditional performances 
-The Cultural Heritage Restoration Project preserves the cultural value of the work
-It delivers a legacy to future generations.<br>Special thanks to professor Park jinho </p>
+          <p>Seungmu(승무&lt;僧舞&gt;)'s Heirs to Korean Intangible Cultural Property. we organized a 1:1 scale of traditional performances The Cultural Heritage Restoration Project preserves the cultural value of the work It delivers a legacy to future generations.<br>Special thanks to professor Park jinho</p>
         </div>
         <div class="work-image">
           <img src="images/image-04.jpg" alt="Drone Works" />
         </div>
       </a>
-     
 
       <a href="drone/index.html" class="work-block">
         <div class="work-text">
           <div class="num">Sequence #05</div>
           <h2>Immersive Archive<br>of World Heritage</h2>
-          <p>Introduces the UNESCO World Heritage Site to the present
-Through digital restoration, spatial images,
-Provides an immersive cultural storytelling experience.<br>Special thanks to Creative Director Park Minwoo</p>
+          <p>Introduces the UNESCO World Heritage Site to the present Through digital restoration, spatial images, Provides an immersive cultural storytelling experience.<br>Special thanks to Creative Director Park Minwoo</p>
         </div>
         <div class="work-image">
           <img src="images/image-05.jpg" alt="Drone Works" />
         </div>
       </a>
-
-      
 
       <a href="drone/index.html" class="work-block">
         <div class="work-text">
@@ -558,50 +605,44 @@ Provides an immersive cultural storytelling experience.<br>Special thanks to Cre
         </div>
       </a>
 
-       <a href="drone/index.html" class="work-block">
+      <a href="drone/index.html" class="work-block">
         <div class="work-text">
           <div class="num">Sequence #07</div>
           <h2>UV Experience in Real Time<br>see what happened</h2>
-          <p>Do sunscreens really protect our skin from UV rays?
-This project answered that question through live public experience,
-It visually reveals the difference between sunscreen and bare skin<br>Thanks to Green Pinger</p>
+          <p>Do sunscreens really protect our skin from UV rays? This project answered that question through live public experience, It visually reveals the difference between sunscreen and bare skin<br>Thanks to Green Pinger</p>
         </div>
         <div class="work-image">
           <img src="images/image-07.jpg" alt="Drone Works" />
         </div>
       </a>
 
-            <a href="drone/index.html" class="work-block">
+      <a href="drone/index.html" class="work-block">
         <div class="work-text">
           <div class="num">Sequence #08</div>
           <h2>The Value <br>of Luxury brand</h2>
-          <p>Expressing the elegance of a luxury brand is a demanding task.
-True branding reflects both the client’s vision and the customer’s experience, creating encounters that allow the brand to extend beyond a product and into new cultural and emotional spaces<br>Special thanks to watch designer Christian BÉDAT</p>
+          <p>Expressing the elegance of a luxury brand is a demanding task. True branding reflects both the client’s vision and the customer’s experience, creating encounters that allow the brand to extend beyond a product and into new cultural and emotional spaces<br>Special thanks to watch designer Christian BÉDAT</p>
         </div>
         <div class="work-image">
           <img src="images/image-08.jpg" alt="Drone Works" />
         </div>
       </a>
 
-          <a href="drone/index.html" class="work-block">
+      <a href="drone/index.html" class="work-block">
         <div class="work-text">
           <div class="num">Sequence #09</div>
           <h2>Seeing the World <br>from Elsewhere</h2>
-          <p>Drone photographs and videos reveal the hidden order of the world.
-From the sky, nature is reconstructed, The world you used to know becomes a new place<br>Special thanks to Director Moses Jung</p>
+          <p>Drone photographs and videos reveal the hidden order of the world. From the sky, nature is reconstructed, The world you used to know becomes a new place<br>Special thanks to Director Moses Jung</p>
         </div>
         <div class="work-image">
           <img src="images/image-09.jpg" alt="Drone Works" />
         </div>
       </a>
 
-          <a href="drone/index.html" class="work-block">
+      <a href="drone/index.html" class="work-block">
         <div class="work-text">
           <div class="num">Sequence #10</div>
           <h2>Value of meeting<br>and learning</h2>
-          <p>To lecture is to share experience,
-but also to receive new perspectives.
-Each encounter becomes a rewarding moment of growth<br>Special thanks to DAXIB</p>
+          <p>To lecture is to share experience, but also to receive new perspectives. Each encounter becomes a rewarding moment of growth<br>Special thanks to DAXIB</p>
         </div>
         <div class="work-image">
           <img src="images/image-10.jpg" alt="Drone Works" />
@@ -615,6 +656,44 @@ Each encounter becomes a rewarding moment of growth<br>Special thanks to DAXIB</
     <p>
       DK Sequence is a group for visual creative experiences direction, a creative gathering focused on photography, motion graphics, project-based experiences, and storytelling.
     </p>
+
+    <div class="about-team">
+      <div class="team-member">
+        <div class="team-photo">
+          <img src="images/staff-01.jpg" alt="Danny" />
+        </div>
+        <div class="team-name">Danny</div>
+        <div class="team-role">Creative Director</div>
+        <div class="team-desc">
+          Builds visual experiences through photography, motion graphics,
+          and project-based storytelling.
+        </div>
+      </div>
+
+      <div class="team-member">
+        <div class="team-photo">
+          <img src="images/staff-02.jpg" alt="Staff 2" />
+        </div>
+        <div class="team-name">Name</div>
+        <div class="team-role">Photographer</div>
+        <div class="team-desc">
+          Focuses on portrait, landscape, and documentary-based visual work
+          with emotional clarity.
+        </div>
+      </div>
+
+      <div class="team-member">
+        <div class="team-photo">
+          <img src="images/staff-03.jpg" alt="Staff 3" />
+        </div>
+        <div class="team-name">Name</div>
+        <div class="team-role">Motion Graphic Designer</div>
+        <div class="team-desc">
+          Expands visual storytelling through motion, composition,
+          and digital brand experiences.
+        </div>
+      </div>
+    </div>
   </section>
 
   <section class="contact" id="contact">
@@ -630,7 +709,6 @@ Each encounter becomes a rewarding moment of growth<br>Special thanks to DAXIB</
     const nextBtn = document.getElementById('nextBtn');
     const heroSlider = document.getElementById('heroSlider');
 
-    // 여기 숫자만 바꾸면 슬라이드 개수가 자동으로 바뀜
     const SLIDE_COUNT = 5;
 
     let currentIndex = 0;
