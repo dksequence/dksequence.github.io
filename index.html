@@ -214,12 +214,12 @@
 
     .work-block {
       display: grid;
-  grid-template-columns: 380px minmax(0, 1fr);
-  gap: 50px;
-  align-items: center;
-  margin-bottom: 120px;
-  color: inherit;
-  text-decoration: none;
+      grid-template-columns: 380px minmax(0, 1fr);
+      gap: 50px;
+      align-items: center;
+      margin-bottom: 120px;
+      color: inherit;
+      text-decoration: none;
     }
 
     .work-block:hover {
@@ -257,6 +257,7 @@
     }
 
     .work-image img {
+      width: 100%;
       aspect-ratio: 2 / 1;
       object-fit: cover;
       background: #111;
@@ -374,8 +375,12 @@
       }
 
       .work-image {
-        width: 78%;
-        margin: 0 auto;
+        width: 100%;
+        margin: 0;
+      }
+
+      .work-image img {
+        width: 100%;
       }
     }
 
@@ -416,8 +421,12 @@
       }
 
       .work-image {
-        width: 76%;
-        margin: 0 auto;
+        width: 100%;
+        margin: 0;
+      }
+
+      .work-image img {
+        width: 100%;
       }
 
       .about,
