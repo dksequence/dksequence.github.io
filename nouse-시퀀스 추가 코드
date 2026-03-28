@@ -8,3 +8,6 @@
     <img src="images/image-05.jpg" alt="New Sequence" />
   </div>
 </a>
+
+
+메인 백그라운드 슬라이스 이미지는 images 폴더에 main-01 연번순으로 업데이트만 하면 됨.
