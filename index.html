@@ -278,6 +278,20 @@
       font-size: 18px;
     }
 
+    .network-title {
+      font-size: 38px;
+      margin-top: 56px;
+      margin-bottom: 18px;
+      font-weight: 700;
+    }
+
+    .network-desc {
+      max-width: 760px;
+      color: #d0d0d0;
+      font-size: 18px;
+      margin-bottom: 0;
+    }
+
     .about-team {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -310,6 +324,16 @@
       font-size: 22px;
       font-weight: 700;
       margin-bottom: 8px;
+    }
+
+    .team-sns {
+      display: inline-block;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: #9fc7ff;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      word-break: break-all;
     }
 
     .team-role {
@@ -479,13 +503,19 @@
       }
 
       .about h2,
-      .contact h2 {
+      .contact h2,
+      .network-title {
         font-size: 30px;
       }
 
       .about p,
-      .contact p {
+      .contact p,
+      .network-desc {
         font-size: 16px;
+      }
+
+      .network-title {
+        margin-top: 44px;
       }
 
       .about-team {
@@ -499,6 +529,10 @@
 
       .team-name {
         font-size: 20px;
+      }
+
+      .team-sns {
+        font-size: 13px;
       }
 
       .team-desc {
@@ -657,13 +691,22 @@
       DK Sequence is a group for visual creative experiences direction, a creative gathering focused on photography, motion graphics, project-based experiences, and storytelling.
     </p>
 
+    <h2 class="network-title">Creative Network</h2>
+    <p class="network-desc">
+      A wider creative network that joins DKsequence across selected projects,
+      collaborations, and visual experiences.
+    </p>
+
     <div class="about-team">
       <div class="team-member">
         <div class="team-photo">
           <img src="images/staff-01.jpg" alt="Danny" />
         </div>
         <div class="team-name">Danny</div>
-        <div class="team-role">Creative Director</div>
+        <a class="team-sns" href="https://instagram.com/your_account" target="_blank" rel="noopener noreferrer">
+          instagram.com/your_account
+        </a>
+        <div class="team-role">Creative Contributor</div>
         <div class="team-desc">
           Builds visual experiences through photography, motion graphics,
           and project-based storytelling.
@@ -672,10 +715,13 @@
 
       <div class="team-member">
         <div class="team-photo">
-          <img src="images/staff-02.jpg" alt="Staff 2" />
+          <img src="images/staff-02.jpg" alt="Name" />
         </div>
         <div class="team-name">Name</div>
-        <div class="team-role">Photographer</div>
+        <a class="team-sns" href="https://instagram.com/your_account" target="_blank" rel="noopener noreferrer">
+          instagram.com/your_account
+        </a>
+        <div class="team-role">Visual Contributor</div>
         <div class="team-desc">
           Focuses on portrait, landscape, and documentary-based visual work
           with emotional clarity.
@@ -684,10 +730,13 @@
 
       <div class="team-member">
         <div class="team-photo">
-          <img src="images/staff-03.jpg" alt="Staff 3" />
+          <img src="images/staff-03.jpg" alt="Name" />
         </div>
         <div class="team-name">Name</div>
-        <div class="team-role">Motion Graphic Designer</div>
+        <a class="team-sns" href="https://instagram.com/your_account" target="_blank" rel="noopener noreferrer">
+          instagram.com/your_account
+        </a>
+        <div class="team-role">Project Collaborator</div>
         <div class="team-desc">
           Expands visual storytelling through motion, composition,
           and digital brand experiences.
