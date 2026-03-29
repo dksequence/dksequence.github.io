@@ -120,10 +120,7 @@
       background: #111;
       cursor: pointer;
       border: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .gallery-item.tall {
-      grid-column: span 4;
+      padding: 0;
     }
 
     .gallery-item.wide {
@@ -293,8 +290,7 @@
     }
 
     @media (max-width: 1100px) {
-      .gallery-item,
-      .gallery-item.tall {
+      .gallery-item {
         grid-column: span 6;
       }
 
@@ -320,7 +316,7 @@
       }
 
       .page-wrap {
-        width: min(100%, 100%);
+        width: 100%;
         padding: 34px 14px 80px;
       }
 
@@ -338,7 +334,6 @@
       }
 
       .gallery-item,
-      .gallery-item.tall,
       .gallery-item.wide {
         grid-column: span 1;
       }
@@ -406,11 +401,10 @@
     </section>
     <!-- INTRO EDIT END -->
 
-    <!-- IMAGE DATA NOTE
-         Add more images only in the script array below.
-         Example path:
-         ../images/sequence-01/01.jpg
-         ../images/sequence-01/02.jpg
+    <!-- IMAGE LIST EDIT NOTE
+         Add / remove / reorder images only in the galleryItems array below.
+         Image folder:
+         ../images/sequence-01/
     -->
 
     <!-- GALLERY GRID START -->
@@ -441,55 +435,53 @@
   <!-- LIGHTBOX END -->
 
   <script>
-    /* IMAGE LIST EDIT START
-       Add / remove images here only.
-       type:
-       - normal
-       - wide
-    */
+    /* IMAGE LIST EDIT START */
     const galleryItems = [
-      {
-        src: "../images/sequence-01/01.jpg",
-        alt: "Sequence 01 image 01",
-        title: "Quiet Surface",
-        text: "Macro and detail-based image.",
-        type: "normal"
-      },
-      {
-        src: "../images/sequence-01/02.jpg",
-        alt: "Sequence 01 image 02",
-        title: "Small Atmosphere",
-        text: "A closer look into texture and silence.",
-        type: "normal"
-      },
-      {
-        src: "../images/sequence-01/03.jpg",
-        alt: "Sequence 01 image 03",
-        title: "Observed Detail",
-        text: "A detail-driven image within daily life.",
-        type: "wide"
-      },
-      {
-        src: "../images/sequence-01/04.jpg",
-        alt: "Sequence 01 image 04",
-        title: "Inner Texture",
-        text: "Quiet structure and surface.",
-        type: "normal"
-      },
-      {
-        src: "../images/sequence-01/05.jpg",
-        alt: "Sequence 01 image 05",
-        title: "Still Fragment",
-        text: "An image for slow viewing.",
-        type: "normal"
-      },
-      {
-        src: "../images/sequence-01/06.jpg",
-        alt: "Sequence 01 image 06",
-        title: "Close Presence",
-        text: "Macro or non-macro, guided by detail.",
-        type: "wide"
-      }
+      { src: "../images/sequence-01/006.JPG", alt: "Sequence 01 image 006", title: "Expansion", text: "A quiet world revealed through texture and form.", type: "normal" },
+      { src: "../images/sequence-01/001.JPG", alt: "Sequence 01 image 001", title: "Forest Seed", text: "A detail-based image shaped by atmosphere and silence.", type: "normal" },
+      { src: "../images/sequence-01/003.JPG", alt: "Sequence 01 image 003", title: "Rough Shelter", text: "Surface, structure, and the poetry of small textures.", type: "normal" },
+      { src: "../images/sequence-01/010.jpg", alt: "Sequence 01 image 010", title: "Pine Memory", text: "A small subject holding a larger atmosphere.", type: "normal" },
+      { src: "../images/sequence-01/015.JPG", alt: "Sequence 01 image 015", title: "Still Stem", text: "A delicate form emerging from a soft green field.", type: "normal" },
+      { src: "../images/sequence-01/029.JPG", alt: "Sequence 01 image 029", title: "Orange Interior", text: "A close study of color, pulp, and luminous texture.", type: "normal" },
+      { src: "../images/sequence-01/035.JPG", alt: "Sequence 01 image 035", title: "Hidden Cluster", text: "Detail and repetition within a warm, organic frame.", type: "wide" },
+      { src: "../images/sequence-01/044.jpg", alt: "Sequence 01 image 044", title: "Winter Edge", text: "A quiet vertical rhythm shaped by cold air and light.", type: "normal" },
+      { src: "../images/sequence-01/013.png", alt: "Sequence 01 image 013", title: "Leaf Vein", text: "A bright inner map hidden inside an ordinary surface.", type: "normal" },
+      { src: "../images/sequence-01/017.JPG", alt: "Sequence 01 image 017", title: "Camellia Detail", text: "Color and texture gathered into a small living scene.", type: "wide" },
+      { src: "../images/sequence-01/039.JPG", alt: "Sequence 01 image 039", title: "White Bloom", text: "A simple stillness revealed through light and contrast.", type: "normal" },
+      { src: "../images/sequence-01/038.JPG", alt: "Sequence 01 image 038", title: "Red Cluster", text: "A concentrated detail of color suspended in space.", type: "normal" },
+      { src: "../images/sequence-01/005.JPG", alt: "Sequence 01 image 005", title: "Fallen Leaf", text: "A suspended fragment of daily life, briefly illuminated.", type: "normal" },
+      { src: "../images/sequence-01/009.JPG", alt: "Sequence 01 image 009", title: "Fern Detail", text: "Quiet repetition and structure in a natural pattern.", type: "normal" },
+      { src: "../images/sequence-01/024.jpg", alt: "Sequence 01 image 024", title: "Soft Fern", text: "A softer study of form and atmosphere.", type: "normal" },
+      { src: "../images/sequence-01/041.JPG", alt: "Sequence 01 image 041", title: "Blue Bark", text: "An abstract edge between natural texture and deep color.", type: "wide" },
+
+      { src: "../images/sequence-01/002.JPG", alt: "Sequence 01 image 002", title: "Layered Shell", text: "Repeated form and warm texture in close focus.", type: "normal" },
+      { src: "../images/sequence-01/004.JPG", alt: "Sequence 01 image 004", title: "Dark Spiral", text: "A heavier study of pattern and organic structure.", type: "normal" },
+      { src: "../images/sequence-01/008.JPG", alt: "Sequence 01 image 008", title: "Red Moss", text: "A vivid moment found inside a small patch of life.", type: "normal" },
+      { src: "../images/sequence-01/011.JPG", alt: "Sequence 01 image 011", title: "Split Form", text: "A close observation of shape, tension, and surface.", type: "normal" },
+      { src: "../images/sequence-01/012.JPG", alt: "Sequence 01 image 012", title: "Violet Bud", text: "A single form held against a dark, quiet field.", type: "normal" },
+      { src: "../images/sequence-01/014.jpg", alt: "Sequence 01 image 014", title: "Glass Cross", text: "A reflective object rendered as a detail study.", type: "normal" },
+      { src: "../images/sequence-01/016.JPG", alt: "Sequence 01 image 016", title: "Material", text: "Texture and age observed at close range.", type: "normal" },
+      { src: "../images/sequence-01/018.JPG", alt: "Sequence 01 image 018", title: "Shell Repetition", text: "A denser continuation of patterned surface.", type: "normal" },
+      { src: "../images/sequence-01/019.JPG", alt: "Sequence 01 image 019", title: "White Seed", text: "A fleeting softness framed by shallow depth.", type: "normal" },
+      { src: "../images/sequence-01/020.JPG", alt: "Sequence 01 image 020", title: "Broken Stump", text: "A small object carrying a sculptural presence.", type: "normal" },
+      { src: "../images/sequence-01/021.JPG", alt: "Sequence 01 image 021", title: "Moss Block", text: "A fragment of forest structure seen like a monument.", type: "normal" },
+      { src: "../images/sequence-01/022.JPG", alt: "Sequence 01 image 022", title: "Observed Device", text: "A non-macro detail image within an everyday scene.", type: "wide" },
+      { src: "../images/sequence-01/023.jpg", alt: "Sequence 01 image 023", title: "Hanging Ice", text: "Vertical detail and cold light gathered into a narrow frame.", type: "normal" },
+      { src: "../images/sequence-01/025.JPG", alt: "Sequence 01 image 025", title: "Threaded Needle", text: "A precise and minimal study of line and tension.", type: "normal" },
+      { src: "../images/sequence-01/026.jpg", alt: "Sequence 01 image 026", title: "Winter Path", text: "A wider quiet moment that still holds the spirit of detail.", type: "normal" },
+      { src: "../images/sequence-01/027.png", alt: "Sequence 01 image 027", title: "Distant Slope", text: "A landscape fragment included through a detail-based gaze.", type: "normal" },
+      { src: "../images/sequence-01/028.JPG", alt: "Sequence 01 image 028", title: "Green Log", text: "Texture and moss gathered on a small forest edge.", type: "normal" },
+      { src: "../images/sequence-01/030.JPG", alt: "Sequence 01 image 030", title: "Peeling Bark", text: "A close study of natural layers and warm surfaces.", type: "normal" },
+      { src: "../images/sequence-01/031.JPG", alt: "Sequence 01 image 031", title: "Perched Figure", text: "A wider fragment that still follows a detail-driven eye.", type: "wide" },
+      { src: "../images/sequence-01/032.JPG", alt: "Sequence 01 image 032", title: "Blue Surface", text: "A still object seen through light, reflection, and mood.", type: "normal" },
+      { src: "../images/sequence-01/033.JPG", alt: "Sequence 01 image 033", title: "Single Feather", text: "A minimal vertical study of softness and line.", type: "normal" },
+      { src: "../images/sequence-01/034.JPG", alt: "Sequence 01 image 034", title: "White Stone", text: "A sculptural detail defined by contrast and silence.", type: "normal" },
+      { src: "../images/sequence-01/036.JPG", alt: "Sequence 01 image 036", title: "Red Interior", text: "A closer continuation of hidden organic pattern.", type: "wide" },
+      { src: "../images/sequence-01/037.jpg", alt: "Sequence 01 image 037", title: "Green Stem", text: "A small upright form isolated by light and depth.", type: "normal" },
+      { src: "../images/sequence-01/040.JPG", alt: "Sequence 01 image 040", title: "Yellow Bloom", text: "A compact floral detail emerging from darkness.", type: "normal" },
+      { src: "../images/sequence-01/042.JPG", alt: "Sequence 01 image 042", title: "Brown Surface", text: "A close abstract of layered texture and shadow.", type: "normal" },
+      { src: "../images/sequence-01/043.JPG", alt: "Sequence 01 image 043", title: "Side Growth", text: "Repeated natural form placed along a vertical edge.", type: "normal" },
+      { src: "../images/sequence-01/007.JPG", alt: "Sequence 01 image 007", title: "White Shape", text: "A minimal close detail with reduced color and form.", type: "normal" }
     ];
     /* IMAGE LIST EDIT END */
 
