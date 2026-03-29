@@ -128,7 +128,6 @@
       line-height: 1.75;
     }
 
-    /* MASONRY GRID START */
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -201,7 +200,6 @@
       color: #d7d7d7;
       line-height: 1.5;
     }
-    /* MASONRY GRID END */
 
     .footer-note {
       margin-top: 54px;
@@ -504,53 +502,159 @@
   </div>
 
   <script>
-    const galleryItems = [
-      { src: "../images/gallery/006.JPG", alt: "Sequence 01 image 006", title: "Expansion", text: "A quiet world revealed through texture and form.", type: "normal" },
-      { src: "../images/gallery/001.JPG", alt: "Sequence 01 image 001", title: "Forest Seed", text: "A detail-based image shaped by atmosphere and silence.", type: "normal" },
-      { src: "../images/gallery/003.JPG", alt: "Sequence 01 image 003", title: "Rough Shelter", text: "Surface, structure, and the poetry of small textures.", type: "normal" },
-      { src: "../images/gallery/010.jpg", alt: "Sequence 01 image 010", title: "Pine Memory", text: "A small subject holding a larger atmosphere.", type: "normal" },
-      { src: "../images/gallery/015.JPG", alt: "Sequence 01 image 015", title: "Still Stem", text: "A delicate form emerging from a soft green field.", type: "normal" },
-      { src: "../images/gallery/029.JPG", alt: "Sequence 01 image 029", title: "Orange Interior", text: "A close study of color, pulp, and luminous texture.", type: "normal" },
-      { src: "../images/gallery/035.JPG", alt: "Sequence 01 image 035", title: "Hidden Cluster", text: "Detail and repetition within a warm, organic frame.", type: "wide" },
-      { src: "../images/gallery/044.jpg", alt: "Sequence 01 image 044", title: "Winter Edge", text: "A quiet vertical rhythm shaped by cold air and light.", type: "normal" },
-      { src: "../images/gallery/013.png", alt: "Sequence 01 image 013", title: "Leaf Vein", text: "A bright inner map hidden inside an ordinary surface.", type: "normal" },
-      { src: "../images/gallery/017.JPG", alt: "Sequence 01 image 017", title: "Camellia Detail", text: "Color and texture gathered into a small living scene.", type: "wide" },
-      { src: "../images/gallery/039.JPG", alt: "Sequence 01 image 039", title: "White Bloom", text: "A simple stillness revealed through light and contrast.", type: "normal" },
-      { src: "../images/gallery/038.JPG", alt: "Sequence 01 image 038", title: "Red Cluster", text: "A concentrated detail of color suspended in space.", type: "normal" },
-      { src: "../images/gallery/005.JPG", alt: "Sequence 01 image 005", title: "Fallen Leaf", text: "A suspended fragment of daily life, briefly illuminated.", type: "normal" },
-      { src: "../images/gallery/009.JPG", alt: "Sequence 01 image 009", title: "Fern Detail", text: "Quiet repetition and structure in a natural pattern.", type: "normal" },
-      { src: "../images/gallery/024.jpg", alt: "Sequence 01 image 024", title: "Soft Fern", text: "A softer study of form and atmosphere.", type: "normal" },
-      { src: "../images/gallery/041.JPG", alt: "Sequence 01 image 041", title: "Blue Bark", text: "An abstract edge between natural texture and deep color.", type: "wide" },
+    /*
+      AUTO GALLERY SETTINGS START
 
-      { src: "../images/gallery/002.JPG", alt: "Sequence 01 image 002", title: "Layered Shell", text: "Repeated form and warm texture in close focus.", type: "normal" },
-      { src: "../images/gallery/004.JPG", alt: "Sequence 01 image 004", title: "Dark Spiral", text: "A heavier study of pattern and organic structure.", type: "normal" },
-      { src: "../images/gallery/008.JPG", alt: "Sequence 01 image 008", title: "Red Moss", text: "A vivid moment found inside a small patch of life.", type: "normal" },
-      { src: "../images/gallery/011.JPG", alt: "Sequence 01 image 011", title: "Split Form", text: "A close observation of shape, tension, and surface.", type: "normal" },
-      { src: "../images/gallery/012.JPG", alt: "Sequence 01 image 012", title: "Violet Bud", text: "A single form held against a dark, quiet field.", type: "normal" },
-      { src: "../images/gallery/014.jpg", alt: "Sequence 01 image 014", title: "Glass Cross", text: "A reflective object rendered as a detail study.", type: "normal" },
-      { src: "../images/gallery/016.JPG", alt: "Sequence 01 image 016", title: "Material", text: "Texture and age observed at close range.", type: "normal" },
-      { src: "../images/gallery/018.JPG", alt: "Sequence 01 image 018", title: "Shell Repetition", text: "A denser continuation of patterned surface.", type: "normal" },
-      { src: "../images/gallery/019.JPG", alt: "Sequence 01 image 019", title: "White Seed", text: "A fleeting softness framed by shallow depth.", type: "normal" },
-      { src: "../images/gallery/020.JPG", alt: "Sequence 01 image 020", title: "Broken Stump", text: "A small object carrying a sculptural presence.", type: "normal" },
-      { src: "../images/gallery/021.JPG", alt: "Sequence 01 image 021", title: "Moss Block", text: "A fragment of forest structure seen like a monument.", type: "normal" },
-      { src: "../images/gallery/022.JPG", alt: "Sequence 01 image 022", title: "Observed Device", text: "A non-macro detail image within an everyday scene.", type: "wide" },
-      { src: "../images/gallery/023.jpg", alt: "Sequence 01 image 023", title: "Hanging Ice", text: "Vertical detail and cold light gathered into a narrow frame.", type: "normal" },
-      { src: "../images/gallery/025.JPG", alt: "Sequence 01 image 025", title: "Threaded Needle", text: "A precise and minimal study of line and tension.", type: "normal" },
-      { src: "../images/gallery/026.jpg", alt: "Sequence 01 image 026", title: "Winter Path", text: "A wider quiet moment that still holds the spirit of detail.", type: "normal" },
-      { src: "../images/gallery/027.png", alt: "Sequence 01 image 027", title: "Distant Slope", text: "A landscape fragment included through a detail-based gaze.", type: "normal" },
-      { src: "../images/gallery/028.JPG", alt: "Sequence 01 image 028", title: "Green Log", text: "Texture and moss gathered on a small forest edge.", type: "normal" },
-      { src: "../images/gallery/030.JPG", alt: "Sequence 01 image 030", title: "Peeling Bark", text: "A close study of natural layers and warm surfaces.", type: "normal" },
-      { src: "../images/gallery/031.JPG", alt: "Sequence 01 image 031", title: "Perched Figure", text: "A wider fragment that still follows a detail-driven eye.", type: "wide" },
-      { src: "../images/gallery/032.JPG", alt: "Sequence 01 image 032", title: "Blue Surface", text: "A still object seen through light, reflection, and mood.", type: "normal" },
-      { src: "../images/gallery/033.JPG", alt: "Sequence 01 image 033", title: "Single Feather", text: "A minimal vertical study of softness and line.", type: "normal" },
-      { src: "../images/gallery/034.JPG", alt: "Sequence 01 image 034", title: "White Stone", text: "A sculptural detail defined by contrast and silence.", type: "normal" },
-      { src: "../images/gallery/036.JPG", alt: "Sequence 01 image 036", title: "Red Interior", text: "A closer continuation of hidden organic pattern.", type: "wide" },
-      { src: "../images/gallery/037.jpg", alt: "Sequence 01 image 037", title: "Green Stem", text: "A small upright form isolated by light and depth.", type: "normal" },
-      { src: "../images/gallery/040.JPG", alt: "Sequence 01 image 040", title: "Yellow Bloom", text: "A compact floral detail emerging from darkness.", type: "normal" },
-      { src: "../images/gallery/042.JPG", alt: "Sequence 01 image 042", title: "Brown Surface", text: "A close abstract of layered texture and shadow.", type: "normal" },
-      { src: "../images/gallery/043.JPG", alt: "Sequence 01 image 043", title: "Side Growth", text: "Repeated natural form placed along a vertical edge.", type: "normal" },
-      { src: "../images/gallery/007.JPG", alt: "Sequence 01 image 007", title: "White Shape", text: "A minimal close detail with reduced color and form.", type: "normal" }
-    ];
+      1. Upload image files to:
+         ../images/gallery/
+
+      2. Keep numbering in order:
+         001, 002, 003 ... 046, 047
+
+      3. Only change TOTAL_IMAGES when a new image is added.
+
+      4. Latest image is shown first automatically.
+
+      5. If you want a specific image to be wide, add its number to WIDE_IMAGES.
+
+      6. If a title is not provided, "The Poetry of Detail" is used automatically.
+    */
+
+    const TOTAL_IMAGES = 46;
+    const IMAGE_FOLDER = "../images/gallery/";
+    const WIDE_IMAGES = [6, 17, 22, 31, 35, 36, 41];
+
+    const DEFAULT_TITLE = "The Poetry of Detail";
+    const DEFAULT_TEXT = "";
+
+    /*
+      Optional:
+      Add only the images you want to give custom titles/text.
+      If omitted, default title/text will be used.
+      Example:
+      47: "Quiet Moss"
+    */
+    const TITLE_OVERRIDES = {
+      1: "Forest Seed",
+      2: "Layered Shell",
+      3: "Rough Shelter",
+      4: "Dark Spiral",
+      5: "Fallen Leaf",
+      6: "Expansion",
+      7: "White Shape",
+      8: "Red Moss",
+      9: "Fern Detail",
+      10: "Pine Memory",
+      11: "Split Form",
+      12: "Violet Bud",
+      13: "Leaf Vein",
+      14: "Glass Cross",
+      15: "Still Stem",
+      16: "Material",
+      17: "Camellia Detail",
+      18: "Shell Repetition",
+      19: "White Seed",
+      20: "Broken Stump",
+      21: "Moss Block",
+      22: "Observed Device",
+      23: "Hanging Ice",
+      24: "Soft Fern",
+      25: "Threaded Needle",
+      26: "Winter Path",
+      27: "Distant Slope",
+      28: "Green Log",
+      29: "Orange Interior",
+      30: "Peeling Bark",
+      31: "Perched Figure",
+      32: "Blue Surface",
+      33: "Single Feather",
+      34: "White Stone",
+      35: "Hidden Cluster",
+      36: "Red Interior",
+      37: "Green Stem",
+      38: "Red Cluster",
+      39: "White Bloom",
+      40: "Yellow Bloom",
+      41: "Blue Bark",
+      42: "Brown Surface",
+      43: "Side Growth",
+      44: "Winter Edge"
+    };
+
+    const TEXT_OVERRIDES = {
+      1: "A detail-based image shaped by atmosphere and silence.",
+      2: "Repeated form and warm texture in close focus.",
+      3: "Surface, structure, and the poetry of small textures.",
+      4: "A heavier study of pattern and organic structure.",
+      5: "A suspended fragment of daily life, briefly illuminated.",
+      6: "A quiet world revealed through texture and form.",
+      7: "A minimal close detail with reduced color and form.",
+      8: "A vivid moment found inside a small patch of life.",
+      9: "Quiet repetition and structure in a natural pattern.",
+      10: "A small subject holding a larger atmosphere.",
+      11: "A close observation of shape, tension, and surface.",
+      12: "A single form held against a dark, quiet field.",
+      13: "A bright inner map hidden inside an ordinary surface.",
+      14: "A reflective object rendered as a detail study.",
+      15: "A delicate form emerging from a soft green field.",
+      16: "Texture and age observed at close range.",
+      17: "Color and texture gathered into a small living scene.",
+      18: "A denser continuation of patterned surface.",
+      19: "A fleeting softness framed by shallow depth.",
+      20: "A small object carrying a sculptural presence.",
+      21: "A fragment of forest structure seen like a monument.",
+      22: "A non-macro detail image within an everyday scene.",
+      23: "Vertical detail and cold light gathered into a narrow frame.",
+      24: "A softer study of form and atmosphere.",
+      25: "A precise and minimal study of line and tension.",
+      26: "A wider quiet moment that still holds the spirit of detail.",
+      27: "A landscape fragment included through a detail-based gaze.",
+      28: "Texture and moss gathered on a small forest edge.",
+      29: "A close study of color, pulp, and luminous texture.",
+      30: "A close study of natural layers and warm surfaces.",
+      31: "A wider fragment that still follows a detail-driven eye.",
+      32: "A still object seen through light, reflection, and mood.",
+      33: "A minimal vertical study of softness and line.",
+      34: "A sculptural detail defined by contrast and silence.",
+      35: "Detail and repetition within a warm, organic frame.",
+      36: "A closer continuation of hidden organic pattern.",
+      37: "A small upright form isolated by light and depth.",
+      38: "A concentrated detail of color suspended in space.",
+      39: "A simple stillness revealed through light and contrast.",
+      40: "A compact floral detail emerging from darkness.",
+      41: "An abstract edge between natural texture and deep color.",
+      42: "A close abstract of layered texture and shadow.",
+      43: "Repeated natural form placed along a vertical edge.",
+      44: "A quiet vertical rhythm shaped by cold air and light."
+    };
+
+    const EXTENSIONS = ["JPG", "jpg", "JPEG", "jpeg", "PNG", "png", "WEBP", "webp"];
+
+    function padNumber(num) {
+      return String(num).padStart(3, "0");
+    }
+
+    function getCandidates(num) {
+      const padded = padNumber(num);
+      return EXTENSIONS.map(ext => `${IMAGE_FOLDER}${padded}.${ext}`);
+    }
+
+    function buildGalleryItems() {
+      const items = [];
+      for (let i = TOTAL_IMAGES; i >= 1; i--) {
+        items.push({
+          number: i,
+          alt: `Sequence 01 image ${padNumber(i)}`,
+          title: TITLE_OVERRIDES[i] || DEFAULT_TITLE,
+          text: TEXT_OVERRIDES[i] || DEFAULT_TEXT,
+          type: WIDE_IMAGES.includes(i) ? "wide" : "normal",
+          candidates: getCandidates(i)
+        });
+      }
+      return items;
+    }
+
+    const galleryItems = buildGalleryItems();
 
     const galleryGrid = document.getElementById("galleryGrid");
     const lightbox = document.getElementById("lightbox");
@@ -569,6 +673,36 @@
     let touchEndX = 0;
     let touchEndY = 0;
 
+    function setImageWithFallback(imgEl, candidates, onDone) {
+      let index = 0;
+
+      function tryNext() {
+        if (index >= candidates.length) {
+          imgEl.src = "";
+          imgEl.alt = "Image not found";
+          if (onDone) onDone(false);
+          return;
+        }
+
+        const testSrc = candidates[index];
+        const testImg = new Image();
+
+        testImg.onload = function () {
+          imgEl.src = testSrc;
+          if (onDone) onDone(true);
+        };
+
+        testImg.onerror = function () {
+          index += 1;
+          tryNext();
+        };
+
+        testImg.src = testSrc;
+      }
+
+      tryNext();
+    }
+
     function renderGallery() {
       galleryGrid.innerHTML = "";
 
@@ -580,7 +714,7 @@
 
         button.innerHTML = `
           <div class="gallery-card">
-            <img src="${item.src}" alt="${item.alt}" loading="lazy">
+            <img alt="${item.alt}" loading="lazy">
             <div class="gallery-meta">
               <h3>${item.title || ""}</h3>
               <p>${item.text || ""}</p>
@@ -589,8 +723,10 @@
         `;
 
         const img = button.querySelector("img");
-        img.addEventListener("load", resizeAllGridItems);
-        img.addEventListener("error", resizeAllGridItems);
+
+        setImageWithFallback(img, item.candidates, () => {
+          resizeAllGridItems();
+        });
 
         button.addEventListener("click", () => openLightbox(index));
         galleryGrid.appendChild(button);
@@ -598,6 +734,7 @@
 
       requestAnimationFrame(resizeAllGridItems);
       setTimeout(resizeAllGridItems, 300);
+      setTimeout(resizeAllGridItems, 800);
     }
 
     function resizeGridItem(item) {
@@ -632,10 +769,11 @@
 
     function updateLightbox() {
       const item = galleryItems[currentIndex];
-      lightboxImage.src = item.src;
+      lightboxTitle.textContent = item.title || DEFAULT_TITLE;
+      lightboxText.textContent = item.text || DEFAULT_TEXT;
+
+      setImageWithFallback(lightboxImage, item.candidates);
       lightboxImage.alt = item.alt || "";
-      lightboxTitle.textContent = item.title || "";
-      lightboxText.textContent = item.text || "";
     }
 
     function showPrev() {
