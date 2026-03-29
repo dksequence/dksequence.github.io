@@ -685,11 +685,8 @@
   </header>
 
   <nav class="mobile-menu" id="mobileMenu">
-    <a href="./index.html">Home</a>
-    <a href="./html/list.html#works">Work List</a>
-    <a href="./html/list.html#lectures">Lecture History</a>
-    <a href="./html/list.html#projects">Project Summary</a>
-    <a href="./html/list.html#awards">Awards</a>
+    <a href="#top">Home</a>
+    <a href="./html/list.html">Work List</a>
     <a href="#contact">Contact</a>
   </nav>
 
@@ -837,11 +834,12 @@
   <section class="about" id="about">
     <h2>About</h2>
     <p>
-DKSequence is a creative collective dedicated to visual works and direction.
-We create valuable experiences through photography, motion graphics, creative projects, and storytelling, turning ideas and emotions into meaningful visual sequences.<br>
-  <p></p>
+      DKSequence is a creative collective dedicated to visual works and direction.
+      We create valuable experiences through photography, motion graphics, creative projects, and storytelling, turning ideas and emotions into meaningful visual sequences.
+    </p>
+    <p style="margin-top:16px;">
       We believe that images, moving visuals, and technology are not simply meant to be seen, but to be experienced.
-What matters most is the emotional connection they create, allowing each moment to be felt, remembered, and carried forward as part of life’s ongoing sequence.    
+      What matters most is the emotional connection they create, allowing each moment to be felt, remembered, and carried forward as part of life’s ongoing sequence.
     </p>
 
     <h2 class="network-title">Creative Network</h2>
@@ -1083,6 +1081,12 @@ What matters most is the emotional connection they create, allowing each moment 
           link.addEventListener('click', () => {
             mobileMenu.classList.remove('active');
           });
+        });
+
+        document.addEventListener('click', function (e) {
+          if (!mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+            mobileMenu.classList.remove('active');
+          }
         });
       }
 
