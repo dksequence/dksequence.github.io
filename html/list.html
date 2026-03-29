@@ -1,1 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DKsequence - List</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 32px;
+      background: rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(6px);
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .menu-btn {
+      display: block;
+      font-size: 30px;
+      line-height: 1;
+      cursor: pointer;
+      user-select: none;
+      z-index: 1002;
+    }
+
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.96);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 34px;
+      transform: translateY(-100%);
+      transition: transform 0.3s ease;
+      z-index: 1001;
+      pointer-events: none;
+    }
+
+    .mobile-menu.active {
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .mobile-menu a {
+      font-size: 28px;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .page-hero {
+      padding: 150px 20px 70px;
+      text-align: center;
+    }
+
+    .page-hero h1 {
+      font-size: clamp(42px, 7vw, 90px);
+      font-weight: 400;
+      line-height: 0.95;
+      margin-bottom: 14px;
+    }
+
+    .page-hero p {
+      font-size: 18px;
+      color: #cfcfcf;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .page-section {
+      width: min(1200px, 92%);
+      margin: 0 auto 110px;
+      padding-top: 34px;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      scroll-margin-top: 120px;
+    }
+
+    .page-section h2 {
+      font-size: clamp(30px, 4vw, 42px);
+      margin-bottom: 24px;
+      font-weight: 700;
+    }
+
+    .section-intro {
+      font-size: 17px;
+      color: #cfcfcf;
+      margin-bottom: 26px;
+      max-width: 900px;
+    }
+
+    .list-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .list-card {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.03);
+      padding: 20px 22px;
+    }
+
+    .list-card h3 {
+      font-size: 22px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .meta {
+      font-size: 15px;
+      color: #bdbdbd;
+      margin-bottom: 8px;
+    }
+
+    .desc {
+      font-size: 16px;
+      color: #dcdcdc;
+    }
+
+    .simple-list {
+      list-style: none;
+      display: grid;
+      gap: 14px;
+    }
+
+    .simple-list li {
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 14px;
+      font-size: 17px;
+      color: #d8d8d8;
+    }
+
+    .simple-list li strong {
+      color: #fff;
+    }
+
+    .back-home-wrap {
+      width: min(1200px, 92%);
+      margin: 0 auto 80px;
+      text-align: center;
+    }
+
+    .back-home-btn {
+      display: inline-block;
+      padding: 15px 28px;
+      border: 1px solid rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      font-size: 16px;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .back-home-btn:hover {
+      background: rgba(255,255,255,0.12);
+      transform: translateY(-2px);
+    }
+
+    .site-footer {
+      width: min(1400px, 92%);
+      margin: 0 auto 60px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      text-align: center;
+    }
+
+    .site-footer p {
+      color: #9f9f9f;
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 6px;
+    }
+
+    @media (max-width: 900px) {
+      .topbar {
+        padding: 18px 20px;
+      }
+
+      .logo {
+        font-size: 22px;
+      }
+
+      .page-hero {
+        padding: 130px 18px 56px;
+      }
+
+      .page-section {
+        width: min(100%, 94%);
+        margin-bottom: 80px;
+        scroll-margin-top: 105px;
+      }
+
+      .mobile-menu a {
+        font-size: 24px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page-hero h1 {
+        line-height: 1;
+      }
+
+      .page-hero p,
+      .section-intro,
+      .desc,
+      .simple-list li {
+        font-size: 16px;
+      }
+
+      .list-card {
+        padding: 18px 16px;
+      }
+
+      .page-section,
+      .back-home-wrap,
+      .site-footer {
+        width: 100%;
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+
+      .site-footer {
+        margin-bottom: 40px;
+      }
+
+      .site-footer p {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="index.html" class="logo">DKsequence</a>
+    <div class="menu-btn" id="menuBtn">☰</div>
+  </header>
+
+  <nav class="mobile-menu" id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="list.html#works">Work List</a>
+    <a href="list.html#lectures">Lecture History</a>
+    <a href="list.html#projects">Project Summary</a>
+    <a href="list.html#awards">Awards</a>
+  </nav>
+
+  <section class="page-hero">
+    <h1>Selected Lists<br>in Sequence</h1>
+    <p>
+      A structured archive of work categories, lecture history, project summaries, and awards.
+    </p>
+  </section>
+
+  <section id="works" class="page-section">
+    <h2>Work List</h2>
+    <p class="section-intro">
+      Major categories of work carried out over the recent years.
+    </p>
+
+    <div class="list-grid">
+      <div class="list-card">
+        <h3>Plan & Marketing</h3>
+        <p class="desc">Planning, promotion, and advertising production including CF and promotional campaign execution.</p>
+      </div>
+
+      <div class="list-card">
+        <h3>VR Content Production & Operation</h3>
+        <p class="desc">VR experience content production, system operation, and multiple exhibition-based experience projects.</p>
+      </div>
+
+      <div class="list-card">
+        <h3>Drone Education</h3>
+        <p class="desc">Drone industry education, flight practice, and lectures for government, military, schools, and institutions.</p>
+      </div>
+
+      <div class="list-card">
+        <h3>Drone Operating</h3>
+        <p class="desc">FPV and aerial drone operation using DJI FPV, AVATA, MAVIC, and INSPIRE platforms.</p>
+      </div>
+
+      <div class="list-card">
+        <h3>Filming & Photography</h3>
+        <p class="desc">4K video production, drone filming, panorama, object-based capture, and 360VR content creation.</p>
+      </div>
+
+      <div class="list-card">
+        <h3>Government Task Execution</h3>
+        <p class="desc">Projects related to public institutions, regional development agencies, and national digital initiatives.</p>
+      </div>
+
+      <div class="list-card">
+        <h3>Motion Graphic Design</h3>
+        <p class="desc">Motion graphic design, creative production, and visual direction using After Effects, Premiere, and Photoshop.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="lectures" class="page-section">
+    <h2>Lecture History</h2>
+    <p class="section-intro">
+      Selected lecture, education, mentoring, and examiner history.
+    </p>
+
+    <div class="list-grid">
+      <div class="list-card">
+        <h3>CA Conference</h3>
+        <p class="meta">2011.02.26 · Assistant Instructor</p>
+        <p class="desc">Next Generation Motion Graphics Secret Insight</p>
+      </div>
+
+      <div class="list-card">
+        <h3>Seogwipo Industrial Science High School</h3>
+        <p class="meta">2016.11 ~ 12 · Main Instructor</p>
+        <p class="desc">VR Content Production Curriculum</p>
+      </div>
+
+      <div class="list-card">
+        <h3>Jeju ON Coding</h3>
+        <p class="meta">2017.07.13 · Main Instructor</p>
+        <p class="desc">Drone Block Coding</p>
+      </div>
+
+      <div class="list-card">
+        <h3>Daum Kakao Group</h3>
+        <p class="meta">2017.08.07 ~ 08.18 · Main Instructor</p>
+        <p class="desc">Kakao Class Drone & VR Camp</p>
+      </div>
+
+      <div class="list-card">
+        <h3>Jeju Regional Aviation Office</h3>
+        <p class="meta">2017.09.26 · Assistant Instructor</p>
+        <p class="desc">Drone Industry Status Lecture</p>
+      </div>
+
+      <div class="list-card">
+        <h3>Seobu Agricultural Technology Center</h3>
+        <p class="meta">2018.05.31 · Assistant Instructor</p>
+        <p class="desc">Drone & Agriculture Technology</p>
+      </div>
+
+      <div class="list-card">
+        <h3>Halla Elementary School</h3>
+        <p class="meta">2018.06.27 · Main Instructor</p>
+        <p class="desc">Understanding and Practice of Drones</p>
+      </div>
+
+      <div class="list-card">
+        <h3>Ministry of Land, Infrastructure and Transport</h3>
+        <p class="meta">2018.06.21 · Main Instructor</p>
+        <p class="desc">Innovative Growth Project – Drone Education</p>
+      </div>
+
+      <div class="list-card">
+        <h3>NIA Korea Information Society Agency</h3>
+        <p class="meta">2018.09.10 · Main Instructor</p>
+        <p class="desc">ICT Convergence Talent Development Training</p>
+      </div>
+
+      <div class="list-card">
+        <h3>Jeju Human Resource Development</h3>
+        <p class="meta">2018.09.16 · Main Instructor</p>
+        <p class="desc">Drone Industry & Practice</p>
+      </div>
+
+      <div class="list-card">
+        <h3>NIA Korea Information Society Agency</h3>
+        <p class="meta">2018.10.05 · Main Instructor / Assistant Instructor</p>
+        <p class="desc">KAIST AeG Linked Education</p>
+      </div>
+
+      <div class="list-card">
+        <h3>Samsung Elementary School</h3>
+        <p class="meta">2018.10.22 · Main Instructor</p>
+        <p class="desc">Drone Education & Practice</p>
+      </div>
+
+      <div class="list-card">
+        <h3>NIA Korea Information Society Agency</h3>
+        <p class="meta">2018.11.05 · Main Instructor / Assistant Instructor</p>
+        <p class="desc">ICT Convergence Capacity Training (Korea Military Academy)</p>
+      </div>
+
+      <div class="list-card">
+        <h3>NIA Korea Information Society Agency</h3>
+        <p class="meta">2018.11.08 · Main Instructor / Assistant Instructor</p>
+        <p class="desc">ICT Convergence Capacity Training</p>
+      </div>
+
+      <div class="list-card">
+        <h3>NIA Korea Information Society Agency</h3>
+        <p class="meta">2018.11.13 · Main Instructor / Assistant Instructor</p>
+        <p class="desc">ICT Convergence Capacity Training for Public Officials</p>
+      </div>
+
+      <div class="list-card">
+        <h3>Hanyang University ERICA Campus</h3>
+        <p class="meta">2019.05.30 · Main Instructor</p>
+        <p class="desc">Understanding Drones</p>
+      </div>
+
+      <div class="list-card">
+        <h3>Yeongdeungpo Industrial Information School</h3>
+        <p class="meta">2019.07.08 ~ 07.12 · Main Instructor</p>
+        <p class="desc">Future Industry VR Drone Camp</p>
+      </div>
+
+      <div class="list-card">
+        <h3>Jeju Techno Park</h3>
+        <p class="meta">2020.10.12 · Examiner</p>
+        <p class="desc">Drone Pilot Certification Training & Evaluation</p>
+      </div>
+
+      <div class="list-card">
+        <h3>JDC Jeju International Free City Development Center</h3>
+        <p class="meta">2023.05.15 ~ 07.14 · Main Instructor</p>
+        <p class="desc">JDC Makerspace Fun Lab Lecture</p>
+      </div>
+
+      <div class="list-card">
+        <h3>Korea Cultural Heritage Foundation</h3>
+        <p class="meta">2023.09 ~ 12 · Mentor</p>
+        <p class="desc">SW Talent Development Mentoring</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects" class="page-section">
+    <h2>Project Summary</h2>
+    <p class="section-intro">
+      Selected project highlights and execution summaries.
+    </p>
+
+    <ul class="simple-list">
+      <li>Development of AR solutions using spatial data for tourism XR services.</li>
+      <li>Metaverse platform software development and operational execution.</li>
+      <li>Digital twin platform development and data production.</li>
+      <li>AR/Web integrated service content development.</li>
+      <li>3D spatial scanning and cultural heritage digital restoration projects.</li>
+      <li>Large-scale aviation mapping and spatial data construction projects.</li>
+      <li>AR technology development using digital twin data.</li>
+      <li>Construction and operation of large-scale VR experience halls.</li>
+      <li>VR content production for cultural heritage and UNESCO-related assets.</li>
+      <li>AR/VR heritage platform development projects.</li>
+      <li>Drone-based aviation data VR content production for Hallasan-related work.</li>
+      <li>Additional projects across digital content, branding, spatial media, and visual storytelling.</li>
+    </ul>
+  </section>
+
+  <section id="awards" class="page-section">
+    <h2>Awards</h2>
+    <p class="section-intro">
+      Awards received through participated and executed projects.
+    </p>
+
+    <ul class="simple-list">
+      <li><strong>2017</strong> — Korea Drone Content Award, <em>Escape to Jeju</em></li>
+      <li><strong>2011</strong> — IT Award, <em>KIA Motors RAY</em></li>
+      <li><strong>2010</strong> — Digital Media Award, Best Digital Video Product & Brand, <em>Hyundai i30 3D</em></li>
+      <li><strong>2009</strong> — Digital Media Award, Global Grand Prize, <em>RED8WORLD</em></li>
+      <li><strong>2009</strong> — Digital Media Award, Public & Education Grand Prize, <em>Seoul Vision Gallery</em></li>
+      <li><strong>2008</strong> — Web Award Korea, Grand Prize, <em>Hyundai Soul</em></li>
+      <li><strong>2000</strong> — Cinematheque 1/24, Best Directing Award</li>
+    </ul>
+  </section>
+
+  <div class="back-home-wrap">
+    <a href="index.html" class="back-home-btn">Back to Main Page</a>
+  </div>
+
+  <footer class="site-footer">
+    <p>© 2026 DKsequence. All rights reserved.</p>
+    <p>All content on this site is created by DKsequence. Some works were developed in collaboration with clients.</p>
+    <p>Unauthorized commercial use, reproduction, or distribution is prohibited without prior written permission.</p>
+  </footer>
+
+  <script>
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    if (menuBtn && mobileMenu) {
+      menuBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        mobileMenu.classList.toggle('active');
+      });
+
+      mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenu.classList.remove('active');
+        });
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+          mobileMenu.classList.remove('active');
+        }
+      });
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const targetId = this.getAttribute('href');
+        const target = document.querySelector(targetId);
+        if (!target) return;
+
+        e.preventDefault();
+
+        const header = document.querySelector('.topbar');
+        const headerHeight = header ? header.offsetHeight : 0;
+        const targetTop = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - 24;
+
+        window.scrollTo({
+          top: targetTop,
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
