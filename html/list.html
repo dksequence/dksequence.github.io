@@ -64,7 +64,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 34px;
+      gap: 32px;
       transform: translateY(-100%);
       transition: transform 0.3s ease;
       z-index: 1001;
@@ -77,7 +77,7 @@
     }
 
     .mobile-menu a {
-      font-size: 28px;
+      font-size: 26px;
       text-transform: uppercase;
       text-align: center;
     }
@@ -97,12 +97,12 @@
     .page-hero p {
       font-size: 18px;
       color: #cfcfcf;
-      max-width: 780px;
+      max-width: 820px;
       margin: 0 auto;
     }
 
     .page-section {
-      width: min(1200px, 92%);
+      width: min(1280px, 92%);
       margin: 0 auto 110px;
       padding-top: 34px;
       border-top: 1px solid rgba(255, 255, 255, 0.15);
@@ -118,7 +118,7 @@
     .section-intro {
       font-size: 17px;
       color: #cfcfcf;
-      margin-bottom: 26px;
+      margin-bottom: 28px;
       max-width: 900px;
     }
 
@@ -130,24 +130,35 @@
     .list-card {
       border: 1px solid rgba(255, 255, 255, 0.12);
       background: rgba(255, 255, 255, 0.03);
-      padding: 20px 22px;
+      padding: 22px 24px;
     }
 
     .list-card h3 {
       font-size: 22px;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       font-weight: 700;
     }
 
     .meta {
       font-size: 15px;
       color: #bdbdbd;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
 
     .desc {
       font-size: 16px;
       color: #dcdcdc;
+    }
+
+    .sub-list {
+      margin-top: 10px;
+      padding-left: 18px;
+      color: #d8d8d8;
+    }
+
+    .sub-list li {
+      margin-bottom: 8px;
+      font-size: 15px;
     }
 
     .simple-list {
@@ -168,7 +179,7 @@
     }
 
     .back-home-wrap {
-      width: min(1200px, 92%);
+      width: min(1280px, 92%);
       margin: 0 auto 80px;
       text-align: center;
     }
@@ -223,7 +234,7 @@
       }
 
       .mobile-menu a {
-        font-size: 24px;
+        font-size: 23px;
       }
     }
 
@@ -261,74 +272,96 @@
     }
   </style>
 </head>
-<body>
+<body id="top">
 
   <header class="topbar">
-    <a href="index.html" class="logo">DKsequence</a>
+    <a href="../index.html" class="logo">DKsequence</a>
     <div class="menu-btn" id="menuBtn">☰</div>
   </header>
 
   <nav class="mobile-menu" id="mobileMenu">
-    <a href="index.html">Home</a>
-    <a href="html/list.html#works">Work List</a>
-    <a href="html/list.html#lectures">Lecture History</a>
-    <a href="html/list.html#projects">Project Summary</a>
-    <a href="html/list.html#awards">Awards</a>
+    <a href="../index.html">Home</a>
+    <a href="#works">Work List</a>
+    <a href="#lectures">Lecture History</a>
+    <a href="#projects">Major Project Summary</a>
+    <a href="#previous-projects">Previous Projects</a>
+    <a href="#awards">Awards</a>
   </nav>
 
   <section class="page-hero">
     <h1>Selected Lists<br>in Sequence</h1>
     <p>
-      A structured archive of work categories, lecture history, project summaries, and awards.
+      A structured archive of work categories, lecture history, project summaries, previous projects, and awards.
     </p>
   </section>
 
   <section id="works" class="page-section">
-    <h2>Work List</h2>
+    <h2>Work Categories</h2>
     <p class="section-intro">
-      Major categories of work carried out over the recent years.
+      Major categories of work carried out over the recent 10 years.
     </p>
 
     <div class="list-grid">
       <div class="list-card">
         <h3>Plan & Marketing</h3>
-        <p class="desc">Planning, promotion, and advertising production including CF and promotional campaign execution.</p>
+        <ul class="sub-list">
+          <li>Planning / Promotion / Advertising Production</li>
+          <li>CF and Promotional Campaign Planning & Production</li>
+        </ul>
       </div>
 
       <div class="list-card">
         <h3>VR Content Production & Operation</h3>
-        <p class="desc">VR experience content production, system operation, and multiple exhibition-based experience projects.</p>
+        <ul class="sub-list">
+          <li>VR Experience Content Production & System Operation</li>
+          <li>Multiple VR Experience Projects & Exhibition Operation</li>
+        </ul>
       </div>
 
       <div class="list-card">
         <h3>Drone Education</h3>
-        <p class="desc">Drone industry education, flight practice, and lectures for government, military, schools, and institutions.</p>
+        <ul class="sub-list">
+          <li>Drone Industry & Flight Training Education</li>
+          <li>Government / Military / Public Institution Training</li>
+        </ul>
       </div>
 
       <div class="list-card">
         <h3>Drone Operating</h3>
-        <p class="desc">FPV and aerial drone operation using DJI FPV, AVATA, MAVIC, and INSPIRE platforms.</p>
+        <ul class="sub-list">
+          <li>FPV & Aerial Drone Operation</li>
+          <li>DJI FPV, DJI AVATA, DJI MAVIC, DJI INSPIRE Operation</li>
+        </ul>
       </div>
 
       <div class="list-card">
         <h3>Filming & Photography</h3>
-        <p class="desc">4K video production, drone filming, panorama, object-based capture, and 360VR content creation.</p>
+        <ul class="sub-list">
+          <li>4K Video Production & Drone Filming</li>
+          <li>Panorama / Object / 360 VR Content Production</li>
+        </ul>
       </div>
 
       <div class="list-card">
         <h3>Government Task Execution</h3>
-        <p class="desc">Projects related to public institutions, regional development agencies, and national digital initiatives.</p>
+        <ul class="sub-list">
+          <li>Projects with NIS, Ministry of Land, NIPA, and Regional Development Agencies</li>
+        </ul>
       </div>
 
       <div class="list-card">
         <h3>Motion Graphic Design</h3>
-        <p class="desc">Motion graphic design, creative production, and visual direction using After Effects, Premiere, and Photoshop.</p>
+        <ul class="sub-list">
+          <li>Motion Graphic Design Production</li>
+          <li>Web Agency & Creative Production Experience</li>
+          <li>Tools: After Effects, Premiere, Photoshop</li>
+        </ul>
       </div>
     </div>
   </section>
 
   <section id="lectures" class="page-section">
-    <h2>Lecture History</h2>
+    <h2>Lecture & Education History</h2>
     <p class="section-intro">
       Selected lecture, education, mentoring, and examiner history.
     </p>
@@ -336,145 +369,187 @@
     <div class="list-grid">
       <div class="list-card">
         <h3>CA Conference</h3>
-        <p class="meta">2011.02.26 · Assistant Instructor</p>
-        <p class="desc">Next Generation Motion Graphics Secret Insight</p>
+        <p class="meta">Date: 2011.02.26 · Role: Assistant Instructor</p>
+        <p class="desc">Program: Next Generation Motion Graphics Secret Insight</p>
       </div>
 
       <div class="list-card">
         <h3>Seogwipo Industrial Science High School</h3>
-        <p class="meta">2016.11 ~ 12 · Main Instructor</p>
-        <p class="desc">VR Content Production Curriculum</p>
+        <p class="meta">Date: 2016.11 ~ 12 · Role: Main Instructor</p>
+        <p class="desc">Program: VR Content Production Curriculum</p>
       </div>
 
       <div class="list-card">
         <h3>Jeju ON Coding</h3>
-        <p class="meta">2017.07.13 · Main Instructor</p>
-        <p class="desc">Drone Block Coding</p>
+        <p class="meta">Date: 2017.07.13 · Role: Main Instructor</p>
+        <p class="desc">Program: Drone Block Coding</p>
       </div>
 
       <div class="list-card">
         <h3>Daum Kakao Group</h3>
-        <p class="meta">2017.08.07 ~ 08.18 · Main Instructor</p>
-        <p class="desc">Kakao Class Drone & VR Camp</p>
+        <p class="meta">Date: 2017.08.07 ~ 08.18 · Role: Main Instructor</p>
+        <p class="desc">Program: Kakao Class Drone & VR Camp</p>
       </div>
 
       <div class="list-card">
         <h3>Jeju Regional Aviation Office</h3>
-        <p class="meta">2017.09.26 · Assistant Instructor</p>
-        <p class="desc">Drone Industry Status Lecture</p>
+        <p class="meta">Date: 2017.09.26 · Role: Assistant Instructor</p>
+        <p class="desc">Program: Drone Industry Status Lecture</p>
       </div>
 
       <div class="list-card">
         <h3>Seobu Agricultural Technology Center</h3>
-        <p class="meta">2018.05.31 · Assistant Instructor</p>
-        <p class="desc">Drone & Agriculture Technology</p>
+        <p class="meta">Date: 2018.05.31 · Role: Assistant Instructor</p>
+        <p class="desc">Program: Drone & Agriculture Technology</p>
       </div>
 
       <div class="list-card">
         <h3>Halla Elementary School</h3>
-        <p class="meta">2018.06.27 · Main Instructor</p>
-        <p class="desc">Understanding and Practice of Drones</p>
+        <p class="meta">Date: 2018.06.27 · Role: Main Instructor</p>
+        <p class="desc">Program: Understanding and Practice of Drones</p>
       </div>
 
       <div class="list-card">
         <h3>Ministry of Land, Infrastructure and Transport</h3>
-        <p class="meta">2018.06.21 · Main Instructor</p>
-        <p class="desc">Innovative Growth Project – Drone Education</p>
+        <p class="meta">Date: 2018.06.21 · Role: Main Instructor</p>
+        <p class="desc">Program: Innovative Growth Project – Drone Education</p>
       </div>
 
       <div class="list-card">
         <h3>NIA Korea Information Society Agency</h3>
-        <p class="meta">2018.09.10 · Main Instructor</p>
-        <p class="desc">ICT Convergence Talent Development Training</p>
+        <p class="meta">Date: 2018.09.10 · Role: Main Instructor</p>
+        <p class="desc">Program: ICT Convergence Talent Development Training</p>
       </div>
 
       <div class="list-card">
         <h3>Jeju Human Resource Development</h3>
-        <p class="meta">2018.09.16 · Main Instructor</p>
-        <p class="desc">Drone Industry & Practice</p>
+        <p class="meta">Date: 2018.09.16 · Role: Main Instructor</p>
+        <p class="desc">Program: Drone Industry & Practice</p>
       </div>
 
       <div class="list-card">
         <h3>NIA Korea Information Society Agency</h3>
-        <p class="meta">2018.10.05 · Main Instructor / Assistant Instructor</p>
-        <p class="desc">KAIST AeG Linked Education</p>
+        <p class="meta">Date: 2018.10.05 · Role: Main Instructor / Assistant Instructor</p>
+        <p class="desc">Program: KAIST AeG Linked Education</p>
       </div>
 
       <div class="list-card">
         <h3>Samsung Elementary School</h3>
-        <p class="meta">2018.10.22 · Main Instructor</p>
-        <p class="desc">Drone Education & Practice</p>
+        <p class="meta">Date: 2018.10.22 · Role: Main Instructor</p>
+        <p class="desc">Program: Drone Education & Practice</p>
       </div>
 
       <div class="list-card">
         <h3>NIA Korea Information Society Agency</h3>
-        <p class="meta">2018.11.05 · Main Instructor / Assistant Instructor</p>
-        <p class="desc">ICT Convergence Capacity Training (Korea Military Academy)</p>
+        <p class="meta">Date: 2018.11.05 · Role: Main Instructor / Assistant Instructor</p>
+        <p class="desc">Program: ICT Convergence Capacity Training (Korea Military Academy)</p>
       </div>
 
       <div class="list-card">
         <h3>NIA Korea Information Society Agency</h3>
-        <p class="meta">2018.11.08 · Main Instructor / Assistant Instructor</p>
-        <p class="desc">ICT Convergence Capacity Training</p>
+        <p class="meta">Date: 2018.11.08 · Role: Main Instructor / Assistant Instructor</p>
+        <p class="desc">Program: ICT Convergence Capacity Training</p>
       </div>
 
       <div class="list-card">
         <h3>NIA Korea Information Society Agency</h3>
-        <p class="meta">2018.11.13 · Main Instructor / Assistant Instructor</p>
-        <p class="desc">ICT Convergence Capacity Training for Public Officials</p>
+        <p class="meta">Date: 2018.11.13 · Role: Main Instructor / Assistant Instructor</p>
+        <p class="desc">Program: ICT Convergence Capacity Training for Public Officials</p>
       </div>
 
       <div class="list-card">
         <h3>Hanyang University ERICA Campus</h3>
-        <p class="meta">2019.05.30 · Main Instructor</p>
-        <p class="desc">Understanding Drones</p>
+        <p class="meta">Date: 2019.05.30 · Role: Main Instructor</p>
+        <p class="desc">Program: Understanding Drones</p>
       </div>
 
       <div class="list-card">
         <h3>Yeongdeungpo Industrial Information School</h3>
-        <p class="meta">2019.07.08 ~ 07.12 · Main Instructor</p>
-        <p class="desc">Future Industry VR Drone Camp</p>
+        <p class="meta">Date: 2019.07.08 ~ 07.12 · Role: Main Instructor</p>
+        <p class="desc">Program: Future Industry VR Drone Camp</p>
       </div>
 
       <div class="list-card">
         <h3>Jeju Techno Park</h3>
-        <p class="meta">2020.10.12 · Examiner</p>
-        <p class="desc">Drone Pilot Certification Training & Evaluation</p>
+        <p class="meta">Date: 2020.10.12 · Role: Examiner</p>
+        <p class="desc">Program: Drone Pilot Certification Training & Evaluation</p>
       </div>
 
       <div class="list-card">
         <h3>JDC Jeju International Free City Development Center</h3>
-        <p class="meta">2023.05.15 ~ 07.14 · Main Instructor</p>
-        <p class="desc">JDC Makerspace Fun Lab Lecture</p>
+        <p class="meta">Date: 2023.05.15 ~ 07.14 · Role: Main Instructor</p>
+        <p class="desc">Program: JDC Makerspace Fun Lab Lecture</p>
       </div>
 
       <div class="list-card">
         <h3>Korea Cultural Heritage Foundation</h3>
-        <p class="meta">2023.09 ~ 12 · Mentor</p>
-        <p class="desc">SW Talent Development Mentoring</p>
+        <p class="meta">Date: 2023.09 ~ 12 · Role: Mentor</p>
+        <p class="desc">Program: SW Talent Development Mentoring</p>
+      </div>
+
+      <div class="list-card">
+        <h3>Others</h3>
+        <p class="desc">Various additional lectures and education-related activities.</p>
       </div>
     </div>
   </section>
 
   <section id="projects" class="page-section">
-    <h2>Project Summary</h2>
+    <h2>Major Project Summary</h2>
     <p class="section-intro">
-      Selected project highlights and execution summaries.
+      Selected project highlights and execution summaries from recent years.
     </p>
 
     <ul class="simple-list">
-      <li>Development of AR solutions using spatial data for tourism XR services.</li>
-      <li>Metaverse platform software development and operational execution.</li>
-      <li>Digital twin platform development and data production.</li>
-      <li>AR/Web integrated service content development.</li>
-      <li>3D spatial scanning and cultural heritage digital restoration projects.</li>
-      <li>Large-scale aviation mapping and spatial data construction projects.</li>
-      <li>AR technology development using digital twin data.</li>
-      <li>Construction and operation of large-scale VR experience halls.</li>
-      <li>VR content production for cultural heritage and UNESCO-related assets.</li>
-      <li>AR/VR heritage platform development projects.</li>
-      <li>Drone-based aviation data VR content production for Hallasan-related work.</li>
-      <li>Additional projects across digital content, branding, spatial media, and visual storytelling.</li>
+      <li>Development of AR solution using big spatial data for tourism XR services (R&D)</li>
+      <li>Metaverse platform software development (multi-year project)</li>
+      <li>Digital twin platform development & data production</li>
+      <li>AR/Web integrated service content development (university collaboration)</li>
+      <li>3D spatial scanning & cultural heritage digital restoration (Jeju city)</li>
+      <li>Large-scale aviation mapping data production (government supply)</li>
+      <li>AR technology development using digital twin data (TIPS selected project)</li>
+      <li>300-pyeong VR experience hall construction & operation</li>
+      <li>VR content production for cultural heritage & UNESCO assets</li>
+      <li>AR/VR heritage platform development</li>
+      <li>Drone-based aviation data VR content production (Hallasan project)</li>
+      <li>Others: Various</li>
+    </ul>
+  </section>
+
+  <section id="previous-projects" class="page-section">
+    <h2>Previous Projects (Before 2016)</h2>
+    <p class="section-intro">
+      Earlier project history across visual production, digital campaigns, websites, and interactive content.
+    </p>
+
+    <ul class="simple-list">
+      <li><strong>2016</strong> — LH VVIP Briefing System (Project Manager)</li>
+      <li><strong>2015</strong> — Hyundai Motors Touchable Wall System</li>
+      <li><strong>2015</strong> — Green Finger Suncare Promotion</li>
+      <li><strong>2014</strong> — Maxwell Interactive House</li>
+      <li><strong>2014</strong> — Dawn of the Planet of the Apes Interactive Media Wall</li>
+      <li><strong>2014</strong> — Movie X-Men Interactive Promotion Event</li>
+      <li><strong>2013</strong> — Ministry of Science ICT Exhibition</li>
+      <li><strong>2012</strong> — Cultural Heritage Digital Restoration Project</li>
+      <li><strong>2012</strong> — Adidas ALL 2012 Promotion Event</li>
+      <li><strong>2011</strong> — Jeju Airline Media Wall</li>
+      <li><strong>2011</strong> — ADLINE Website Production</li>
+      <li><strong>2011</strong> — Hyundai Grandeur HG Promotion Site</li>
+      <li><strong>2010</strong> — Prospects W Brand Website Renewal</li>
+      <li><strong>2010</strong> — Hyundai i30 Promotion Site</li>
+      <li><strong>2010</strong> — Sketch Korea Brand Website</li>
+      <li><strong>2010</strong> — MOSAIQ Brand Site</li>
+      <li><strong>2009</strong> — Giorgio Armani Phone Interface Design</li>
+      <li><strong>2009</strong> — Cyber Trade Information Center</li>
+      <li><strong>2009</strong> — Anointing Album DVD Interface</li>
+      <li><strong>2009</strong> — RED8WORLD Brand Site</li>
+      <li><strong>2008</strong> — Seoul Vision Gallery</li>
+      <li><strong>2008</strong> — KIA Motors Sorento Promotion</li>
+      <li><strong>2008</strong> — LG CES Monitor Display</li>
+      <li><strong>2008</strong> — KIA Soul Promotion</li>
+      <li><strong>2007</strong> — Hanyang University IFI Exhibition</li>
+      <li><strong>2007</strong> — Anointing Conference DVD Interface</li>
+      <li><strong>Others</strong> — Various</li>
     </ul>
   </section>
 
@@ -485,18 +560,18 @@
     </p>
 
     <ul class="simple-list">
-      <li><strong>2017</strong> — Korea Drone Content Award, <em>Escape to Jeju</em></li>
-      <li><strong>2011</strong> — IT Award, <em>KIA Motors RAY</em></li>
-      <li><strong>2010</strong> — Digital Media Award, Best Digital Video Product & Brand, <em>Hyundai i30 3D</em></li>
-      <li><strong>2009</strong> — Digital Media Award, Global Grand Prize, <em>RED8WORLD</em></li>
-      <li><strong>2009</strong> — Digital Media Award, Public & Education Grand Prize, <em>Seoul Vision Gallery</em></li>
-      <li><strong>2008</strong> — Web Award Korea, Grand Prize, <em>Hyundai Soul</em></li>
-      <li><strong>2000</strong> — Cinematheque 1/24, Best Directing Award</li>
+      <li><strong>2017</strong> — Korea Drone Content Award (Escape to Jeju)</li>
+      <li><strong>2011</strong> — IT Award 2011 (KIA Motors RAY)</li>
+      <li><strong>2010</strong> — Digital Media Award – Best Digital Video Product & Brand (Hyundai i30 3D)</li>
+      <li><strong>2009</strong> — Digital Media Award – Global Grand Prize (RED8WORLD)</li>
+      <li><strong>2009</strong> — Digital Media Award – Public & Education Grand Prize (Seoul Vision Gallery)</li>
+      <li><strong>2008</strong> — Web Award Korea – Grand Prize (Hyundai Soul)</li>
+      <li><strong>2000</strong> — Cinematheque 1/24 Best Directing Award</li>
     </ul>
   </section>
 
   <div class="back-home-wrap">
-    <a href="index.html" class="back-home-btn">Back to Main Page</a>
+    <a href="../index.html" class="back-home-btn">Back to Main Page</a>
   </div>
 
   <footer class="site-footer">
@@ -538,7 +613,8 @@
 
         const header = document.querySelector('.topbar');
         const headerHeight = header ? header.offsetHeight : 0;
-        const targetTop = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - 24;
+        const extraOffset = window.innerWidth <= 640 ? 20 : 24;
+        const targetTop = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - extraOffset;
 
         window.scrollTo({
           top: targetTop,
