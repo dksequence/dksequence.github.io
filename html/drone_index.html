@@ -1,1 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DKsequence — Sequence 09</title>
 
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 22px 32px;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      color: #fff;
+    }
+
+    .menu-btn {
+      display: block;
+      font-size: 30px;
+      line-height: 1;
+      cursor: pointer;
+      user-select: none;
+      z-index: 1002;
+      color: #fff;
+      background: transparent;
+      border: 0;
+    }
+
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.96);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 36px;
+      transform: translateY(-100%);
+      transition: transform 0.3s ease;
+      z-index: 1001;
+      pointer-events: none;
+    }
+
+    .mobile-menu.active {
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .mobile-menu a {
+      font-size: 28px;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .page-wrap {
+      width: min(1440px, 94%);
+      margin: 0 auto;
+      padding: 56px 0 100px;
+    }
+
+    .intro {
+      max-width: 980px;
+      margin-bottom: 48px;
+      scroll-margin-top: 110px;
+    }
+
+    .sequence-label {
+      font-size: 14px;
+      color: #9f9f9f;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .intro h1 {
+      font-size: clamp(38px, 7vw, 84px);
+      line-height: 0.95;
+      font-weight: 500;
+      margin-bottom: 22px;
+    }
+
+    .intro p {
+      max-width: 840px;
+      color: #cfcfcf;
+      font-size: 18px;
+      line-height: 1.75;
+    }
+
+    .section-title {
+      font-size: 14px;
+      color: #9f9f9f;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      align-items: start;
+    }
+
+    .video-card {
+      position: relative;
+      background: #0b0b0b;
+      border: 1px solid rgba(255,255,255,0.06);
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .video-card.landscape {
+      grid-column: span 2;
+    }
+
+    .video-thumb-wrap {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      background: #111;
+    }
+
+    .video-card.portrait .video-thumb-wrap {
+      aspect-ratio: 9 / 16;
+    }
+
+    .video-card.landscape .video-thumb-wrap {
+      aspect-ratio: 16 / 9;
+    }
+
+    .video-thumb-wrap iframe,
+    .video-thumb-wrap img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      object-fit: cover;
+      background: #111;
+    }
+
+    .video-thumb-wrap img {
+      transition: transform 0.35s ease, opacity 0.3s ease;
+    }
+
+    .video-card:hover .video-thumb-wrap img {
+      transform: scale(1.03);
+      opacity: 0.92;
+    }
+
+    .play-badge {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .play-badge::before {
+      content: "";
+      width: 68px;
+      height: 68px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.55);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.12);
+    }
+
+    .play-badge::after {
+      content: "";
+      position: absolute;
+      margin-left: 6px;
+      border-left: 20px solid #fff;
+      border-top: 12px solid transparent;
+      border-bottom: 12px solid transparent;
+    }
+
+    .video-meta {
+      padding: 12px 12px 14px;
+    }
+
+    .video-meta h3 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+      line-height: 1.45;
+    }
+
+    .video-meta p {
+      font-size: 12px;
+      color: #bdbdbd;
+      line-height: 1.5;
+    }
+
+    .footer-note {
+      margin-top: 54px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      color: #8f8f8f;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .bottom-actions {
+      margin-top: 28px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .bottom-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 160px;
+      padding: 14px 22px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      font-size: 14px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .bottom-btn:hover {
+      background: rgba(255,255,255,0.10);
+      border-color: rgba(255,255,255,0.32);
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 1100px) {
+      .video-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .video-card.landscape {
+        grid-column: span 2;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .topbar {
+        padding: 18px 16px;
+      }
+
+      .logo {
+        font-size: 22px;
+      }
+
+      .page-wrap {
+        width: 100%;
+        padding: 34px 14px 80px;
+      }
+
+      .intro {
+        margin-bottom: 36px;
+      }
+
+      .intro p {
+        font-size: 16px;
+      }
+
+      .mobile-menu a {
+        font-size: 24px;
+      }
+
+      .video-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .video-card.landscape {
+        grid-column: span 2;
+      }
+
+      .video-meta h3 {
+        font-size: 12px;
+      }
+
+      .video-meta p {
+        font-size: 11px;
+      }
+
+      .play-badge::before {
+        width: 56px;
+        height: 56px;
+      }
+
+      .play-badge::after {
+        border-left-width: 16px;
+        border-top-width: 10px;
+        border-bottom-width: 10px;
+      }
+
+      .bottom-btn {
+        min-width: 140px;
+        padding: 13px 18px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body id="top">
+
+  <header class="topbar">
+    <a href="../index.html" class="logo">DKsequence</a>
+    <button class="menu-btn" id="menuBtn" aria-label="Menu">☰</button>
+  </header>
+
+  <nav class="mobile-menu" id="mobileMenu">
+    <a href="../index.html">Home</a>
+    <a href="#sequence09">Sequence 09</a>
+    <a href="#video-gallery">Gallery</a>
+  </nav>
+
+  <main class="page-wrap">
+    <section class="intro" id="sequence09">
+      <div class="sequence-label">Sequence #09</div>
+      <h1>Seeing the World<br>from Elsewhere</h1>
+      <p>
+        This sequence gathers aerial shorts and flight-based moving images into a curated video grid.
+        Vertical clips are arranged in a compact archive format, while horizontal works are given more space to emphasize scale, movement, and perspective.
+      </p>
+    </section>
+
+    <section id="video-gallery">
+      <div class="section-title">Video Archive</div>
+      <div class="video-grid" id="videoGrid"></div>
+    </section>
+
+    <div class="footer-note">
+      Sequence 09 archive. Click any thumbnail to play. When another video is selected, the currently playing video returns to its thumbnail view.
+    </div>
+
+    <div class="bottom-actions">
+      <a href="#top" class="bottom-btn">Back to Top</a>
+      <a href="../index.html" class="bottom-btn">Home</a>
+    </div>
+  </main>
+
+  <script>
+    const videoItems = [
+      { id: "_qAD-cjmdiI", type: "short", title: "Aerial Short 01" },
+      { id: "JuETvaI-45w", type: "short", title: "Aerial Short 02" },
+      { id: "c2cQHXdV7nc", type: "short", title: "Aerial Short 03" },
+      { id: "uZdk1gZv6z8", type: "short", title: "Aerial Short 04" },
+      { id: "lFklM_AJ8Fw", type: "short", title: "Aerial Short 05" },
+      { id: "yWIc1276xxE", type: "short", title: "Aerial Short 06" },
+      { id: "MKC390u4LWw", type: "short", title: "Aerial Short 07" },
+      { id: "rNkP5iDQJnY", type: "short", title: "Aerial Short 08" },
+      { id: "ApoFtBjptbo", type: "short", title: "Aerial Short 09" },
+      { id: "gvRTCagqVpU", type: "short", title: "Aerial Short 10" },
+      { id: "xgWqegkY2g8", type: "short", title: "Aerial Short 11" },
+      { id: "YZwdbYRJSi0", type: "short", title: "Aerial Short 12" },
+      { id: "livIHBj2uSA", type: "short", title: "Aerial Short 13" },
+      { id: "8mRVtBzqEI8", type: "short", title: "Aerial Short 14" },
+      { id: "261T-1GrxH8", type: "short", title: "Aerial Short 15" },
+      { id: "YCtu8V_TeRc", type: "short", title: "Aerial Short 16" },
+      { id: "OIUrqcahnsw", type: "short", title: "Aerial Short 17" },
+      { id: "u_tCMUeHthc", type: "short", title: "Aerial Short 18" },
+      { id: "22O6xbDHIfk", type: "short", title: "Aerial Short 19" },
+      { id: "oDTySsGgLb4", type: "short", title: "Aerial Short 20" },
+      { id: "eoqnERbIYUk", type: "short", title: "Aerial Short 21" },
+      { id: "Yb_M9dpSOx4", type: "short", title: "Aerial Short 22" },
+      { id: "J04ZQXqUGN4", type: "short", title: "Aerial Short 23" },
+      { id: "mv0xLLVYw_Y", type: "short", title: "Aerial Short 24" },
+      { id: "W3BlmC_d2J0", type: "short", title: "Aerial Short 25" },
+      { id: "mb7FBzbpq7Q", type: "short", title: "Aerial Short 26" },
+      { id: "VPaSuHmFwzU", type: "short", title: "Aerial Short 27" },
+      { id: "y3UFBik7D7w", type: "short", title: "Aerial Short 28" },
+      { id: "DF3aKNpqOww", type: "short", title: "Aerial Short 29" },
+      { id: "94UKxlyJYTc", type: "short", title: "Aerial Short 30" },
+      { id: "e0G9PCjT1yw", type: "short", title: "Aerial Short 31" },
+      { id: "OLzAukg40dc", type: "short", title: "Aerial Short 32" },
+
+      { id: "JN3UtouaZ_Q", type: "short", title: "Aerial Short 33" },
+      { id: "CKAFepURr5A", type: "short", title: "Aerial Short 34" },
+      { id: "pOeBYQxTWGI", type: "short", title: "Aerial Short 35" },
+      { id: "MDz6aXxuAfo", type: "short", title: "Aerial Short 36" },
+      { id: "REHHl8HPm00", type: "short", title: "Aerial Short 37" },
+      { id: "G_-dA4lzk0I", type: "short", title: "Aerial Short 38" },
+
+      { id: "FgxUgPV5lWg", type: "landscape", title: "Flight Film 01" },
+      { id: "3GxIAvBo8kg", type: "landscape", title: "Flight Film 02" },
+      { id: "KtCobx8fzDU", type: "landscape", title: "Flight Film 03" },
+      { id: "jj7dYvrkSKc", type: "landscape", title: "Flight Film 04" },
+      { id: "Or1_xtM34ck", type: "landscape", title: "Flight Film 05" },
+      { id: "iNgf8dFX8JQ", type: "landscape", title: "Flight Film 06" },
+      { id: "ctWe2okqEtU", type: "landscape", title: "Flight Film 07" },
+      { id: "FI0LSRN7Tv0", type: "landscape", title: "Flight Film 08" }
+    ];
+
+    // Optional custom thumbnails:
+    // Add a file path if you want to override a YouTube thumbnail.
+    // Example: "_qAD-cjmdiI": "../experience/thumb_001.jpg"
+    const thumbnailOverrides = {
+    };
+
+    const videoGrid = document.getElementById("videoGrid");
+    let currentPlayingCard = null;
+
+    function getThumbnail(videoId) {
+      return thumbnailOverrides[videoId] || `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+    }
+
+    function getEmbedUrl(videoId, type) {
+      if (type === "short") {
+        return `https://www.youtube.com/embed/${videoId}?rel=0&playsinline=1`;
+      }
+      return `https://www.youtube.com/embed/${videoId}?rel=0`;
+    }
+
+    function createCard(item) {
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = `video-card ${item.type === "landscape" ? "landscape" : "portrait"}`;
+      card.setAttribute("aria-label", item.title);
+
+      card.innerHTML = `
+        <div class="video-thumb-wrap">
+          <img src="${getThumbnail(item.id)}" alt="${item.title}" loading="lazy">
+          <div class="play-badge"></div>
+        </div>
+        <div class="video-meta">
+          <h3>${item.title}</h3>
+          <p>${item.type === "landscape" ? "Horizontal video" : "Vertical short"}</p>
+        </div>
+      `;
+
+      card.addEventListener("click", () => playVideo(card, item));
+      return card;
+    }
+
+    function resetCard(card, item) {
+      const wrap = card.querySelector(".video-thumb-wrap");
+      wrap.innerHTML = `
+        <img src="${getThumbnail(item.id)}" alt="${item.title}" loading="lazy">
+        <div class="play-badge"></div>
+      `;
+    }
+
+    function playVideo(card, item) {
+      if (currentPlayingCard && currentPlayingCard.card !== card) {
+        resetCard(currentPlayingCard.card, currentPlayingCard.item);
+      }
+
+      const wrap = card.querySelector(".video-thumb-wrap");
+      wrap.innerHTML = `
+        <iframe
+          src="${getEmbedUrl(item.id, item.type)}&autoplay=1"
+          title="${item.title}"
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
+      `;
+
+      currentPlayingCard = { card, item };
+    }
+
+    function renderGrid() {
+      videoGrid.innerHTML = "";
+      videoItems.forEach(item => {
+        videoGrid.appendChild(createCard(item));
+      });
+    }
+
+    const menuBtn = document.getElementById("menuBtn");
+    const mobileMenu = document.getElementById("mobileMenu");
+
+    if (menuBtn && mobileMenu) {
+      menuBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        mobileMenu.classList.toggle("active");
+      });
+
+      mobileMenu.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => {
+          mobileMenu.classList.remove("active");
+        });
+      });
+
+      document.addEventListener("click", function (e) {
+        if (!mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+          mobileMenu.classList.remove("active");
+        }
+      });
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener("click", function (e) {
+        const targetId = this.getAttribute("href");
+        const target = document.querySelector(targetId);
+        if (!target) return;
+
+        e.preventDefault();
+
+        const header = document.querySelector(".topbar");
+        const headerHeight = header ? header.offsetHeight : 0;
+        const extraOffset = window.innerWidth <= 700 ? 16 : 22;
+        const targetTop = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - extraOffset;
+
+        window.scrollTo({
+          top: targetTop,
+          behavior: "smooth"
+        });
+      });
+    });
+
+    renderGrid();
+  </script>
+</body>
+</html>
