@@ -1,1 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DKsequence — Motion</title>
 
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 22px 32px;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      color: #fff;
+    }
+
+    .page-wrap {
+      width: min(1200px, 94%);
+      margin: 0 auto;
+      padding: 56px 0 100px;
+    }
+
+    .intro {
+      max-width: 920px;
+      margin-bottom: 42px;
+    }
+
+    .sequence-label {
+      font-size: 14px;
+      color: #9f9f9f;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .intro h1 {
+      font-size: clamp(38px, 7vw, 84px);
+      line-height: 0.95;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+
+    .intro p {
+      max-width: 760px;
+      color: #cfcfcf;
+      font-size: 18px;
+      line-height: 1.75;
+    }
+
+    .video-wrap {
+      margin-bottom: 56px;
+    }
+
+    .video-box {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #111;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .video-box iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .project-meta {
+      margin-top: 18px;
+      color: #bdbdbd;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .project-meta strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .section-title {
+      font-size: 18px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #9f9f9f;
+      margin-bottom: 18px;
+    }
+
+    .image-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .image-card {
+      background: #0b0b0b;
+      border: 1px solid rgba(255,255,255,0.06);
+      overflow: hidden;
+    }
+
+    .image-card img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      background: #111;
+    }
+
+    .footer-note {
+      margin-top: 54px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      color: #8f8f8f;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .bottom-actions {
+      margin-top: 28px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .bottom-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 160px;
+      padding: 14px 22px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      font-size: 14px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .bottom-btn:hover {
+      background: rgba(255,255,255,0.10);
+      border-color: rgba(255,255,255,0.32);
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 700px) {
+      .topbar {
+        padding: 18px 16px;
+      }
+
+      .logo {
+        font-size: 22px;
+      }
+
+      .page-wrap {
+        width: 100%;
+        padding: 34px 14px 80px;
+      }
+
+      .intro {
+        margin-bottom: 28px;
+      }
+
+      .intro p {
+        font-size: 16px;
+      }
+
+      .project-meta {
+        font-size: 13px;
+      }
+
+      .image-list {
+        gap: 12px;
+      }
+
+      .bottom-btn {
+        min-width: 140px;
+        padding: 13px 18px;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body id="top">
+
+  <header class="topbar">
+    <a href="../index.html" class="logo">DKsequence</a>
+  </header>
+
+  <main class="page-wrap">
+    <section class="intro">
+      <div class="sequence-label">Sequence #03</div>
+      <h1>Beyond<br>the Frame</h1>
+      <p>
+        Motion graphic reel exploring rhythm, structure, and visual flow.
+        This sequence gathers moving images, visual fragments, and selected frames
+        into one continuous archive.
+      </p>
+    </section>
+
+    <section class="video-wrap">
+      <div class="video-box">
+        <iframe
+          src="https://www.youtube.com/embed/WsHJE8aDQpk?rel=0"
+          title="DKsequence Motion Reel"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
+      </div>
+
+      <div class="project-meta">
+        <div><strong>Type</strong> Motion / Showreel</div>
+        <div><strong>Format</strong> YouTube Embed + Image Archive</div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">Selected Frames</div>
+      <div class="image-list" id="imageList"></div>
+    </section>
+
+    <div class="footer-note">
+      Sequence 03 motion archive. Scroll down to view the image frames used in this project.
+    </div>
+
+    <div class="bottom-actions">
+      <a href="#top" class="bottom-btn">Back to Top</a>
+      <a href="../index.html" class="bottom-btn">Home</a>
+    </div>
+  </main>
+
+  <script>
+    /*
+      =========================================================
+      SETTINGS
+      =========================================================
+
+      1. Image folder path:
+         ../motion/images/
+
+      2. File rule:
+         motionimage_0001.jpg
+         motionimage_0002.jpg
+         motionimage_0003.jpg
+
+      3. Change only TOTAL_IMAGES when more images are added.
+    */
+
+    const IMAGE_FOLDER = "../motion/images/";
+    const TOTAL_IMAGES = 10;
+
+    function padNumber(num) {
+      return String(num).padStart(4, "0");
+    }
+
+    function getImageSrc(num) {
+      return `${IMAGE_FOLDER}motionimage_${padNumber(num)}.jpg`;
+    }
+
+    function renderImages() {
+      const imageList = document.getElementById("imageList");
+      imageList.innerHTML = "";
+
+      for (let i = 1; i <= TOTAL_IMAGES; i++) {
+        const card = document.createElement("div");
+        card.className = "image-card";
+
+        const img = document.createElement("img");
+        img.src = getImageSrc(i);
+        img.alt = `Motion image ${padNumber(i)}`;
+        img.loading = "lazy";
+
+        card.appendChild(img);
+        imageList.appendChild(card);
+      }
+    }
+
+    renderImages();
+  </script>
+</body>
+</html>
