@@ -231,6 +231,12 @@
       opacity: 0.95;
     }
 
+    .work-block.disabled {
+      pointer-events: none;
+      cursor: default;
+      opacity: 0.55;
+    }
+
     .work-text {
       min-width: 0;
     }
@@ -718,7 +724,7 @@
 
   <main class="content">
     <section id="portfolio">
-      <a href="html/macro_index.html" class="work-block">
+      <a href="html/macro_index.html" class="work-block seq-link" id="sequence01">
         <div class="work-text">
           <div class="num">Sequence #01</div>
           <h2>The Poetry<br>of Detail</h2>
@@ -729,7 +735,7 @@
         </div>
       </a>
 
-      <a href="html/portrait_index.html" class="work-block">
+      <a href="html/portrait_index.html" class="work-block seq-link" id="sequence02">
         <div class="work-text">
           <div class="num">Sequence #02</div>
           <h2>Portrait<br>in Sequence</h2>
@@ -740,7 +746,7 @@
         </div>
       </a>
 
-      <a href="html/motion_index.html" class="work-block">
+      <a href="html/motion_index.html" class="work-block seq-link" id="sequence03">
         <div class="work-text">
           <div class="num">Sequence #03</div>
           <h2>Beyond<br>the Frame</h2>
@@ -773,7 +779,7 @@
         </div>
       </a>
 
-      <a href="html/maxwell_index.html" class="work-block">
+      <a href="html/maxwell_index.html" class="work-block seq-link" id="sequence06">
         <div class="work-text">
           <div class="num">Sequence #06</div>
           <h2>Brand Experience<br>Maxwell House</h2>
@@ -784,7 +790,7 @@
         </div>
       </a>
 
-      <a href="html/uv_index.html" class="work-block">
+      <a href="html/uv_index.html" class="work-block seq-link" id="sequence07">
         <div class="work-text">
           <div class="num">Sequence #07</div>
           <h2>UV Experience in Real Time<br>see what happened</h2>
@@ -795,7 +801,7 @@
         </div>
       </a>
 
-      <a href="html/red_index.html" class="work-block">
+      <a href="html/red_index.html" class="work-block seq-link" id="sequence08">
         <div class="work-text">
           <div class="num">Sequence #08</div>
           <h2>The Value <br>of Luxury brand</h2>
@@ -806,7 +812,7 @@
         </div>
       </a>
 
-      <a href="html/drone_index.html" class="work-block">
+      <a href="html/drone_index.html" class="work-block seq-link" id="sequence09">
         <div class="work-text">
           <div class="num">Sequence #09</div>
           <h2>Seeing the World <br>from Elsewhere</h2>
@@ -828,7 +834,7 @@
         </div>
       </a>
 
-      <a href="html/digitaltwin_index.html" class="work-block">
+      <a href="html/digitaltwin_index.html" class="work-block seq-link" id="sequence11">
         <div class="work-text">
           <div class="num">Sequence #11</div>
           <h2>Translating <br>the World into Data</h2>
@@ -958,9 +964,7 @@
           </a>
         </div>
 
-        <div class="team-role">Photographer<br>
-        Digital Twin Spatial Data Specialist<br>
-        Drone operator</div>
+        <div class="team-role">Undefined</div>
         <div class="team-desc"></div>
       </div>
 
@@ -1217,7 +1221,5 @@
       });
     });
   </script>
-  <script data-goatcounter="https://dksequence.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
 </body>
 </html>
