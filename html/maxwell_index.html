@@ -146,11 +146,11 @@
     }
 
     .video-wrap {
-  margin-top: 12px;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-}
+      margin-top: 12px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
 
     .video-box {
       position: relative;
@@ -177,6 +177,51 @@
     }
 
     .project-meta strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .extra-experience {
+      margin-top: 54px;
+    }
+
+    .extra-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 500px));
+      justify-content: center;
+      gap: 24px;
+      margin-top: 18px;
+    }
+
+    .extra-card {
+      width: 100%;
+    }
+
+    .extra-video {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #111;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .extra-video iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .extra-meta {
+      margin-top: 10px;
+      color: #bdbdbd;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .extra-meta strong {
       color: #fff;
       font-weight: 600;
     }
@@ -219,6 +264,17 @@
       transform: translateY(-1px);
     }
 
+    @media (max-width: 1100px) {
+      .extra-grid {
+        grid-template-columns: 1fr;
+        justify-items: center;
+      }
+
+      .extra-card {
+        max-width: 500px;
+      }
+    }
+
     @media (max-width: 700px) {
       .topbar {
         padding: 18px 16px;
@@ -246,6 +302,10 @@
         font-size: 24px;
       }
 
+      .extra-grid {
+        gap: 18px;
+      }
+
       .bottom-btn {
         min-width: 140px;
         padding: 13px 18px;
@@ -265,6 +325,7 @@
     <a href="../index.html">Home</a>
     <a href="#sequence06">Sequence 06</a>
     <a href="#video-section">Video</a>
+    <a href="#extra-experience">More</a>
   </nav>
 
   <main class="page-wrap">
@@ -302,13 +363,83 @@
         <div class="project-meta">
           <div><strong>Type</strong> Brand Experience / Motion Content</div>
           <div><strong>Client</strong> Maxwell House</div>
-          <div><strong>Format</strong> YouTube Embed</div>
+          <div><strong>Format</strong> Main YouTube Embed</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="extra-experience" id="extra-experience">
+      <div class="section-title">Additional Experience Content</div>
+      <div class="section-text">
+        Additional experience content expands the project beyond a single branded record.<br>
+        These related motion pieces show how visual rhythm, interaction, and promotional atmosphere were developed across different experiences.
+      </div>
+
+      <div class="extra-grid">
+        <div class="extra-card">
+          <div class="extra-video">
+            <iframe
+              src="https://www.youtube.com/embed/ou9rxkBl4vw?rel=0"
+              title="Additional Experience Content 01"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen>
+            </iframe>
+          </div>
+          <div class="extra-meta">
+            <div><strong>Additional Experience</strong> 01</div>
+          </div>
+        </div>
+
+        <div class="extra-card">
+          <div class="extra-video">
+            <iframe
+              src="https://www.youtube.com/embed/UeztNRmXt0Q?rel=0"
+              title="Additional Experience Content 02"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen>
+            </iframe>
+          </div>
+          <div class="extra-meta">
+            <div><strong>Additional Experience</strong> 02</div>
+          </div>
+        </div>
+
+        <div class="extra-card">
+          <div class="extra-video">
+            <iframe
+              src="https://www.youtube.com/embed/-ZBAzJAueK8?rel=0"
+              title="Additional Experience Content 03"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen>
+            </iframe>
+          </div>
+          <div class="extra-meta">
+            <div><strong>Additional Experience</strong> 03</div>
+          </div>
+        </div>
+
+        <div class="extra-card">
+          <div class="extra-video">
+            <iframe
+              src="https://www.youtube.com/embed/KvLS4_n5JBo?rel=0"
+              title="Additional Experience Content 04"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen>
+            </iframe>
+          </div>
+          <div class="extra-meta">
+            <div><strong>Additional Experience</strong> 04</div>
+          </div>
         </div>
       </div>
     </section>
 
     <div class="footer-note">
-      Sequence 06 archive. This page presents a motion-based brand experience project through an embedded video record and project description.
+      Sequence 06 archive. This page presents a motion-based brand experience project through an embedded video record and grouped additional experience content.
     </div>
 
     <div class="bottom-actions">
