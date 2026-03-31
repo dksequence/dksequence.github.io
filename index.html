@@ -281,6 +281,22 @@
       background: #111;
     }
 
+    .work-image-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .work-image-grid img {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      background: #111;
+      display: block;
+    }
+
     .about,
     .contact {
       width: min(1400px, 92%);
@@ -559,6 +575,10 @@
         width: 100%;
       }
 
+      .work-image-grid {
+        gap: 5px;
+      }
+
       .about-team {
         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
         gap: 34px;
@@ -618,6 +638,10 @@
 
       .work-image img {
         width: 100%;
+      }
+
+      .work-image-grid {
+        gap: 4px;
       }
 
       .about,
@@ -730,9 +754,7 @@
           <h2>The Poetry<br>of Detail</h2>
           <p>Macro photography and detail-based images reveal quiet worlds hidden within daily life. It is an art of stepping away from the familiar and into small worlds you can quietly explore.</p>
         </div>
-        <div class="work-image">
-          <img src="images/image-01.jpg" alt="Motion Graphics" />
-        </div>
+        <div class="work-image-grid" id="sequence01-grid"></div>
       </a>
 
       <a href="html/portrait_index.html" class="work-block seq-link" id="sequence02">
@@ -741,9 +763,7 @@
           <h2>Portrait<br>in Sequence</h2>
           <p>Portrait photography captures more than appearance. It records mood, presence, and the quiet tension between a person and a place.<br><span class="thanks-text">* Special thanks to Jonna Jin Her &amp; hyungwoo Kim</span></p>
         </div>
-        <div class="work-image">
-          <img src="images/image-02.jpg" alt="Macro Photography" />
-        </div>
+        <div class="work-image-grid" id="sequence02-grid"></div>
       </a>
 
       <a href="html/motion_index.html" class="work-block seq-link" id="sequence03">
@@ -753,7 +773,7 @@
           <p>Digital composition expands the image beyond what is seen. It turns ideas, motion, and graphic elements into a new visual world</p>
         </div>
         <div class="work-image">
-          <img src="images/image-03.jpg" alt="Portrait Experience" />
+          <img src="images/image-03.jpg" alt="Sequence 03 cover" />
         </div>
       </a>
 
@@ -764,7 +784,7 @@
           <p>Seungmu(승무&lt;僧舞&gt;)'s Heirs to Korean Intangible Cultural Property. we organized a 1:1 scale of traditional performances The Cultural Heritage Restoration Project preserves the cultural value of the work It delivers a legacy to future generations.<br><span class="thanks-text">* Special thanks to professor jinho Park</span></p>
         </div>
         <div class="work-image">
-          <img src="images/image-04.jpg" alt="Drone Works" />
+          <img src="images/image-04.jpg" alt="Sequence 04 cover" />
         </div>
       </a>
 
@@ -775,7 +795,7 @@
           <p>Introduces the UNESCO World Heritage Site to the present Through digital restoration, spatial images, Provides an immersive cultural storytelling experience.<br><span class="thanks-text">* Special thanks to Creative Director Minwoo Park</span></p>
         </div>
         <div class="work-image">
-          <img src="images/image-05.jpg" alt="Drone Works" />
+          <img src="images/image-05.jpg" alt="Sequence 05 cover" />
         </div>
       </a>
 
@@ -786,7 +806,7 @@
           <p>Designed as a promotional event for Maxwell House, this digital vending machine created face-to-face experiences with singer and entertainer. More than 140,000 people engaged with this event promotion, leaving with familiar yet fresh brand impressions and memorable experiences of Maxwell House.<br><span class="thanks-text">* Special thanks to You`ve got idea</span></p>
         </div>
         <div class="work-image">
-          <img src="images/image-06.jpg" alt="Drone Works" />
+          <img src="images/image-06.jpg" alt="Sequence 06 cover" />
         </div>
       </a>
 
@@ -797,7 +817,7 @@
           <p>Do sunscreens really protect our skin from UV rays? This project answered that question through live public experience. It visually reveals the difference between sunscreen and bare skin.<br><span class="thanks-text">* Thanks to Green Pinger</span></p>
         </div>
         <div class="work-image">
-          <img src="images/image-07.jpg" alt="Drone Works" />
+          <img src="images/image-07.jpg" alt="Sequence 07 cover" />
         </div>
       </a>
 
@@ -808,7 +828,7 @@
           <p>Expressing the elegance of a luxury brand is a demanding task. True branding reflects both the client’s vision and the customer’s experience, creating encounters that allow the brand to extend beyond a product and into new cultural and emotional spaces.<br><span class="thanks-text">* Special thanks to watch designer Christian BÉDAT</span></p>
         </div>
         <div class="work-image">
-          <img src="images/image-08.jpg" alt="Drone Works" />
+          <img src="images/image-08.jpg" alt="Sequence 08 cover" />
         </div>
       </a>
 
@@ -819,7 +839,7 @@
           <p>Drone photographs and videos reveal the hidden order of the world. From the sky, nature is reconstructed. The world you used to know becomes a new place.<br><span class="thanks-text">* Special thanks to Director Moses Jung</span></p>
         </div>
         <div class="work-image">
-          <img src="images/image-09.jpg" alt="Drone Works" />
+          <img src="images/image-09.jpg" alt="Sequence 09 cover" />
         </div>
       </a>
 
@@ -830,7 +850,7 @@
           <p>To lecture is to share experience, but also to receive new perspectives. Each encounter becomes a rewarding moment of growth.<br><span class="thanks-text">* Special thanks to DAXIB</span></p>
         </div>
         <div class="work-image">
-          <img src="images/image-10.jpg" alt="Drone Works" />
+          <img src="images/image-10.jpg" alt="Sequence 10 cover" />
         </div>
       </a>
 
@@ -841,7 +861,7 @@
           <p>Building digital twin spatial information is the work of translating the world we live in into digital form. By acquiring point cloud data that contains real location information, this project opened endless possibilities for analysis, simulation, and future use. Over three years, we successfully constructed the topography of the entire Jeju Island through digital twin data.<br><span class="thanks-text">* Special thanks to Dohee Hwang &amp; Sejong baek</span></p>
         </div>
         <div class="work-image">
-          <img src="images/image-11.jpg" alt="Drone Works" />
+          <img src="images/image-11.jpg" alt="Sequence 11 cover" />
         </div>
       </a>
     </section>
@@ -1219,6 +1239,68 @@
           });
         });
       });
+
+      document.querySelectorAll('.seq-link').forEach(link => {
+        link.addEventListener('click', function () {
+          sessionStorage.setItem('lastSequenceId', this.id);
+        });
+      });
+
+      const sequence01Images = Array.from({ length: 46 }, (_, i) => i + 1)
+        .filter(num => ![44, 34, 30, 22, 12, 3, 5, 9].includes(num))
+        .map(num => `gallery/small/${String(num).padStart(4, '0')}_small.jpg`);
+
+      const sequence02Images = Array.from({ length: 46 }, (_, i) => i + 1)
+        .filter(num => ![43, 34, 30, 23, 20, 12, 6].includes(num))
+        .map(num => `portrait/photo/small/${String(num).padStart(4, '0')}_small.jpg`);
+
+      function shuffleArray(array) {
+        const copied = [...array];
+        for (let i = copied.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copied[i], copied[j]] = [copied[j], copied[i]];
+        }
+        return copied;
+      }
+
+      function renderRandomTriptych(containerId, images, altPrefix) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        container.innerHTML = "";
+        const selectedImages = shuffleArray(images).slice(0, 3);
+
+        selectedImages.forEach((src, index) => {
+          const img = document.createElement("img");
+          img.src = src;
+          img.alt = `${altPrefix} ${index + 1}`;
+          img.loading = "lazy";
+          container.appendChild(img);
+        });
+      }
+
+      renderRandomTriptych("sequence01-grid", sequence01Images, "Sequence 01 thumbnail");
+      renderRandomTriptych("sequence02-grid", sequence02Images, "Sequence 02 thumbnail");
+    });
+
+    window.addEventListener('pageshow', function () {
+      const lastId = sessionStorage.getItem('lastSequenceId');
+      if (!lastId) return;
+
+      const target = document.getElementById(lastId);
+      if (!target) return;
+
+      setTimeout(() => {
+        const header = document.querySelector('.topbar');
+        const headerHeight = header ? header.offsetHeight : 0;
+        const extraOffset = window.innerWidth <= 640 ? 20 : 24;
+        const targetTop = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - extraOffset;
+
+        window.scrollTo({
+          top: targetTop,
+          behavior: 'auto'
+        });
+      }, 120);
     });
   </script>
 </body>
