@@ -99,7 +99,7 @@
 
     .intro {
       max-width: 980px;
-      margin-bottom: 64px;
+      margin-bottom: 40px;
       scroll-margin-top: 110px;
     }
 
@@ -123,6 +123,43 @@
       color: #cfcfcf;
       font-size: 18px;
       line-height: 1.75;
+    }
+
+    .video-wrap {
+      margin-top: 12px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 56px;
+    }
+
+    .video-box {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #111;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .video-box iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .project-meta {
+      margin-top: 18px;
+      color: #bdbdbd;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .project-meta strong {
+      color: #fff;
+      font-weight: 600;
     }
 
     .section-block {
@@ -164,18 +201,6 @@
       width: 100%;
       height: 100%;
       border: 0;
-    }
-
-    .project-meta {
-      margin-top: 18px;
-      color: #bdbdbd;
-      font-size: 14px;
-      line-height: 1.7;
-    }
-
-    .project-meta strong {
-      color: #fff;
-      font-weight: 600;
     }
 
     .footer-note {
@@ -231,7 +256,7 @@
       }
 
       .intro {
-        margin-bottom: 44px;
+        margin-bottom: 32px;
       }
 
       .intro p,
@@ -241,6 +266,10 @@
 
       .mobile-menu a {
         font-size: 24px;
+      }
+
+      .video-wrap {
+        margin-bottom: 44px;
       }
 
       .bottom-btn {
@@ -261,6 +290,7 @@
   <nav class="mobile-menu" id="mobileMenu">
     <a href="../index.html">Home</a>
     <a href="#sequence11">Sequence 11</a>
+    <a href="#video-section">Video</a>
     <a href="#digitaltwin-viewer">Viewer</a>
   </nav>
 
@@ -273,6 +303,25 @@
         explorable digital space. This sequence focuses on location-based capture,
         spatial reconstruction, and the visual experience of data becoming place.
       </p>
+    </section>
+
+    <section id="video-section">
+      <div class="video-wrap">
+        <div class="video-box">
+          <iframe
+            src="https://www.youtube.com/embed/01tLaz5NUoE?rel=0"
+            title="Sequence 11 YouTube Video"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+          </iframe>
+        </div>
+
+        <div class="project-meta">
+          <div><strong>Type</strong> Digital Twin / Embedded Video</div>
+          <div><strong>Format</strong> YouTube Embed</div>
+        </div>
+      </div>
     </section>
 
     <section class="section-block" id="digitaltwin-viewer">
