@@ -118,6 +118,42 @@
       margin-bottom: 10px;
     }
 
+    .top-tabs {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+      margin-bottom: 18px;
+    }
+
+    .top-tab {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      padding: 12px 16px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: transparent;
+      color: #cfcfcf;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    }
+
+    .top-tab:hover {
+      border-color: #fff;
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+    }
+
+    .top-tab.current {
+      border-color: #fff;
+      background: #fff;
+      color: #000;
+    }
+
     .intro h1 {
       font-size: clamp(38px, 7vw, 78px);
       line-height: 0.95;
@@ -126,39 +162,8 @@
       letter-spacing: -0.02em;
     }
 
-    .top-tabs {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      margin-top: 18px;
-      margin-bottom: 18px;
-    }
-
-    .top-tab {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 44px;
-      padding: 10px 14px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.03);
-      color: #cfcfcf;
-      font-size: 13px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-    }
-
-    .top-tab:hover {
-      background: rgba(255,255,255,0.08);
-      border-color: rgba(255,255,255,0.28);
-      color: #fff;
-    }
-
-    .top-tab.active {
-      background: rgba(255,255,255,0.16);
-      border-color: rgba(255,255,255,0.34);
-      color: #fff;
+    .section-block {
+      margin-top: 6px;
     }
 
     .section-title {
@@ -345,16 +350,20 @@
       }
 
       .top-tabs {
-        gap: 6px;
-        margin-top: 12px;
-        margin-bottom: 12px;
+        gap: 8px;
+        margin-top: 10px;
+        margin-bottom: 14px;
       }
 
       .top-tab {
-        min-height: 38px;
+        min-height: 42px;
         padding: 8px 10px;
         font-size: 11px;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.04em;
+      }
+
+      .section-block {
+        margin-top: 8px;
       }
 
       .video-grid {
@@ -409,15 +418,16 @@
   <main class="page-wrap">
     <section class="intro" id="sequence12">
       <div class="sequence-label">Sequence #12</div>
+
+      <div class="top-tabs">
+        <a href="ai_index.html" class="top-tab">1. AI Music Box</a>
+        <a href="ai_con.html" class="top-tab current">2. AI Short Reels</a>
+      </div>
+
       <h1>AI Short Reels</h1>
     </section>
 
-    <div class="top-tabs">
-      <a href="ai_index.html" class="top-tab">1. AI Music Box</a>
-      <a href="ai_con.html" class="top-tab active">2. AI Short Reels</a>
-    </div>
-
-    <section id="video-gallery">
+    <section class="section-block" id="video-gallery">
       <div class="section-title">Video Archive</div>
       <div class="video-grid" id="videoGrid"></div>
     </section>
@@ -454,7 +464,6 @@
     ];
 
     const thumbnailOverrides = {
-      // Example:
       // "_qAD-cjmdiI": "../images/ai-thumb-01.jpg"
     };
 
@@ -465,10 +474,7 @@
       return thumbnailOverrides[videoId] || `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
     }
 
-    function getEmbedUrl(videoId, type) {
-      if (type === "short") {
-        return `https://www.youtube.com/embed/${videoId}?rel=0&playsinline=1`;
-      }
+    function getEmbedUrl(videoId) {
       return `https://www.youtube.com/embed/${videoId}?rel=0&playsinline=1`;
     }
 
@@ -509,7 +515,7 @@
       const wrap = card.querySelector(".video-thumb-wrap");
       wrap.innerHTML = `
         <iframe
-          src="${getEmbedUrl(item.id, item.type)}&autoplay=1"
+          src="${getEmbedUrl(item.id)}&autoplay=1"
           title="${item.title}"
           loading="lazy"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
