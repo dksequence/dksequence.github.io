@@ -128,7 +128,7 @@
     .music-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 8px;
+      gap: 6px;
       margin-bottom: 8px;
     }
 
@@ -136,20 +136,23 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 64px;
-      padding: 10px 10px;
+      min-height: 34px;
+      padding: 4px 8px;
       border: 1px solid rgba(255,255,255,0.12);
       background: rgba(255,255,255,0.02);
       color: #fff;
       text-align: center;
       cursor: pointer;
-      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-      font-size: 14px;
-      line-height: 1.05;
-      letter-spacing: 0.03em;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+      font-size: 12px;
+      line-height: 1;
+      letter-spacing: 0.02em;
       text-transform: uppercase;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .music-item:hover {
@@ -166,6 +169,17 @@
     .music-item.active {
       background: rgba(255,255,255,0.15);
       border-color: rgba(255,255,255,0.32);
+      color: #fff;
+      animation: blinkText 1.1s steps(1, end) infinite;
+    }
+
+    @keyframes blinkText {
+      0%, 50% {
+        color: #fff;
+      }
+      51%, 100% {
+        color: rgba(255,255,255,0.35);
+      }
     }
 
     .player-wrap {
@@ -187,22 +201,7 @@
       width: 100%;
       height: 100%;
       border: 0;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .player-placeholder {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 24px;
-      color: #8f8f8f;
-      font-size: 15px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      display: block;
       background: #000;
     }
 
@@ -298,21 +297,16 @@
 
       .music-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 6px;
+        gap: 5px;
         margin-bottom: 8px;
       }
 
       .music-item {
-        min-height: 54px;
-        padding: 8px 8px;
-        font-size: 13px;
+        min-height: 30px;
+        padding: 4px 6px;
+        font-size: 11px;
         line-height: 1;
-        letter-spacing: 0.02em;
-      }
-
-      .player-placeholder {
-        font-size: 13px;
-        padding: 16px;
+        letter-spacing: 0.01em;
       }
 
       .now-playing {
@@ -353,19 +347,19 @@
 
     <section class="music-box">
       <div class="music-grid" id="music-list">
-        <button class="music-item" data-id="x2ZZn0FjI-o" data-title="Reggae">Reggae music</button>
-        <button class="music-item" data-id="AtrLr0KYF8I" data-title="R&B">R&amp;B</button>
+        <button class="music-item" data-id="x2ZZn0FjI-o" data-title="Reggae Music">Reggae music</button>
+        <button class="music-item" data-id="AtrLr0KYF8I" data-title="R&amp;B">R&amp;B</button>
         <button class="music-item" data-id="xwjZeeY638o" data-title="Jazz">Jazz</button>
         <button class="music-item" data-id="ytxF-xEqcsY" data-title="French Pop">French Pop</button>
 
         <button class="music-item" data-id="scvshcnk64c" data-title="J-Pop">J-Pop</button>
-        <button class="music-item" data-id="swPSMZD2_rQ" data-title="Ballad">Ballad pop</button>
+        <button class="music-item" data-id="swPSMZD2_rQ" data-title="Ballad Pop">Ballad pop</button>
         <button class="music-item" data-id="UYRjgUAo6XE" data-title="Groove Rap">Groove Rap</button>
-        <button class="music-item" data-id="z5O6jEzHCQQ" data-title="Folk">Folk songs</button>
+        <button class="music-item" data-id="z5O6jEzHCQQ" data-title="Folk Songs">Folk songs</button>
 
-        <button class="music-item" data-id="7T4Vkz5lruI" data-title="K Ballad">K-Ballad</button>
-        <button class="music-item" data-id="jlXzkOTV6MA" data-title="Pilipino">Pilipino music</button>
-        <button class="music-item" data-id="CZsIfV8nV4c" data-title="Disco">Disco music</button>
+        <button class="music-item" data-id="7T4Vkz5lruI" data-title="K-Ballad">K-Ballad</button>
+        <button class="music-item" data-id="jlXzkOTV6MA" data-title="Pilipino Music">Pilipino music</button>
+        <button class="music-item" data-id="CZsIfV8nV4c" data-title="Disco Music">Disco music</button>
         <button class="music-item" data-id="zVhPlFFHLak" data-title="Pet Music">Pet Music</button>
       </div>
 
@@ -379,7 +373,6 @@
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen>
           </iframe>
-          <div class="player-placeholder" id="playerPlaceholder">Random Audio Playing</div>
         </div>
 
         <div class="now-playing">
@@ -408,8 +401,7 @@
 
     const tracks = musicItems.map(item => ({
       id: item.dataset.id,
-      title: item.dataset.title,
-      el: item
+      title: item.dataset.title
     }));
 
     function setActiveButton(videoId) {
@@ -418,9 +410,13 @@
       if (target) target.classList.add("active");
     }
 
-    function playTrack(videoId, title, muted = false) {
+    function buildPlayerUrl(videoId, muted) {
       const muteValue = muted ? 1 : 0;
-      player.src = `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1&mute=${muteValue}&controls=0&modestbranding=1&playsinline=1`;
+      return `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1&mute=${muteValue}&controls=1&modestbranding=1&playsinline=1`;
+    }
+
+    function playTrack(videoId, title, muted = false) {
+      player.src = buildPlayerUrl(videoId, muted);
       nowPlayingTitle.textContent = title;
       setActiveButton(videoId);
     }
