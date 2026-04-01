@@ -30,6 +30,8 @@
 
     button {
       font: inherit;
+      border: 0;
+      background: transparent;
     }
 
     .topbar {
@@ -94,12 +96,12 @@
     .page-wrap {
       width: min(1440px, 94%);
       margin: 0 auto;
-      padding: 48px 0 100px;
+      padding: 34px 0 100px;
     }
 
     .intro {
       max-width: 980px;
-      margin-bottom: 26px;
+      margin-bottom: 12px;
       scroll-margin-top: 110px;
     }
 
@@ -108,110 +110,43 @@
       color: #9f9f9f;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .intro h1 {
-      font-size: clamp(40px, 7vw, 84px);
+      font-size: clamp(38px, 7vw, 78px);
       line-height: 0.95;
       font-weight: 700;
-      margin-bottom: 18px;
+      margin-bottom: 0;
       letter-spacing: -0.02em;
     }
 
-    .intro p {
-      max-width: 840px;
-      color: #cfcfcf;
-      font-size: 18px;
-      line-height: 1.72;
-    }
-
-    .music-meta {
-      margin-top: 16px;
-      color: #9f9f9f;
-      font-size: 14px;
-      line-height: 1.7;
-    }
-
-    .music-meta strong {
-      color: #fff;
-      font-weight: 600;
-    }
-
     .music-box {
-      margin-top: 26px;
-    }
-
-    .player-wrap {
-      margin-bottom: 18px;
-    }
-
-    .player-box {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      background: #111;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .player-box iframe {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      border: 0;
-    }
-
-    .now-playing {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      align-items: center;
       margin-top: 12px;
-      color: #bdbdbd;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .now-playing strong {
-      color: #fff;
-      font-weight: 600;
-    }
-
-    .grid-section {
-      margin-top: 18px;
-    }
-
-    .grid-title {
-      font-size: 14px;
-      color: #9f9f9f;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      margin-bottom: 12px;
     }
 
     .music-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
+      gap: 8px;
+      margin-bottom: 10px;
     }
 
     .music-item {
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 74px;
-      padding: 14px 12px;
+      min-height: 64px;
+      padding: 10px 10px;
       border: 1px solid rgba(255,255,255,0.12);
       background: rgba(255,255,255,0.02);
       color: #fff;
       text-align: center;
       cursor: pointer;
-      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
       font-size: 14px;
-      line-height: 1.2;
-      letter-spacing: 0.04em;
+      line-height: 1.05;
+      letter-spacing: 0.03em;
       text-transform: uppercase;
       user-select: none;
       -webkit-tap-highlight-color: transparent;
@@ -224,33 +159,67 @@
     }
 
     .music-item:focus-visible {
-      outline: 2px solid rgba(255,255,255,0.75);
+      outline: 2px solid rgba(255,255,255,0.7);
       outline-offset: 2px;
     }
 
     .music-item.active {
       background: rgba(255,255,255,0.15);
       border-color: rgba(255,255,255,0.32);
-      color: #fff;
     }
 
-    .section-block {
-      margin-top: 34px;
+    .player-wrap {
+      margin-top: 0;
     }
 
-    .section-title {
-      font-size: 14px;
-      color: #9f9f9f;
-      letter-spacing: 0.12em;
+    .player-box {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .player-box iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .player-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      color: #8f8f8f;
+      font-size: 15px;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      margin-bottom: 16px;
+      background: #000;
     }
 
-    .section-text {
-      max-width: 920px;
-      color: #cfcfcf;
-      font-size: 17px;
-      line-height: 1.8;
+    .now-playing {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-top: 10px;
+      color: #bdbdbd;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .now-playing strong {
+      color: #fff;
+      font-weight: 600;
     }
 
     .footer-note {
@@ -312,62 +281,50 @@
 
       .page-wrap {
         width: 100%;
-        padding: 28px 14px 80px;
+        padding: 22px 14px 80px;
       }
 
       .intro {
-        margin-bottom: 18px;
+        margin-bottom: 8px;
       }
 
-      .intro h1 {
-        margin-bottom: 14px;
-      }
-
-      .intro p,
-      .section-text {
-        font-size: 16px;
+      .sequence-label {
+        margin-bottom: 8px;
       }
 
       .music-box {
-        margin-top: 20px;
-      }
-
-      .player-wrap {
-        margin-bottom: 14px;
-      }
-
-      .player-box {
-        width: 100%;
-        aspect-ratio: 16 / 9;
-      }
-
-      .now-playing {
-        margin-top: 10px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
-        font-size: 13px;
-      }
-
-      .grid-section {
-        margin-top: 14px;
-      }
-
-      .grid-title {
-        margin-bottom: 10px;
+        margin-top: 8px;
       }
 
       .music-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
+        gap: 6px;
+        margin-bottom: 8px;
       }
 
       .music-item {
-        min-height: 60px;
-        padding: 12px 10px;
+        min-height: 54px;
+        padding: 8px 8px;
         font-size: 13px;
-        line-height: 1.08;
-        letter-spacing: 0.03em;
+        line-height: 1;
+        letter-spacing: 0.02em;
+      }
+
+      .player-box {
+        aspect-ratio: 16 / 9;
+      }
+
+      .player-placeholder {
+        font-size: 13px;
+        padding: 16px;
+      }
+
+      .now-playing {
+        margin-top: 8px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        font-size: 13px;
       }
 
       .bottom-btn {
@@ -388,78 +345,56 @@
   <nav class="mobile-menu" id="mobileMenu">
     <a href="../index.html">Home</a>
     <a href="#sequence12">Sequence 12</a>
-    <a href="#music-player">Music Box</a>
     <a href="#music-list">Playlist</a>
+    <a href="#music-player">Player</a>
   </nav>
 
   <main class="page-wrap">
     <section class="intro" id="sequence12">
       <div class="sequence-label">Sequence #12</div>
-      <h1>AI Music<br>Box</h1>
-      <p>
-        Fun AI Lab expands into a music-driven interface where artificial intelligence,
-        atmosphere, and listening habits are translated into a simple interactive playlist box.
-        Rather than presenting music as a flat list, this sequence frames each genre as a selectable mood
-        inside one shared player.
-      </p>
-      <div class="music-meta">
-        <div><strong>Type</strong> AI Music / Playlist Interface</div>
-        <div><strong>Format</strong> YouTube Embed / Jukebox-style Selection</div>
-      </div>
+      <h1>AI Music Box</h1>
     </section>
 
-    <section class="music-box" id="music-player">
-      <div class="player-wrap">
+    <section class="music-box">
+      <div class="music-grid" id="music-list">
+        <button class="music-item active" data-id="x2ZZn0FjI-o" data-title="Reggae">Reggae</button>
+        <button class="music-item" data-id="AtrLr0KYF8I" data-title="R&amp;B">R&amp;B</button>
+        <button class="music-item" data-id="xwjZeeY638o" data-title="Jazz">Jazz</button>
+        <button class="music-item" data-id="ytxF-xEqcsY" data-title="French Pop">French Pop</button>
+
+        <button class="music-item" data-id="scvshcnk64c" data-title="J-Pop">J-Pop</button>
+        <button class="music-item" data-id="swPSMZD2_rQ" data-title="Ballad">Ballad</button>
+        <button class="music-item" data-id="UYRjgUAo6XE" data-title="Groove Rap">Groove Rap</button>
+        <button class="music-item" data-id="z5O6jEzHCQQ" data-title="Folk">Folk</button>
+
+        <button class="music-item" data-id="7T4Vkz5lruI" data-title="K Ballad">K Ballad</button>
+        <button class="music-item" data-id="jlXzkOTV6MA" data-title="Pilipino">Pilipino</button>
+        <button class="music-item" data-id="CZsIfV8nV4c" data-title="Disco">Disco</button>
+        <button class="music-item" data-id="zVhPlFFHLak" data-title="Pet Music">Pet Music</button>
+      </div>
+
+      <div class="player-wrap" id="music-player">
         <div class="player-box">
           <iframe
             id="ytPlayer"
-            src="https://www.youtube.com/embed/x2ZZn0FjI-o?rel=0&autoplay=0"
+            src="https://www.youtube.com/embed/x2ZZn0FjI-o?rel=0&autoplay=1&mute=1&controls=0&modestbranding=1&playsinline=1"
             title="AI Music Box Player"
             loading="eager"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen>
           </iframe>
+          <div class="player-placeholder" id="playerPlaceholder">Audio Playing</div>
         </div>
 
         <div class="now-playing">
           <div><strong>Now Playing</strong> <span id="nowPlayingTitle">Reggae</span></div>
-          <div>Choose a genre below to change the player.</div>
+          <div>Select another genre above.</div>
         </div>
-      </div>
-
-      <div class="grid-section" id="music-list">
-        <div class="grid-title">Playlist</div>
-        <div class="music-grid">
-          <button class="music-item active" data-id="x2ZZn0FjI-o" data-title="Reggae">Reggae</button>
-          <button class="music-item" data-id="AtrLr0KYF8I" data-title="R&amp;B">R&amp;B</button>
-          <button class="music-item" data-id="xwjZeeY638o" data-title="Jazz">Jazz</button>
-          <button class="music-item" data-id="ytxF-xEqcsY" data-title="French Pop">French Pop</button>
-
-          <button class="music-item" data-id="scvshcnk64c" data-title="J-Pop">J-Pop</button>
-          <button class="music-item" data-id="swPSMZD2_rQ" data-title="Ballad">Ballad</button>
-          <button class="music-item" data-id="UYRjgUAo6XE" data-title="Groove Rap">Groove Rap</button>
-          <button class="music-item" data-id="z5O6jEzHCQQ" data-title="Folk">Folk</button>
-
-          <button class="music-item" data-id="7T4Vkz5lruI" data-title="K Ballad">K Ballad</button>
-          <button class="music-item" data-id="jlXzkOTV6MA" data-title="Pilipino">Pilipino</button>
-          <button class="music-item" data-id="CZsIfV8nV4c" data-title="Disco">Disco</button>
-          <button class="music-item" data-id="zVhPlFFHLak" data-title="Pet Music">Pet Music</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="section-block">
-      <div class="section-title">Description</div>
-      <div class="section-text">
-        This page organizes long-form AI-assisted music selections into a compact listening interface.
-        The layout is intentionally reduced so the viewer can choose a mood quickly, while the player remains
-        visible from the first screen on mobile. Instead of pushing visual clutter, the structure prioritizes
-        clear selection, immediate playback, and a unified sequence identity.
       </div>
     </section>
 
     <div class="footer-note">
-      Sequence 12 AI Music Box. Select a genre, listen through the embedded player, and return to the main index to continue through the sequence.
+      Sequence 12 AI Music Box. Select a genre and listen through the embedded player.
     </div>
 
     <div class="bottom-actions">
@@ -519,7 +454,7 @@
         const videoId = this.dataset.id;
         const title = this.dataset.title;
 
-        player.src = `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1`;
+        player.src = `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1&mute=1&controls=0&modestbranding=1&playsinline=1`;
         nowPlayingTitle.textContent = title;
 
         musicItems.forEach(btn => btn.classList.remove("active"));
