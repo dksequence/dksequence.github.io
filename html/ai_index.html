@@ -101,7 +101,7 @@
 
     .intro {
       max-width: 980px;
-      margin-bottom: 10px;
+      margin-bottom: 14px;
       scroll-margin-top: 110px;
     }
 
@@ -121,15 +121,26 @@
       letter-spacing: -0.02em;
     }
 
-    .music-box {
+    .music-layout {
+      display: grid;
+      grid-template-columns: 420px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
       margin-top: 10px;
+    }
+
+    .music-left {
+      min-width: 0;
+    }
+
+    .music-right {
+      min-width: 0;
     }
 
     .music-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 6px;
-      margin-bottom: 8px;
     }
 
     .music-item {
@@ -182,13 +193,10 @@
       }
     }
 
-    .player-wrap {
-      margin-top: 0;
-    }
-
     .player-box {
       position: relative;
       width: 100%;
+      max-width: 760px;
       aspect-ratio: 16 / 9;
       background: #000;
       overflow: hidden;
@@ -236,6 +244,7 @@
       color: #bdbdbd;
       font-size: 14px;
       line-height: 1.5;
+      max-width: 760px;
     }
 
     .now-playing strong {
@@ -282,8 +291,30 @@
     }
 
     @media (max-width: 1100px) {
+      .music-layout {
+        grid-template-columns: 360px minmax(0, 1fr);
+        gap: 14px;
+      }
+
+      .player-box,
+      .now-playing {
+        max-width: 680px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .music-layout {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
       .music-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .player-box,
+      .now-playing {
+        max-width: none;
       }
     }
 
@@ -313,14 +344,14 @@
         margin-bottom: 8px;
       }
 
-      .music-box {
+      .music-layout {
         margin-top: 8px;
+        gap: 8px;
       }
 
       .music-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 5px;
-        margin-bottom: 8px;
       }
 
       .music-item {
@@ -372,25 +403,27 @@
       <h1>AI Music Box</h1>
     </section>
 
-    <section class="music-box">
-      <div class="music-grid" id="music-list">
-        <button class="music-item" data-id="x2ZZn0FjI-o" data-title="Reggae Music">Reggae music</button>
-        <button class="music-item" data-id="AtrLr0KYF8I" data-title="R&amp;B">R&amp;B</button>
-        <button class="music-item" data-id="xwjZeeY638o" data-title="Jazz">Jazz</button>
-        <button class="music-item" data-id="ytxF-xEqcsY" data-title="French Pop">French Pop</button>
+    <section class="music-layout">
+      <div class="music-left">
+        <div class="music-grid" id="music-list">
+          <button class="music-item" data-id="x2ZZn0FjI-o" data-title="Reggae Music">Reggae music</button>
+          <button class="music-item" data-id="AtrLr0KYF8I" data-title="R&amp;B">R&amp;B</button>
+          <button class="music-item" data-id="xwjZeeY638o" data-title="Jazz">Jazz</button>
+          <button class="music-item" data-id="ytxF-xEqcsY" data-title="French Pop">French Pop</button>
 
-        <button class="music-item" data-id="scvshcnk64c" data-title="J-Pop">J-Pop</button>
-        <button class="music-item" data-id="swPSMZD2_rQ" data-title="Ballad Pop">Ballad pop</button>
-        <button class="music-item" data-id="UYRjgUAo6XE" data-title="Groove Rap">Groove Rap</button>
-        <button class="music-item" data-id="z5O6jEzHCQQ" data-title="Folk Songs">Folk songs</button>
+          <button class="music-item" data-id="scvshcnk64c" data-title="J-Pop">J-Pop</button>
+          <button class="music-item" data-id="swPSMZD2_rQ" data-title="Ballad Pop">Ballad pop</button>
+          <button class="music-item" data-id="UYRjgUAo6XE" data-title="Groove Rap">Groove Rap</button>
+          <button class="music-item" data-id="z5O6jEzHCQQ" data-title="Folk Songs">Folk songs</button>
 
-        <button class="music-item" data-id="7T4Vkz5lruI" data-title="K-Ballad">K-Ballad</button>
-        <button class="music-item" data-id="jlXzkOTV6MA" data-title="Pilipino Music">Pilipino music</button>
-        <button class="music-item" data-id="CZsIfV8nV4c" data-title="Disco Music">Disco music</button>
-        <button class="music-item" data-id="zVhPlFFHLak" data-title="Pet Music">Pet Music</button>
+          <button class="music-item" data-id="7T4Vkz5lruI" data-title="K-Ballad">K-Ballad</button>
+          <button class="music-item" data-id="jlXzkOTV6MA" data-title="Pilipino Music">Pilipino music</button>
+          <button class="music-item" data-id="CZsIfV8nV4c" data-title="Disco Music">Disco music</button>
+          <button class="music-item" data-id="zVhPlFFHLak" data-title="Pet Music">Pet Music</button>
+        </div>
       </div>
 
-      <div class="player-wrap" id="music-player">
+      <div class="music-right" id="music-player">
         <div class="player-box">
           <iframe
             id="ytPlayer"
