@@ -205,6 +205,28 @@
       background: #000;
     }
 
+    .player-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      color: #8f8f8f;
+      font-size: 14px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: #000;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .player-placeholder.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
     .now-playing {
       display: flex;
       justify-content: space-between;
@@ -309,6 +331,11 @@
         letter-spacing: 0.01em;
       }
 
+      .player-placeholder {
+        font-size: 12px;
+        padding: 16px;
+      }
+
       .now-playing {
         margin-top: 8px;
         flex-direction: column;
@@ -373,11 +400,12 @@
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen>
           </iframe>
+          <div class="player-placeholder" id="playerPlaceholder">Press a music button to play</div>
         </div>
 
         <div class="now-playing">
-          <div><strong>Now Playing</strong> <span id="nowPlayingTitle">Loading...</span></div>
-          <div>Random play on entry / sound on click.</div>
+          <div><strong>Now Playing</strong> <span id="nowPlayingTitle">None</span></div>
+          <div>Sound starts when you press a genre.</div>
         </div>
       </div>
     </section>
@@ -397,12 +425,8 @@
     const mobileMenu = document.getElementById("mobileMenu");
     const player = document.getElementById("ytPlayer");
     const nowPlayingTitle = document.getElementById("nowPlayingTitle");
+    const playerPlaceholder = document.getElementById("playerPlaceholder");
     const musicItems = Array.from(document.querySelectorAll(".music-item"));
-
-    const tracks = musicItems.map(item => ({
-      id: item.dataset.id,
-      title: item.dataset.title
-    }));
 
     function setActiveButton(videoId) {
       musicItems.forEach(btn => btn.classList.remove("active"));
@@ -410,15 +434,15 @@
       if (target) target.classList.add("active");
     }
 
-    function buildPlayerUrl(videoId, muted) {
-      const muteValue = muted ? 1 : 0;
-      return `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1&mute=${muteValue}&controls=1&modestbranding=1&playsinline=1`;
+    function buildPlayerUrl(videoId) {
+      return `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1&mute=0&controls=1&modestbranding=1&playsinline=1`;
     }
 
-    function playTrack(videoId, title, muted = false) {
-      player.src = buildPlayerUrl(videoId, muted);
+    function playTrack(videoId, title) {
+      player.src = buildPlayerUrl(videoId);
       nowPlayingTitle.textContent = title;
       setActiveButton(videoId);
+      playerPlaceholder.classList.add("hidden");
     }
 
     if (menuBtn && mobileMenu) {
@@ -462,15 +486,8 @@
 
     musicItems.forEach(item => {
       item.addEventListener("click", function () {
-        const videoId = this.dataset.id;
-        const title = this.dataset.title;
-        playTrack(videoId, title, false);
+        playTrack(this.dataset.id, this.dataset.title);
       });
-    });
-
-    window.addEventListener("DOMContentLoaded", function () {
-      const randomTrack = tracks[Math.floor(Math.random() * tracks.length)];
-      playTrack(randomTrack.id, randomTrack.title, true);
     });
   </script>
 </body>
