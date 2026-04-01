@@ -101,7 +101,7 @@
 
     .intro {
       max-width: 980px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       scroll-margin-top: 110px;
     }
 
@@ -122,14 +122,14 @@
     }
 
     .music-box {
-      margin-top: 12px;
+      margin-top: 10px;
     }
 
     .music-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 8px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .music-item {
@@ -310,10 +310,6 @@
         letter-spacing: 0.02em;
       }
 
-      .player-box {
-        aspect-ratio: 16 / 9;
-      }
-
       .player-placeholder {
         font-size: 13px;
         padding: 16px;
@@ -357,19 +353,19 @@
 
     <section class="music-box">
       <div class="music-grid" id="music-list">
-        <button class="music-item active" data-id="x2ZZn0FjI-o" data-title="Reggae">Reggae</button>
-        <button class="music-item" data-id="AtrLr0KYF8I" data-title="R&amp;B">R&amp;B</button>
+        <button class="music-item" data-id="x2ZZn0FjI-o" data-title="Reggae">Reggae music</button>
+        <button class="music-item" data-id="AtrLr0KYF8I" data-title="R&B">R&amp;B</button>
         <button class="music-item" data-id="xwjZeeY638o" data-title="Jazz">Jazz</button>
         <button class="music-item" data-id="ytxF-xEqcsY" data-title="French Pop">French Pop</button>
 
         <button class="music-item" data-id="scvshcnk64c" data-title="J-Pop">J-Pop</button>
-        <button class="music-item" data-id="swPSMZD2_rQ" data-title="Ballad">Ballad</button>
+        <button class="music-item" data-id="swPSMZD2_rQ" data-title="Ballad">Ballad pop</button>
         <button class="music-item" data-id="UYRjgUAo6XE" data-title="Groove Rap">Groove Rap</button>
-        <button class="music-item" data-id="z5O6jEzHCQQ" data-title="Folk">Folk</button>
+        <button class="music-item" data-id="z5O6jEzHCQQ" data-title="Folk">Folk songs</button>
 
-        <button class="music-item" data-id="7T4Vkz5lruI" data-title="K Ballad">K Ballad</button>
-        <button class="music-item" data-id="jlXzkOTV6MA" data-title="Pilipino">Pilipino</button>
-        <button class="music-item" data-id="CZsIfV8nV4c" data-title="Disco">Disco</button>
+        <button class="music-item" data-id="7T4Vkz5lruI" data-title="K Ballad">K-Ballad</button>
+        <button class="music-item" data-id="jlXzkOTV6MA" data-title="Pilipino">Pilipino music</button>
+        <button class="music-item" data-id="CZsIfV8nV4c" data-title="Disco">Disco music</button>
         <button class="music-item" data-id="zVhPlFFHLak" data-title="Pet Music">Pet Music</button>
       </div>
 
@@ -377,18 +373,18 @@
         <div class="player-box">
           <iframe
             id="ytPlayer"
-            src="https://www.youtube.com/embed/x2ZZn0FjI-o?rel=0&autoplay=1&mute=1&controls=0&modestbranding=1&playsinline=1"
+            src=""
             title="AI Music Box Player"
             loading="eager"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowfullscreen>
           </iframe>
-          <div class="player-placeholder" id="playerPlaceholder">Audio Playing</div>
+          <div class="player-placeholder" id="playerPlaceholder">Random Audio Playing</div>
         </div>
 
         <div class="now-playing">
-          <div><strong>Now Playing</strong> <span id="nowPlayingTitle">Reggae</span></div>
-          <div>Select another genre above.</div>
+          <div><strong>Now Playing</strong> <span id="nowPlayingTitle">Loading...</span></div>
+          <div>Random play on entry / sound on click.</div>
         </div>
       </div>
     </section>
@@ -408,7 +404,26 @@
     const mobileMenu = document.getElementById("mobileMenu");
     const player = document.getElementById("ytPlayer");
     const nowPlayingTitle = document.getElementById("nowPlayingTitle");
-    const musicItems = document.querySelectorAll(".music-item");
+    const musicItems = Array.from(document.querySelectorAll(".music-item"));
+
+    const tracks = musicItems.map(item => ({
+      id: item.dataset.id,
+      title: item.dataset.title,
+      el: item
+    }));
+
+    function setActiveButton(videoId) {
+      musicItems.forEach(btn => btn.classList.remove("active"));
+      const target = musicItems.find(btn => btn.dataset.id === videoId);
+      if (target) target.classList.add("active");
+    }
+
+    function playTrack(videoId, title, muted = false) {
+      const muteValue = muted ? 1 : 0;
+      player.src = `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1&mute=${muteValue}&controls=0&modestbranding=1&playsinline=1`;
+      nowPlayingTitle.textContent = title;
+      setActiveButton(videoId);
+    }
 
     if (menuBtn && mobileMenu) {
       menuBtn.addEventListener("click", function (e) {
@@ -453,13 +468,13 @@
       item.addEventListener("click", function () {
         const videoId = this.dataset.id;
         const title = this.dataset.title;
-
-        player.src = `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=1&mute=1&controls=0&modestbranding=1&playsinline=1`;
-        nowPlayingTitle.textContent = title;
-
-        musicItems.forEach(btn => btn.classList.remove("active"));
-        this.classList.add("active");
+        playTrack(videoId, title, false);
       });
+    });
+
+    window.addEventListener("DOMContentLoaded", function () {
+      const randomTrack = tracks[Math.floor(Math.random() * tracks.length)];
+      playTrack(randomTrack.id, randomTrack.title, true);
     });
   </script>
 </body>
