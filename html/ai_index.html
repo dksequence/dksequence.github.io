@@ -1,1 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Music Box</title>
 
+<style>
+body {
+  margin: 0;
+  background: #000;
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
+
+/* 전체 레이아웃 */
+.wrap {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 100px 20px 60px;
+}
+
+/* 타이틀 */
+.title {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.title h1 {
+  font-size: 48px;
+  letter-spacing: 2px;
+}
+
+.title p {
+  opacity: 0.6;
+  margin-top: 10px;
+}
+
+/* 앨범 그리드 */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 40px;
+}
+
+.item {
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,0.15);
+  text-align: center;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.item:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.item.active {
+  background: rgba(255,255,255,0.15);
+}
+
+/* 플레이어 */
+.player {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 0 40px rgba(255,255,255,0.08);
+}
+
+iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* 모바일 */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .title h1 {
+    font-size: 32px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+  <!-- 타이틀 -->
+  <div class="title">
+    <h1>AI MUSIC BOX</h1>
+    <p>Artificial Intelligence × Human Consciousness</p>
+  </div>
+
+  <!-- 앨범 선택 -->
+  <div class="grid">
+
+    <div class="item active" onclick="play('x2ZZn0FjI-o', this)">REGGAE</div>
+    <div class="item" onclick="play('AtrLr0KYF8I', this)">R&B</div>
+    <div class="item" onclick="play('xwjZeeY638o', this)">JAZZ</div>
+    <div class="item" onclick="play('ytxF-xEqcsY', this)">FRENCH POP</div>
+
+    <div class="item" onclick="play('scvshcnk64c', this)">J-POP</div>
+    <div class="item" onclick="play('swPSMZD2_rQ', this)">BALLAD</div>
+    <div class="item" onclick="play('UYRjgUAo6XE', this)">GROOVE RAP</div>
+    <div class="item" onclick="play('z5O6jEzHCQQ', this)">FOLK</div>
+
+    <div class="item" onclick="play('7T4Vkz5lruI', this)">K BALLAD</div>
+    <div class="item" onclick="play('jlXzkOTV6MA', this)">PILIPINO</div>
+    <div class="item" onclick="play('CZsIfV8nV4c', this)">DISCO</div>
+    <div class="item" onclick="play('zVhPlFFHLak', this)">PET MUSIC</div>
+
+  </div>
+
+  <!-- 플레이어 -->
+  <div class="player">
+    <iframe id="player"
+      src="https://www.youtube.com/embed/x2ZZn0FjI-o?autoplay=1&mute=1"
+      allow="autoplay"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+</div>
+
+<script>
+function play(id, el) {
+  document.getElementById("player").src =
+    "https://www.youtube.com/embed/" + id + "?autoplay=1";
+
+  document.querySelectorAll(".item").forEach(e => e.classList.remove("active"));
+  el.classList.add("active");
+}
+</script>
+
+</body>
+</html>
