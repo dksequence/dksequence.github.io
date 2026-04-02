@@ -1,1 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DKsequence — Interesting Experiment</title>
 
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .page-wrap {
+      width: min(1200px, 94%);
+      margin: 0 auto;
+      padding: 40px 0 100px;
+    }
+
+    .sequence-label {
+      font-size: 13px;
+      color: #888;
+      letter-spacing: 0.12em;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .top-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .top-tab {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #ccc;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    .top-tab.current {
+      background: #fff;
+      color: #000;
+      border-color: #fff;
+    }
+
+    h1 {
+      font-size: clamp(40px, 6vw, 80px);
+      margin-bottom: 40px;
+      letter-spacing: -0.02em;
+    }
+
+    .center-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 50vh;
+      text-align: center;
+    }
+
+    .question {
+      font-size: clamp(120px, 20vw, 260px);
+      font-weight: 700;
+      line-height: 1;
+      opacity: 0.08;
+      margin-bottom: 20px;
+    }
+
+    .desc {
+      font-size: 18px;
+      color: #bbb;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    .desc strong {
+      color: #fff;
+    }
+
+    @media (max-width: 700px) {
+      .top-tabs {
+        grid-template-columns: 1fr;
+      }
+
+      .question {
+        font-size: 140px;
+      }
+
+      .desc {
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="topbar">
+    <a href="./index.html" class="logo">DKsequence</a>
+  </header>
+
+  <main class="page-wrap">
+
+    <div class="sequence-label">Experimental Space</div>
+
+    <div class="top-tabs">
+      <a href="ai_index.html" class="top-tab">1. AI Music Box</a>
+      <a href="ai_con.html" class="top-tab">2. AI Short Reels</a>
+      <a href="time_teller.html" class="top-tab">3. Time Teller</a>
+      <a href="comming_index.html" class="top-tab current">4. Coming Soon</a>
+    </div>
+
+    <h1>Interesting Experiment</h1>
+
+    <div class="center-area">
+      <div class="question">?</div>
+      <div class="desc">
+        Looking for the next <strong>interesting idea</strong>.<br>
+        A space where small experiments turn into new sequences.<br><br>
+        Coming soon.
+      </div>
+    </div>
+
+  </main>
+
+</body>
+</html>
