@@ -120,7 +120,7 @@
 
     .top-tabs {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 10px;
       margin-top: 14px;
       margin-bottom: 18px;
@@ -342,6 +342,7 @@
       }
 
       .top-tabs {
+        grid-template-columns: 1fr;
         gap: 8px;
         margin-top: 10px;
         margin-bottom: 14px;
@@ -397,12 +398,12 @@
 <body id="top">
 
   <header class="topbar">
-    <a href="../index.html" class="logo">DKsequence</a>
+    <a href="./index.html" class="logo">DKsequence</a>
     <button class="menu-btn" id="menuBtn" aria-label="Menu">☰</button>
   </header>
 
   <nav class="mobile-menu" id="mobileMenu">
-    <a href="../index.html">Home</a>
+    <a href="./index.html">Home</a>
     <a href="#sequence12">Sequence 12</a>
     <a href="#video-gallery">Gallery</a>
   </nav>
@@ -414,6 +415,8 @@
       <div class="top-tabs">
         <a href="ai_index.html" class="top-tab">1. AI Music Box</a>
         <a href="ai_con.html" class="top-tab current">2. AI Short Reels</a>
+        <a href="time_teller.html" class="top-tab">3. Time Teller</a>
+        <a href="time_teller.html" class="top-tab">4. Coming Soon</a>
       </div>
 
       <h1>AI Short Reels</h1>
@@ -430,7 +433,7 @@
 
     <div class="bottom-actions">
       <a href="#top" class="bottom-btn">Back to Top</a>
-      <a href="../index.html" class="bottom-btn">Home</a>
+      <a href="./index.html" class="bottom-btn">Home</a>
     </div>
   </main>
 
@@ -520,7 +523,7 @@
       const card = document.createElement("button");
       card.type = "button";
       card.className = "video-card";
-      card.setAttribute("aria-label", item.title);
+      card.setAttribute("aria-label", `${item.title} play`);
 
       card.innerHTML = `
         <div class="video-thumb-wrap">
