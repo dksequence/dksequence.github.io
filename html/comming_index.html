@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DKsequence — Interesting Experiment</title>
 
+  <link rel="stylesheet" href="../css/menu.css" />
+
   <style>
     * {
       box-sizing: border-box;
@@ -56,30 +58,6 @@
       text-transform: uppercase;
     }
 
-    .top-tabs {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .top-tab {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px;
-      border: 1px solid rgba(255,255,255,0.2);
-      color: #ccc;
-      font-size: 13px;
-      text-transform: uppercase;
-    }
-
-    .top-tab.current {
-      background: #fff;
-      color: #000;
-      border-color: #fff;
-    }
-
     h1 {
       font-size: clamp(40px, 6vw, 80px);
       margin-bottom: 40px;
@@ -115,8 +93,9 @@
     }
 
     @media (max-width: 700px) {
-      .top-tabs {
-       grid-template-columns: repeat(2, minmax(0, 1fr));
+      .page-wrap {
+        width: 100%;
+        padding: 22px 14px 80px;
       }
 
       .question {
@@ -131,13 +110,11 @@
 </head>
 
 <body>
-
   <header class="topbar">
-    <a href="./index.html" class="logo">DKsequence</a>
+    <a href="../index.html" class="logo">DKsequence</a>
   </header>
 
   <main class="page-wrap">
-
     <div class="sequence-label">Experimental Space</div>
 
     <div class="top-tabs">
@@ -157,8 +134,6 @@
         Coming soon.
       </div>
     </div>
-
   </main>
-
 </body>
 </html>
