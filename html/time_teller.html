@@ -1,167 +1,733 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>DKsequence | Time Teller</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DKsequence | Time Teller</title>
 
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#000;color:#fff;font-family:Arial,sans-serif}
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-/* TOP */
-.topbar{
-display:flex;justify-content:space-between;
-padding:20px 24px;border-bottom:1px solid rgba(255,255,255,0.08)
-}
-.logo{font-size:24px;font-weight:700}
+    html {
+      scroll-behavior: smooth;
+    }
 
-/* MENU */
-.top-tabs{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:10px;
-margin:20px 0;
-}
-.top-tab{
-display:flex;justify-content:center;align-items:center;
-min-height:52px;
-border:1px solid rgba(255,255,255,0.2);
-font-size:13px;text-transform:uppercase;
-color:#cfcfcf;
-}
-.top-tab.current{
-background:#fff;color:#000;
-}
+    body {
+      background: #000;
+      color: #fff;
+      font-family: Arial, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
 
-/* TITLE */
-.title-row{
-display:flex;justify-content:space-between;
-align-items:center;margin-bottom:16px
-}
-h1{font-size:48px}
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-/* INTERVAL */
-.interval-top{
-border:1px solid rgba(255,255,255,0.1);
-padding:16px;margin-bottom:16px
-}
+    button,
+    select,
+    input {
+      font: inherit;
+    }
 
-/* CLOCK */
-.clock{
-font-size:72px;
-font-weight:700;
-letter-spacing:-2px;
-}
+    button {
+      border: 0;
+      background: transparent;
+      color: inherit;
+      cursor: pointer;
+    }
 
-/* MOBILE */
-@media(max-width:700px){
-  .top-tabs {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-    margin-top: 10px;
-    margin-bottom: 14px;
-}
-</style>
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      color: #fff;
+    }
+
+    .menu-btn {
+      display: block;
+      font-size: 30px;
+      line-height: 1;
+      user-select: none;
+      z-index: 1002;
+    }
+
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.96);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 34px;
+      transform: translateY(-100%);
+      transition: transform 0.3s ease;
+      z-index: 1001;
+      pointer-events: none;
+    }
+
+    .mobile-menu.active {
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .mobile-menu a {
+      font-size: 28px;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .page-wrap {
+      width: min(1280px, 94%);
+      margin: 0 auto;
+      padding: 26px 0 90px;
+    }
+
+    .intro {
+      margin-bottom: 18px;
+    }
+
+    .sequence-label {
+      font-size: 13px;
+      color: #8f8f8f;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .title-row h1 {
+      font-size: clamp(38px, 6vw, 72px);
+      line-height: 0.96;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin: 0;
+    }
+
+    .title-start-btn {
+      min-width: 160px;
+      min-height: 56px;
+      padding: 16px 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 13px;
+      font-weight: 700;
+      background: #fff;
+      color: #000;
+      border: 1px solid #fff;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .title-start-btn.off {
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.14);
+    }
+
+    .title-start-btn:hover {
+      background: #f0f0f0;
+    }
+
+    .title-start-btn.off:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.24);
+    }
+
+    .interval-top {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .section-label {
+      font-size: 12px;
+      color: #8f8f8f;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .interval-display {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .interval-num {
+      font-size: 42px;
+      line-height: 1;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.04em;
+    }
+
+    .interval-unit {
+      font-size: 15px;
+      color: #a8a8a8;
+    }
+
+    input[type=range] {
+      width: 100%;
+      height: 2px;
+      appearance: none;
+      background: rgba(255,255,255,0.18);
+      outline: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fff;
+      border: 0;
+      cursor: pointer;
+    }
+
+    input[type=range]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fff;
+      border: 0;
+      cursor: pointer;
+    }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+      font-size: 11px;
+      color: #7f7f7f;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .panel-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .panel,
+    .side-panel {
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.03);
+      backdrop-filter: blur(6px);
+    }
+
+    .panel {
+      padding: 24px;
+      min-height: 100%;
+    }
+
+    .side-panel {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .clock-card {
+      border: 1px solid rgba(255,255,255,0.1);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      padding: 26px 22px 20px;
+      margin-bottom: 18px;
+    }
+
+    .clock-time {
+      font-size: clamp(54px, 9vw, 108px);
+      line-height: 0.95;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      color: #fff;
+    }
+
+    .clock-date {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #9f9f9f;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .status-box {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+      padding: 16px 18px;
+    }
+
+    .status-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      margin-top: 6px;
+      background: rgba(255,255,255,0.22);
+      flex-shrink: 0;
+    }
+
+    .status-dot.on {
+      background: #fff;
+      box-shadow: 0 0 12px rgba(255,255,255,0.45);
+    }
+
+    .status-text {
+      font-size: 14px;
+      color: #d5d5d5;
+      line-height: 1.65;
+    }
+
+    .next-text {
+      margin-top: 6px;
+      font-size: 13px;
+      color: #8f8f8f;
+      line-height: 1.6;
+    }
+
+    .section {
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.02);
+      padding: 18px;
+    }
+
+    .voice-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .voice-row select {
+      flex: 1;
+      background: #0a0a0a;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.14);
+      padding: 14px 14px;
+      outline: none;
+      min-width: 0;
+    }
+
+    .mini-btn {
+      padding: 14px 16px;
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      white-space: nowrap;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .mini-btn:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.24);
+    }
+
+    .btn-area {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: auto;
+    }
+
+    .btn-sub {
+      min-height: 56px;
+      padding: 16px 18px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 13px;
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.14);
+      font-weight: 600;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .btn-sub:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.24);
+    }
+
+    @media (max-width: 980px) {
+      .panel-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .topbar {
+        padding: 18px 16px;
+      }
+
+      .logo {
+        font-size: 22px;
+      }
+
+      .mobile-menu a {
+        font-size: 24px;
+      }
+
+      .page-wrap {
+        width: 100%;
+        padding: 20px 14px 72px;
+      }
+
+      .title-row {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .title-start-btn {
+        width: 100%;
+      }
+
+      .panel,
+      .side-panel {
+        padding: 16px;
+      }
+
+      .clock-card {
+        padding: 20px 16px 16px;
+        margin-bottom: 14px;
+      }
+
+      .clock-time {
+        font-size: clamp(52px, 16vw, 84px);
+      }
+
+      .clock-date {
+        margin-top: 10px;
+        font-size: 12px;
+      }
+
+      .section,
+      .interval-top {
+        padding: 14px;
+      }
+
+      .interval-num {
+        font-size: 36px;
+      }
+
+      .voice-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .mini-btn {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
+<body id="top">
 
-<body>
+  <header class="topbar">
+    <a href="../index.html" class="logo">DKsequence</a>
+    <button class="menu-btn" id="menuBtn" aria-label="Menu">☰</button>
+  </header>
 
-<header class="topbar">
-<div class="logo">DKsequence</div>
-</header>
+  <nav class="mobile-menu" id="mobileMenu">
+    <a href="../index.html">Home</a>
+    <a href="#top">Time Teller</a>
+  </nav>
 
-<div class="page-wrap">
+  <main class="page-wrap">
+    <section class="intro">
+      <div class="sequence-label">Utility / Time Teller</div>
 
-<div class="top-tabs">
-<a href="ai_index.html" class="top-tab">1. AI Music Box</a>
-<a href="ai_con.html" class="top-tab">2. AI Short Reels</a>
-<a href="time_teller.html" class="top-tab current">3. Time Teller</a>
-<a href="comming_index.html" class="top-tab">4. Coming Soon</a>
-</div>
+      <div class="title-row">
+        <h1>Time Teller</h1>
+        <button class="title-start-btn off" id="toggle-btn" onclick="toggleActive()">Start</button>
+      </div>
 
-<div class="title-row">
-<h1>Time Teller</h1>
-</div>
+      <div class="interval-top">
+        <div class="section-label">Interval</div>
+        <div class="interval-display">
+          <span class="interval-num" id="interval-num">1</span>
+          <span class="interval-unit">minutes</span>
+        </div>
 
-<div class="interval-top">
-<div>
-<span id="interval-num">5</span> minutes
-</div>
-<input type="range" min="1" max="60" value="5"
-oninput="updateInterval(this.value)">
-</div>
+        <input
+          type="range"
+          id="interval"
+          min="1"
+          max="60"
+          value="1"
+          step="1"
+          oninput="updateInterval(this.value)"
+        />
 
-<div class="clock" id="clock">00:00</div>
+        <div class="range-labels">
+          <span>1 min</span>
+          <span>60 min</span>
+        </div>
+      </div>
+    </section>
 
-</div>
+    <section class="panel-grid">
+      <div class="panel">
+        <div class="clock-card">
+          <div class="clock-time" id="clock">00:00:00</div>
+          <div class="clock-date" id="clock-date">Loading date...</div>
+        </div>
 
-<script>
-var intervalMin = 5;
-var nextAnnounce = null;
-var lastKey = '';
+        <div class="status-box">
+          <div class="status-row">
+            <div class="status-dot" id="status-dot"></div>
+            <div>
+              <div class="status-text" id="status-text">Press start to activate the time teller.</div>
+              <div class="next-text" id="next-text"></div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-function updateClock(){
-var now = new Date();
+      <aside class="side-panel">
+        <div class="section">
+          <div class="section-label">Voice</div>
+          <div class="voice-row">
+            <select id="voice-select" onchange="onVoiceChange(this.value)">
+              <option value="">Default voice</option>
+            </select>
+            <button class="mini-btn" onclick="testVoice()">Test</button>
+          </div>
+        </div>
 
-var h = now.getHours()%12 || 12;
-var m = String(now.getMinutes()).padStart(2,'0');
+        <div class="btn-area">
+          <button class="btn-sub" onclick="speakNow()">Speak now</button>
+        </div>
+      </aside>
+    </section>
+  </main>
 
-document.getElementById('clock').textContent = h+':'+m;
+  <script>
+    var active = false;
+    var intervalMin = 1;
+    var voices = [];
+    var selectedVoice = null;
+    var nextAnnounce = null;
+    var lastSpokenKey = '';
 
-if(nextAnnounce){
-var diff = nextAnnounce - now;
+    var DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-if(diff <= 1000){
-var key = now.getHours()+':'+now.getMinutes();
-if(lastKey!==key){
-lastKey=key;
-speakTime();
-scheduleNext();
-}
-}
-}
-}
+    const menuBtn = document.getElementById("menuBtn");
+    const mobileMenu = document.getElementById("mobileMenu");
 
-function scheduleNext(){
-var now = new Date();
-var next = new Date(now);
+    if (menuBtn && mobileMenu) {
+      menuBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        mobileMenu.classList.toggle("active");
+      });
 
-next.setSeconds(0);
-var min = next.getMinutes();
-var add = intervalMin - (min % intervalMin);
-next.setMinutes(min + add);
+      mobileMenu.querySelectorAll("a").forEach(function (link) {
+        link.addEventListener("click", function () {
+          mobileMenu.classList.remove("active");
+        });
+      });
 
-nextAnnounce = next;
-}
+      document.addEventListener("click", function (e) {
+        if (!mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+          mobileMenu.classList.remove("active");
+        }
+      });
+    }
 
-function speakTime(){
-var now = new Date();
-var h = now.getHours()%12 || 12;
-var m = String(now.getMinutes()).padStart(2,'0');
+    function updateClock() {
+      var now = new Date();
+      var h = String(now.getHours()).padStart(2, '0');
+      var m = String(now.getMinutes()).padStart(2, '0');
+      var s = String(now.getSeconds()).padStart(2, '0');
 
-var text = h+':'+m;
+      document.getElementById('clock').textContent = h + ':' + m + ':' + s;
 
-if(window.speechSynthesis){
-speechSynthesis.cancel();
-var u = new SpeechSynthesisUtterance(text);
-u.lang='ko-KR';
-speechSynthesis.speak(u);
-}
-}
+      var year = now.getFullYear();
+      var month = String(now.getMonth() + 1).padStart(2, '0');
+      var date = String(now.getDate()).padStart(2, '0');
+      var day = DAYS[now.getDay()];
+      document.getElementById('clock-date').textContent = year + '.' + month + '.' + date + ' / ' + day;
 
-function updateInterval(val){
-intervalMin=parseInt(val);
-document.getElementById('interval-num').textContent=val;
-scheduleNext();
-}
+      if (active && nextAnnounce) {
+        var diff = nextAnnounce.getTime() - now.getTime();
 
-/* 🔥 자동 시작 */
-window.onload = function(){
-scheduleNext();
-setInterval(updateClock,500);
-}
-</script>
+        if (diff <= 1500) {
+          var speakKey = now.getFullYear() + '-' +
+            String(now.getMonth() + 1).padStart(2, '0') + '-' +
+            String(now.getDate()).padStart(2, '0') + ' ' +
+            String(now.getHours()).padStart(2, '0') + ':' +
+            String(now.getMinutes()).padStart(2, '0');
 
+          if (lastSpokenKey !== speakKey) {
+            lastSpokenKey = speakKey;
+            speakNow();
+            scheduleNext();
+          }
+        } else {
+          var totalSec = Math.ceil(diff / 1000);
+          var mm = String(Math.floor(totalSec / 60)).padStart(2, '0');
+          var ss = String(totalSec % 60).padStart(2, '0');
+          document.getElementById('next-text').textContent = 'Next in ' + mm + ':' + ss;
+        }
+      }
+    }
+
+    function scheduleNext() {
+      var now = new Date();
+      var next = new Date(now);
+
+      next.setSeconds(0);
+      next.setMilliseconds(0);
+
+      var minute = next.getMinutes();
+      var remainder = minute % intervalMin;
+
+      if (remainder === 0 && now.getSeconds() === 0) {
+      } else {
+        var addMin = remainder === 0 ? intervalMin : (intervalMin - remainder);
+        next.setMinutes(minute + addMin);
+      }
+
+      nextAnnounce = next;
+    }
+
+    function speakNow() {
+      var now = new Date();
+      var hour12 = now.getHours() % 12 || 12;
+      var minute = String(now.getMinutes()).padStart(2, '0');
+      var text = hour12 + ':' + minute;
+
+      speak(text);
+      document.getElementById('status-text').textContent = text;
+    }
+
+    function speak(text) {
+      if (!window.speechSynthesis) return;
+
+      window.speechSynthesis.cancel();
+
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = 'ko-KR';
+      if (selectedVoice) u.voice = selectedVoice;
+      u.rate = 0.95;
+
+      window.speechSynthesis.speak(u);
+    }
+
+    function testVoice() {
+      speak('7:05');
+    }
+
+    function onVoiceChange(val) {
+      selectedVoice = val !== '' ? voices[parseInt(val, 10)] : null;
+    }
+
+    function toggleActive() {
+      active = !active;
+      var btn = document.getElementById('toggle-btn');
+      var dot = document.getElementById('status-dot');
+
+      if (active) {
+        lastSpokenKey = '';
+        scheduleNext();
+        btn.textContent = 'Stop';
+        btn.classList.remove('off');
+        dot.classList.add('on');
+        document.getElementById('status-text').textContent = 'Speaking every ' + intervalMin + ' minutes.';
+      } else {
+        nextAnnounce = null;
+        btn.textContent = 'Start';
+        btn.classList.add('off');
+        dot.classList.remove('on');
+        document.getElementById('status-text').textContent = 'Press start to activate the time teller.';
+        document.getElementById('next-text').textContent = '';
+      }
+    }
+
+    function updateInterval(val) {
+      intervalMin = parseInt(val, 10);
+      document.getElementById('interval-num').textContent = val;
+
+      if (active) {
+        lastSpokenKey = '';
+        scheduleNext();
+      }
+    }
+
+    function loadVoices() {
+      voices = window.speechSynthesis.getVoices();
+      var sel = document.getElementById('voice-select');
+      var koVoices = voices.filter(function(v) {
+        return v.lang && v.lang.startsWith('ko');
+      });
+      var list = koVoices.length > 0 ? koVoices : voices;
+
+      sel.innerHTML = '';
+
+      if (list.length === 0) {
+        sel.innerHTML = '<option value="">Default voice</option>';
+        selectedVoice = null;
+        return;
+      }
+
+      list.forEach(function(v) {
+        var idx = voices.indexOf(v);
+        var opt = document.createElement('option');
+        opt.value = idx;
+        opt.textContent = v.name;
+        sel.appendChild(opt);
+      });
+
+      selectedVoice = list[0];
+      sel.value = voices.indexOf(list[0]);
+    }
+
+    if (window.speechSynthesis) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    loadVoices();
+    setInterval(updateClock, 250);
+    updateClock();
+  </script>
 </body>
 </html>
