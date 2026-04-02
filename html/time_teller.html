@@ -570,6 +570,7 @@
     var selectedVoice = null;
     var nextAnnounce = null;
     var lastSpokenKey = '';
+    var wakeLock = null;
 
     var DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -594,6 +595,42 @@
         }
       });
     }
+
+    async function requestWakeLock() {
+      try {
+        if ('wakeLock' in navigator && document.visibilityState === 'visible') {
+          wakeLock = await navigator.wakeLock.request('screen');
+
+          wakeLock.addEventListener('release', function () {
+            wakeLock = null;
+            if (active) {
+              document.getElementById('status-text').textContent =
+                'Speaking every ' + intervalMin + ' minutes. Screen lock prevention released.';
+            }
+          });
+        }
+      } catch (err) {
+        console.log('Wake Lock error:', err);
+      }
+    }
+
+    async function releaseWakeLock() {
+      try {
+        if (wakeLock) {
+          await wakeLock.release();
+          wakeLock = null;
+        }
+      } catch (err) {
+        console.log('Wake Lock release error:', err);
+      }
+    }
+
+    document.addEventListener('visibilitychange', async function () {
+      if (document.visibilityState === 'visible' && active) {
+        await requestWakeLock();
+        scheduleNext();
+      }
+    });
 
     function updateClock() {
       var now = new Date();
@@ -683,7 +720,7 @@
       selectedVoice = val !== '' ? voices[parseInt(val, 10)] : null;
     }
 
-    function toggleActive() {
+    async function toggleActive() {
       active = !active;
       var btn = document.getElementById('toggle-btn');
       var dot = document.getElementById('status-dot');
@@ -695,6 +732,7 @@
         btn.classList.remove('off');
         dot.classList.add('on');
         document.getElementById('status-text').textContent = 'Speaking every ' + intervalMin + ' minutes.';
+        await requestWakeLock();
       } else {
         nextAnnounce = null;
         btn.textContent = 'Start';
@@ -702,6 +740,7 @@
         dot.classList.remove('on');
         document.getElementById('status-text').textContent = 'Press start to activate the time teller.';
         document.getElementById('next-text').textContent = '';
+        await releaseWakeLock();
       }
     }
 
