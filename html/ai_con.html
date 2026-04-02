@@ -99,7 +99,7 @@
     }
 
     .page-wrap {
-      width: min(1440px, 94%);
+      width: min(1600px, 94%);
       margin: 0 auto;
       padding: 34px 0 100px;
     }
@@ -176,7 +176,7 @@
 
     .video-grid {
       display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
+      grid-template-columns: repeat(8, minmax(0, 1fr));
       gap: 16px;
       align-items: start;
     }
@@ -188,10 +188,7 @@
       overflow: hidden;
       cursor: pointer;
       text-align: left;
-    }
-
-    .video-card.landscape {
-      grid-column: span 2;
+      width: 100%;
     }
 
     .video-thumb-wrap {
@@ -199,14 +196,7 @@
       width: 100%;
       overflow: hidden;
       background: #111;
-    }
-
-    .video-card.portrait .video-thumb-wrap {
       aspect-ratio: 9 / 16;
-    }
-
-    .video-card.landscape .video-thumb-wrap {
-      aspect-ratio: 16 / 9;
     }
 
     .video-thumb-wrap iframe,
@@ -241,8 +231,8 @@
 
     .play-badge::before {
       content: "";
-      width: 68px;
-      height: 68px;
+      width: 56px;
+      height: 56px;
       border-radius: 999px;
       background: rgba(0, 0, 0, 0.55);
       box-shadow: 0 0 0 1px rgba(255,255,255,0.12);
@@ -251,28 +241,28 @@
     .play-badge::after {
       content: "";
       position: absolute;
-      margin-left: 6px;
-      border-left: 20px solid #fff;
-      border-top: 12px solid transparent;
-      border-bottom: 12px solid transparent;
+      margin-left: 5px;
+      border-left: 16px solid #fff;
+      border-top: 10px solid transparent;
+      border-bottom: 10px solid transparent;
     }
 
     .video-meta {
-      padding: 12px 12px 14px;
+      padding: 10px 10px 12px;
     }
 
     .video-meta h3 {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
       color: #fff;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
       line-height: 1.45;
     }
 
     .video-meta p {
-      font-size: 12px;
+      font-size: 11px;
       color: #bdbdbd;
-      line-height: 1.5;
+      line-height: 1.45;
     }
 
     .footer-note {
@@ -313,13 +303,15 @@
       transform: translateY(-1px);
     }
 
-    @media (max-width: 1100px) {
+    @media (max-width: 1200px) {
       .video-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(6, minmax(0, 1fr));
       }
+    }
 
-      .video-card.landscape {
-        grid-column: span 2;
+    @media (max-width: 900px) {
+      .video-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
       }
     }
 
@@ -367,31 +359,31 @@
       }
 
       .video-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
       }
 
-      .video-card.landscape {
-        grid-column: span 2;
+      .video-meta {
+        padding: 8px 8px 10px;
       }
 
       .video-meta h3 {
-        font-size: 12px;
-      }
-
-      .video-meta p {
         font-size: 11px;
       }
 
+      .video-meta p {
+        font-size: 10px;
+      }
+
       .play-badge::before {
-        width: 56px;
-        height: 56px;
+        width: 44px;
+        height: 44px;
       }
 
       .play-badge::after {
-        border-left-width: 16px;
-        border-top-width: 10px;
-        border-bottom-width: 10px;
+        border-left-width: 13px;
+        border-top-width: 8px;
+        border-bottom-width: 8px;
       }
 
       .bottom-btn {
@@ -444,27 +436,31 @@
 
   <script>
     const videoItems = [
-      { id: "_qAD-cjmdiI", type: "short", title: "AI Short 01" },
-      { id: "JuETvaI-45w", type: "short", title: "AI Short 02" },
-      { id: "c2cQHXdV7nc", type: "short", title: "AI Short 03" },
-      { id: "uZdk1gZv6z8", type: "short", title: "AI Short 04" },
-      { id: "lFklM_AJ8Fw", type: "short", title: "AI Short 05" },
-      { id: "yWIc1276xxE", type: "short", title: "AI Short 06" },
-      { id: "MKC390u4LWw", type: "short", title: "AI Short 07" },
-      { id: "rNkP5iDQJnY", type: "short", title: "AI Short 08" },
-      { id: "ApoFtBjptbo", type: "short", title: "AI Short 09" },
-      { id: "gvRTCagqVpU", type: "short", title: "AI Short 10" },
-      { id: "xgWqegkY2g8", type: "short", title: "AI Short 11" },
-      { id: "YZwdbYRJSi0", type: "short", title: "AI Short 12" },
+      { id: "GZGr7ig7iO4", title: "Song 01", category: "Song" },
+      { id: "3sNfbxwCSek", title: "Song 02", category: "Song" },
+      { id: "JoGncsYNYlk", title: "Song 03", category: "Song" },
+      { id: "8qc_3LRBoLM", title: "Song 04", category: "Song" },
+      { id: "Xduw5Q4ldLc", title: "Song 05", category: "Song" },
+      { id: "zbhU3zahzxs", title: "Song 06", category: "Song" },
+      { id: "K8YJLbz7wsw", title: "Song 07", category: "Song" },
+      { id: "JHDAKL_gD3k", title: "Song 08", category: "Song" },
+      { id: "xkjbsWLS2yI", title: "Song 09", category: "Song" },
+      { id: "s0A3jDWYvqg", title: "Song 10", category: "Song" },
 
-      { id: "FgxUgPV5lWg", type: "landscape", title: "AI Reel 01" },
-      { id: "3GxIAvBo8kg", type: "landscape", title: "AI Reel 02" },
-      { id: "KtCobx8fzDU", type: "landscape", title: "AI Reel 03" },
-      { id: "jj7dYvrkSKc", type: "landscape", title: "AI Reel 04" }
+      { id: "sZYZL3bj5bw", title: "Runway 01", category: "Runway" },
+      { id: "tfbDnqLa_hk", title: "Runway 02", category: "Runway" },
+      { id: "-H8qI9YZVwI", title: "Runway 03", category: "Runway" },
+      { id: "8Pet6pLK5UU", title: "Runway 04", category: "Runway" },
+      { id: "WMPglA0LWKI", title: "Runway 05", category: "Runway" },
+      { id: "0bYll3pQqmw", title: "Runway 06", category: "Runway" },
+      { id: "A_N0_bO3Tc8", title: "Runway 07", category: "Runway" },
+      { id: "4Pglm7d70o4", title: "Runway 08", category: "Runway" },
+      { id: "3fQHMD_Exd4", title: "Runway 09", category: "Runway" },
+      { id: "AHeksHHzwUQ", title: "Runway 10", category: "Runway" }
     ];
 
     const thumbnailOverrides = {
-      // "_qAD-cjmdiI": "../images/ai-thumb-01.jpg"
+      // "GZGr7ig7iO4": "../images/custom-thumb.jpg"
     };
 
     const videoGrid = document.getElementById("videoGrid");
@@ -481,7 +477,7 @@
     function createCard(item) {
       const card = document.createElement("button");
       card.type = "button";
-      card.className = `video-card ${item.type === "landscape" ? "landscape" : "portrait"}`;
+      card.className = "video-card";
       card.setAttribute("aria-label", item.title);
 
       card.innerHTML = `
@@ -491,7 +487,7 @@
         </div>
         <div class="video-meta">
           <h3>${item.title}</h3>
-          <p>${item.type === "landscape" ? "Horizontal video" : "Vertical short"}</p>
+          <p>${item.category}</p>
         </div>
       `;
 
