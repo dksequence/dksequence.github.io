@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DKsequence | Time Teller</title>
 
+  <link rel="stylesheet" href="../css/menu.css" />
+
   <style>
     * {
       box-sizing: border-box;
@@ -476,6 +478,13 @@
     <section class="intro">
       <div class="sequence-label">Utility / Time Teller</div>
 
+      <div class="top-tabs">
+        <a href="ai_index.html" class="top-tab">1. AI Music Box</a>
+        <a href="ai_con.html" class="top-tab">2. AI Short Reels</a>
+        <a href="time_teller.html" class="top-tab current">3. Time Teller</a>
+        <a href="comming_index.html" class="top-tab">4. Coming Soon</a>
+      </div>
+
       <div class="title-row">
         <h1>Time Teller</h1>
         <button class="title-start-btn off" id="toggle-btn" onclick="toggleActive()">Start</button>
@@ -484,7 +493,7 @@
       <div class="interval-top">
         <div class="section-label">Interval</div>
         <div class="interval-display">
-          <span class="interval-num" id="interval-num">1</span>
+          <span class="interval-num" id="interval-num">5</span>
           <span class="interval-unit">minutes</span>
         </div>
 
@@ -493,7 +502,7 @@
           id="interval"
           min="1"
           max="60"
-          value="1"
+          value="5"
           step="1"
           oninput="updateInterval(this.value)"
         />
@@ -543,7 +552,7 @@
 
   <script>
     var active = false;
-    var intervalMin = 1;
+    var intervalMin = 5;
     var voices = [];
     var selectedVoice = null;
     var nextAnnounce = null;
