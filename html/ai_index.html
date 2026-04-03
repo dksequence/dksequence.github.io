@@ -153,7 +153,7 @@
       color: #ddd;
       text-align: center;
       cursor: pointer;
-      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
       font-size: 12px;
       line-height: 1;
       letter-spacing: 0.02em;
@@ -181,6 +181,21 @@
       background: #fff;
       color: #000;
       border-color: #fff;
+    }
+
+    @keyframes nowPlayingBlink {
+      0%, 100% {
+        opacity: 1;
+        box-shadow: 0 0 0 rgba(255,255,255,0);
+      }
+      50% {
+        opacity: 0.45;
+        box-shadow: 0 0 14px rgba(255,255,255,0.35);
+      }
+    }
+
+    .music-item.playing {
+      animation: nowPlayingBlink 1s ease-in-out infinite;
     }
 
     .player-box {
@@ -459,10 +474,15 @@
     const playerPlaceholder = document.getElementById("playerPlaceholder");
     const musicItems = Array.from(document.querySelectorAll(".music-item"));
 
-    function setActiveButton(videoId) {
-      musicItems.forEach(btn => btn.classList.remove("active"));
+    function setPlayingButton(videoId) {
+      musicItems.forEach(btn => {
+        btn.classList.remove("active", "playing");
+      });
+
       const target = musicItems.find(btn => btn.dataset.id === videoId);
-      if (target) target.classList.add("active");
+      if (target) {
+        target.classList.add("active", "playing");
+      }
     }
 
     function buildPlayerUrl(videoId) {
@@ -472,7 +492,7 @@
     function playTrack(videoId, title) {
       player.src = buildPlayerUrl(videoId);
       nowPlayingTitle.textContent = title;
-      setActiveButton(videoId);
+      setPlayingButton(videoId);
       playerPlaceholder.classList.add("hidden");
     }
 
