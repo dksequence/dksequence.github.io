@@ -122,12 +122,16 @@
       display: flex;
       height: 100%;
       transition: transform 0.5s ease;
+      will-change: transform;
     }
 
     .hero-slide {
       min-width: 100%;
       height: 100vh;
       position: relative;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     .hero-slide img {
@@ -135,6 +139,7 @@
       height: 100%;
       object-fit: cover;
       opacity: 0.8;
+      pointer-events: none;
     }
 
     .hero-overlay {
@@ -145,14 +150,24 @@
         rgba(0, 0, 0, 0.15),
         rgba(0, 0, 0, 0.15)
       );
+      pointer-events: none;
     }
 
-    .hero-inner {
-      position: relative;
+    .hero-slide-content {
+      position: absolute;
+      inset: 0;
       z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       text-align: center;
-      max-width: 1100px;
       padding: 0 20px;
+      pointer-events: none;
+    }
+
+    .hero-text-wrap {
+      max-width: 1100px;
+      pointer-events: none;
     }
 
     .hero-sub {
@@ -160,6 +175,8 @@
       font-style: italic;
       font-weight: 300;
       margin-bottom: 10px;
+      color: #fff;
+      text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
     }
 
     .hero-title {
@@ -167,6 +184,8 @@
       font-weight: 400;
       line-height: 0.85;
       text-transform: none;
+      color: #fff;
+      text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
     }
 
     .hero-arrow {
@@ -522,10 +541,6 @@
         right: 12px;
       }
 
-      .hero-inner {
-        max-width: 92%;
-      }
-
       .hero-sub {
         font-size: clamp(24px, 8vw, 42px);
       }
@@ -738,15 +753,10 @@
       <div class="hero-track" id="heroTrack"></div>
     </div>
 
-    <button class="hero-arrow left" id="prevBtn">&#10094;</button>
-    <button class="hero-arrow right" id="nextBtn">&#10095;</button>
+    <button class="hero-arrow left" id="prevBtn" aria-label="Previous slide">&#10094;</button>
+    <button class="hero-arrow right" id="nextBtn" aria-label="Next slide">&#10095;</button>
 
     <div class="hero-dots" id="heroDots"></div>
-
-    <div class="hero-inner">
-      <div class="hero-sub">small things become</div>
-      <div class="hero-title">wave of Sequence</div>
-    </div>
   </section>
 
   <main class="content">
@@ -868,7 +878,7 @@
         </div>
       </a>
 
-            <a href="html/ai_index.html" class="work-block seq-link" id="sequence12">
+      <a href="html/ai_index.html" class="work-block seq-link" id="sequence12">
         <div class="work-text">
           <div class="num">Sequence #12</div>
           <h2>Artificial<br>Playground sequence</h2>
@@ -878,7 +888,6 @@
           <img src="images/image-12.jpg" alt="Sequence 12 cover" />
         </div>
       </a>
-      
     </section>
   </main>
 
@@ -933,391 +942,255 @@
           FPV Drone operator
         </div>
       </div>
-
-      <div class="team-member">
-        <div class="team-photo">
-          <img src="images/staff-02.jpg" alt="Jinho Park" />
-        </div>
-        <div class="team-name">Jinho Park</div>
-
-        <div class="team-links">
-          <a class="team-link web" href="#" aria-label="Homepage">
-            <span class="team-link-label">WEB</span>
-          </a>
-          <a class="team-link yt active" href="https://www.youtube.com/watch?v=8wYcS7geNnk" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M23 12s0-3.5-.4-5.2a2.9 2.9 0 0 0-2-2C18.8 4.3 12 4.3 12 4.3s-6.8 0-8.6.5a2.9 2.9 0 0 0-2 2C1 8.5 1 12 1 12s0 3.5.4 5.2a2.9 2.9 0 0 0 2 2c1.8.5 8.6.5 8.6.5s6.8 0 8.6-.5a2.9 2.9 0 0 0 2-2c.4-1.7.4-5.2.4-5.2zM10 15.5v-7l6 3.5-6 3.5z"/>
-            </svg>
-          </a>
-          <a class="team-link ig" href="#" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2.2A2.8 2.8 0 0 0 4.2 7v10A2.8 2.8 0 0 0 7 19.8h10a2.8 2.8 0 0 0 2.8-2.8V7A2.8 2.8 0 0 0 17 4.2H7zm10.5 1.6a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2.2A2.8 2.8 0 1 0 12 14.8 2.8 2.8 0 0 0 12 9.2z"/>
-            </svg>
-          </a>
-          <a class="team-link fb active" href="https://www.facebook.com/arkology" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M13.5 22v-8h2.7l.4-3h-3.1V9.1c0-.9.3-1.5 1.6-1.5h1.7V4.9c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.3V11H8v3h2.2v8h3.3z"/>
-            </svg>
-          </a>
-        </div>
-
-        <div class="team-role">
-          Professor / Korea University<br>
-          Digital Heritage Restoration Specialist<br>
-          XR Realistic Content Expert<br>
-          AI Cinema Director
-        </div>
-      </div>
-
-      <div class="team-member">
-        <div class="team-photo">
-          <img src="images/staff-03.jpg" alt="Sophia" />
-        </div>
-        <div class="team-name">Dohee . H</div>
-
-        <div class="team-links">
-          <a class="team-link web" href="#" aria-label="Homepage">
-            <span class="team-link-label">WEB</span>
-          </a>
-          <a class="team-link yt" href="#" aria-label="YouTube">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M23 12s0-3.5-.4-5.2a2.9 2.9 0 0 0-2-2C18.8 4.3 12 4.3 12 4.3s-6.8 0-8.6.5a2.9 2.9 0 0 0-2 2C1 8.5 1 12 1 12s0 3.5.4 5.2a2.9 2.9 0 0 0 2 2c1.8.5 8.6.5 8.6.5s6.8 0 8.6-.5a2.9 2.9 0 0 0 2-2c.4-1.7.4-5.2.4-5.2zM10 15.5v-7l6 3.5-6 3.5z"/>
-            </svg>
-          </a>
-          <a class="team-link ig" href="#" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2.2A2.8 2.8 0 0 0 4.2 7v10A2.8 2.8 0 0 0 7 19.8h10a2.8 2.8 0 0 0 2.8-2.8V7A2.8 2.8 0 0 0 17 4.2H7zm10.5 1.6a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2.2A2.8 2.8 0 1 0 12 14.8 2.8 2.8 0 0 0 12 9.2z"/>
-            </svg>
-          </a>
-          <a class="team-link fb" href="#" aria-label="Facebook">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M13.5 22v-8h2.7l.4-3h-3.1V9.1c0-.9.3-1.5 1.6-1.5h1.7V4.9c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.3V11H8v3h2.2v8h3.3z"/>
-            </svg>
-          </a>
-        </div>
-
-        <div class="team-role">Photographer<br>Drone operator<br>Digital twin specialist</div>
-        <div class="team-desc"></div>
-      </div>
-
-      <div class="team-member">
-        <div class="team-photo">
-          <img src="images/staff-04.jpg" alt="Noah" />
-        </div>
-        <div class="team-name">Noah</div>
-
-        <div class="team-links">
-          <a class="team-link web" href="#" aria-label="Homepage">
-            <span class="team-link-label">WEB</span>
-          </a>
-          <a class="team-link yt" href="#" aria-label="YouTube">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M23 12s0-3.5-.4-5.2a2.9 2.9 0 0 0-2-2C18.8 4.3 12 4.3 12 4.3s-6.8 0-8.6.5a2.9 2.9 0 0 0-2 2C1 8.5 1 12 1 12s0 3.5.4 5.2a2.9 2.9 0 0 0 2 2c1.8.5 8.6.5 8.6.5s6.8 0 8.6-.5a2.9 2.9 0 0 0 2-2c.4-1.7.4-5.2.4-5.2zM10 15.5v-7l6 3.5-6 3.5z"/>
-            </svg>
-          </a>
-          <a class="team-link ig" href="#" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2.2A2.8 2.8 0 0 0 4.2 7v10A2.8 2.8 0 0 0 7 19.8h10a2.8 2.8 0 0 0 2.8-2.8V7A2.8 2.8 0 0 0 17 4.2H7zm10.5 1.6a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2.2A2.8 2.8 0 1 0 12 14.8 2.8 2.8 0 0 0 12 9.2z"/>
-            </svg>
-          </a>
-          <a class="team-link fb" href="#" aria-label="Facebook">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M13.5 22v-8h2.7l.4-3h-3.1V9.1c0-.9.3-1.5 1.6-1.5h1.7V4.9c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.3V11H8v3h2.2v8h3.3z"/>
-            </svg>
-          </a>
-        </div>
-
-        <div class="team-role">Undefined</div>
-        <div class="team-desc"></div>
-      </div>
-
-      <div class="team-member">
-        <div class="team-photo">
-          <img src="images/staff-05.jpg" alt="Olivia" />
-        </div>
-        <div class="team-name">Olivia</div>
-
-        <div class="team-links">
-          <a class="team-link web" href="#" aria-label="Homepage">
-            <span class="team-link-label">WEB</span>
-          </a>
-          <a class="team-link yt" href="#" aria-label="YouTube">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M23 12s0-3.5-.4-5.2a2.9 2.9 0 0 0-2-2C18.8 4.3 12 4.3 12 4.3s-6.8 0-8.6.5a2.9 2.9 0 0 0-2 2C1 8.5 1 12 1 12s0 3.5.4 5.2a2.9 2.9 0 0 0 2 2c1.8.5 8.6.5 8.6.5s6.8 0 8.6-.5a2.9 2.9 0 0 0 2-2c.4-1.7.4-5.2.4-5.2zM10 15.5v-7l6 3.5-6 3.5z"/>
-            </svg>
-          </a>
-          <a class="team-link ig" href="#" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2.2A2.8 2.8 0 0 0 4.2 7v10A2.8 2.8 0 0 0 7 19.8h10a2.8 2.8 0 0 0 2.8-2.8V7A2.8 2.8 0 0 0 17 4.2H7zm10.5 1.6a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2.2A2.8 2.8 0 1 0 12 14.8 2.8 2.8 0 0 0 12 9.2z"/>
-            </svg>
-          </a>
-          <a class="team-link fb" href="#" aria-label="Facebook">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M13.5 22v-8h2.7l.4-3h-3.1V9.1c0-.9.3-1.5 1.6-1.5h1.7V4.9c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.3V11H8v3h2.2v8h3.3z"/>
-            </svg>
-          </a>
-        </div>
-
-        <div class="team-role">Undefined</div>
-        <div class="team-desc"></div>
-      </div>
-
-      <div class="team-member">
-        <div class="team-photo">
-          <img src="images/staff-06.jpg" alt="Ethan" />
-        </div>
-        <div class="team-name">Ethan</div>
-
-        <div class="team-links">
-          <a class="team-link web" href="#" aria-label="Homepage">
-            <span class="team-link-label">WEB</span>
-          </a>
-          <a class="team-link yt" href="#" aria-label="YouTube">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M23 12s0-3.5-.4-5.2a2.9 2.9 0 0 0-2-2C18.8 4.3 12 4.3 12 4.3s-6.8 0-8.6.5a2.9 2.9 0 0 0-2 2C1 8.5 1 12 1 12s0 3.5.4 5.2a2.9 2.9 0 0 0 2 2c1.8.5 8.6.5 8.6.5s6.8 0 8.6-.5a2.9 2.9 0 0 0 2-2c.4-1.7.4-5.2.4-5.2zM10 15.5v-7l6 3.5-6 3.5z"/>
-            </svg>
-          </a>
-          <a class="team-link ig" href="#" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2.2A2.8 2.8 0 0 0 4.2 7v10A2.8 2.8 0 0 0 7 19.8h10a2.8 2.8 0 0 0 2.8-2.8V7A2.8 2.8 0 0 0 17 4.2H7zm10.5 1.6a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2.2A2.8 2.8 0 1 0 12 14.8 2.8 2.8 0 0 0 12 9.2z"/>
-            </svg>
-          </a>
-          <a class="team-link fb" href="#" aria-label="Facebook">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M13.5 22v-8h2.7l.4-3h-3.1V9.1c0-.9.3-1.5 1.6-1.5h1.7V4.9c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.3V11H8v3h2.2v8h3.3z"/>
-            </svg>
-          </a>
-        </div>
-
-        <div class="team-role">Undefined</div>
-        <div class="team-desc"></div>
-      </div>
     </div>
   </section>
 
-  <section class="contact" id="contact">
-    <h2>Contact</h2>
-    <p>dkseq4@gmail.com</p>
-    <p>Jeju Island, South Korea</p>
-  </section>
-
   <footer class="site-footer">
-    <p>© 2026 DKsequence. All rights reserved.</p>
-    <p>All content on this site is created by DKsequence. Some works were developed in collaboration with clients.</p>
-    <p>Unauthorized commercial use, reproduction, or distribution is prohibited without prior written permission.</p>
+    <p>DKsequence</p>
+    <p>Moments unfolding in sequence.</p>
   </footer>
 
   <script>
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const heroSlider = document.getElementById('heroSlider');
     const heroTrack = document.getElementById('heroTrack');
     const heroDots = document.getElementById('heroDots');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
-    const heroSlider = document.getElementById('heroSlider');
 
-    const SLIDE_COUNT = 7;
+    /*
+      HERO SLIDE SETTINGS
+      image: 슬라이드 이미지 경로
+      sub: 작은 텍스트
+      title: 큰 텍스트
+      link: 클릭 시 이동할 페이지
+
+      여기 link 값만 바꾸면 됨
+    */
+    const HERO_SLIDES = [
+      {
+        image: 'images/main-01.jpg',
+        sub: 'small things become',
+        title: 'wave of Sequence',
+        link: 'html/macro_index.html'
+      },
+      {
+        image: 'images/main-02.jpg',
+        sub: 'Portrait',
+        title: 'in Sequence',
+        link: 'html/portrait_index.html'
+      },
+      {
+        image: 'images/main-03.jpg',
+        sub: 'Beyond',
+        title: 'the Frame',
+        link: 'html/motion_index.html'
+      },
+      {
+        image: 'images/main-04.jpg',
+        sub: 'Brand Experience',
+        title: 'Maxwell House',
+        link: 'html/maxwell_index.html'
+      },
+      {
+        image: 'images/main-05.jpg',
+        sub: 'UV Experience',
+        title: 'in Real Time',
+        link: 'html/uv_index.html'
+      },
+      {
+        image: 'images/main-06.jpg',
+        sub: 'Seeing the World',
+        title: 'from Elsewhere',
+        link: 'html/drone_index.html'
+      },
+      {
+        image: 'images/main-07.jpg',
+        sub: 'Artificial',
+        title: 'Playground sequence',
+        link: 'html/ai_index.html'
+      }
+    ];
 
     let currentIndex = 0;
+    let startX = 0;
+    let startY = 0;
+    let endX = 0;
+    let endY = 0;
+    let isPointerDown = false;
+    let isSwiping = false;
     let dots = [];
 
-    function buildSlides() {
+    const SWIPE_THRESHOLD = 50;
+    const CLICK_THRESHOLD = 10;
+
+    function buildHeroSlides() {
       heroTrack.innerHTML = '';
       heroDots.innerHTML = '';
 
-      for (let i = 1; i <= SLIDE_COUNT; i++) {
-        const fileNumber = String(i).padStart(2, '0');
-
+      HERO_SLIDES.forEach((item, index) => {
         const slide = document.createElement('div');
         slide.className = 'hero-slide';
+        slide.setAttribute('data-index', index);
+        slide.setAttribute('data-link', item.link);
 
-        const img = document.createElement('img');
-        img.src = `images/main-${fileNumber}.jpg`;
-        img.alt = `Hero ${i}`;
-        img.decoding = 'async';
-        if (i === 1) {
-          img.fetchPriority = 'high';
-        }
+        slide.innerHTML = `
+          <img src="${item.image}" alt="${item.title}" ${index === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} />
+          <div class="hero-overlay"></div>
+          <div class="hero-slide-content">
+            <div class="hero-text-wrap">
+              <div class="hero-sub">${item.sub}</div>
+              <div class="hero-title">${item.title}</div>
+            </div>
+          </div>
+        `;
 
-        const overlay = document.createElement('div');
-        overlay.className = 'hero-overlay';
-
-        slide.appendChild(img);
-        slide.appendChild(overlay);
         heroTrack.appendChild(slide);
 
         const dot = document.createElement('button');
-        dot.dataset.index = i - 1;
-
-        if (i === 1) {
-          dot.classList.add('active');
-        }
+        dot.type = 'button';
+        dot.setAttribute('aria-label', `Go to slide ${index + 1}`);
+        if (index === 0) dot.classList.add('active');
 
         dot.addEventListener('click', () => {
-          currentIndex = i - 1;
-          updateSlider(currentIndex);
+          currentIndex = index;
+          updateHero();
         });
 
         heroDots.appendChild(dot);
+      });
+
+      dots = Array.from(heroDots.querySelectorAll('button'));
+    }
+
+    function updateHero() {
+      heroTrack.style.transform = `translateX(-${currentIndex * 100}%)`;
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentIndex);
+      });
+    }
+
+    function goPrev() {
+      currentIndex = (currentIndex - 1 + HERO_SLIDES.length) % HERO_SLIDES.length;
+      updateHero();
+    }
+
+    function goNext() {
+      currentIndex = (currentIndex + 1) % HERO_SLIDES.length;
+      updateHero();
+    }
+
+    function getPointX(event) {
+      if (event.touches && event.touches.length) return event.touches[0].clientX;
+      if (event.changedTouches && event.changedTouches.length) return event.changedTouches[0].clientX;
+      return event.clientX;
+    }
+
+    function getPointY(event) {
+      if (event.touches && event.touches.length) return event.touches[0].clientY;
+      if (event.changedTouches && event.changedTouches.length) return event.changedTouches[0].clientY;
+      return event.clientY;
+    }
+
+    function onPointerStart(event) {
+      isPointerDown = true;
+      isSwiping = false;
+
+      startX = getPointX(event);
+      startY = getPointY(event);
+      endX = startX;
+      endY = startY;
+    }
+
+    function onPointerMove(event) {
+      if (!isPointerDown) return;
+
+      endX = getPointX(event);
+      endY = getPointY(event);
+
+      const diffX = endX - startX;
+      const diffY = endY - startY;
+
+      if (Math.abs(diffX) > CLICK_THRESHOLD && Math.abs(diffX) > Math.abs(diffY)) {
+        isSwiping = true;
       }
-
-      dots = Array.from(document.querySelectorAll('#heroDots button'));
     }
 
-    function updateSlider(index) {
-      heroTrack.style.transform = `translateX(-${index * 100}%)`;
-      dots.forEach(dot => dot.classList.remove('active'));
-      if (dots[index]) {
-        dots[index].classList.add('active');
-      }
-    }
+    function onPointerEnd(event) {
+      if (!isPointerDown) return;
 
-    function showPrevSlide() {
-      currentIndex = (currentIndex - 1 + SLIDE_COUNT) % SLIDE_COUNT;
-      updateSlider(currentIndex);
-    }
+      isPointerDown = false;
+      endX = getPointX(event);
+      endY = getPointY(event);
 
-    function showNextSlide() {
-      currentIndex = (currentIndex + 1) % SLIDE_COUNT;
-      updateSlider(currentIndex);
-    }
+      const diffX = endX - startX;
+      const diffY = endY - startY;
+      const absDiffX = Math.abs(diffX);
+      const absDiffY = Math.abs(diffY);
 
-    buildSlides();
-    updateSlider(currentIndex);
-
-    prevBtn.addEventListener('click', showPrevSlide);
-    nextBtn.addEventListener('click', showNextSlide);
-
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let touchEndX = 0;
-    let touchEndY = 0;
-
-    heroSlider.addEventListener('touchstart', (e) => {
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-    }, { passive: true });
-
-    heroSlider.addEventListener('touchend', (e) => {
-      touchEndX = e.changedTouches[0].clientX;
-      touchEndY = e.changedTouches[0].clientY;
-
-      const diffX = touchEndX - touchStartX;
-      const diffY = touchEndY - touchStartY;
-
-      if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY)) {
+      if (absDiffX > SWIPE_THRESHOLD && absDiffX > absDiffY) {
         if (diffX < 0) {
-          showNextSlide();
+          goNext();
         } else {
-          showPrevSlide();
+          goPrev();
         }
+        return;
       }
-    }, { passive: true });
 
-    document.addEventListener('DOMContentLoaded', function () {
-      const menuBtn = document.getElementById('menuBtn');
-      const mobileMenu = document.getElementById('mobileMenu');
-
-      if (menuBtn && mobileMenu) {
-        menuBtn.onclick = function (e) {
-          e.stopPropagation();
-          mobileMenu.classList.toggle('active');
-        };
-
-        mobileMenu.querySelectorAll('a').forEach(link => {
-          link.addEventListener('click', () => {
-            mobileMenu.classList.remove('active');
-          });
-        });
-
-        document.addEventListener('click', function (e) {
-          if (!mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-            mobileMenu.classList.remove('active');
+      if (absDiffX < CLICK_THRESHOLD && absDiffY < CLICK_THRESHOLD) {
+        const clickedSlide = event.target.closest('.hero-slide');
+        if (clickedSlide) {
+          const targetLink = clickedSlide.getAttribute('data-link');
+          if (targetLink && targetLink !== '#') {
+            window.location.href = targetLink;
           }
-        });
-      }
-
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-          const targetId = this.getAttribute('href');
-          const target = document.querySelector(targetId);
-
-          if (!target) return;
-
-          e.preventDefault();
-
-          const header = document.querySelector('.topbar');
-          const headerHeight = header ? header.offsetHeight : 0;
-          const extraOffset = window.innerWidth <= 640 ? 20 : 24;
-          const targetTop = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - extraOffset;
-
-          window.scrollTo({
-            top: targetTop,
-            behavior: 'smooth'
-          });
-        });
-      });
-
-      document.querySelectorAll('.seq-link').forEach(link => {
-        link.addEventListener('click', function () {
-          sessionStorage.setItem('lastSequenceId', this.id);
-        });
-      });
-
-      const sequence01Images = Array.from({ length: 46 }, (_, i) => i + 1)
-        .filter(num => ![44, 34, 30, 22, 12, 3, 5, 9].includes(num))
-        .map(num => `gallery/small/${String(num).padStart(4, '0')}_small.jpg`);
-
-      const sequence02Images = Array.from({ length: 46 }, (_, i) => i + 1)
-        .filter(num => ![43, 34, 30, 23, 20, 12, 6].includes(num))
-        .map(num => `portrait/photo/small/${String(num).padStart(4, '0')}_small.jpg`);
-
-      function shuffleArray(array) {
-        const copied = [...array];
-        for (let i = copied.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [copied[i], copied[j]] = [copied[j], copied[i]];
         }
-        return copied;
       }
+    }
 
-      function renderRandomTriptych(containerId, images, altPrefix) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
+    if (menuBtn && mobileMenu) {
+      menuBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        mobileMenu.classList.toggle('active');
+      });
 
-        container.innerHTML = '';
-        const selectedImages = shuffleArray(images).slice(0, 3);
-
-        selectedImages.forEach((src, index) => {
-          const img = document.createElement('img');
-          img.src = src;
-          img.alt = `${altPrefix} ${index + 1}`;
-          img.loading = 'lazy';
-          container.appendChild(img);
+      mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenu.classList.remove('active');
         });
-      }
+      });
 
-      renderRandomTriptych('sequence01-grid', sequence01Images, 'Sequence 01 thumbnail');
-      renderRandomTriptych('sequence02-grid', sequence02Images, 'Sequence 02 thumbnail');
+      document.addEventListener('click', function (e) {
+        if (!mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+          mobileMenu.classList.remove('active');
+        }
+      });
+    }
+
+    prevBtn.addEventListener('click', goPrev);
+    nextBtn.addEventListener('click', goNext);
+
+    heroSlider.addEventListener('touchstart', onPointerStart, { passive: true });
+    heroSlider.addEventListener('touchmove', onPointerMove, { passive: true });
+    heroSlider.addEventListener('touchend', onPointerEnd, { passive: true });
+
+    heroSlider.addEventListener('mousedown', onPointerStart);
+    heroSlider.addEventListener('mousemove', onPointerMove);
+    heroSlider.addEventListener('mouseup', onPointerEnd);
+    heroSlider.addEventListener('mouseleave', function (event) {
+      if (isPointerDown) {
+        onPointerEnd(event);
+      }
     });
 
-    window.addEventListener('pageshow', function () {
-      const lastId = sessionStorage.getItem('lastSequenceId');
-      if (!lastId) return;
-
-      const target = document.getElementById(lastId);
-      if (!target) return;
-
-      setTimeout(() => {
-        const header = document.querySelector('.topbar');
-        const headerHeight = header ? header.offsetHeight : 0;
-        const extraOffset = window.innerWidth <= 640 ? 20 : 24;
-        const targetTop = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - extraOffset;
-
-        window.scrollTo({
-          top: targetTop,
-          behavior: 'auto'
-        });
-      }, 120);
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'ArrowLeft') goPrev();
+      if (event.key === 'ArrowRight') goNext();
     });
+
+    buildHeroSlides();
+    updateHero();
   </script>
 </body>
 </html>
