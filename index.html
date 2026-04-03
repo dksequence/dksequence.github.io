@@ -1,1196 +1,259 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DKsequence</title>
-
-  <!-- KakaoTalk / SNS Preview -->
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://dksequence.github.io/" />
-  <meta property="og:title" content="DKsequence | Visual Archive" />
-  <meta property="og:description" content="Welcome to moments unfolding in sequence!" />
-  <meta property="og:image" content="https://dksequence.github.io/images/og-cover.jpg" />
-  <meta property="og:site_name" content="DKsequence" />
-  <meta name="description" content="Photography, motion graphics, and visual storytelling by DKsequence." />
-
-  <!-- First hero image preload -->
-  <link rel="preload" as="image" href="images/main-01.jpg" />
-
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      background: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      line-height: 1.4;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    img {
-      display: block;
-      width: 100%;
-    }
-
-    .topbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      z-index: 1000;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 24px 32px;
-      background: rgba(0, 0, 0, 0.25);
-      backdrop-filter: blur(6px);
-    }
-
-    .logo {
-      font-size: 26px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-
-    .menu-btn {
-      display: block;
-      font-size: 30px;
-      line-height: 1;
-      cursor: pointer;
-      user-select: none;
-      z-index: 1002;
-    }
-
-    .mobile-menu {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.96);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 46px;
-      transform: translateY(-100%);
-      transition: transform 0.3s ease;
-      z-index: 1001;
-      pointer-events: none;
-    }
-
-    .mobile-menu.active {
-      transform: translateY(0);
-      pointer-events: auto;
-    }
-
-    .mobile-menu a {
-      font-size: 28px;
-      text-transform: uppercase;
-      text-align: center;
-    }
-
-    .hero {
-      position: relative;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      padding: 120px 24px 60px;
-    }
-
-    .hero-slider {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-      z-index: 1;
-      touch-action: pan-y;
-    }
-
-    .hero-track {
-      display: flex;
-      height: 100%;
-      transition: transform 0.5s ease;
-      will-change: transform;
-    }
-
-    .hero-slide {
-      min-width: 100%;
-      height: 100vh;
-      position: relative;
-      cursor: pointer;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-
-    .hero-slide img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0.8;
-      pointer-events: none;
-    }
-
-    .hero-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0.15),
-        rgba(0, 0, 0, 0.15)
-      );
-      pointer-events: none;
-    }
-
-    .hero-slide-content {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 0 20px;
-      pointer-events: none;
-    }
-
-    .hero-text-wrap {
-      max-width: 1100px;
-      pointer-events: none;
-    }
-
-    .hero-sub {
-      font-size: clamp(34px, 4vw, 64px);
-      font-style: italic;
-      font-weight: 300;
-      margin-bottom: 10px;
-      color: #fff;
-      text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
-    }
-
-    .hero-title {
-      font-size: clamp(56px, 8vw, 120px);
-      font-weight: 400;
-      line-height: 0.85;
-      text-transform: none;
-      color: #fff;
-      text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
-    }
-
-    .hero-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 3;
-      width: 54px;
-      height: 54px;
-      border: 1px solid rgba(255, 255, 255, 0.45);
-      background: rgba(0, 0, 0, 0.28);
-      color: #fff;
-      font-size: 28px;
-      cursor: pointer;
-    }
-
-    .hero-arrow.left {
-      left: 24px;
-    }
-
-    .hero-arrow.right {
-      right: 24px;
-    }
-
-    .hero-dots {
-      position: absolute;
-      bottom: 34px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 10px;
-      z-index: 3;
-    }
-
-    .hero-dots button {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      border: 0;
-      background: rgba(255, 255, 255, 0.35);
-      cursor: pointer;
-    }
-
-    .hero-dots button.active {
-      background: #fff;
-    }
-
-    .content {
-      width: min(1400px, 92%);
-      margin: 0 auto 140px;
-      padding-top: 40px;
-    }
-
-    .work-block {
-      display: grid;
-      grid-template-columns: 380px minmax(0, 1fr);
-      gap: 50px;
-      align-items: center;
-      margin-bottom: 120px;
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .work-block:hover {
-      opacity: 0.95;
-    }
-
-    .work-block.disabled {
-      pointer-events: none;
-      cursor: default;
-      opacity: 1;
-    }
-
-    .work-text {
-      min-width: 0;
-    }
-
-    .work-text .num {
-      font-size: 42px;
-      font-style: italic;
-      margin-bottom: 22px;
-    }
-
-    .work-text h2 {
-      font-size: clamp(34px, 3.2vw, 58px);
-      line-height: 1.02;
-      margin-bottom: 18px;
-      font-weight: 800;
-      word-break: keep-all;
-      overflow-wrap: break-word;
-    }
-
-    .work-text p {
-      font-size: 18px;
-      color: #d0d0d0;
-      max-width: 300px;
-    }
-
-    .thanks-text {
-      display: inline-block;
-      margin-top: 6px;
-      font-size: 10px;
-      color: #bdbdbd;
-    }
-
-    .work-image {
-      width: 100%;
-      min-width: 0;
-    }
-
-    .work-image img {
-      width: 100%;
-      aspect-ratio: 2 / 1;
-      object-fit: cover;
-      background: #111;
-    }
-
-    .work-image-grid {
-      width: 100%;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 6px;
-      min-width: 0;
-    }
-
-    .work-image-grid img {
-      width: 100%;
-      aspect-ratio: 3 / 4;
-      object-fit: cover;
-      background: #111;
-      display: block;
-    }
-
-    .about,
-    .contact {
-      width: min(1400px, 92%);
-      margin: 0 auto 120px;
-      padding-top: 40px;
-      border-top: 1px solid rgba(255, 255, 255, 0.15);
-      scroll-margin-top: 120px;
-    }
-
-    #portfolio {
-      scroll-margin-top: 120px;
-    }
-
-    .about h2,
-    .contact h2 {
-      font-size: 38px;
-      margin-bottom: 18px;
-    }
-
-    .about p,
-    .contact p {
-      max-width: 760px;
-      color: #d0d0d0;
-      font-size: 18px;
-    }
-
-    .network-title {
-      font-size: 38px;
-      margin-top: 56px;
-      margin-bottom: 18px;
-      font-weight: 700;
-    }
-
-    .network-desc {
-      max-width: 760px;
-      color: #d0d0d0;
-      font-size: 18px;
-      margin-bottom: 0;
-    }
-
-    .about-team {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 40px;
-      margin-top: 42px;
-      align-items: start;
-    }
-
-    .team-member {
-      text-align: center;
-    }
-
-    .team-photo {
-      width: min(180px, 100%);
-      aspect-ratio: 1 / 1;
-      margin: 0 auto 18px;
-      border-radius: 50%;
-      overflow: hidden;
-      background: #111;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .team-photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .team-name {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 14px;
-    }
-
-    .team-links {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
-
-    .team-link {
-      width: 40px;
-      height: 40px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: #5a5a5a;
-      color: #d8d8d8;
-      border: none;
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-      transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease;
-      opacity: 0.9;
-      pointer-events: none;
-      cursor: default;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .team-link svg {
-      width: 18px;
-      height: 18px;
-      fill: currentColor;
-      display: block;
-      flex-shrink: 0;
-    }
-
-    .team-link-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-      line-height: 1;
-    }
-
-    .team-link.active {
-      pointer-events: auto;
-      cursor: pointer;
-      opacity: 1;
-      box-shadow: none;
-    }
-
-    .team-link.active:hover {
-      transform: translateY(-2px);
-    }
-
-    .team-link.web.active {
-      background: #3b82f6;
-      color: #fff;
-    }
-
-    .team-link.yt.active {
-      background: #ff0000;
-      color: #fff;
-    }
-
-    .team-link.ig.active {
-      background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af, #515bd4);
-      color: #fff;
-    }
-
-    .team-link.fb.active {
-      background: #1877f2;
-      color: #fff;
-    }
-
-    .team-role {
-      font-size: 15px;
-      color: #d0d0d0;
-      margin-bottom: 12px;
-      line-height: 1.45;
-      letter-spacing: -0.2px;
-    }
-
-    .team-desc {
-      max-width: 320px;
-      margin: 0 auto;
-      font-size: 16px;
-      line-height: 1.6;
-      color: #d0d0d0;
-    }
-
-    .site-footer {
-      width: min(1400px, 92%);
-      margin: 0 auto 60px;
-      padding-top: 28px;
-      border-top: 1px solid rgba(255, 255, 255, 0.15);
-      text-align: center;
-    }
-
-    .site-footer p {
-      color: #9f9f9f;
-      font-size: 14px;
-      line-height: 1.7;
-      margin-bottom: 6px;
-    }
-
-    @media (max-width: 1200px) {
-      .content,
-      .about,
-      .contact,
-      .site-footer {
-        width: min(1200px, 94%);
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .work-block {
-        grid-template-columns: 340px 1fr;
-        gap: 50px;
-      }
-
-      .work-text h2 {
-        font-size: clamp(32px, 3.8vw, 52px);
-      }
-    }
-
-    @media (max-width: 900px) {
-      .topbar {
-        padding: 18px 20px;
-      }
-
-      .logo {
-        font-size: 22px;
-      }
-
-      .hero-arrow {
-        width: 44px;
-        height: 44px;
-        font-size: 22px;
-        top: 38%;
-      }
-
-      .hero-arrow.left {
-        left: 12px;
-      }
-
-      .hero-arrow.right {
-        right: 12px;
-      }
-
-      .hero-sub {
-        font-size: clamp(24px, 8vw, 42px);
-      }
-
-      .hero-title {
-        font-size: clamp(44px, 12vw, 72px);
-        line-height: 0.9;
-      }
-
-      .content {
-        width: min(100%, 94%);
-        margin-bottom: 100px;
-      }
-
-      .work-block {
-        grid-template-columns: 1fr;
-        gap: 18px;
-        margin-bottom: 80px;
-      }
-
-      .work-text {
-        max-width: 100%;
-      }
-
-      .work-text .num {
-        font-size: 34px;
-        margin-bottom: 16px;
-      }
-
-      .work-text h2 {
-        font-size: clamp(30px, 10vw, 48px);
-        margin-bottom: 14px;
-      }
-
-      .work-text p {
-        max-width: 100%;
-        font-size: 17px;
-      }
-
-      .thanks-text {
-        font-size: 14px;
-      }
-
-      .work-image {
-        width: 100%;
-        margin: 0;
-      }
-
-      .work-image img {
-        width: 100%;
-      }
-
-      .work-image-grid {
-        gap: 5px;
-      }
-
-      .about-team {
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 34px;
-      }
-
-      .about,
-      .contact,
-      #portfolio {
-        scroll-margin-top: 110px;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .hero {
-        padding: 100px 16px 50px;
-      }
-
-      .hero-arrow {
-        top: 34%;
-      }
-
-      .hero-dots {
-        bottom: 24px;
-      }
-
-      .content {
-        width: 100%;
-        padding: 24px 14px 0;
-      }
-
-      .work-block {
-        gap: 14px;
-        margin-bottom: 64px;
-      }
-
-      .work-text .num {
-        font-size: 30px;
-      }
-
-      .work-text h2 {
-        font-size: clamp(28px, 12vw, 42px);
-      }
-
-      .work-text p {
-        font-size: 16px;
-        line-height: 1.5;
-      }
-
-      .thanks-text {
-        font-size: 12px;
-      }
-
-      .work-image {
-        width: 100%;
-        margin: 0;
-      }
-
-      .work-image img {
-        width: 100%;
-      }
-
-      .work-image-grid {
-        gap: 4px;
-      }
-
-      .about,
-      .contact,
-      .site-footer {
-        width: 100%;
-        padding: 34px 14px 0;
-        margin-bottom: 80px;
-      }
-
-      .about h2,
-      .contact h2,
-      .network-title {
-        font-size: 30px;
-      }
-
-      .about p,
-      .contact p,
-      .network-desc {
-        font-size: 16px;
-      }
-
-      .network-title {
-        margin-top: 44px;
-      }
-
-      .about-team {
-        grid-template-columns: 1fr;
-        gap: 38px;
-      }
-
-      .team-photo {
-        width: 160px;
-      }
-
-      .team-name {
-        font-size: 20px;
-      }
-
-      .team-link {
-        width: 38px;
-        height: 38px;
-      }
-
-      .team-link svg {
-        width: 17px;
-        height: 17px;
-      }
-
-      .team-role {
-        font-size: 15px;
-      }
-
-      .team-desc {
-        max-width: 100%;
-        font-size: 15px;
-      }
-
-      .site-footer {
-        margin-bottom: 40px;
-      }
-
-      .site-footer p {
-        font-size: 12px;
-        line-height: 1.6;
-      }
-
-      .about,
-      .contact,
-      #portfolio {
-        scroll-margin-top: 96px;
-      }
-    }
-  </style>
-</head>
-<body id="top">
-
-  <header class="topbar">
-    <a href="#top" class="logo">DKsequence</a>
-    <div class="menu-btn" id="menuBtn">☰</div>
-  </header>
-
-  <nav class="mobile-menu" id="mobileMenu">
-    <a href="#top">Home</a>
-    <a href="./html/list.html">Work List</a>
-    <a href="#contact">Contact</a>
-  </nav>
-
-  <section class="hero">
-    <div class="hero-slider" id="heroSlider">
-      <div class="hero-track" id="heroTrack"></div>
-    </div>
-
-    <button class="hero-arrow left" id="prevBtn" aria-label="Previous slide">&#10094;</button>
-    <button class="hero-arrow right" id="nextBtn" aria-label="Next slide">&#10095;</button>
-
-    <div class="hero-dots" id="heroDots"></div>
-  </section>
-
-  <main class="content">
-    <section id="portfolio">
-      <a href="html/macro_index.html" class="work-block seq-link" id="sequence01">
-        <div class="work-text">
-          <div class="num">Sequence #01</div>
-          <h2>The Poetry<br>of Detail</h2>
-          <p>Macro photography and detail-based images reveal quiet worlds hidden within daily life. It is an art of stepping away from the familiar and into small worlds you can quietly explore.</p>
-        </div>
-        <div class="work-image-grid" id="sequence01-grid"></div>
-      </a>
-
-      <a href="html/portrait_index.html" class="work-block seq-link" id="sequence02">
-        <div class="work-text">
-          <div class="num">Sequence #02</div>
-          <h2>Portrait<br>in Sequence</h2>
-          <p>Portrait photography captures more than appearance. It records mood, presence, and the quiet tension between a person and a place.<br><span class="thanks-text">* Special thanks to Jonna Jin Her &amp; hyungwoo Kim</span></p>
-        </div>
-        <div class="work-image-grid" id="sequence02-grid"></div>
-      </a>
-
-      <a href="html/motion_index.html" class="work-block seq-link" id="sequence03">
-        <div class="work-text">
-          <div class="num">Sequence #03</div>
-          <h2>Beyond<br>the Frame</h2>
-          <p>Digital composition expands the image beyond what is seen. It turns ideas, motion, and graphic elements into a new visual world</p>
-        </div>
-        <div class="work-image">
-          <img src="images/image-03.jpg" alt="Sequence 03 cover" />
-        </div>
-      </a>
-
-      <a href="#" class="work-block disabled">
-        <div class="work-text">
-          <div class="num">Sequence #04</div>
-          <h2>A Living Record<br>of Heritage. 승무(僧舞)</h2>
-          <p>Seungmu(승무&lt;僧舞&gt;)'s Heirs to Korean Intangible Cultural Property. we organized a 1:1 scale of traditional performances The Cultural Heritage Restoration Project preserves the cultural value of the work It delivers a legacy to future generations.<br><span class="thanks-text">* Special thanks to professor jinho Park</span></p>
-        </div>
-        <div class="work-image">
-          <img src="images/image-04.jpg" alt="Sequence 04 cover" />
-        </div>
-      </a>
-
-      <a href="#" class="work-block disabled">
-        <div class="work-text">
-          <div class="num">Sequence #05</div>
-          <h2>Immersive Archive<br>of World Heritage</h2>
-          <p>Introduces the UNESCO World Heritage Site to the present Through digital restoration, spatial images, Provides an immersive cultural storytelling experience.<br><span class="thanks-text">* Special thanks to Creative Director Minwoo Park</span></p>
-        </div>
-        <div class="work-image">
-          <img src="images/image-05.jpg" alt="Sequence 05 cover" />
-        </div>
-      </a>
-
-      <a href="html/maxwell_index.html" class="work-block seq-link" id="sequence06">
-        <div class="work-text">
-          <div class="num">Sequence #06</div>
-          <h2>Brand Experience<br>Maxwell House</h2>
-          <p>Designed as a promotional event for Maxwell House, this digital vending machine created face-to-face experiences with singer and entertainer. More than 140,000 people engaged with this event promotion, leaving with familiar yet fresh brand impressions and memorable experiences of Maxwell House.<br><span class="thanks-text">* Special thanks to You`ve got idea</span></p>
-        </div>
-        <div class="work-image">
-          <img src="images/image-06.jpg" alt="Sequence 06 cover" />
-        </div>
-      </a>
-
-      <a href="html/uv_index.html" class="work-block seq-link" id="sequence07">
-        <div class="work-text">
-          <div class="num">Sequence #07</div>
-          <h2>UV Experience in Real Time<br>see what happened</h2>
-          <p>Do sunscreens really protect our skin from UV rays? This project answered that question through live public experience. It visually reveals the difference between sunscreen and bare skin.<br><span class="thanks-text">* Thanks to Green Pinger</span></p>
-        </div>
-        <div class="work-image">
-          <img src="images/image-07.jpg" alt="Sequence 07 cover" />
-        </div>
-      </a>
-
-      <a href="html/red_index.html" class="work-block seq-link" id="sequence08">
-        <div class="work-text">
-          <div class="num">Sequence #08</div>
-          <h2>The Value <br>of Luxury brand</h2>
-          <p>Expressing the elegance of a luxury brand is a demanding task. True branding reflects both the client’s vision and the customer’s experience, creating encounters that allow the brand to extend beyond a product and into new cultural and emotional spaces.<br><span class="thanks-text">* Special thanks to watch designer Christian BÉDAT</span></p>
-        </div>
-        <div class="work-image">
-          <img src="images/image-08.jpg" alt="Sequence 08 cover" />
-        </div>
-      </a>
-
-      <a href="html/drone_index.html" class="work-block seq-link" id="sequence09">
-        <div class="work-text">
-          <div class="num">Sequence #09</div>
-          <h2>Seeing the World <br>from Elsewhere</h2>
-          <p>Drone photographs and videos reveal the hidden order of the world. From the sky, nature is reconstructed. The world you used to know becomes a new place.<br><span class="thanks-text">* Special thanks to Director Moses Jung</span></p>
-        </div>
-        <div class="work-image">
-          <img src="images/image-09.jpg" alt="Sequence 09 cover" />
-        </div>
-      </a>
-
-      <a href="#" class="work-block disabled">
-        <div class="work-text">
-          <div class="num">Sequence #10</div>
-          <h2>Value of meeting<br>and learning</h2>
-          <p>To lecture is to share experience, but also to receive new perspectives. Each encounter becomes a rewarding moment of growth.<br><span class="thanks-text">* Special thanks to DAXIB</span></p>
-        </div>
-        <div class="work-image">
-          <img src="images/image-10.jpg" alt="Sequence 10 cover" />
-        </div>
-      </a>
-
-      <a href="html/digitaltwin_index.html" class="work-block seq-link" id="sequence11">
-        <div class="work-text">
-          <div class="num">Sequence #11</div>
-          <h2>Translating <br>the World into Data</h2>
-          <p>Building digital twin spatial information is the work of translating the world we live in into digital form. By acquiring point cloud data that contains real location information, this project opened endless possibilities for analysis, simulation, and future use. Over three years, we successfully constructed the topography of the entire Jeju Island through digital twin data.<br><span class="thanks-text">* Special thanks to Dohee Hwang &amp; Sejong baek</span></p>
-        </div>
-        <div class="work-image">
-          <img src="images/image-11.jpg" alt="Sequence 11 cover" />
-        </div>
-      </a>
-
-      <a href="html/ai_index.html" class="work-block seq-link" id="sequence12">
-        <div class="work-text">
-          <div class="num">Sequence #12</div>
-          <h2>Artificial<br>Playground sequence</h2>
-          <p>Artificial Playground sequence is a playful exploration of new creative methods beyond conventional production for fun. Using tools such as Stable Diffusion and AI service, this sequence experiments with image-making shaped by the changing flow of our time. More than a technical process, it is a space for imagination, play, and new visual possibilities.</p>
-        </div>
-        <div class="work-image">
-          <img src="images/image-12.jpg" alt="Sequence 12 cover" />
-        </div>
-      </a>
-    </section>
-  </main>
-
-  <section class="about" id="about">
-    <h2>About</h2>
-    <p>
-      DKSequence is a creative collective dedicated to visual works and direction.
-      We create valuable experiences through photography, motion graphics, creative projects, and storytelling, turning ideas and emotions into meaningful visual sequences.
-    </p>
-    <p style="margin-top:16px;">
-      We believe that images, moving visuals, and technology are not simply meant to be seen, but to be experienced.
-      What matters most is the emotional connection they create, allowing each moment to be felt, remembered, and carried forward as part of life’s ongoing sequence.
-    </p>
-
-    <h2 class="network-title">Creative Network</h2>
-    <p class="network-desc">
-      DKsequence across selected projects, collaborations, and visual experiences
-    </p>
-
-    <div class="about-team">
-      <div class="team-member">
-        <div class="team-photo">
-          <img src="images/staff-01.jpg" alt="Danny" />
-        </div>
-        <div class="team-name">Danny Ki</div>
-
-        <div class="team-links">
-          <a class="team-link web" href="#" aria-label="Homepage">
-            <span class="team-link-label">WEB</span>
-          </a>
-          <a class="team-link yt" href="#" aria-label="YouTube">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M23 12s0-3.5-.4-5.2a2.9 2.9 0 0 0-2-2C18.8 4.3 12 4.3 12 4.3s-6.8 0-8.6.5a2.9 2.9 0 0 0-2 2C1 8.5 1 12 1 12s0 3.5.4 5.2a2.9 2.9 0 0 0 2 2c1.8.5 8.6.5 8.6.5s6.8 0 8.6-.5a2.9 2.9 0 0 0 2-2c.4-1.7.4-5.2.4-5.2zM10 15.5v-7l6 3.5-6 3.5z"/>
-            </svg>
-          </a>
-          <a class="team-link ig" href="#" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2.2A2.8 2.8 0 0 0 4.2 7v10A2.8 2.8 0 0 0 7 19.8h10a2.8 2.8 0 0 0 2.8-2.8V7A2.8 2.8 0 0 0 17 4.2H7zm10.5 1.6a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2.2A2.8 2.8 0 1 0 12 14.8 2.8 2.8 0 0 0 12 9.2z"/>
-            </svg>
-          </a>
-          <a class="team-link fb" href="#" aria-label="Facebook">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M13.5 22v-8h2.7l.4-3h-3.1V9.1c0-.9.3-1.5 1.6-1.5h1.7V4.9c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.3V11H8v3h2.2v8h3.3z"/>
-            </svg>
-          </a>
-        </div>
-
-        <div class="team-role">
-          Creative director<br>
-          Photographer<br>
-          Motiongraphic designer<br>
-          FPV Drone operator
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <footer class="site-footer">
-    <p>DKsequence</p>
-    <p>Moments unfolding in sequence.</p>
-  </footer>
-
-  <script>
-    const menuBtn = document.getElementById('menuBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-    const heroSlider = document.getElementById('heroSlider');
-    const heroTrack = document.getElementById('heroTrack');
-    const heroDots = document.getElementById('heroDots');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-
-    /*
-      HERO SLIDE SETTINGS
-      image: 슬라이드 이미지 경로
-      sub: 작은 텍스트
-      title: 큰 텍스트
-      link: 클릭 시 이동할 페이지
-
-      여기 link 값만 바꾸면 됨
-    */
-    const HERO_SLIDES = [
-      {
-        image: 'images/main-01.jpg',
-        sub: 'small things become',
-        title: 'wave of Sequence',
-        link: '#'
-      },
-      {
-        image: 'images/main-02.jpg',
-        sub: 'Portrait',
-        title: 'in Sequence',
-        link: 'html/motion_index.html'
-      },
-      {
-        image: 'images/main-03.jpg',
-        sub: 'Beyond',
-        title: 'the Frame',
-        link: 'html/macro_index.html'
-      },
-      {
-        image: 'images/main-04.jpg',
-        sub: 'Brand Experience',
-        title: 'Maxwell House',
-        link: '#'
-      },
-      {
-        image: 'images/main-05.jpg',
-        sub: 'UV Experience',
-        title: 'in Real Time',
-        link: '#'
-      },
-      {
-        image: 'images/main-06.jpg',
-        sub: 'Seeing the World',
-        title: 'from Elsewhere',
-        link: '#'
-      },
-      {
-        image: 'images/main-07.jpg',
-        sub: 'Artificial',
-        title: 'Playground sequence',
-        link: 'html/ai_index.html'
-      }
-    ];
-
-    let currentIndex = 0;
-    let startX = 0;
-    let startY = 0;
-    let endX = 0;
-    let endY = 0;
-    let isPointerDown = false;
-    let isSwiping = false;
-    let dots = [];
-
-    const SWIPE_THRESHOLD = 50;
-    const CLICK_THRESHOLD = 10;
-
-    function buildHeroSlides() {
-      heroTrack.innerHTML = '';
-      heroDots.innerHTML = '';
-
-      HERO_SLIDES.forEach((item, index) => {
-        const slide = document.createElement('div');
-        slide.className = 'hero-slide';
-        slide.setAttribute('data-index', index);
-        slide.setAttribute('data-link', item.link);
-
-        slide.innerHTML = `
-          <img src="${item.image}" alt="${item.title}" ${index === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} />
-          <div class="hero-overlay"></div>
-          <div class="hero-slide-content">
-            <div class="hero-text-wrap">
-              <div class="hero-sub">${item.sub}</div>
-              <div class="hero-title">${item.title}</div>
-            </div>
+<script>
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const heroSlider = document.getElementById('heroSlider');
+  const heroTrack = document.getElementById('heroTrack');
+  const heroDots = document.getElementById('heroDots');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  /*
+    HERO SLIDE SETTINGS
+    image: 슬라이드 이미지 경로
+    sub: 작은 텍스트
+    title: 큰 텍스트
+    link: 클릭 시 이동할 페이지
+
+    여기 link 값만 바꾸면 됨
+  */
+  const HERO_SLIDES = [
+    {
+      image: 'images/main-01.jpg',
+      sub: 'small things become',
+      title: 'wave of Sequence',
+      link: '#'
+    },
+    {
+      image: 'images/main-02.jpg',
+      sub: 'Portrait',
+      title: 'in Sequence',
+      link: 'html/motion_index.html'
+    },
+    {
+      image: 'images/main-03.jpg',
+      sub: 'Beyond',
+      title: 'the Frame',
+      link: 'html/macro_index.html'
+    },
+    {
+      image: 'images/main-04.jpg',
+      sub: 'Brand Experience',
+      title: 'Maxwell House',
+      link: '#'
+    },
+    {
+      image: 'images/main-05.jpg',
+      sub: 'UV Experience',
+      title: 'in Real Time',
+      link: '#'
+    },
+    {
+      image: 'images/main-06.jpg',
+      sub: 'Seeing the World',
+      title: 'from Elsewhere',
+      link: '#'
+    },
+    {
+      image: 'images/main-07.jpg',
+      sub: 'Artificial',
+      title: 'Playground sequence',
+      link: 'html/ai_index.html'
+    }
+  ];
+
+  let currentIndex = 0;
+  let startX = 0;
+  let startY = 0;
+  let endX = 0;
+  let endY = 0;
+  let isPointerDown = false;
+  let dots = [];
+
+  const SWIPE_THRESHOLD = 50;
+  const CLICK_THRESHOLD = 10;
+
+  function buildHeroSlides() {
+    heroTrack.innerHTML = '';
+    heroDots.innerHTML = '';
+
+    HERO_SLIDES.forEach((item, index) => {
+      const slide = document.createElement('div');
+      slide.className = 'hero-slide';
+      slide.setAttribute('data-index', index);
+      slide.setAttribute('data-link', item.link);
+
+      slide.innerHTML = `
+        <img src="${item.image}" alt="${item.title}" ${index === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} />
+        <div class="hero-overlay"></div>
+        <div class="hero-slide-content">
+          <div class="hero-text-wrap">
+            <div class="hero-sub">${item.sub}</div>
+            <div class="hero-title">${item.title}</div>
           </div>
-        `;
+        </div>
+      `;
 
-        heroTrack.appendChild(slide);
+      heroTrack.appendChild(slide);
 
-        const dot = document.createElement('button');
-        dot.type = 'button';
-        dot.setAttribute('aria-label', `Go to slide ${index + 1}`);
-        if (index === 0) dot.classList.add('active');
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.setAttribute('aria-label', `Go to slide ${index + 1}`);
 
-        dot.addEventListener('click', () => {
-          currentIndex = index;
-          updateHero();
-        });
-
-        heroDots.appendChild(dot);
-      });
-
-      dots = Array.from(heroDots.querySelectorAll('button'));
-    }
-
-    function updateHero() {
-      heroTrack.style.transform = `translateX(-${currentIndex * 100}%)`;
-      dots.forEach((dot, index) => {
-        dot.classList.toggle('active', index === currentIndex);
-      });
-    }
-
-    function goPrev() {
-      currentIndex = (currentIndex - 1 + HERO_SLIDES.length) % HERO_SLIDES.length;
-      updateHero();
-    }
-
-    function goNext() {
-      currentIndex = (currentIndex + 1) % HERO_SLIDES.length;
-      updateHero();
-    }
-
-    function getPointX(event) {
-      if (event.touches && event.touches.length) return event.touches[0].clientX;
-      if (event.changedTouches && event.changedTouches.length) return event.changedTouches[0].clientX;
-      return event.clientX;
-    }
-
-    function getPointY(event) {
-      if (event.touches && event.touches.length) return event.touches[0].clientY;
-      if (event.changedTouches && event.changedTouches.length) return event.changedTouches[0].clientY;
-      return event.clientY;
-    }
-
-    function onPointerStart(event) {
-      isPointerDown = true;
-      isSwiping = false;
-
-      startX = getPointX(event);
-      startY = getPointY(event);
-      endX = startX;
-      endY = startY;
-    }
-
-    function onPointerMove(event) {
-      if (!isPointerDown) return;
-
-      endX = getPointX(event);
-      endY = getPointY(event);
-
-      const diffX = endX - startX;
-      const diffY = endY - startY;
-
-      if (Math.abs(diffX) > CLICK_THRESHOLD && Math.abs(diffX) > Math.abs(diffY)) {
-        isSwiping = true;
-      }
-    }
-
-    function onPointerEnd(event) {
-      if (!isPointerDown) return;
-
-      isPointerDown = false;
-      endX = getPointX(event);
-      endY = getPointY(event);
-
-      const diffX = endX - startX;
-      const diffY = endY - startY;
-      const absDiffX = Math.abs(diffX);
-      const absDiffY = Math.abs(diffY);
-
-      if (absDiffX > SWIPE_THRESHOLD && absDiffX > absDiffY) {
-        if (diffX < 0) {
-          goNext();
-        } else {
-          goPrev();
-        }
-        return;
+      if (index === 0) {
+        dot.classList.add('active');
       }
 
-      if (absDiffX < CLICK_THRESHOLD && absDiffY < CLICK_THRESHOLD) {
-        const clickedSlide = event.target.closest('.hero-slide');
-        if (clickedSlide) {
-          const targetLink = clickedSlide.getAttribute('data-link');
-          if (targetLink && targetLink !== '#') {
-            window.location.href = targetLink;
-          }
-        }
-      }
-    }
-
-    if (menuBtn && mobileMenu) {
-      menuBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        mobileMenu.classList.toggle('active');
+      dot.addEventListener('click', () => {
+        currentIndex = index;
+        updateHero();
       });
 
-      mobileMenu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-          mobileMenu.classList.remove('active');
-        });
-      });
-
-      document.addEventListener('click', function (e) {
-        if (!mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-          mobileMenu.classList.remove('active');
-        }
-      });
-    }
-
-    prevBtn.addEventListener('click', goPrev);
-    nextBtn.addEventListener('click', goNext);
-
-    heroSlider.addEventListener('touchstart', onPointerStart, { passive: true });
-    heroSlider.addEventListener('touchmove', onPointerMove, { passive: true });
-    heroSlider.addEventListener('touchend', onPointerEnd, { passive: true });
-
-    heroSlider.addEventListener('mousedown', onPointerStart);
-    heroSlider.addEventListener('mousemove', onPointerMove);
-    heroSlider.addEventListener('mouseup', onPointerEnd);
-    heroSlider.addEventListener('mouseleave', function (event) {
-      if (isPointerDown) {
-        onPointerEnd(event);
-      }
+      heroDots.appendChild(dot);
     });
 
-    document.addEventListener('keydown', function (event) {
-      if (event.key === 'ArrowLeft') goPrev();
-      if (event.key === 'ArrowRight') goNext();
-    });
+    dots = Array.from(heroDots.querySelectorAll('button'));
+  }
 
-    buildHeroSlides();
+  function updateHero() {
+    heroTrack.style.transform = `translateX(-${currentIndex * 100}%)`;
+    dots.forEach((dot, index) => {
+      dot.classList.toggle('active', index === currentIndex);
+    });
+  }
+
+  function goPrev() {
+    currentIndex = (currentIndex - 1 + HERO_SLIDES.length) % HERO_SLIDES.length;
     updateHero();
-  </script>
-</body>
-</html>
+  }
+
+  function goNext() {
+    currentIndex = (currentIndex + 1) % HERO_SLIDES.length;
+    updateHero();
+  }
+
+  function getPointX(event) {
+    if (event.touches && event.touches.length) return event.touches[0].clientX;
+    if (event.changedTouches && event.changedTouches.length) return event.changedTouches[0].clientX;
+    return event.clientX;
+  }
+
+  function getPointY(event) {
+    if (event.touches && event.touches.length) return event.touches[0].clientY;
+    if (event.changedTouches && event.changedTouches.length) return event.changedTouches[0].clientY;
+    return event.clientY;
+  }
+
+  function onPointerStart(event) {
+    isPointerDown = true;
+    startX = getPointX(event);
+    startY = getPointY(event);
+    endX = startX;
+    endY = startY;
+  }
+
+  function onPointerMove(event) {
+    if (!isPointerDown) return;
+
+    endX = getPointX(event);
+    endY = getPointY(event);
+  }
+
+  function onPointerEnd(event) {
+    if (!isPointerDown) return;
+
+    isPointerDown = false;
+    endX = getPointX(event);
+    endY = getPointY(event);
+
+    const diffX = endX - startX;
+    const diffY = endY - startY;
+    const absDiffX = Math.abs(diffX);
+    const absDiffY = Math.abs(diffY);
+
+    if (absDiffX > SWIPE_THRESHOLD && absDiffX > absDiffY) {
+      if (diffX < 0) {
+        goNext();
+      } else {
+        goPrev();
+      }
+      return;
+    }
+
+    if (absDiffX < CLICK_THRESHOLD && absDiffY < CLICK_THRESHOLD) {
+      const clickedSlide = event.target.closest('.hero-slide');
+      if (clickedSlide) {
+        const targetLink = clickedSlide.getAttribute('data-link');
+        if (targetLink && targetLink !== '#') {
+          window.location.href = targetLink;
+        }
+      }
+    }
+  }
+
+  /*
+    Sequence 01 / 02 thumbnail settings
+    아래 숫자와 경로만 바꾸면 됨
+  */
+  function renderSequenceGrid(targetId, folderPath, imageNumbers) {
+    const target = document.getElementById(targetId);
+    if (!target) return;
+
+    target.innerHTML = imageNumbers.map(num => {
+      const fileName = String(num).padStart(4, '0') + '_small.jpg';
+      return `<img src="${folderPath}${fileName}" alt="${targetId} image ${num}" loading="lazy">`;
+    }).join('');
+  }
+
+  /*
+    현재 기준 추천값
+    - Sequence 01: gallery/small/
+    - Sequence 02: portrait/photo/small/
+
+    숫자는 원하는 썸네일 번호로 변경 가능
+  */
+  renderSequenceGrid('sequence01-grid', 'gallery/small/', [47, 46, 45]);
+  renderSequenceGrid('sequence02-grid', 'portrait/photo/small/', [1, 2, 3]);
+
+  if (menuBtn && mobileMenu) {
+    menuBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      mobileMenu.classList.toggle('active');
+    });
+
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('active');
+      });
+    });
+
+    document.addEventListener('click', function (e) {
+      if (!mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+        mobileMenu.classList.remove('active');
+      }
+    });
+  }
+
+  prevBtn.addEventListener('click', goPrev);
+  nextBtn.addEventListener('click', goNext);
+
+  heroSlider.addEventListener('touchstart', onPointerStart, { passive: true });
+  heroSlider.addEventListener('touchmove', onPointerMove, { passive: true });
+  heroSlider.addEventListener('touchend', onPointerEnd, { passive: true });
+
+  heroSlider.addEventListener('mousedown', onPointerStart);
+  heroSlider.addEventListener('mousemove', onPointerMove);
+  heroSlider.addEventListener('mouseup', onPointerEnd);
+  heroSlider.addEventListener('mouseleave', function (event) {
+    if (isPointerDown) {
+      onPointerEnd(event);
+    }
+  });
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'ArrowLeft') goPrev();
+    if (event.key === 'ArrowRight') goNext();
+  });
+
+  buildHeroSlides();
+  updateHero();
+</script>
