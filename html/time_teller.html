@@ -111,7 +111,7 @@
     }
 
     .page-wrap {
-      width: min(1440px, 94%);
+      width: min(1600px, 94%);
       margin: 0 auto;
       padding: 34px 0 100px;
     }
@@ -145,20 +145,14 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: #cfcfcf;
+      min-width: 0;
+      text-align: center;
     }
 
     .top-tab.current {
       background: rgba(255,255,255,0.1);
       color: #fff;
       border-color: rgba(255,255,255,0.18);
-    }
-
-    .intro h1 {
-      font-size: clamp(38px, 7vw, 78px);
-      line-height: 0.95;
-      font-weight: 700;
-      margin-bottom: 0;
-      letter-spacing: -0.02em;
     }
 
     .android-badge {
@@ -205,11 +199,20 @@
       margin-bottom: 28px;
     }
 
+    .hero-copy h1 {
+      font-size: clamp(38px, 7vw, 78px);
+      line-height: 0.95;
+      font-weight: 700;
+      margin-bottom: 0;
+      letter-spacing: -0.02em;
+    }
+
     .hero-copy p {
       color: #c8c8c8;
       font-size: 16px;
       line-height: 1.75;
       max-width: 760px;
+      margin-top: 18px;
     }
 
     .device-gallery {
@@ -685,11 +688,14 @@
       }
 
       .top-tabs {
-        gap: 8px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
         margin-bottom: 22px;
       }
 
       .top-tab {
+        width: 100%;
         padding: 11px 12px;
         font-size: 11px;
       }
@@ -788,13 +794,13 @@
 
   <main class="page-wrap">
     <section class="intro">
-      <div class="sequence-label">Android Available</div>
+      <div class="sequence-label">SEQUENCE #12</div>
 
       <div class="top-tabs">
-        <a href="ai_index.html" class="top-tab">1. AI Music Box</a>
-        <a href="ai_con.html" class="top-tab">2. AI Short Reels</a>
-        <a href="time_teller.html" class="top-tab current">3. Time Teller</a>
-        <a href="comming_index.html" class="top-tab">4. Coming Soon</a>
+        <a href="ai_index.html" class="top-tab">1. AI MUSIC BOX</a>
+        <a href="ai_con.html" class="top-tab">2. AI SHORT REELS</a>
+        <a href="time_teller.html" class="top-tab current">3. TIME TELLER</a>
+        <a href="comming_index.html" class="top-tab">4. COMING SOON</a>
       </div>
 
       <div class="android-badge">
