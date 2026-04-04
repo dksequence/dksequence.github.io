@@ -111,14 +111,14 @@
     }
 
     .page-wrap {
-      width: min(1600px, 94%);
+      width: min(1440px, 94%);
       margin: 0 auto;
       padding: 34px 0 100px;
     }
 
     .intro {
-      max-width: 1100px;
-      margin-bottom: 18px;
+      max-width: 980px;
+      margin-bottom: 14px;
       scroll-margin-top: 110px;
     }
 
@@ -151,6 +151,14 @@
       background: rgba(255,255,255,0.1);
       color: #fff;
       border-color: rgba(255,255,255,0.18);
+    }
+
+    .intro h1 {
+      font-size: clamp(38px, 7vw, 78px);
+      line-height: 0.95;
+      font-weight: 700;
+      margin-bottom: 0;
+      letter-spacing: -0.02em;
     }
 
     .android-badge {
@@ -197,14 +205,6 @@
       margin-bottom: 28px;
     }
 
-    .hero-copy h1 {
-      font-size: clamp(40px, 6vw, 74px);
-      line-height: 0.96;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      margin-bottom: 14px;
-    }
-
     .hero-copy p {
       color: #c8c8c8;
       font-size: 16px;
@@ -219,7 +219,6 @@
       align-items: start;
       justify-content: start;
       margin-top: 10px;
-      margin-bottom: 54px;
     }
 
     .device-stage {
@@ -677,16 +676,30 @@
         padding: 22px 14px 80px;
       }
 
+      .intro {
+        margin-bottom: 8px;
+      }
+
+      .sequence-label {
+        margin-bottom: 8px;
+      }
+
+      .top-tabs {
+        gap: 8px;
+        margin-bottom: 22px;
+      }
+
+      .top-tab {
+        padding: 11px 12px;
+        font-size: 11px;
+      }
+
       .android-badge {
         padding: 12px 14px;
       }
 
       .android-badge-text strong {
         font-size: 20px;
-      }
-
-      .hero-copy h1 {
-        font-size: clamp(30px, 10vw, 44px);
       }
 
       .hero-copy p {
@@ -803,7 +816,7 @@
       </div>
 
       <div class="hero-copy">
-        <h1>Time Teller for the web,<br>experienced like a real mobile device.</h1>
+        <h1>Time Teller</h1>
         <p>
           This interface works directly inside an Android-style phone frame. When viewing this site on a PC,
           the live mobile device interface appears on the left and the reference image appears on the right.
@@ -906,7 +919,7 @@
     </section>
 
     <div class="footer-note">
-      Time Teller live device view. Use the working controls inside the phone-shaped interface. When another setting is selected, the interface updates directly inside the device view.
+      Time Teller live device view. Click Start to activate the timer voice flow. Use the working controls directly inside the device interface.
     </div>
 
     <div class="bottom-actions">
