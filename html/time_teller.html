@@ -23,7 +23,7 @@
         radial-gradient(circle at top, rgba(25, 52, 110, 0.28), transparent 34%),
         linear-gradient(180deg, #040404 0%, #080808 46%, #020202 100%);
       color: #fff;
-      font-family: Arial, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      font-family: Arial, sans-serif;
       line-height: 1.5;
       min-height: 100vh;
     }
@@ -48,7 +48,7 @@
 
     img {
       display: block;
-      max-width: 100%;
+      width: 100%;
     }
 
     .topbar {
@@ -76,6 +76,7 @@
       display: block;
       font-size: 30px;
       line-height: 1;
+      cursor: pointer;
       user-select: none;
       z-index: 1002;
       color: #fff;
@@ -218,6 +219,7 @@
       align-items: start;
       justify-content: start;
       margin-top: 10px;
+      margin-bottom: 54px;
     }
 
     .device-stage {
@@ -602,23 +604,42 @@
       background: #0a0a0a;
     }
 
-    .site-footer {
-      width: min(1600px, 94%);
-      margin: 0 auto;
-      padding: 0 0 38px;
-      border-top: 1px solid rgba(255,255,255,0.08);
+    .footer-note {
+      margin-top: 54px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      color: #8f8f8f;
+      font-size: 13px;
+      line-height: 1.7;
     }
 
-    .footer-inner {
+    .bottom-actions {
+      margin-top: 28px;
       display: flex;
-      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .bottom-btn {
+      display: inline-flex;
       align-items: center;
-      gap: 16px;
-      padding-top: 18px;
-      color: #868686;
-      font-size: 12px;
-      letter-spacing: 0.08em;
+      justify-content: center;
+      min-width: 160px;
+      padding: 14px 22px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      font-size: 14px;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
+      transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .bottom-btn:hover {
+      background: rgba(255,255,255,0.10);
+      border-color: rgba(255,255,255,0.32);
+      transform: translateY(-1px);
     }
 
     @media (max-width: 1100px) {
@@ -732,9 +753,10 @@
         border-radius: 22px;
       }
 
-      .footer-inner {
-        flex-direction: column;
-        align-items: flex-start;
+      .bottom-btn {
+        min-width: 140px;
+        padding: 13px 18px;
+        font-size: 13px;
       }
     }
   </style>
@@ -775,15 +797,17 @@
           <circle cx="14" cy="7.8" r="0.8" fill="#040404"/>
         </svg>
         <div class="android-badge-text">
-          <strong>Android application</strong>
-          <span>Time Teller</span>
+          <strong>Android Available</strong>
+          <span>Built from the Time Teller web prototype</span>
         </div>
       </div>
 
       <div class="hero-copy">
-        <h1>Time Teller for the web</h1>
+        <h1>Time Teller for the web,<br>experienced like a real mobile device.</h1>
         <p>
-          It actually works as an application by installing the apk file on an Android phone. This interface works inside the Android frame for a web experience
+          This interface works directly inside an Android-style phone frame. When viewing this site on a PC,
+          the live mobile device interface appears on the left and the reference image appears on the right.
+          When viewing this site on a mobile, the reference image follows below the working device interface.
         </p>
       </div>
     </section>
@@ -874,43 +898,26 @@
 
       <aside class="reference-panel">
         <img
-          src="lab/mockup.jpg"
+          src="lab/mock-up.jpg"
           alt="Time Teller reference image"
           class="reference-image"
         />
       </aside>
     </section>
+
+    <div class="footer-note">
+      Time Teller live device view. Use the working controls inside the phone-shaped interface. When another setting is selected, the interface updates directly inside the device view.
+    </div>
+
+    <div class="bottom-actions">
+      <a href="#top" class="bottom-btn">Back to Top</a>
+      <a href="../index.html" class="bottom-btn">Home</a>
+    </div>
   </main>
 
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <span>DKsequence</span>
-      <span>Time Teller / Web Prototype / Android Available</span>
-    </div>
-  </footer>
-
   <script>
-    var active = false;
-    var intervalMin = 5;
-    var voices = [];
-    var selectedVoice = null;
-    var nextAnnounce = null;
-    var lastSpokenKey = '';
-    var wakeLock = null;
-
-    var DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
     const menuBtn = document.getElementById("menuBtn");
     const mobileMenu = document.getElementById("mobileMenu");
-
-    const phoneToggleBtn = document.getElementById('phone-toggle-btn');
-    const phoneSpeakBtn = document.getElementById('phone-speak-btn');
-    const phoneTestBtn = document.getElementById('phone-test-btn');
-    const phoneInterval = document.getElementById('phone-interval');
-    const phoneIntervalNum = document.getElementById('phone-interval-num');
-    const phoneStatusDot = document.getElementById('phone-status-dot');
-    const phoneStatusTime = document.getElementById('phone-status-time');
-    const voiceSelect = document.getElementById('voice-select');
 
     if (menuBtn && mobileMenu) {
       menuBtn.addEventListener("click", function (e) {
@@ -930,6 +937,25 @@
         }
       });
     }
+
+    var active = false;
+    var intervalMin = 5;
+    var voices = [];
+    var selectedVoice = null;
+    var nextAnnounce = null;
+    var lastSpokenKey = '';
+    var wakeLock = null;
+
+    var DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+    const phoneToggleBtn = document.getElementById('phone-toggle-btn');
+    const phoneSpeakBtn = document.getElementById('phone-speak-btn');
+    const phoneTestBtn = document.getElementById('phone-test-btn');
+    const phoneInterval = document.getElementById('phone-interval');
+    const phoneIntervalNum = document.getElementById('phone-interval-num');
+    const phoneStatusDot = document.getElementById('phone-status-dot');
+    const phoneStatusTime = document.getElementById('phone-status-time');
+    const voiceSelect = document.getElementById('voice-select');
 
     phoneToggleBtn.addEventListener('click', toggleActive);
     phoneSpeakBtn.addEventListener('click', speakNow);
