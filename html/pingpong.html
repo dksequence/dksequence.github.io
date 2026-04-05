@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>.                </title>
+<title>Full League Match</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap');
 
@@ -142,9 +142,8 @@ input.mi:focus{background:#eef4ff;}
 
   .ctrl{display:none!important;}
 
-  /* 표 전체를 오른쪽으로 조금 이동 */
   .sheet{
-    padding:0 0 0 4mm !important;
+    padding:0 !important;
     overflow:visible;
     width:100%;
   }
@@ -157,6 +156,7 @@ input.mi:focus{background:#eef4ff;}
   table.lt{
     width:calc(100% - 4mm) !important;
     table-layout:fixed;
+    margin-left:4mm !important;
   }
 
   /* 인쇄 시: 상단 이름행과 본문 이름행 동일 높이 */
@@ -172,7 +172,7 @@ input.mi:focus{background:#eef4ff;}
   col.c-gap2 {width:4px!important;}
   col.c-rank {width:42px!important;}
 
-  table.lt th,table.lt td{border:1px solid #222;font-size:9px;}
+  table.lt th,table.lt td{border:1.2px solid #222;font-size:9px;}
   input.ni{font-size:8px;padding:1px;}
   input.mi{font-size:10px;}
   .rc{font-size:10px;}
@@ -271,7 +271,6 @@ function build(n){
   /* ── thead ── */
   const thead=document.createElement('thead');
 
-  // 1행: 번호
   const tr1=document.createElement('tr');
   tr1.className='r-num';
 
@@ -310,7 +309,6 @@ function build(n){
 
   thead.appendChild(tr1);
 
-  // 2행: 이름 입력
   const tr2=document.createElement('tr');
   tr2.className='r-name';
 
@@ -337,7 +335,6 @@ function build(n){
   thead.appendChild(tr2);
   tbl.appendChild(thead);
 
-  /* ── tbody ── */
   const tbody=document.createElement('tbody');
   const sEls=[];
   const rEls=[];
@@ -346,13 +343,11 @@ function build(n){
     const tr=document.createElement('tr');
     tr.className='r-body';
 
-    // 순서
     const tdSq=document.createElement('th');
     tdSq.className='sq';
     tdSq.textContent=r+1;
     tr.appendChild(tdSq);
 
-    // 행 이름
     const tdN=document.createElement('td');
 
     const ni1=document.createElement('input');
@@ -371,7 +366,6 @@ function build(n){
     tdN.appendChild(ni2);
     tr.appendChild(tdN);
 
-    // 경기 칸
     for(let c=0;c<n;c++){
       const td=document.createElement('td');
 
@@ -393,23 +387,19 @@ function build(n){
       tr.appendChild(td);
     }
 
-    // gap1
     const g1=document.createElement('td');
     g1.className='gc';
     tr.appendChild(g1);
 
-    // 점수
     const tdS=document.createElement('td');
     tdS.className='rc';
     tr.appendChild(tdS);
     sEls.push(tdS);
 
-    // gap2
     const g2=document.createElement('td');
     g2.className='gc';
     tr.appendChild(g2);
 
-    // 순위
     const tdR=document.createElement('td');
     tdR.className='rc';
     tr.appendChild(tdR);
