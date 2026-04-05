@@ -164,6 +164,15 @@
       color: #000;
     }
 
+    .page-title {
+      font-size: clamp(46px, 8vw, 118px);
+      line-height: 0.94;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      margin: 8px 0 28px;
+      color: #fff;
+    }
+
     .device-gallery {
       display: grid;
       grid-template-columns: minmax(340px, 430px) minmax(300px, 430px);
@@ -639,6 +648,11 @@
         letter-spacing: 0.04em;
       }
 
+      .page-title {
+        font-size: clamp(42px, 16vw, 72px);
+        margin: 6px 0 20px;
+      }
+
       .page-wrap {
         width: 100%;
         padding: 22px 14px 80px;
@@ -735,7 +749,7 @@
 
   <main class="page-wrap">
     <section class="intro">
-      <div class="sequence-label">Utility / Time Teller</div>
+      <div class="sequence-label">SEQUENCE #12</div>
 
       <div class="top-tabs">
         <a href="ai_index.html" class="top-tab">1. AI Music Box</a>
@@ -743,6 +757,8 @@
         <a href="time_teller.html" class="top-tab current">3. Time Teller</a>
         <a href="comming_index.html" class="top-tab">4. Coming Soon</a>
       </div>
+
+      <h1 class="page-title">Time Teller</h1>
 
       <section class="device-gallery" id="time-teller-layout">
         <div class="device-stage">
@@ -835,11 +851,10 @@
             class="reference-image"
           />
         </aside>
-          <h1>Interesting Experiment</h1>
       </section>
 
       <div class="footer-note">
-        Time Teller mobile mockup layout with live voice announcement control 
+        Time Teller mobile mockup layout with live voice announcement control.
       </div>
 
       <div class="bottom-actions">
