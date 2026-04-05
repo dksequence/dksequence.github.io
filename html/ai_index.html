@@ -36,65 +36,6 @@
       background: transparent;
     }
 
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 22px 32px;
-      background: rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .logo {
-      font-size: 26px;
-      font-weight: 700;
-      letter-spacing: 0.4px;
-      color: #fff;
-    }
-
-    .menu-btn {
-      display: block;
-      font-size: 30px;
-      line-height: 1;
-      cursor: pointer;
-      user-select: none;
-      z-index: 1002;
-      color: #fff;
-      background: transparent;
-      border: 0;
-    }
-
-    .mobile-menu {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.96);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 36px;
-      transform: translateY(-100%);
-      transition: transform 0.3s ease;
-      z-index: 1001;
-      pointer-events: none;
-    }
-
-    .mobile-menu.active {
-      transform: translateY(0);
-      pointer-events: auto;
-    }
-
-    .mobile-menu a {
-      font-size: 28px;
-      text-transform: uppercase;
-      text-align: center;
-    }
-
     .page-wrap {
       width: min(1440px, 94%);
       margin: 0 auto;
@@ -266,35 +207,6 @@
       line-height: 1.7;
     }
 
-    .bottom-actions {
-      margin-top: 28px;
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .bottom-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 160px;
-      padding: 14px 22px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.04);
-      color: #fff;
-      font-size: 14px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
-    }
-
-    .bottom-btn:hover {
-      background: rgba(255,255,255,0.10);
-      border-color: rgba(255,255,255,0.32);
-      transform: translateY(-1px);
-    }
-
     @media (max-width: 1100px) {
       .music-layout {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -324,18 +236,6 @@
     }
 
     @media (max-width: 700px) {
-      .topbar {
-        padding: 18px 16px;
-      }
-
-      .logo {
-        font-size: 22px;
-      }
-
-      .mobile-menu a {
-        font-size: 24px;
-      }
-
       .page-wrap {
         width: 100%;
         padding: 22px 14px 80px;
@@ -379,34 +279,17 @@
         gap: 4px;
         font-size: 13px;
       }
-
-      .bottom-btn {
-        min-width: 140px;
-        padding: 13px 18px;
-        font-size: 13px;
-      }
     }
   </style>
 </head>
 <body id="top">
-
-  <header class="topbar">
-    <a href="../index.html" class="logo">DKsequence</a>
-    <button class="menu-btn" id="menuBtn" aria-label="Menu">☰</button>
-  </header>
-
-  <nav class="mobile-menu" id="mobileMenu">
-    <a href="../index.html">Home</a>
-    <a href="#sequence12">Sequence 12</a>
-    <a href="#music-list">Playlist</a>
-    <a href="#music-player">Player</a>
-  </nav>
+  <div id="site-header"></div>
 
   <main class="page-wrap">
     <section class="intro" id="sequence12">
       <div class="sequence-label">Sequence #12</div>
 
-      <div class="top-tabs">
+      <div class="top-tabs" id="content-start">
         <a href="ai_index.html" class="top-tab current">1. AI Music Box</a>
         <a href="ai_con.html" class="top-tab">2. AI Short Reels</a>
         <a href="time_teller.html" class="top-tab">3. Time Teller</a>
@@ -460,26 +343,22 @@
       Sequence 12 AI Music Box. Select a genre and listen through the embedded player.
     </div>
 
-    <div class="bottom-actions">
-      <a href="#top" class="bottom-btn">Back to Top</a>
-      <a href="../index.html" class="bottom-btn">Home</a>
-    </div>
+    <div id="site-footer"></div>
   </main>
 
+  <script src="./js/layout.js"></script>
   <script>
-    const menuBtn = document.getElementById("menuBtn");
-    const mobileMenu = document.getElementById("mobileMenu");
     const player = document.getElementById("ytPlayer");
     const nowPlayingTitle = document.getElementById("nowPlayingTitle");
     const playerPlaceholder = document.getElementById("playerPlaceholder");
     const musicItems = Array.from(document.querySelectorAll(".music-item"));
 
     function setPlayingButton(videoId) {
-      musicItems.forEach(btn => {
+      musicItems.forEach((btn) => {
         btn.classList.remove("active", "playing");
       });
 
-      const target = musicItems.find(btn => btn.dataset.id === videoId);
+      const target = musicItems.find((btn) => btn.dataset.id === videoId);
       if (target) {
         target.classList.add("active", "playing");
       }
@@ -496,46 +375,7 @@
       playerPlaceholder.classList.add("hidden");
     }
 
-    if (menuBtn && mobileMenu) {
-      menuBtn.addEventListener("click", function (e) {
-        e.stopPropagation();
-        mobileMenu.classList.toggle("active");
-      });
-
-      mobileMenu.querySelectorAll("a").forEach(link => {
-        link.addEventListener("click", () => {
-          mobileMenu.classList.remove("active");
-        });
-      });
-
-      document.addEventListener("click", function (e) {
-        if (!mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-          mobileMenu.classList.remove("active");
-        }
-      });
-    }
-
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener("click", function (e) {
-        const targetId = this.getAttribute("href");
-        const target = document.querySelector(targetId);
-        if (!target) return;
-
-        e.preventDefault();
-
-        const header = document.querySelector(".topbar");
-        const headerHeight = header ? header.offsetHeight : 0;
-        const extraOffset = window.innerWidth <= 700 ? 16 : 22;
-        const targetTop = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - extraOffset;
-
-        window.scrollTo({
-          top: targetTop,
-          behavior: "smooth"
-        });
-      });
-    });
-
-    musicItems.forEach(item => {
+    musicItems.forEach((item) => {
       item.addEventListener("click", function () {
         playTrack(this.dataset.id, this.dataset.title);
       });
