@@ -3,14 +3,28 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>복식 리그전</title>
+<title>.                </title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap');
+
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{font-family:'Noto Sans KR',sans-serif;background:#ddd;color:#111;}
 
+/* 공통 변수 */
+:root{
+  --teams: 10;
+}
+
 /* ══ 컨트롤 바 ══ */
-.ctrl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:10px 16px;background:#1a1a2e;color:#ddd;}
+.ctrl{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+  padding:10px 16px;
+  background:#1a1a2e;
+  color:#ddd;
+}
 .ctrl label{font-size:13px;font-weight:700;white-space:nowrap;}
 .ctrl input[type=number]{width:70px;height:36px;padding:0 8px;font-size:14px;border:1px solid #555;background:#2a2a44;color:#fff;}
 .ctrl input[type=text]{width:200px;height:36px;padding:0 8px;font-size:13px;border:1px solid #555;background:#2a2a44;color:#fff;}
@@ -23,25 +37,42 @@ html,body{font-family:'Noto Sans KR',sans-serif;background:#ddd;color:#111;}
 .sheet-title{text-align:center;font-size:26px;font-weight:900;margin-bottom:14px;text-decoration:underline;text-underline-offset:5px;letter-spacing:2px;}
 
 /* ══ 테이블 ══ */
-table.lt{border-collapse:collapse;width:100%;table-layout:fixed;background:#fff;}
-table.lt th,table.lt td{border:1.5px solid #222;text-align:center;vertical-align:middle;padding:0;overflow:hidden;}
+table.lt{
+  border-collapse:collapse;
+  width:100%;
+  table-layout:fixed;
+  background:#fff;
+}
+table.lt th,table.lt td{
+  border:1.5px solid #222;
+  text-align:center;
+  vertical-align:middle;
+  padding:0;
+  overflow:hidden;
+}
 
 /* 화면 행 높이 */
-tr.r-num  {height:36px;}   /* 번호 행 */
-tr.r-name {height:48px;}   /* 이름 행 */
-tr.r-body {height:64px;}   /* 데이터 행 */
+tr.r-num  {height:36px;}
+tr.r-name {height:64px;}
+tr.r-body {height:64px;}
 
-/* 고정 열 */
-col.c-seq  {width:48px;}
+/* 화면용 고정 열 */
+col.c-seq  {width:52px;}
 col.c-name {width:110px;}
-col.c-gap1 {width:10px;}   /* 경기↔점수 사이 gap */
+col.c-gap1 {width:10px;}
 col.c-score{width:72px;}
-col.c-gap2 {width:10px;}   /* 점수↔순위 사이 gap */
+col.c-gap2 {width:10px;}
 col.c-rank {width:72px;}
 
 /* 코너 사선 */
 .corner{position:relative;overflow:hidden;}
-.corner::after{content:"";position:absolute;inset:0;background:linear-gradient(to top right,transparent calc(50% - 1px),#222 50%,transparent calc(50% + 1px));pointer-events:none;}
+.corner::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to top right,transparent calc(50% - 1px),#222 50%,transparent calc(50% + 1px));
+  pointer-events:none;
+}
 .cbl{position:absolute;left:6px;bottom:5px;font-size:11px;font-weight:700;}
 .ctr{position:absolute;right:6px;top:5px;font-size:11px;font-weight:700;}
 
@@ -49,13 +80,21 @@ col.c-rank {width:72px;}
 td.gc,th.gc{border:0!important;background:#fff!important;}
 
 /* 번호 셀 */
-.num-cell{font-size:14px;font-weight:900;}
+.num-cell{font-size:14px;font-weight:900;overflow:visible;white-space:nowrap;}
+th.sq{font-size:13px;font-weight:900;overflow:visible;white-space:nowrap;}
 
-/* 이름 입력 (헤더 이름행 & 행 이름) */
+/* 이름 입력 */
 input.ni{
-  display:block;width:100%;height:100%;
-  border:0;outline:none;background:transparent;
-  text-align:center;font-size:12px;font-family:inherit;padding:2px;
+  display:block;
+  width:100%;
+  height:50%;
+  border:0;
+  outline:none;
+  background:transparent;
+  text-align:center;
+  font-size:12px;
+  font-family:inherit;
+  padding:2px;
 }
 input.ni:focus{background:#eef4ff;}
 
@@ -64,7 +103,17 @@ input.ni:focus{background:#eef4ff;}
 .blocked input{visibility:hidden;pointer-events:none;}
 
 /* 경기 입력 */
-input.mi{display:block;width:100%;height:100%;border:0;outline:none;background:transparent;text-align:center;font-size:15px;font-family:inherit;}
+input.mi{
+  display:block;
+  width:100%;
+  height:100%;
+  border:0;
+  outline:none;
+  background:transparent;
+  text-align:center;
+  font-size:15px;
+  font-family:inherit;
+}
 input.mi:focus{background:#eef4ff;}
 
 /* 결과 */
@@ -72,38 +121,63 @@ input.mi:focus{background:#eef4ff;}
 .rk1{background:#ffd700;}
 .rk2{background:#d8d8d8;}
 .rk3{background:#e8a96a;}
-th.sq{font-size:13px;font-weight:900;}
 
 /* ══ 인쇄 ══ */
 @media print{
-  @page{size:A4 landscape;margin:7mm 6mm;}
-  html,body{background:#fff;width:285mm;}
-  body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  @page{
+    size:A4 landscape;
+    margin:8mm;
+  }
+
+  html,body{
+    background:#fff;
+    width:auto;
+    height:auto;
+  }
+
+  body{
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+
   .ctrl{display:none!important;}
-  .sheet{padding:0;overflow:visible;width:285mm;}
-  .sheet-title{font-size:17px;margin-bottom:4mm;}
 
-  table.lt{width:285mm!important;table-layout:fixed;}
+  /* 표 전체를 오른쪽으로 조금 이동 */
+  .sheet{
+    padding:0 0 0 4mm !important;
+    overflow:visible;
+    width:100%;
+  }
 
+  .sheet-title{
+    font-size:17px;
+    margin-bottom:3mm;
+  }
+
+  table.lt{
+    width:calc(100% - 4mm) !important;
+    table-layout:fixed;
+  }
+
+  /* 인쇄 시: 상단 이름행과 본문 이름행 동일 높이 */
   tr.r-num  {height:22px;}
-  tr.r-name {height:30px;}
-  tr.r-body {height:auto;}   /* tbody 행은 남은 높이 균등 분배 */
+  tr.r-name {height:calc((170mm - 22px) / (var(--teams) + 1));}
+  tr.r-body {height:calc((170mm - 22px) / (var(--teams) + 1));}
 
-  /* 인쇄 시 tbody 전체 높이를 페이지에 맞춤 */
-  table.lt{height:calc(210mm - 14mm - 10mm - 52px);}  /* 페이지높이 - 상하여백 - 제목 - 헤더 */
-
-  col.c-seq  {width:36px!important;}
-  col.c-name {width:80px!important;}
-  col.c-gap1 {width:6px!important;}
-  col.c-score{width:54px!important;}
-  col.c-gap2 {width:6px!important;}
-  col.c-rank {width:54px!important;}
+  /* 왼쪽 번호 잘림 방지: 첫 열 확대 + 나머지 일부 축소 */
+  col.c-seq  {width:58px!important;}
+  col.c-name {width:68px!important;}
+  col.c-gap1 {width:4px!important;}
+  col.c-score{width:42px!important;}
+  col.c-gap2 {width:4px!important;}
+  col.c-rank {width:42px!important;}
 
   table.lt th,table.lt td{border:1px solid #222;font-size:9px;}
-  input.ni{font-size:8px;}
+  input.ni{font-size:8px;padding:1px;}
   input.mi{font-size:10px;}
   .rc{font-size:10px;}
   .num-cell{font-size:10px;}
+  th.sq{font-size:10px;}
   .cbl,.ctr{font-size:8px;}
 
   .blocked{background:#888!important;}
@@ -134,21 +208,50 @@ th.sq{font-size:13px;font-weight:900;}
 const tcEl=document.getElementById('tc');
 const tiEl=document.getElementById('ti');
 const stEl=document.getElementById('st');
-document.getElementById('bg').addEventListener('click',()=>{const n=getN();if(n)build(n);});
-document.getElementById('bp').addEventListener('click',()=>window.print());
-tcEl.addEventListener('keydown',e=>{if(e.key==='Enter'){const n=getN();if(n)build(n);}});
-tiEl.addEventListener('input',()=>{stEl.textContent=tiEl.value||'복식 리그전';});
+
+document.getElementById('bg').addEventListener('click',()=>{
+  const n=getN();
+  if(n) build(n);
+});
+
+document.getElementById('bp').addEventListener('click',()=>{
+  const n=getN();
+  if(n){
+    document.documentElement.style.setProperty('--teams', n);
+    window.print();
+  }
+});
+
+tcEl.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    const n=getN();
+    if(n) build(n);
+  }
+});
+
+tiEl.addEventListener('input',()=>{
+  stEl.textContent=tiEl.value||'복식 리그전';
+});
 
 function getN(){
   const v=parseInt(tcEl.value,10);
-  if(isNaN(v)||v<2){alert('2 이상 입력하세요');return null;}
-  if(v>20){alert('최대 20팀');return null;}
+  if(isNaN(v)||v<2){
+    alert('2 이상 입력하세요');
+    return null;
+  }
+  if(v>20){
+    alert('최대 20팀');
+    return null;
+  }
   return v;
 }
 
 function build(n){
+  document.documentElement.style.setProperty('--teams', n);
+
   const wrap=document.getElementById('wrap');
   wrap.innerHTML='';
+
   const tbl=document.createElement('table');
   tbl.className='lt';
 
@@ -158,68 +261,86 @@ function build(n){
   const cg=document.createElement('colgroup');
   addCol(cg,'c-seq');
   addCol(cg,'c-name');
-  for(let i=0;i<n;i++) addCol(cg,'c-match'); // auto → 균등
+  for(let i=0;i<n;i++) addCol(cg,'c-match');
   addCol(cg,'c-gap1');
   addCol(cg,'c-score');
   addCol(cg,'c-gap2');
   addCol(cg,'c-rank');
   tbl.appendChild(cg);
 
-  /* ── thead: 2행 구조 ──
-     행1: 순서(rowspan2) | 이름(rowspan2,corner) | 1 | 2 | ... | n | gap1(rowspan2) | 점수(rowspan2) | gap2(rowspan2) | 순위(rowspan2)
-     행2: (병합됨)                                  | 이름입력1 | ... | 이름입력n |
-  */
+  /* ── thead ── */
   const thead=document.createElement('thead');
 
-  // ── 1행: 번호 ──
+  // 1행: 번호
   const tr1=document.createElement('tr');
   tr1.className='r-num';
 
-  // 순서 (rowspan=2)
-  const thSeq=mth('sq','순서'); thSeq.rowSpan=2; tr1.appendChild(thSeq);
+  const thSeq=mth('sq','순서');
+  thSeq.rowSpan=2;
+  tr1.appendChild(thSeq);
 
-  // 코너 (rowspan=2)
   const thC=document.createElement('th');
-  thC.className='corner'; thC.rowSpan=2;
+  thC.className='corner';
+  thC.rowSpan=2;
   thC.innerHTML='<span class="cbl">이름</span><span class="ctr">이름</span>';
   tr1.appendChild(thC);
 
-  // 번호 셀
   for(let c=0;c<n;c++){
     const th=mth('num-cell', String(c+1));
     tr1.appendChild(th);
   }
 
-  // gap1 (rowspan=2)
-  const thG1=document.createElement('th'); thG1.className='gc'; thG1.rowSpan=2; tr1.appendChild(thG1);
-  // 점수 (rowspan=2)
-  const thSc=mth('','점수'); thSc.rowSpan=2; tr1.appendChild(thSc);
-  // gap2 (rowspan=2)
-  const thG2=document.createElement('th'); thG2.className='gc'; thG2.rowSpan=2; tr1.appendChild(thG2);
-  // 순위 (rowspan=2)
-  const thRk=mth('','순위'); thRk.rowSpan=2; tr1.appendChild(thRk);
+  const thG1=document.createElement('th');
+  thG1.className='gc';
+  thG1.rowSpan=2;
+  tr1.appendChild(thG1);
+
+  const thSc=mth('','점수');
+  thSc.rowSpan=2;
+  tr1.appendChild(thSc);
+
+  const thG2=document.createElement('th');
+  thG2.className='gc';
+  thG2.rowSpan=2;
+  tr1.appendChild(thG2);
+
+  const thRk=mth('','순위');
+  thRk.rowSpan=2;
+  tr1.appendChild(thRk);
 
   thead.appendChild(tr1);
 
-  // ── 2행: 이름 입력 ──
+  // 2행: 이름 입력
   const tr2=document.createElement('tr');
   tr2.className='r-name';
+
   for(let c=0;c<n;c++){
     const td=document.createElement('th');
-    // 두 줄 입력
-    const i1=document.createElement('input'); i1.type='text'; i1.className='ni hni';
-    i1.dataset.col=c; i1.dataset.line=0; i1.style.height='50%';
-    const i2=document.createElement('input'); i2.type='text'; i2.className='ni hni';
-    i2.dataset.col=c; i2.dataset.line=1; i2.style.height='50%';
-    td.appendChild(i1); td.appendChild(i2);
+
+    const i1=document.createElement('input');
+    i1.type='text';
+    i1.className='ni hni';
+    i1.dataset.col=c;
+    i1.dataset.line=0;
+
+    const i2=document.createElement('input');
+    i2.type='text';
+    i2.className='ni hni';
+    i2.dataset.col=c;
+    i2.dataset.line=1;
+
+    td.appendChild(i1);
+    td.appendChild(i2);
     tr2.appendChild(td);
   }
+
   thead.appendChild(tr2);
   tbl.appendChild(thead);
 
   /* ── tbody ── */
   const tbody=document.createElement('tbody');
-  const sEls=[],rEls=[];
+  const sEls=[];
+  const rEls=[];
 
   for(let r=0;r<n;r++){
     const tr=document.createElement('tr');
@@ -227,41 +348,72 @@ function build(n){
 
     // 순서
     const tdSq=document.createElement('th');
-    tdSq.className='sq'; tdSq.textContent=r+1; tr.appendChild(tdSq);
+    tdSq.className='sq';
+    tdSq.textContent=r+1;
+    tr.appendChild(tdSq);
 
-    // 행 이름 (2줄)
+    // 행 이름
     const tdN=document.createElement('td');
-    const ni1=document.createElement('input'); ni1.type='text'; ni1.className='ni rni';
-    ni1.dataset.row=r; ni1.dataset.line=0; ni1.style.height='50%';
-    const ni2=document.createElement('input'); ni2.type='text'; ni2.className='ni rni';
-    ni2.dataset.row=r; ni2.dataset.line=1; ni2.style.height='50%';
-    tdN.appendChild(ni1); tdN.appendChild(ni2);
+
+    const ni1=document.createElement('input');
+    ni1.type='text';
+    ni1.className='ni rni';
+    ni1.dataset.row=r;
+    ni1.dataset.line=0;
+
+    const ni2=document.createElement('input');
+    ni2.type='text';
+    ni2.className='ni rni';
+    ni2.dataset.row=r;
+    ni2.dataset.line=1;
+
+    tdN.appendChild(ni1);
+    tdN.appendChild(ni2);
     tr.appendChild(tdN);
 
     // 경기 칸
     for(let c=0;c<n;c++){
       const td=document.createElement('td');
+
       if(r===c){
         td.className='blocked';
-        const d=document.createElement('input'); d.type='text'; td.appendChild(d);
-      } else {
+        const d=document.createElement('input');
+        d.type='text';
+        td.appendChild(d);
+      }else{
         const inp=document.createElement('input');
-        inp.type='text'; inp.className='mi';
-        inp.dataset.row=r; inp.dataset.col=c;
+        inp.type='text';
+        inp.className='mi';
+        inp.dataset.row=r;
+        inp.dataset.col=c;
         inp.addEventListener('input',()=>recalc(n,sEls,rEls));
         td.appendChild(inp);
       }
+
       tr.appendChild(td);
     }
 
     // gap1
-    const g1=document.createElement('td'); g1.className='gc'; tr.appendChild(g1);
+    const g1=document.createElement('td');
+    g1.className='gc';
+    tr.appendChild(g1);
+
     // 점수
-    const tdS=document.createElement('td'); tdS.className='rc'; tr.appendChild(tdS); sEls.push(tdS);
+    const tdS=document.createElement('td');
+    tdS.className='rc';
+    tr.appendChild(tdS);
+    sEls.push(tdS);
+
     // gap2
-    const g2=document.createElement('td'); g2.className='gc'; tr.appendChild(g2);
+    const g2=document.createElement('td');
+    g2.className='gc';
+    tr.appendChild(g2);
+
     // 순위
-    const tdR=document.createElement('td'); tdR.className='rc'; tr.appendChild(tdR); rEls.push(tdR);
+    const tdR=document.createElement('td');
+    tdR.className='rc';
+    tr.appendChild(tdR);
+    rEls.push(tdR);
 
     tbody.appendChild(tr);
   }
@@ -272,42 +424,73 @@ function build(n){
   /* 이름 동기화 헤더↔행 */
   tbl.addEventListener('input',e=>{
     const el=e.target;
+
     if(el.classList.contains('hni')){
-      const c=+el.dataset.col,l=+el.dataset.line;
+      const c=+el.dataset.col;
+      const l=+el.dataset.line;
       const t=tbl.querySelector(`.rni[data-row="${c}"][data-line="${l}"]`);
-      if(t)t.value=el.value;
-    } else if(el.classList.contains('rni')){
-      const r=+el.dataset.row,l=+el.dataset.line;
+      if(t) t.value=el.value;
+    }else if(el.classList.contains('rni')){
+      const r=+el.dataset.row;
+      const l=+el.dataset.line;
       const t=tbl.querySelector(`.hni[data-col="${r}"][data-line="${l}"]`);
-      if(t)t.value=el.value;
+      if(t) t.value=el.value;
     }
   });
 }
 
 function recalc(n,sEls,rEls){
-  const totals=new Array(n).fill(0),hasVal=new Array(n).fill(false);
+  const totals=new Array(n).fill(0);
+  const hasVal=new Array(n).fill(false);
+
   document.querySelectorAll('input.mi').forEach(inp=>{
-    const v=inp.value.trim();if(!v)return;
-    const num=parseFloat(v);if(isNaN(num))return;
-    totals[+inp.dataset.row]+=num;hasVal[+inp.dataset.row]=true;
+    const v=inp.value.trim();
+    if(!v) return;
+    const num=parseFloat(v);
+    if(isNaN(num)) return;
+    totals[+inp.dataset.row]+=num;
+    hasVal[+inp.dataset.row]=true;
   });
-  sEls.forEach((el,i)=>{el.textContent=hasVal[i]?totals[i]:'';});
-  const sorted=totals.map((t,i)=>({i,t,has:hasVal[i]})).filter(x=>x.has).sort((a,b)=>b.t-a.t);
+
+  sEls.forEach((el,i)=>{
+    el.textContent=hasVal[i]?totals[i]:'';
+  });
+
+  const sorted=totals
+    .map((t,i)=>({i,t,has:hasVal[i]}))
+    .filter(x=>x.has)
+    .sort((a,b)=>b.t-a.t);
+
   const rm={};
-  sorted.forEach((x,idx)=>{rm[x.i]=idx===0?1:(x.t===sorted[idx-1].t?rm[sorted[idx-1].i]:idx+1);});
+  sorted.forEach((x,idx)=>{
+    rm[x.i]=idx===0?1:(x.t===sorted[idx-1].t?rm[sorted[idx-1].i]:idx+1);
+  });
+
   rEls.forEach((el,i)=>{
     el.className='rc';
     if(rm[i]!=null){
       el.textContent=rm[i];
-      if(rm[i]===1)el.classList.add('rk1');
-      else if(rm[i]===2)el.classList.add('rk2');
-      else if(rm[i]===3)el.classList.add('rk3');
-    } else el.textContent='';
+      if(rm[i]===1) el.classList.add('rk1');
+      else if(rm[i]===2) el.classList.add('rk2');
+      else if(rm[i]===3) el.classList.add('rk3');
+    }else{
+      el.textContent='';
+    }
   });
 }
 
-function mth(cls,txt){const th=document.createElement('th');if(cls)th.className=cls;th.textContent=txt;return th;}
-function addCol(cg,cls){const col=document.createElement('col');if(cls)col.className=cls;cg.appendChild(col);}
+function mth(cls,txt){
+  const th=document.createElement('th');
+  if(cls) th.className=cls;
+  th.textContent=txt;
+  return th;
+}
+
+function addCol(cg,cls){
+  const col=document.createElement('col');
+  if(cls) col.className=cls;
+  cg.appendChild(col);
+}
 
 build(10);
 </script>
