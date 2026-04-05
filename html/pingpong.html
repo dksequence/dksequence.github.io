@@ -1,87 +1,278 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover" />
+<meta name="color-scheme" content="light only" />
 <title>Full League Match</title>
+
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap');
 
-*{box-sizing:border-box;margin:0;padding:0;}
-html,body{font-family:'Noto Sans KR',sans-serif;background:#ddd;color:#111;}
-
-/* 공통 변수 */
 :root{
   --teams: 10;
+  --bg-app: #e6e6e6;
+  --bg-bar: #1a1a2e;
+  --bg-input: #2a2a44;
+  --line: #2a2a2a;
+  --text: #111;
+  --muted: #6d6d6d;
+  --blue: #88aaff;
+  --sheet-bg: #ffffff;
+  --block: #9a9a9a;
 }
 
-/* ══ 컨트롤 바 ══ */
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html{
+  color-scheme: light only;
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+}
+
+body{
+  font-family:'Noto Sans KR',sans-serif;
+  background:var(--bg-app);
+  color:var(--text);
+  min-height:100vh;
+}
+
+/* ===== 상단 컨트롤 ===== */
 .ctrl{
   display:flex;
   flex-wrap:wrap;
-  gap:10px;
   align-items:center;
-  padding:10px 16px;
-  background:#1a1a2e;
+  gap:10px 14px;
+  padding:12px 16px;
+  background:var(--bg-bar);
   color:#ddd;
 }
-.ctrl label{font-size:13px;font-weight:700;white-space:nowrap;}
-.ctrl input[type=number]{width:70px;height:36px;padding:0 8px;font-size:14px;border:1px solid #555;background:#2a2a44;color:#fff;}
-.ctrl input[type=text]{width:200px;height:36px;padding:0 8px;font-size:13px;border:1px solid #555;background:#2a2a44;color:#fff;}
-.ctrl button{height:36px;padding:0 16px;border:1px solid #88aaff;background:transparent;color:#88aaff;cursor:pointer;font-size:13px;font-weight:700;}
-.ctrl button:hover{background:#88aaff22;}
-.hint{font-size:11px;color:#999;}
 
-/* ══ 시트 ══ */
-.sheet{background:#fff;padding:18px 18px 24px;overflow-x:auto;}
-.sheet-title{text-align:center;font-size:26px;font-weight:900;margin-bottom:14px;text-decoration:underline;text-underline-offset:5px;letter-spacing:2px;}
+.ctrl label{
+  font-size:13px;
+  font-weight:700;
+  white-space:nowrap;
+}
 
-/* ══ 테이블 ══ */
+.ctrl input[type="number"],
+.ctrl input[type="text"]{
+  height:38px;
+  border:1px solid #555;
+  background:var(--bg-input);
+  color:#fff;
+  padding:0 10px;
+  outline:none;
+  border-radius:0;
+  font-family:inherit;
+  appearance:none;
+  -webkit-appearance:none;
+  color-scheme:light;
+}
+
+.ctrl input[type="number"]{
+  width:74px;
+  font-size:14px;
+}
+
+.ctrl input[type="text"]{
+  width:220px;
+  font-size:14px;
+}
+
+.ctrl button{
+  height:38px;
+  padding:0 16px;
+  border:1px solid var(--blue);
+  background:transparent;
+  color:var(--blue);
+  cursor:pointer;
+  font-size:13px;
+  font-weight:700;
+  font-family:inherit;
+  border-radius:0;
+  appearance:none;
+  -webkit-appearance:none;
+  color-scheme:light;
+}
+
+.ctrl button:hover{
+  background:#88aaff22;
+}
+
+.hint{
+  font-size:11px;
+  color:#a7a7a7;
+  white-space:nowrap;
+}
+
+/* 모바일에서 상단 UI 정리 */
+@media (max-width: 700px){
+  .ctrl{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:10px;
+    align-items:center;
+  }
+
+  .ctrl label[for="tc"]{grid-column:1;}
+  #tc{grid-column:2 / 4; width:100%;}
+  .ctrl label[for="ti"]{grid-column:1;}
+  #ti{grid-column:2 / 4; width:100%;}
+  #bg{grid-column:2;}
+  #bp{grid-column:1 / 3;}
+  .hint{
+    grid-column:3;
+    align-self:center;
+    white-space:normal;
+    text-align:left;
+    line-height:1.35;
+  }
+}
+
+@media (max-width: 520px){
+  .ctrl{
+    grid-template-columns:70px 1fr;
+  }
+
+  #tc,
+  #ti,
+  #bg,
+  #bp,
+  .hint{
+    grid-column:2;
+  }
+
+  .hint{
+    margin-top:2px;
+  }
+}
+
+/* ===== 시트 ===== */
+.sheet{
+  background:var(--sheet-bg);
+  padding:18px 18px 26px;
+  overflow:hidden;
+}
+
+.sheet-title{
+  text-align:center;
+  font-size:clamp(26px, 4vw, 42px);
+  font-weight:900;
+  margin-bottom:16px;
+  text-decoration:underline;
+  text-underline-offset:7px;
+  letter-spacing:2px;
+  color:#111;
+  background:#fff;
+}
+
+/* 보기용 자동 맞춤 스테이지 */
+.fit-stage{
+  width:100%;
+  overflow:hidden;
+  position:relative;
+}
+
+.fit-box{
+  width:max-content;
+  transform-origin:top left;
+  will-change:transform;
+}
+
+/* ===== 표 ===== */
 table.lt{
   border-collapse:collapse;
-  width:100%;
   table-layout:fixed;
   background:#fff;
 }
-table.lt th,table.lt td{
-  border:1.5px solid #222;
+
+table.lt th,
+table.lt td{
+  border:1.5px solid var(--line);
   text-align:center;
   vertical-align:middle;
   padding:0;
   overflow:hidden;
+  color:#111;
+  background:#fff;
 }
 
-/* 화면 행 높이 */
-tr.r-num  {height:36px;}
-tr.r-name {height:64px;}
-tr.r-body {height:64px;}
+/* 행 높이 */
+tr.r-num  {height:44px;}
+tr.r-name {height:78px;}
+tr.r-body {height:78px;}
 
-/* 화면용 고정 열 */
-col.c-seq  {width:52px;}
-col.c-name {width:110px;}
-col.c-gap1 {width:10px;}
-col.c-score{width:72px;}
-col.c-gap2 {width:10px;}
-col.c-rank {width:72px;}
+/* 열 너비 */
+col.c-seq   {width:70px;}
+col.c-name  {width:150px;}
+col.c-match {width:64px;}
+col.c-gap1  {width:14px;}
+col.c-score {width:92px;}
+col.c-gap2  {width:14px;}
+col.c-rank  {width:92px;}
 
-/* 코너 사선 */
-.corner{position:relative;overflow:hidden;}
+/* 좌상단 사선 셀 */
+.corner{
+  position:relative;
+  overflow:hidden;
+  background:#fff;
+}
+
 .corner::after{
   content:"";
   position:absolute;
   inset:0;
-  background:linear-gradient(to top right,transparent calc(50% - 1px),#222 50%,transparent calc(50% + 1px));
+  background:
+    linear-gradient(
+      to top right,
+      transparent calc(50% - 1px),
+      var(--line) 50%,
+      transparent calc(50% + 1px)
+    );
   pointer-events:none;
 }
-.cbl{position:absolute;left:6px;bottom:5px;font-size:11px;font-weight:700;}
-.ctr{position:absolute;right:6px;top:5px;font-size:11px;font-weight:700;}
 
-/* gap 열 */
-td.gc,th.gc{border:0!important;background:#fff!important;}
+.cbl{
+  position:absolute;
+  left:10px;
+  bottom:8px;
+  font-size:14px;
+  font-weight:700;
+  color:#111;
+}
 
-/* 번호 셀 */
-.num-cell{font-size:14px;font-weight:900;overflow:visible;white-space:nowrap;}
-th.sq{font-size:13px;font-weight:900;overflow:visible;white-space:nowrap;}
+.ctr{
+  position:absolute;
+  right:10px;
+  top:8px;
+  font-size:14px;
+  font-weight:700;
+  color:#111;
+}
+
+/* 간격 컬럼 */
+td.gc,
+th.gc{
+  border:0 !important;
+  background:#fff !important;
+}
+
+/* 번호 영역 */
+.num-cell{
+  font-size:15px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+th.sq{
+  font-size:15px;
+  font-weight:900;
+  white-space:nowrap;
+}
 
 /* 이름 입력 */
 input.ni{
@@ -90,47 +281,81 @@ input.ni{
   height:50%;
   border:0;
   outline:none;
-  background:transparent;
+  background:#fff;
+  color:#111;
   text-align:center;
-  font-size:12px;
+  font-size:13px;
   font-family:inherit;
-  padding:2px;
+  padding:2px 4px;
+  appearance:none;
+  -webkit-appearance:none;
+  color-scheme:light;
 }
-input.ni:focus{background:#eef4ff;}
 
-/* 대각 블록 */
-.blocked{background:#888!important;}
-.blocked input{visibility:hidden;pointer-events:none;}
+input.ni:focus{
+  background:#eef4ff;
+}
 
-/* 경기 입력 */
+/* 경기 점수 입력 */
 input.mi{
   display:block;
   width:100%;
   height:100%;
   border:0;
   outline:none;
-  background:transparent;
+  background:#fff;
+  color:#111;
   text-align:center;
-  font-size:15px;
+  font-size:16px;
   font-family:inherit;
+  appearance:none;
+  -webkit-appearance:none;
+  color-scheme:light;
 }
-input.mi:focus{background:#eef4ff;}
 
-/* 결과 */
-.rc{font-size:15px;font-weight:700;}
-.rk1{background:#ffd700;}
-.rk2{background:#d8d8d8;}
-.rk3{background:#e8a96a;}
+input.mi:focus{
+  background:#eef4ff;
+}
 
-/* ══ 인쇄 ══ */
+/* 대각 차단 셀 */
+.blocked{
+  background:var(--block) !important;
+}
+
+.blocked input{
+  visibility:hidden;
+  pointer-events:none;
+}
+
+/* 점수/순위 */
+.rc{
+  font-size:16px;
+  font-weight:700;
+  background:#fff;
+  color:#111;
+}
+
+.rk1{background:#ffd700 !important;}
+.rk2{background:#d8d8d8 !important;}
+.rk3{background:#e8a96a !important;}
+
+/* 화면 폭이 아주 넓을 때 조금 더 안정적으로 */
+@media (min-width: 1400px){
+  .sheet{
+    padding-left:24px;
+    padding-right:24px;
+  }
+}
+
+/* ===== 인쇄 ===== */
 @media print{
   @page{
     size:A4 landscape;
     margin:8mm;
   }
 
-  html,body{
-    background:#fff;
+  html, body{
+    background:#fff !important;
     width:auto;
     height:auto;
   }
@@ -140,349 +365,427 @@ input.mi:focus{background:#eef4ff;}
     print-color-adjust:exact;
   }
 
-  .ctrl{display:none!important;}
+  .ctrl{
+    display:none !important;
+  }
 
   .sheet{
     padding:0 !important;
-    overflow:visible;
-    width:100%;
+    overflow:visible !important;
+    background:#fff !important;
   }
 
   .sheet-title{
     font-size:17px;
     margin-bottom:3mm;
+    color:#111 !important;
+    background:#fff !important;
+  }
+
+  .fit-stage{
+    overflow:visible !important;
+    height:auto !important;
+  }
+
+  .fit-box{
+    transform:none !important;
+    width:auto !important;
   }
 
   table.lt{
     width:calc(100% - 4mm) !important;
     table-layout:fixed;
     margin-left:4mm !important;
+    background:#fff !important;
   }
 
-  /* 인쇄 시: 상단 이름행과 본문 이름행 동일 높이 */
   tr.r-num  {height:22px;}
   tr.r-name {height:calc((170mm - 22px) / (var(--teams) + 1));}
   tr.r-body {height:calc((170mm - 22px) / (var(--teams) + 1));}
 
-  /* 왼쪽 번호 잘림 방지: 첫 열 확대 + 나머지 일부 축소 */
-  col.c-seq  {width:58px!important;}
-  col.c-name {width:68px!important;}
-  col.c-gap1 {width:4px!important;}
-  col.c-score{width:42px!important;}
-  col.c-gap2 {width:4px!important;}
-  col.c-rank {width:42px!important;}
+  col.c-seq   {width:58px !important;}
+  col.c-name  {width:68px !important;}
+  col.c-match {width:auto !important;}
+  col.c-gap1  {width:4px !important;}
+  col.c-score {width:42px !important;}
+  col.c-gap2  {width:4px !important;}
+  col.c-rank  {width:42px !important;}
 
-  table.lt th,table.lt td{border:1.2px solid #222;font-size:9px;}
-  input.ni{font-size:8px;padding:1px;}
-  input.mi{font-size:10px;}
-  .rc{font-size:10px;}
-  .num-cell{font-size:10px;}
-  th.sq{font-size:10px;}
-  .cbl,.ctr{font-size:8px;}
+  table.lt th,
+  table.lt td{
+    border:1.2px solid #222 !important;
+    font-size:9px !important;
+    color:#111 !important;
+    background:#fff !important;
+  }
 
-  .blocked{background:#888!important;}
-  .rk1{background:#ffd700!important;}
-  .rk2{background:#d8d8d8!important;}
-  .rk3{background:#e8a96a!important;}
-  td.gc,th.gc{border:0!important;background:#fff!important;}
+  input.ni{
+    font-size:8px !important;
+    padding:1px !important;
+    background:#fff !important;
+    color:#111 !important;
+  }
+
+  input.mi{
+    font-size:10px !important;
+    background:#fff !important;
+    color:#111 !important;
+  }
+
+  .rc{font-size:10px !important;}
+  .num-cell{font-size:10px !important;}
+  th.sq{font-size:10px !important;}
+  .cbl,.ctr{font-size:8px !important;}
+
+  .blocked{background:#888 !important;}
+  .rk1{background:#ffd700 !important;}
+  .rk2{background:#d8d8d8 !important;}
+  .rk3{background:#e8a96a !important;}
+  td.gc, th.gc{border:0 !important;background:#fff !important;}
 }
 </style>
 </head>
 <body>
+
 <div class="ctrl">
   <label for="tc">팀 수</label>
-  <input id="tc" type="number" min="2" max="20" value="10"/>
+  <input id="tc" type="number" min="2" max="20" value="10" />
+
   <label for="ti">대회명</label>
-  <input id="ti" type="text" value="Full league match"/>
+  <input id="ti" type="text" value="Full league match" />
+
   <button id="bg">표 만들기</button>
   <button id="bp">🖨️ 인쇄 (A4 가로)</button>
+
   <span class="hint">최대 20팀 · 점수 입력 시 합계·순위 자동 계산</span>
 </div>
 
 <div class="sheet" id="sheet">
   <h1 class="sheet-title" id="st">Full league match</h1>
-  <div id="wrap"></div>
+
+  <div class="fit-stage" id="fitStage">
+    <div class="fit-box" id="fitBox">
+      <div id="wrap"></div>
+    </div>
+  </div>
 </div>
 
 <script>
-const tcEl=document.getElementById('tc');
-const tiEl=document.getElementById('ti');
-const stEl=document.getElementById('st');
+const tcEl = document.getElementById('tc');
+const tiEl = document.getElementById('ti');
+const stEl = document.getElementById('st');
+const wrapEl = document.getElementById('wrap');
+const fitStage = document.getElementById('fitStage');
+const fitBox = document.getElementById('fitBox');
 
-document.getElementById('bg').addEventListener('click',()=>{
-  const n=getN();
-  if(n) build(n);
+document.getElementById('bg').addEventListener('click', () => {
+  const n = getN();
+  if (n) build(n);
 });
 
-document.getElementById('bp').addEventListener('click',()=>{
-  const n=getN();
-  if(n){
+document.getElementById('bp').addEventListener('click', () => {
+  const n = getN();
+  if (n) {
     document.documentElement.style.setProperty('--teams', n);
     window.print();
   }
 });
 
-tcEl.addEventListener('keydown',e=>{
-  if(e.key==='Enter'){
-    const n=getN();
-    if(n) build(n);
+tcEl.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    const n = getN();
+    if (n) build(n);
   }
 });
 
-tiEl.addEventListener('input',()=>{
-  stEl.textContent=tiEl.value||'Full League Match';
+tiEl.addEventListener('input', () => {
+  stEl.textContent = tiEl.value || 'Full League Match';
+  requestAnimationFrame(fitTableToScreen);
 });
 
-function getN(){
-  const v=parseInt(tcEl.value,10);
-  if(isNaN(v)||v<2){
+window.addEventListener('resize', fitTableToScreen);
+window.addEventListener('orientationchange', () => {
+  setTimeout(fitTableToScreen, 120);
+});
+
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(() => {
+    fitTableToScreen();
+  });
+}
+
+function getN() {
+  const v = parseInt(tcEl.value, 10);
+
+  if (isNaN(v) || v < 2) {
     alert('2 이상 입력하세요');
     return null;
   }
-  if(v>20){
+
+  if (v > 20) {
     alert('최대 20팀');
     return null;
   }
+
   return v;
 }
 
-function build(n){
+function build(n) {
   document.documentElement.style.setProperty('--teams', n);
+  wrapEl.innerHTML = '';
 
-  const wrap=document.getElementById('wrap');
-  wrap.innerHTML='';
+  const tbl = document.createElement('table');
+  tbl.className = 'lt';
 
-  const tbl=document.createElement('table');
-  tbl.className='lt';
-
-  /* ── colgroup ──
-     순서 | 이름 | match×n | gap1 | 점수 | gap2 | 순위
-  */
-  const cg=document.createElement('colgroup');
-  addCol(cg,'c-seq');
-  addCol(cg,'c-name');
-  for(let i=0;i<n;i++) addCol(cg,'c-match');
-  addCol(cg,'c-gap1');
-  addCol(cg,'c-score');
-  addCol(cg,'c-gap2');
-  addCol(cg,'c-rank');
+  const cg = document.createElement('colgroup');
+  addCol(cg, 'c-seq');
+  addCol(cg, 'c-name');
+  for (let i = 0; i < n; i++) addCol(cg, 'c-match');
+  addCol(cg, 'c-gap1');
+  addCol(cg, 'c-score');
+  addCol(cg, 'c-gap2');
+  addCol(cg, 'c-rank');
   tbl.appendChild(cg);
 
-  /* ── thead ── */
-  const thead=document.createElement('thead');
+  const thead = document.createElement('thead');
 
-  const tr1=document.createElement('tr');
-  tr1.className='r-num';
+  const tr1 = document.createElement('tr');
+  tr1.className = 'r-num';
 
-  const thSeq=mth('sq','순서');
-  thSeq.rowSpan=2;
+  const thSeq = mth('sq', '순서');
+  thSeq.rowSpan = 2;
   tr1.appendChild(thSeq);
 
-  const thC=document.createElement('th');
-  thC.className='corner';
-  thC.rowSpan=2;
-  thC.innerHTML='<span class="cbl">이름</span><span class="ctr">이름</span>';
-  tr1.appendChild(thC);
+  const thCorner = document.createElement('th');
+  thCorner.className = 'corner';
+  thCorner.rowSpan = 2;
+  thCorner.innerHTML = '<span class="cbl">이름</span><span class="ctr">이름</span>';
+  tr1.appendChild(thCorner);
 
-  for(let c=0;c<n;c++){
-    const th=mth('num-cell', String(c+1));
-    tr1.appendChild(th);
+  for (let c = 0; c < n; c++) {
+    tr1.appendChild(mth('num-cell', String(c + 1)));
   }
 
-  const thG1=document.createElement('th');
-  thG1.className='gc';
-  thG1.rowSpan=2;
-  tr1.appendChild(thG1);
+  const thGap1 = document.createElement('th');
+  thGap1.className = 'gc';
+  thGap1.rowSpan = 2;
+  tr1.appendChild(thGap1);
 
-  const thSc=mth('','점수');
-  thSc.rowSpan=2;
-  tr1.appendChild(thSc);
+  const thScore = mth('', '점수');
+  thScore.rowSpan = 2;
+  tr1.appendChild(thScore);
 
-  const thG2=document.createElement('th');
-  thG2.className='gc';
-  thG2.rowSpan=2;
-  tr1.appendChild(thG2);
+  const thGap2 = document.createElement('th');
+  thGap2.className = 'gc';
+  thGap2.rowSpan = 2;
+  tr1.appendChild(thGap2);
 
-  const thRk=mth('','순위');
-  thRk.rowSpan=2;
-  tr1.appendChild(thRk);
+  const thRank = mth('', '순위');
+  thRank.rowSpan = 2;
+  tr1.appendChild(thRank);
 
   thead.appendChild(tr1);
 
-  const tr2=document.createElement('tr');
-  tr2.className='r-name';
+  const tr2 = document.createElement('tr');
+  tr2.className = 'r-name';
 
-  for(let c=0;c<n;c++){
-    const td=document.createElement('th');
+  for (let c = 0; c < n; c++) {
+    const th = document.createElement('th');
 
-    const i1=document.createElement('input');
-    i1.type='text';
-    i1.className='ni hni';
-    i1.dataset.col=c;
-    i1.dataset.line=0;
+    const i1 = document.createElement('input');
+    i1.type = 'text';
+    i1.className = 'ni hni';
+    i1.dataset.col = c;
+    i1.dataset.line = 0;
 
-    const i2=document.createElement('input');
-    i2.type='text';
-    i2.className='ni hni';
-    i2.dataset.col=c;
-    i2.dataset.line=1;
+    const i2 = document.createElement('input');
+    i2.type = 'text';
+    i2.className = 'ni hni';
+    i2.dataset.col = c;
+    i2.dataset.line = 1;
 
-    td.appendChild(i1);
-    td.appendChild(i2);
-    tr2.appendChild(td);
+    th.appendChild(i1);
+    th.appendChild(i2);
+    tr2.appendChild(th);
   }
 
   thead.appendChild(tr2);
   tbl.appendChild(thead);
 
-  const tbody=document.createElement('tbody');
-  const sEls=[];
-  const rEls=[];
+  const tbody = document.createElement('tbody');
+  const scoreEls = [];
+  const rankEls = [];
 
-  for(let r=0;r<n;r++){
-    const tr=document.createElement('tr');
-    tr.className='r-body';
+  for (let r = 0; r < n; r++) {
+    const tr = document.createElement('tr');
+    tr.className = 'r-body';
 
-    const tdSq=document.createElement('th');
-    tdSq.className='sq';
-    tdSq.textContent=r+1;
+    const tdSq = document.createElement('th');
+    tdSq.className = 'sq';
+    tdSq.textContent = r + 1;
     tr.appendChild(tdSq);
 
-    const tdN=document.createElement('td');
+    const tdName = document.createElement('td');
 
-    const ni1=document.createElement('input');
-    ni1.type='text';
-    ni1.className='ni rni';
-    ni1.dataset.row=r;
-    ni1.dataset.line=0;
+    const ni1 = document.createElement('input');
+    ni1.type = 'text';
+    ni1.className = 'ni rni';
+    ni1.dataset.row = r;
+    ni1.dataset.line = 0;
 
-    const ni2=document.createElement('input');
-    ni2.type='text';
-    ni2.className='ni rni';
-    ni2.dataset.row=r;
-    ni2.dataset.line=1;
+    const ni2 = document.createElement('input');
+    ni2.type = 'text';
+    ni2.className = 'ni rni';
+    ni2.dataset.row = r;
+    ni2.dataset.line = 1;
 
-    tdN.appendChild(ni1);
-    tdN.appendChild(ni2);
-    tr.appendChild(tdN);
+    tdName.appendChild(ni1);
+    tdName.appendChild(ni2);
+    tr.appendChild(tdName);
 
-    for(let c=0;c<n;c++){
-      const td=document.createElement('td');
+    for (let c = 0; c < n; c++) {
+      const td = document.createElement('td');
 
-      if(r===c){
-        td.className='blocked';
-        const d=document.createElement('input');
-        d.type='text';
-        td.appendChild(d);
-      }else{
-        const inp=document.createElement('input');
-        inp.type='text';
-        inp.className='mi';
-        inp.dataset.row=r;
-        inp.dataset.col=c;
-        inp.addEventListener('input',()=>recalc(n,sEls,rEls));
+      if (r === c) {
+        td.className = 'blocked';
+        const dummy = document.createElement('input');
+        dummy.type = 'text';
+        td.appendChild(dummy);
+      } else {
+        const inp = document.createElement('input');
+        inp.type = 'text';
+        inp.className = 'mi';
+        inp.dataset.row = r;
+        inp.dataset.col = c;
+        inp.addEventListener('input', () => recalc(n, scoreEls, rankEls));
         td.appendChild(inp);
       }
 
       tr.appendChild(td);
     }
 
-    const g1=document.createElement('td');
-    g1.className='gc';
-    tr.appendChild(g1);
+    const gap1 = document.createElement('td');
+    gap1.className = 'gc';
+    tr.appendChild(gap1);
 
-    const tdS=document.createElement('td');
-    tdS.className='rc';
-    tr.appendChild(tdS);
-    sEls.push(tdS);
+    const tdScore = document.createElement('td');
+    tdScore.className = 'rc';
+    tr.appendChild(tdScore);
+    scoreEls.push(tdScore);
 
-    const g2=document.createElement('td');
-    g2.className='gc';
-    tr.appendChild(g2);
+    const gap2 = document.createElement('td');
+    gap2.className = 'gc';
+    tr.appendChild(gap2);
 
-    const tdR=document.createElement('td');
-    tdR.className='rc';
-    tr.appendChild(tdR);
-    rEls.push(tdR);
+    const tdRank = document.createElement('td');
+    tdRank.className = 'rc';
+    tr.appendChild(tdRank);
+    rankEls.push(tdRank);
 
     tbody.appendChild(tr);
   }
 
   tbl.appendChild(tbody);
-  wrap.appendChild(tbl);
+  wrapEl.appendChild(tbl);
 
-  /* 이름 동기화 헤더↔행 */
-  tbl.addEventListener('input',e=>{
-    const el=e.target;
+  tbl.addEventListener('input', (e) => {
+    const el = e.target;
 
-    if(el.classList.contains('hni')){
-      const c=+el.dataset.col;
-      const l=+el.dataset.line;
-      const t=tbl.querySelector(`.rni[data-row="${c}"][data-line="${l}"]`);
-      if(t) t.value=el.value;
-    }else if(el.classList.contains('rni')){
-      const r=+el.dataset.row;
-      const l=+el.dataset.line;
-      const t=tbl.querySelector(`.hni[data-col="${r}"][data-line="${l}"]`);
-      if(t) t.value=el.value;
+    if (el.classList.contains('hni')) {
+      const c = +el.dataset.col;
+      const l = +el.dataset.line;
+      const target = tbl.querySelector(`.rni[data-row="${c}"][data-line="${l}"]`);
+      if (target) target.value = el.value;
+    } else if (el.classList.contains('rni')) {
+      const r = +el.dataset.row;
+      const l = +el.dataset.line;
+      const target = tbl.querySelector(`.hni[data-col="${r}"][data-line="${l}"]`);
+      if (target) target.value = el.value;
+    }
+  });
+
+  requestAnimationFrame(fitTableToScreen);
+}
+
+function recalc(n, scoreEls, rankEls) {
+  const totals = new Array(n).fill(0);
+  const hasVal = new Array(n).fill(false);
+
+  document.querySelectorAll('input.mi').forEach((inp) => {
+    const v = inp.value.trim();
+    if (!v) return;
+
+    const num = parseFloat(v);
+    if (isNaN(num)) return;
+
+    totals[+inp.dataset.row] += num;
+    hasVal[+inp.dataset.row] = true;
+  });
+
+  scoreEls.forEach((el, i) => {
+    el.textContent = hasVal[i] ? totals[i] : '';
+  });
+
+  const sorted = totals
+    .map((t, i) => ({ i, t, has: hasVal[i] }))
+    .filter(x => x.has)
+    .sort((a, b) => b.t - a.t);
+
+  const rankMap = {};
+  sorted.forEach((x, idx) => {
+    rankMap[x.i] = idx === 0 ? 1 : (x.t === sorted[idx - 1].t ? rankMap[sorted[idx - 1].i] : idx + 1);
+  });
+
+  rankEls.forEach((el, i) => {
+    el.className = 'rc';
+
+    if (rankMap[i] != null) {
+      el.textContent = rankMap[i];
+      if (rankMap[i] === 1) el.classList.add('rk1');
+      else if (rankMap[i] === 2) el.classList.add('rk2');
+      else if (rankMap[i] === 3) el.classList.add('rk3');
+    } else {
+      el.textContent = '';
     }
   });
 }
 
-function recalc(n,sEls,rEls){
-  const totals=new Array(n).fill(0);
-  const hasVal=new Array(n).fill(false);
+/* 보기 모드: 표 전체를 화면 폭에 맞춤 */
+function fitTableToScreen() {
+  const table = wrapEl.querySelector('table.lt');
+  if (!table) return;
 
-  document.querySelectorAll('input.mi').forEach(inp=>{
-    const v=inp.value.trim();
-    if(!v) return;
-    const num=parseFloat(v);
-    if(isNaN(num)) return;
-    totals[+inp.dataset.row]+=num;
-    hasVal[+inp.dataset.row]=true;
-  });
+  fitBox.style.transform = 'scale(1)';
+  fitBox.style.width = 'max-content';
+  fitStage.style.height = 'auto';
 
-  sEls.forEach((el,i)=>{
-    el.textContent=hasVal[i]?totals[i]:'';
-  });
+  const naturalWidth = fitBox.offsetWidth;
+  const naturalHeight = fitBox.offsetHeight;
+  const stageWidth = fitStage.clientWidth;
 
-  const sorted=totals
-    .map((t,i)=>({i,t,has:hasVal[i]}))
-    .filter(x=>x.has)
-    .sort((a,b)=>b.t-a.t);
+  if (!naturalWidth || !stageWidth) return;
 
-  const rm={};
-  sorted.forEach((x,idx)=>{
-    rm[x.i]=idx===0?1:(x.t===sorted[idx-1].t?rm[sorted[idx-1].i]:idx+1);
-  });
+  const scale = Math.min(1, stageWidth / naturalWidth);
 
-  rEls.forEach((el,i)=>{
-    el.className='rc';
-    if(rm[i]!=null){
-      el.textContent=rm[i];
-      if(rm[i]===1) el.classList.add('rk1');
-      else if(rm[i]===2) el.classList.add('rk2');
-      else if(rm[i]===3) el.classList.add('rk3');
-    }else{
-      el.textContent='';
-    }
-  });
+  fitBox.style.transform = `scale(${scale})`;
+  fitStage.style.height = `${naturalHeight * scale}px`;
 }
 
-function mth(cls,txt){
-  const th=document.createElement('th');
-  if(cls) th.className=cls;
-  th.textContent=txt;
+function mth(cls, txt) {
+  const th = document.createElement('th');
+  if (cls) th.className = cls;
+  th.textContent = txt;
   return th;
 }
 
-function addCol(cg,cls){
-  const col=document.createElement('col');
-  if(cls) col.className=cls;
+function addCol(cg, cls) {
+  const col = document.createElement('col');
+  if (cls) col.className = cls;
   cg.appendChild(col);
 }
 
 build(10);
 </script>
+
 </body>
 </html>
