@@ -1,55 +1,46 @@
-<!-- 기존 코드는 그대로 유지하고 아래 부분만 수정된 상태 -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DKsequence | Time Teller</title>
 
-<!-- 🔻 이 부분만 바뀜 (reference-panel 전체 교체) -->
-<aside class="reference-panel">
-  <div style="display:flex; flex-direction:column; gap:20px; max-width:520px;">
+<link rel="stylesheet" href="../css/menu.css" />
 
-    <img
-      src="../lab/mockup.jpg"
-      alt="Time Teller work image"
-      class="reference-image"
-    />
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#000;color:#fff;font-family:Arial,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;}
 
-    <!-- 🔥 Behance 스타일 설명 영역 -->
-    <div style="
-      padding: 18px 6px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-    ">
-      <div style="
-        font-size: 14px;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: #9a9a9a;
-        margin-bottom: 10px;
-      ">
-        Application for Android
-      </div>
+img{display:block;max-width:100%;}
 
-      <div style="
-        font-size: 20px;
-        font-weight: 600;
-        letter-spacing: -0.02em;
-        margin-bottom: 12px;
-      ">
-        Time Teller — Voice-based time notification system
-      </div>
+/* ---------- 기존 유지 ---------- */
 
-      <div style="
-        font-size: 14px;
-        color: #b5b5b5;
-        line-height: 1.7;
-        max-width: 480px;
-      ">
-        A minimal time-based interaction tool designed to announce the current time at defined intervals.  
-        The interface focuses on clarity, rhythm, and presence, allowing users to experience time not as numbers,  
-        but as a continuous auditory sequence.  
+.page-title{
+font-size:clamp(28px,12vw,56px);
+margin:8px 0 28px;
+}
 
-        <br><br>
+/* ---------- layout ---------- */
 
-        Designed with a dark minimal UI and structured layout,  
-        this application bridges utility and emotional awareness through voice interaction.
-      </div>
-    </div>
+.device-gallery{
+display:grid;
+grid-template-columns:minmax(340px,430px) minmax(420px,640px);
+gap:48px;
+}
 
-  </div>
-</aside>
+/* ---------- phone ---------- */
+
+.phone-shell{
+aspect-ratio:9/17.8;
+}
+
+/* ---------- right panel ---------- */
+
+.reference-panel{
+width:100%;
+max-width:640px;
+}
+
+.reference-stack{
+display:flex;
+flex-direction
