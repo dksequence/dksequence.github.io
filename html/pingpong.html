@@ -1,1 +1,566 @@
 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>리그전 대진표 생성기</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, "Noto Sans KR", sans-serif;
+      background: #f3f3f3;
+      color: #111;
+    }
+
+    body {
+      min-height: 100vh;
+    }
+
+    body.print-portrait {
+      --print-size: A4 portrait;
+    }
+
+    body.print-landscape {
+      --print-size: A4 landscape;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 20px 20px 40px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+      padding: 14px 16px;
+      background: #fff;
+      border: 1px solid #d8d8d8;
+    }
+
+    .controls label {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .controls input,
+    .controls select {
+      height: 42px;
+      padding: 8px 10px;
+      font-size: 16px;
+      border: 1px solid #bbb;
+      background: #fff;
+    }
+
+    .controls input {
+      width: 120px;
+    }
+
+    .controls select {
+      width: 130px;
+    }
+
+    .controls button {
+      height: 42px;
+      padding: 0 16px;
+      border: 1px solid #222;
+      background: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .controls button:hover {
+      background: #f0f0f0;
+    }
+
+    .hint {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .sheet-wrap {
+      background: #fff;
+      border: 1px solid #cfcfcf;
+      padding: 18px 16px 20px;
+      overflow-x: auto;
+    }
+
+    .print-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      min-height: 24px;
+      font-size: 13px;
+      color: #222;
+    }
+
+    .print-time {
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .print-generator {
+      flex: 1;
+      text-align: center;
+      font-size: 13px;
+      color: #444;
+    }
+
+    .print-spacer {
+      width: 140px;
+      flex-shrink: 0;
+    }
+
+    .sheet-title {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 800;
+      margin: 0 0 18px;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    #tableContainer {
+      width: 100%;
+    }
+
+    table.league-table {
+      border-collapse: collapse;
+      width: 100%;
+      table-layout: fixed;
+      background: #fff;
+    }
+
+    table.league-table th,
+    table.league-table td {
+      border: 1px solid #222;
+      text-align: center;
+      vertical-align: middle;
+      height: 56px;
+      padding: 0;
+      font-size: 15px;
+    }
+
+    table.league-table th {
+      font-weight: 800;
+      background: #fff;
+    }
+
+    .col-order,
+    .row-order {
+      width: 64px;
+      min-width: 64px;
+      font-weight: 700;
+    }
+
+    .col-name,
+    .row-name {
+      width: 124px;
+      min-width: 124px;
+    }
+
+    .corner-cell {
+      position: relative;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .corner-cell::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(
+          to top right,
+          transparent calc(50% - 1px),
+          #2b6f92 50%,
+          transparent calc(50% + 1px)
+        );
+      pointer-events: none;
+    }
+
+    .corner-cell .corner-bottom-left {
+      position: absolute;
+      left: 12px;
+      bottom: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .corner-cell .corner-top-right {
+      position: absolute;
+      right: 12px;
+      top: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .name-input {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      outline: none;
+      background: transparent;
+      text-align: center;
+      font-size: 14px;
+      padding: 6px;
+    }
+
+    .score-input,
+    .rank-input,
+    .match-input {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      outline: none;
+      background: transparent;
+      text-align: center;
+      font-size: 14px;
+      padding: 4px;
+    }
+
+    .blocked {
+      background: #9a9a9a;
+    }
+
+    .blocked .match-input {
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .score-col,
+    .rank-col {
+      width: 84px;
+      min-width: 84px;
+    }
+
+    .gap-col {
+      width: 14px;
+      min-width: 14px;
+      border: 0 !important;
+      background: #fff !important;
+    }
+
+    .footer-space {
+      height: 8px;
+    }
+
+    @media print {
+      @page {
+        size: var(--print-size, A4 portrait);
+        margin: 8mm;
+      }
+
+      html, body {
+        background: #fff;
+      }
+
+      body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .controls,
+      .hint {
+        display: none !important;
+      }
+
+      .page {
+        max-width: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .sheet-wrap {
+        border: 0;
+        padding: 0;
+        overflow: visible;
+      }
+
+      /* 인쇄 시 좌상단 날짜 및 상단 문구 제거 */
+      .print-time,
+      .print-generator,
+      .print-spacer {
+        display: none !important;
+      }
+
+      .print-meta {
+        display: none !important;
+        margin: 0 !important;
+        min-height: 0 !important;
+      }
+
+      .sheet-title {
+        margin: 0 0 10px;
+        font-size: 24px;
+      }
+
+      table.league-table {
+        width: 100%;
+      }
+
+      table.league-table th,
+      table.league-table td {
+        height: 47px;
+        font-size: 13px;
+      }
+
+      .col-order,
+      .row-order {
+        width: 50px;
+        min-width: 50px;
+      }
+
+      .col-name,
+      .row-name {
+        width: 92px;
+        min-width: 92px;
+      }
+
+      .score-col,
+      .rank-col {
+        width: 62px;
+        min-width: 62px;
+      }
+
+      .gap-col {
+        width: 8px;
+        min-width: 8px;
+      }
+
+      .corner-cell .corner-bottom-left,
+      .corner-cell .corner-top-right {
+        font-size: 12px;
+      }
+
+      .name-input,
+      .score-input,
+      .rank-input,
+      .match-input {
+        font-size: 12px;
+      }
+
+      .blocked {
+        background: #9a9a9a !important;
+      }
+    }
+  </style>
+</head>
+<body class="print-portrait">
+  <div class="page">
+    <div class="controls">
+      <label for="participantCount">참가자 수</label>
+      <input id="participantCount" type="number" min="2" max="20" value="10" />
+
+      <label for="printOrientation">출력 방향</label>
+      <select id="printOrientation">
+        <option value="portrait">세로</option>
+        <option value="landscape">가로</option>
+      </select>
+
+      <button id="generateBtn" type="button">표 만들기</button>
+      <button id="printBtn" type="button">인쇄</button>
+
+      <div class="hint">참가자 수는 최대 20명까지 입력할 수 있습니다.</div>
+    </div>
+
+    <div class="sheet-wrap">
+      <div class="print-meta">
+        <div class="print-time" id="printTime"></div>
+        <div class="print-generator">리그전 대진표 생성기</div>
+        <div class="print-spacer"></div>
+      </div>
+
+      <h1 class="sheet-title">리그전</h1>
+      <div id="tableContainer"></div>
+      <div class="footer-space"></div>
+    </div>
+  </div>
+
+  <script>
+    const participantInput = document.getElementById("participantCount");
+    const printOrientation = document.getElementById("printOrientation");
+    const generateBtn = document.getElementById("generateBtn");
+    const printBtn = document.getElementById("printBtn");
+    const tableContainer = document.getElementById("tableContainer");
+    const printTime = document.getElementById("printTime");
+
+    function updatePrintTime() {
+      const now = new Date();
+      const year = String(now.getFullYear()).slice(2);
+      const month = now.getMonth() + 1;
+      const date = now.getDate();
+
+      let hours = now.getHours();
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+      const isAm = hours < 12;
+      const period = isAm ? "오전" : "오후";
+
+      let hour12 = hours % 12;
+      if (hour12 === 0) hour12 = 12;
+
+      printTime.textContent = `${year}. ${month}. ${date}. ${period} ${hour12}:${minutes}`;
+    }
+
+    function applyOrientation() {
+      document.body.classList.remove("print-portrait", "print-landscape");
+
+      if (printOrientation.value === "landscape") {
+        document.body.classList.add("print-landscape");
+      } else {
+        document.body.classList.add("print-portrait");
+      }
+    }
+
+    function createCell(tag, className = "", text = "") {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (text) el.textContent = text;
+      return el;
+    }
+
+    function createInput(className, placeholder = "") {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.className = className;
+      if (placeholder) input.placeholder = placeholder;
+      return input;
+    }
+
+    function buildLeagueTable(count) {
+      tableContainer.innerHTML = "";
+
+      const table = document.createElement("table");
+      table.className = "league-table";
+
+      const thead = document.createElement("thead");
+      const headRow = document.createElement("tr");
+
+      headRow.appendChild(createCell("th", "col-order", "순서"));
+
+      const nameHead = createCell("th", "col-name corner-cell");
+      const bottomLeft = createCell("div", "corner-bottom-left", "이름");
+      const topRight = createCell("div", "corner-top-right", "이름");
+      nameHead.appendChild(bottomLeft);
+      nameHead.appendChild(topRight);
+      headRow.appendChild(nameHead);
+
+      for (let col = 1; col <= count; col += 1) {
+        headRow.appendChild(createCell("th", "", String(col)));
+      }
+
+      headRow.appendChild(createCell("th", "gap-col", ""));
+      headRow.appendChild(createCell("th", "score-col", "점수"));
+      headRow.appendChild(createCell("th", "rank-col", "순위"));
+
+      thead.appendChild(headRow);
+      table.appendChild(thead);
+
+      const tbody = document.createElement("tbody");
+
+      for (let row = 1; row <= count; row += 1) {
+        const tr = document.createElement("tr");
+
+        tr.appendChild(createCell("th", "row-order", String(row)));
+
+        const nameTd = createCell("td", "row-name");
+        nameTd.appendChild(createInput("name-input"));
+        tr.appendChild(nameTd);
+
+        for (let col = 1; col <= count; col += 1) {
+          const td = createCell("td");
+          if (row === col) {
+            td.classList.add("blocked");
+          }
+          const input = createInput("match-input");
+          td.appendChild(input);
+          tr.appendChild(td);
+        }
+
+        tr.appendChild(createCell("td", "gap-col", ""));
+
+        const scoreTd = createCell("td", "score-col");
+        scoreTd.appendChild(createInput("score-input"));
+        tr.appendChild(scoreTd);
+
+        const rankTd = createCell("td", "rank-col");
+        rankTd.appendChild(createInput("rank-input"));
+        tr.appendChild(rankTd);
+
+        tbody.appendChild(tr);
+      }
+
+      table.appendChild(tbody);
+      tableContainer.appendChild(table);
+    }
+
+    function getValidatedCount() {
+      const raw = parseInt(participantInput.value, 10);
+
+      if (Number.isNaN(raw)) {
+        alert("참가자 수를 숫자로 입력하세요.");
+        participantInput.focus();
+        return null;
+      }
+
+      if (raw < 2) {
+        alert("참가자 수는 최소 2명 이상이어야 합니다.");
+        participantInput.focus();
+        return null;
+      }
+
+      if (raw > 20) {
+        alert("참가자 수는 최대 20명까지 입력할 수 있습니다.");
+        participantInput.focus();
+        return null;
+      }
+
+      return raw;
+    }
+
+    generateBtn.addEventListener("click", () => {
+      const count = getValidatedCount();
+      if (count === null) return;
+      buildLeagueTable(count);
+    });
+
+    printBtn.addEventListener("click", () => {
+      applyOrientation();
+      updatePrintTime();
+      window.print();
+    });
+
+    printOrientation.addEventListener("change", () => {
+      applyOrientation();
+    });
+
+    participantInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        const count = getValidatedCount();
+        if (count === null) return;
+        buildLeagueTable(count);
+      }
+    });
+
+    updatePrintTime();
+    applyOrientation();
+    buildLeagueTable(10);
+  </script>
+</body>
+</html>
