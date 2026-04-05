@@ -44,63 +44,9 @@
       cursor: pointer;
     }
 
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 22px 32px;
-      background: rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .logo {
-      font-size: 26px;
-      font-weight: 700;
-      letter-spacing: 0.4px;
-      color: #fff;
-    }
-
-    .menu-btn {
+    img {
       display: block;
-      font-size: 30px;
-      line-height: 1;
-      cursor: pointer;
-      user-select: none;
-      z-index: 1002;
-      color: #fff;
-      background: transparent;
-      border: 0;
-    }
-
-    .mobile-menu {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.96);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 36px;
-      transform: translateY(-100%);
-      transition: transform 0.3s ease;
-      z-index: 1001;
-      pointer-events: none;
-    }
-
-    .mobile-menu.active {
-      transform: translateY(0);
-      pointer-events: auto;
-    }
-
-    .mobile-menu a {
-      font-size: 28px;
-      text-transform: uppercase;
-      text-align: center;
+      max-width: 100%;
     }
 
     .page-wrap {
@@ -110,8 +56,8 @@
     }
 
     .intro {
-      max-width: 980px;
-      margin-bottom: 14px;
+      max-width: 1100px;
+      margin-bottom: 18px;
       scroll-margin-top: 110px;
     }
 
@@ -123,295 +69,465 @@
       margin-bottom: 10px;
     }
 
-    .title-row {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 16px;
+    .top-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
       margin-bottom: 18px;
     }
 
-    .title-row h1 {
-      font-size: clamp(38px, 7vw, 78px);
-      line-height: 0.95;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin: 0;
+    .top-tab {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      padding: 12px 16px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: transparent;
+      color: #cfcfcf;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
     }
 
-    .title-start-btn {
-      min-width: 160px;
-      min-height: 56px;
-      padding: 16px 20px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-size: 13px;
-      font-weight: 700;
+    .top-tab:hover {
+      border-color: #fff;
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+    }
+
+    .top-tab.current {
+      border-color: #fff;
       background: #fff;
       color: #000;
-      border: 1px solid #fff;
-      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-      flex-shrink: 0;
     }
 
-    .title-start-btn.off {
-      background: rgba(255,255,255,0.04);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.14);
+    .device-gallery {
+      display: grid;
+      grid-template-columns: minmax(340px, 430px) minmax(300px, 430px);
+      gap: 48px;
+      align-items: start;
+      justify-content: start;
+      margin-top: 10px;
     }
 
-    .title-start-btn:hover {
-      background: #f0f0f0;
+    .device-stage {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      position: relative;
+      padding-top: 10px;
+      min-width: 0;
     }
 
-    .title-start-btn.off:hover {
-      background: rgba(255,255,255,0.1);
-      border-color: rgba(255,255,255,0.24);
+    .device-glow {
+      position: absolute;
+      width: min(500px, 90%);
+      height: 82%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(40, 87, 184, 0.18) 0%, rgba(40, 87, 184, 0.07) 34%, transparent 72%);
+      filter: blur(36px);
+      pointer-events: none;
     }
 
-    .interval-top {
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.02);
-      padding: 18px;
-      margin-bottom: 16px;
+    .phone-shell {
+      position: relative;
+      width: 100%;
+      max-width: 430px;
+      aspect-ratio: 9 / 19.5;
+      border-radius: 48px;
+      padding: 14px;
+      background:
+        linear-gradient(145deg, #e2e2e7 0%, #74747c 10%, #151518 24%, #86868d 48%, #09090b 72%, #c8c8cf 100%);
+      box-shadow:
+        0 40px 90px rgba(0,0,0,0.56),
+        inset 0 1px 0 rgba(255,255,255,0.32),
+        inset 0 -1px 0 rgba(0,0,0,0.35);
     }
 
-    .section-label {
+    .phone-frame-button {
+      position: absolute;
+      right: -4px;
+      width: 4px;
+      border-radius: 5px;
+      background: linear-gradient(180deg, #d2d2d8, #4c4c54);
+      opacity: 0.95;
+    }
+
+    .phone-frame-button.top {
+      top: 164px;
+      height: 74px;
+    }
+
+    .phone-frame-button.mid {
+      top: 256px;
+      height: 126px;
+    }
+
+    .phone-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 38px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at top, rgba(30, 58, 117, 0.26), transparent 26%),
+        #000;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .phone-camera {
+      position: absolute;
+      top: 11px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #2f4a7c 0%, #0b1733 35%, #020202 72%);
+      border: 1px solid rgba(255,255,255,0.12);
+      z-index: 40;
+      box-shadow: 0 0 0 4px rgba(0,0,0,0.45);
+    }
+
+    .phone-status {
+      position: absolute;
+      top: 14px;
+      left: 18px;
+      right: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-size: 12px;
-      color: #8f8f8f;
+      color: rgba(255,255,255,0.9);
+      z-index: 30;
+      pointer-events: none;
+    }
+
+    .phone-status-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .signal-dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .signal-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.75);
+    }
+
+    .battery {
+      width: 22px;
+      height: 11px;
+      border: 1.4px solid rgba(255,255,255,0.82);
+      border-radius: 3px;
+      position: relative;
+    }
+
+    .battery::after {
+      content: "";
+      position: absolute;
+      right: -4px;
+      top: 2px;
+      width: 2px;
+      height: 5px;
+      border-radius: 1px;
+      background: rgba(255,255,255,0.82);
+    }
+
+    .battery-level {
+      width: 76%;
+      height: 100%;
+      background: rgba(255,255,255,0.92);
+    }
+
+    .phone-ui {
+      position: absolute;
+      inset: 42px 0 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 22px 18px 16px;
+    }
+
+    .app-kicker {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #7f7f7f;
+      margin-bottom: 10px;
+      white-space: nowrap;
+    }
+
+    .app-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .app-title {
+      font-size: clamp(28px, 5vw, 42px);
+      line-height: 1;
+      letter-spacing: -0.03em;
+      font-weight: 700;
+      white-space: nowrap;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .app-toggle-btn {
+      min-width: 96px;
+      min-height: 42px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      background: #ffffff;
+      color: #000;
+      border: 1px solid #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+      cursor: pointer;
+    }
+
+    .app-toggle-btn.is-active {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border-color: rgba(255,255,255,0.08);
+    }
+
+    .phone-card {
+      border: 1px solid rgba(255,255,255,0.1);
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .mini-label {
+      font-size: 10px;
+      color: #858585;
       letter-spacing: 0.14em;
       text-transform: uppercase;
       margin-bottom: 12px;
     }
 
-    .interval-display {
+    .phone-interval {
       display: flex;
       align-items: baseline;
-      gap: 8px;
-      margin-bottom: 14px;
+      gap: 6px;
+      margin-bottom: 16px;
     }
 
-    .interval-num {
-      font-size: 42px;
+    .phone-interval strong {
+      font-size: 44px;
       line-height: 1;
-      font-weight: 700;
-      color: #fff;
       letter-spacing: -0.04em;
     }
 
-    .interval-unit {
-      font-size: 15px;
-      color: #a8a8a8;
+    .phone-interval span {
+      font-size: 14px;
+      color: #b4b4b4;
     }
 
-    input[type=range] {
+    .phone-slider {
       width: 100%;
-      height: 2px;
       appearance: none;
-      background: rgba(255,255,255,0.18);
+      height: 2px;
+      background: rgba(255,255,255,0.14);
+      margin-bottom: 10px;
       outline: none;
       border: none;
       cursor: pointer;
     }
 
-    input[type=range]::-webkit-slider-thumb {
+    .phone-slider::-webkit-slider-thumb {
       appearance: none;
       width: 18px;
       height: 18px;
       border-radius: 50%;
       background: #fff;
       border: 0;
-      cursor: pointer;
     }
 
-    input[type=range]::-moz-range-thumb {
+    .phone-slider::-moz-range-thumb {
       width: 18px;
       height: 18px;
       border-radius: 50%;
       background: #fff;
       border: 0;
-      cursor: pointer;
     }
 
-    .range-labels {
+    .phone-range-row {
       display: flex;
       justify-content: space-between;
-      margin-top: 10px;
       font-size: 11px;
       color: #7f7f7f;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
     }
 
-    .panel-grid {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 16px;
-      align-items: stretch;
-    }
-
-    .panel,
-    .side-panel {
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.03);
-      backdrop-filter: blur(6px);
-    }
-
-    .panel {
-      padding: 24px;
-      min-height: 100%;
-    }
-
-    .side-panel {
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .clock-card {
-      border: 1px solid rgba(255,255,255,0.1);
-      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-      padding: 26px 22px 20px;
-      margin-bottom: 18px;
-    }
-
-    .clock-time {
-      font-size: clamp(54px, 9vw, 108px);
-      line-height: 0.95;
+    .phone-clock {
+      font-size: clamp(48px, 11vw, 88px);
+      line-height: 0.93;
+      letter-spacing: -0.05em;
       font-weight: 700;
-      letter-spacing: -0.04em;
-      color: #fff;
+      margin-bottom: 10px;
     }
 
-    .clock-date {
-      margin-top: 12px;
-      font-size: 14px;
-      color: #9f9f9f;
-      letter-spacing: 0.04em;
+    .phone-date {
+      font-size: 12px;
+      color: #989898;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
     }
 
-    .status-box {
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.02);
-      padding: 16px 18px;
-    }
-
-    .status-row {
+    .phone-status-row {
       display: flex;
       gap: 10px;
       align-items: flex-start;
     }
 
-    .status-dot {
-      width: 9px;
-      height: 9px;
+    .phone-status-dot {
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
-      margin-top: 6px;
-      background: rgba(255,255,255,0.22);
+      margin-top: 4px;
+      background: rgba(255,255,255,0.24);
       flex-shrink: 0;
     }
 
-    .status-dot.on {
+    .phone-status-dot.on {
       background: #fff;
       box-shadow: 0 0 12px rgba(255,255,255,0.45);
     }
 
-    .status-text {
+    .phone-status-text {
       font-size: 14px;
-      color: #d5d5d5;
-      line-height: 1.65;
+      line-height: 1.55;
+      color: #ececec;
     }
 
-    .next-text {
-      margin-top: 6px;
-      font-size: 13px;
-      color: #8f8f8f;
-      line-height: 1.6;
+    .phone-status-sub {
+      color: #8e8e8e;
     }
 
-    .section {
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.02);
-      padding: 18px;
-    }
-
-    .voice-row {
-      display: flex;
+    .phone-voice-row {
+      display: grid;
+      grid-template-columns: 1fr 86px;
       gap: 10px;
       align-items: center;
+      margin-bottom: 12px;
     }
 
-    .voice-row select {
-      flex: 1;
-      background: #0a0a0a;
+    .phone-select {
+      width: 100%;
+      background: #050505;
       color: #fff;
-      border: 1px solid rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.1);
       padding: 14px 14px;
-      outline: none;
       min-width: 0;
+      appearance: none;
+      outline: none;
     }
 
-    .mini-btn {
-      padding: 14px 16px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.04);
+    .phone-test-btn,
+    .phone-speak-btn {
+      background: rgba(255,255,255,0.08);
       color: #fff;
-      white-space: nowrap;
+      border: 1px solid rgba(255,255,255,0.08);
+      font-weight: 700;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .phone-test-btn {
+      min-height: 50px;
       font-size: 12px;
-      letter-spacing: 0.08em;
-      transition: background 0.2s ease, border-color 0.2s ease;
     }
 
-    .mini-btn:hover {
-      background: rgba(255,255,255,0.1);
-      border-color: rgba(255,255,255,0.24);
-    }
-
-    .btn-area {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-top: auto;
-    }
-
-    .btn-sub {
+    .phone-speak-btn {
+      width: 100%;
       min-height: 56px;
-      padding: 16px 18px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-size: 13px;
-      background: rgba(255,255,255,0.04);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.14);
-      font-weight: 600;
-      transition: background 0.2s ease, border-color 0.2s ease;
+      font-size: 14px;
     }
 
-    .btn-sub:hover {
-      background: rgba(255,255,255,0.1);
-      border-color: rgba(255,255,255,0.24);
+    .phone-nav {
+      margin-top: auto;
+      padding-top: 8px;
+      display: flex;
+      justify-content: center;
     }
 
-    @media (max-width: 980px) {
-      .panel-grid {
+    .home-indicator {
+      width: 130px;
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.92);
+      opacity: 0.9;
+    }
+
+    .reference-panel {
+      width: 100%;
+      max-width: 430px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+    }
+
+    .reference-image {
+      width: 100%;
+      height: auto;
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.42);
+      object-fit: cover;
+      background: #0a0a0a;
+    }
+
+    @media (max-width: 1100px) {
+      .device-gallery {
         grid-template-columns: 1fr;
+        gap: 28px;
+      }
+
+      .device-stage,
+      .reference-panel {
+        justify-content: center;
+      }
+
+      .reference-panel {
+        max-width: 430px;
+        margin: 0 auto;
       }
     }
 
     @media (max-width: 700px) {
-      .topbar {
-        padding: 18px 16px;
+      .top-tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 10px;
+        margin-bottom: 14px;
       }
 
-      .logo {
-        font-size: 22px;
-      }
-
-      .mobile-menu a {
-        font-size: 24px;
+      .top-tab {
+        min-height: 42px;
+        padding: 8px 10px;
+        font-size: 11px;
+        letter-spacing: 0.04em;
       }
 
       .page-wrap {
@@ -427,66 +543,69 @@
         margin-bottom: 8px;
       }
 
-      .title-row {
-        align-items: stretch;
-        flex-direction: column;
+      .phone-shell {
+        width: min(100%, 390px);
+        border-radius: 38px;
+        padding: 11px;
       }
 
-      .title-start-btn {
-        width: 100%;
+      .phone-inner {
+        border-radius: 30px;
       }
 
-      .panel,
-      .side-panel {
-        padding: 16px;
+      .phone-camera {
+        top: 9px;
+        width: 15px;
+        height: 15px;
       }
 
-      .clock-card {
-        padding: 20px 16px 16px;
-        margin-bottom: 14px;
+      .phone-ui {
+        inset: 40px 0 0;
+        padding: 20px 14px 14px;
       }
 
-      .clock-time {
-        font-size: clamp(52px, 16vw, 84px);
+      .app-kicker {
+        font-size: 9px;
       }
 
-      .clock-date {
-        margin-top: 10px;
-        font-size: 12px;
+      .app-title {
+        font-size: 24px;
       }
 
-      .section,
-      .interval-top {
+      .app-toggle-btn {
+        min-width: 86px;
+        min-height: 38px;
+        font-size: 11px;
+      }
+
+      .phone-card {
         padding: 14px;
+        margin-bottom: 10px;
       }
 
-      .interval-num {
-        font-size: 36px;
+      .phone-clock {
+        font-size: 46px;
       }
 
-      .voice-row {
-        flex-direction: column;
-        align-items: stretch;
+      .phone-interval strong {
+        font-size: 40px;
       }
 
-      .mini-btn {
-        width: 100%;
+      .phone-voice-row {
+        grid-template-columns: 1fr;
+      }
+
+      .reference-panel {
+        margin-top: 4px;
+      }
+
+      .reference-image {
+        border-radius: 22px;
       }
     }
   </style>
 </head>
 <body id="top">
-
-  <header class="topbar">
-    <a href="../index.html" class="logo">DKsequence</a>
-    <button class="menu-btn" id="menuBtn" aria-label="Menu">☰</button>
-  </header>
-
-  <nav class="mobile-menu" id="mobileMenu">
-    <a href="../index.html">Home</a>
-    <a href="#top">Time Teller</a>
-  </nav>
-
   <main class="page-wrap">
     <section class="intro">
       <div class="sequence-label">Utility / Time Teller</div>
@@ -498,68 +617,98 @@
         <a href="comming_index.html" class="top-tab">4. Coming Soon</a>
       </div>
 
-      <div class="title-row">
-        <h1>Time Teller</h1>
-        <button class="title-start-btn off" id="toggle-btn" onclick="toggleActive()">Start</button>
-      </div>
+      <section class="device-gallery">
+        <div class="device-stage">
+          <div class="device-glow"></div>
 
-      <div class="interval-top">
-        <div class="section-label">Interval</div>
-        <div class="interval-display">
-          <span class="interval-num" id="interval-num">5</span>
-          <span class="interval-unit">minutes</span>
-        </div>
+          <div class="phone-shell">
+            <div class="phone-frame-button top"></div>
+            <div class="phone-frame-button mid"></div>
 
-        <input
-          type="range"
-          id="interval"
-          min="1"
-          max="60"
-          value="5"
-          step="1"
-          oninput="updateInterval(this.value)"
-        />
+            <div class="phone-inner">
+              <div class="phone-camera"></div>
 
-        <div class="range-labels">
-          <span>1 min</span>
-          <span>60 min</span>
-        </div>
-      </div>
-    </section>
+              <div class="phone-status">
+                <span id="phone-status-time">00:00</span>
+                <div class="phone-status-right">
+                  <div class="signal-dots"><span></span><span></span></div>
+                  <div class="battery"><div class="battery-level"></div></div>
+                </div>
+              </div>
 
-    <section class="panel-grid">
-      <div class="panel">
-        <div class="clock-card">
-          <div class="clock-time" id="clock">00:00:00</div>
-          <div class="clock-date" id="clock-date">Loading date...</div>
-        </div>
+              <div class="phone-ui">
+                <div class="app-kicker">DKsequence / Time Teller V1.01</div>
 
-        <div class="status-box">
-          <div class="status-row">
-            <div class="status-dot" id="status-dot"></div>
-            <div>
-              <div class="status-text" id="status-text">Press start to activate the time teller.</div>
-              <div class="next-text" id="next-text"></div>
+                <div class="app-header-row">
+                  <div class="app-title">Time Teller</div>
+                  <button class="app-toggle-btn" id="phone-toggle-btn" type="button">Start</button>
+                </div>
+
+                <div class="phone-card">
+                  <div class="mini-label">Interval</div>
+                  <div class="phone-interval">
+                    <strong id="phone-interval-num">5</strong>
+                    <span>minutes</span>
+                  </div>
+
+                  <input
+                    class="phone-slider"
+                    type="range"
+                    id="phone-interval"
+                    min="1"
+                    max="60"
+                    value="5"
+                    step="1"
+                  />
+
+                  <div class="phone-range-row">
+                    <span>1 min</span>
+                    <span>60 min</span>
+                  </div>
+                </div>
+
+                <div class="phone-card">
+                  <div class="phone-clock" id="clock">00:00:00</div>
+                  <div class="phone-date" id="clock-date">Loading date...</div>
+                </div>
+
+                <div class="phone-card">
+                  <div class="phone-status-row">
+                    <div class="phone-status-dot" id="phone-status-dot"></div>
+                    <div class="phone-status-text">
+                      <span id="status-text">Press start to activate the time teller.</span><br>
+                      <span class="phone-status-sub" id="next-text"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="phone-card">
+                  <div class="mini-label">Voice</div>
+
+                  <div class="phone-voice-row">
+                    <select class="phone-select" id="voice-select"></select>
+                    <button class="phone-test-btn" id="phone-test-btn" type="button">Test</button>
+                  </div>
+
+                  <button class="phone-speak-btn" id="phone-speak-btn" type="button">Speak now</button>
+                </div>
+
+                <div class="phone-nav">
+                  <div class="home-indicator"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <aside class="side-panel">
-        <div class="section">
-          <div class="section-label">Voice</div>
-          <div class="voice-row">
-            <select id="voice-select" onchange="onVoiceChange(this.value)">
-              <option value="">Default voice</option>
-            </select>
-            <button class="mini-btn" onclick="testVoice()">Test</button>
-          </div>
-        </div>
-
-        <div class="btn-area">
-          <button class="btn-sub" onclick="speakNow()">Speak now</button>
-        </div>
-      </aside>
+        <aside class="reference-panel">
+          <img
+            src="lab/mockup.jpg"
+            alt="Time Teller reference image"
+            class="reference-image"
+          />
+        </aside>
+      </section>
     </section>
   </main>
 
@@ -574,27 +723,30 @@
 
     var DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-    const menuBtn = document.getElementById("menuBtn");
-    const mobileMenu = document.getElementById("mobileMenu");
+    var phoneToggleBtn = document.getElementById('phone-toggle-btn');
+    var phoneSpeakBtn = document.getElementById('phone-speak-btn');
+    var phoneTestBtn = document.getElementById('phone-test-btn');
+    var phoneInterval = document.getElementById('phone-interval');
+    var phoneIntervalNum = document.getElementById('phone-interval-num');
+    var phoneStatusDot = document.getElementById('phone-status-dot');
+    var phoneStatusTime = document.getElementById('phone-status-time');
+    var voiceSelect = document.getElementById('voice-select');
+    var clock = document.getElementById('clock');
+    var clockDate = document.getElementById('clock-date');
+    var statusText = document.getElementById('status-text');
+    var nextText = document.getElementById('next-text');
 
-    if (menuBtn && mobileMenu) {
-      menuBtn.addEventListener("click", function (e) {
-        e.stopPropagation();
-        mobileMenu.classList.toggle("active");
-      });
+    phoneToggleBtn.addEventListener('click', toggleActive);
+    phoneSpeakBtn.addEventListener('click', speakNow);
+    phoneTestBtn.addEventListener('click', testVoice);
 
-      mobileMenu.querySelectorAll("a").forEach(function (link) {
-        link.addEventListener("click", function () {
-          mobileMenu.classList.remove("active");
-        });
-      });
+    phoneInterval.addEventListener('input', function () {
+      updateInterval(this.value);
+    });
 
-      document.addEventListener("click", function (e) {
-        if (!mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-          mobileMenu.classList.remove("active");
-        }
-      });
-    }
+    voiceSelect.addEventListener('change', function () {
+      onVoiceChange(this.value);
+    });
 
     async function requestWakeLock() {
       try {
@@ -604,8 +756,7 @@
           wakeLock.addEventListener('release', function () {
             wakeLock = null;
             if (active) {
-              document.getElementById('status-text').textContent =
-                'Speaking every ' + intervalMin + ' minutes. Screen lock prevention released.';
+              statusText.textContent = 'Speaking every ' + intervalMin + ' minutes.';
             }
           });
         }
@@ -638,13 +789,14 @@
       var m = String(now.getMinutes()).padStart(2, '0');
       var s = String(now.getSeconds()).padStart(2, '0');
 
-      document.getElementById('clock').textContent = h + ':' + m + ':' + s;
+      clock.textContent = h + ':' + m + ':' + s;
+      phoneStatusTime.textContent = h + ':' + m;
 
       var year = now.getFullYear();
       var month = String(now.getMonth() + 1).padStart(2, '0');
       var date = String(now.getDate()).padStart(2, '0');
       var day = DAYS[now.getDay()];
-      document.getElementById('clock-date').textContent = year + '.' + month + '.' + date + ' / ' + day;
+      clockDate.textContent = year + '.' + month + '.' + date + ' / ' + day;
 
       if (active && nextAnnounce) {
         var diff = nextAnnounce.getTime() - now.getTime();
@@ -658,14 +810,14 @@
 
           if (lastSpokenKey !== speakKey) {
             lastSpokenKey = speakKey;
-            speakNow();
+            speakCurrentTime();
             scheduleNext();
           }
         } else {
           var totalSec = Math.ceil(diff / 1000);
           var mm = String(Math.floor(totalSec / 60)).padStart(2, '0');
           var ss = String(totalSec % 60).padStart(2, '0');
-          document.getElementById('next-text').textContent = 'Next in ' + mm + ':' + ss;
+          nextText.textContent = 'Next in ' + mm + ':' + ss;
         }
       }
     }
@@ -689,31 +841,41 @@
       nextAnnounce = next;
     }
 
-    function speakNow() {
-      var now = new Date();
-      var hour12 = now.getHours() % 12 || 12;
-      var minute = String(now.getMinutes()).padStart(2, '0');
-      var text = hour12 + ':' + minute;
-
-      speak(text);
-      document.getElementById('status-text').textContent = text;
+    function formatSpeechTime(date) {
+      var hour12 = date.getHours() % 12 || 12;
+      var minute = String(date.getMinutes()).padStart(2, '0');
+      return hour12 + ':' + minute;
     }
 
-    function speak(text) {
+    function speakText(text) {
       if (!window.speechSynthesis) return;
 
       window.speechSynthesis.cancel();
 
       var u = new SpeechSynthesisUtterance(text);
-      u.lang = 'ko-KR';
+      u.lang = selectedVoice && selectedVoice.lang ? selectedVoice.lang : 'ko-KR';
       if (selectedVoice) u.voice = selectedVoice;
       u.rate = 0.95;
 
       window.speechSynthesis.speak(u);
     }
 
+    function speakCurrentTime() {
+      var now = new Date();
+      var text = formatSpeechTime(now);
+      speakText(text);
+      statusText.textContent = text;
+    }
+
+    function speakNow() {
+      speakCurrentTime();
+      if (active) {
+        scheduleNext();
+      }
+    }
+
     function testVoice() {
-      speak('7:05');
+      speakText('7:05');
     }
 
     function onVoiceChange(val) {
@@ -722,50 +884,48 @@
 
     async function toggleActive() {
       active = !active;
-      var btn = document.getElementById('toggle-btn');
-      var dot = document.getElementById('status-dot');
 
       if (active) {
         lastSpokenKey = '';
         scheduleNext();
-        btn.textContent = 'Stop';
-        btn.classList.remove('off');
-        dot.classList.add('on');
-        document.getElementById('status-text').textContent = 'Speaking every ' + intervalMin + ' minutes.';
+        phoneToggleBtn.textContent = 'Stop';
+        phoneToggleBtn.classList.add('is-active');
+        phoneStatusDot.classList.add('on');
+        statusText.textContent = 'Speaking every ' + intervalMin + ' minutes.';
         await requestWakeLock();
       } else {
         nextAnnounce = null;
-        btn.textContent = 'Start';
-        btn.classList.add('off');
-        dot.classList.remove('on');
-        document.getElementById('status-text').textContent = 'Press start to activate the time teller.';
-        document.getElementById('next-text').textContent = '';
+        phoneToggleBtn.textContent = 'Start';
+        phoneToggleBtn.classList.remove('is-active');
+        phoneStatusDot.classList.remove('on');
+        statusText.textContent = 'Press start to activate the time teller.';
+        nextText.textContent = '';
         await releaseWakeLock();
       }
     }
 
     function updateInterval(val) {
-      intervalMin = parseInt(val, 10);
-      document.getElementById('interval-num').textContent = val;
+      intervalMin = parseInt(val, 10) || 5;
+      phoneIntervalNum.textContent = intervalMin;
 
       if (active) {
         lastSpokenKey = '';
         scheduleNext();
+        statusText.textContent = 'Speaking every ' + intervalMin + ' minutes.';
       }
     }
 
     function loadVoices() {
       voices = window.speechSynthesis.getVoices();
-      var sel = document.getElementById('voice-select');
       var koVoices = voices.filter(function(v) {
         return v.lang && v.lang.startsWith('ko');
       });
       var list = koVoices.length > 0 ? koVoices : voices;
 
-      sel.innerHTML = '';
+      voiceSelect.innerHTML = '';
 
       if (list.length === 0) {
-        sel.innerHTML = '<option value="">Default voice</option>';
+        voiceSelect.innerHTML = '<option value="">Default voice</option>';
         selectedVoice = null;
         return;
       }
@@ -775,11 +935,11 @@
         var opt = document.createElement('option');
         opt.value = idx;
         opt.textContent = v.name;
-        sel.appendChild(opt);
+        voiceSelect.appendChild(opt);
       });
 
       selectedVoice = list[0];
-      sel.value = voices.indexOf(list[0]);
+      voiceSelect.value = voices.indexOf(list[0]);
     }
 
     if (window.speechSynthesis) {
@@ -787,8 +947,8 @@
     }
 
     loadVoices();
-    setInterval(updateClock, 250);
     updateClock();
+    setInterval(updateClock, 250);
   </script>
 </body>
 </html>
