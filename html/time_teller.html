@@ -49,65 +49,6 @@
       max-width: 100%;
     }
 
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 22px 32px;
-      background: rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .logo {
-      font-size: 26px;
-      font-weight: 700;
-      letter-spacing: 0.4px;
-      color: #fff;
-    }
-
-    .menu-btn {
-      display: block;
-      font-size: 30px;
-      line-height: 1;
-      cursor: pointer;
-      user-select: none;
-      z-index: 1002;
-      color: #fff;
-      background: transparent;
-      border: 0;
-    }
-
-    .mobile-menu {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.96);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 36px;
-      transform: translateY(-100%);
-      transition: transform 0.3s ease;
-      z-index: 1001;
-      pointer-events: none;
-    }
-
-    .mobile-menu.active {
-      transform: translateY(0);
-      pointer-events: auto;
-    }
-
-    .mobile-menu a {
-      font-size: 28px;
-      text-transform: uppercase;
-      text-align: center;
-    }
-
     .page-wrap {
       width: min(1600px, 94%);
       margin: 0 auto;
@@ -126,42 +67,6 @@
       letter-spacing: 0.12em;
       text-transform: uppercase;
       margin-bottom: 10px;
-    }
-
-    .top-tabs {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 14px;
-      margin-bottom: 18px;
-    }
-
-    .top-tab {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 52px;
-      padding: 12px 16px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: transparent;
-      color: #cfcfcf;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
-    }
-
-    .top-tab:hover {
-      border-color: #fff;
-      background: rgba(255,255,255,0.08);
-      color: #fff;
-    }
-
-    .top-tab.current {
-      border-color: #fff;
-      background: #fff;
-      color: #000;
     }
 
     .page-title {
@@ -439,175 +344,51 @@
       border: 0;
     }
 
-    .phone-range-row {
+    .phone-row {
       display: flex;
       justify-content: space-between;
-      font-size: 11px;
-      color: #7f7f7f;
-      text-transform: uppercase;
-    }
-
-    .phone-clock {
-      font-size: clamp(48px, 11vw, 88px);
-      line-height: 0.93;
-      letter-spacing: -0.05em;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    .phone-date {
-      font-size: 12px;
-      color: #989898;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-
-    .phone-status-row {
-      display: flex;
       gap: 10px;
-      align-items: flex-start;
+      font-size: 12px;
+      color: #b8b8b8;
     }
 
-    .phone-status-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      margin-top: 4px;
-      background: rgba(255,255,255,0.24);
-      flex-shrink: 0;
-    }
-
-    .phone-status-dot.on {
-      background: #fff;
-      box-shadow: 0 0 12px rgba(255,255,255,0.45);
-    }
-
-    .phone-status-text {
-      font-size: 14px;
-      line-height: 1.55;
-      color: #ececec;
-    }
-
-    .phone-status-sub {
-      color: #8e8e8e;
-    }
-
-    .phone-voice-row {
+    .preview-panel {
       display: grid;
-      grid-template-columns: 1fr 86px;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 12px;
+      gap: 18px;
+      align-content: start;
     }
 
-    .phone-select {
-      width: 100%;
-      background: #050505;
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.1);
-      padding: 14px 14px;
-      min-width: 0;
-      appearance: none;
-      outline: none;
-    }
-
-    .phone-test-btn,
-    .phone-speak-btn {
-      background: rgba(255,255,255,0.08);
-      color: #fff;
+    .preview-card {
       border: 1px solid rgba(255,255,255,0.08);
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      cursor: pointer;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      padding: 24px;
     }
 
-    .phone-test-btn {
-      min-height: 50px;
-      font-size: 12px;
+    .preview-card h2 {
+      font-size: 20px;
+      margin-bottom: 10px;
+      line-height: 1.2;
     }
 
-    .phone-speak-btn {
-      width: 100%;
-      min-height: 56px;
+    .preview-card p {
       font-size: 14px;
+      color: #bfbfbf;
+      line-height: 1.7;
     }
 
-    .phone-nav {
-      margin-top: auto;
-      padding-top: 8px;
-      display: flex;
-      justify-content: center;
-    }
-
-    .home-indicator {
-      width: 130px;
-      height: 5px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.92);
-      opacity: 0.9;
-    }
-
-    .reference-panel {
-      width: 100%;
-      max-width: 760px;
-      display: flex;
-      justify-content: flex-start;
-      align-items: flex-start;
-    }
-
-    .reference-stack {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 22px;
-    }
-
-    .reference-image {
-      width: 100%;
-      height: auto;
-      border-radius: 28px;
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: 0 30px 80px rgba(0,0,0,0.42);
-      object-fit: cover;
-      background: #0a0a0a;
-    }
-
-    .reference-copy {
-      width: 100%;
-      padding: 22px 24px;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 28px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
-      box-shadow: 0 30px 80px rgba(0,0,0,0.24);
-    }
-
-    .reference-kicker {
-      font-size: 12px;
-      color: #9f9f9f;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-
-    .reference-title {
-      font-size: clamp(24px, 2.4vw, 34px);
-      line-height: 1.08;
+    .time-preview {
+      font-size: clamp(52px, 10vw, 98px);
       font-weight: 700;
-      letter-spacing: -0.02em;
-      color: #fff;
+      line-height: 0.95;
+      letter-spacing: -0.05em;
       margin-bottom: 16px;
     }
 
-    .reference-text {
-      font-size: 15px;
-      line-height: 1.8;
-      color: #bdbdbd;
-      margin-bottom: 14px;
-    }
-
-    .reference-text:last-child {
-      margin-bottom: 0;
+    .sub-time {
+      font-size: 14px;
+      color: #9b9b9b;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
     }
 
     .footer-note {
@@ -619,198 +400,78 @@
       line-height: 1.7;
     }
 
-    .bottom-actions {
-      margin-top: 28px;
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .bottom-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 160px;
-      padding: 14px 22px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.04);
-      color: #fff;
-      font-size: 14px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
-    }
-
-    .bottom-btn:hover {
-      background: rgba(255,255,255,0.10);
-      border-color: rgba(255,255,255,0.32);
-      transform: translateY(-1px);
-    }
-
     @media (max-width: 1100px) {
       .device-gallery {
         grid-template-columns: 1fr;
         gap: 28px;
       }
 
-      .device-stage,
-      .reference-panel {
+      .device-stage {
         justify-content: center;
-      }
-
-      .reference-panel {
-        max-width: 760px;
-        margin: 0 auto;
       }
     }
 
     @media (max-width: 700px) {
-      .topbar {
-        padding: 18px 16px;
-      }
-
-      .logo {
-        font-size: 22px;
-      }
-
-      .mobile-menu a {
-        font-size: 24px;
-      }
-
-      .top-tabs {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
-        margin-top: 10px;
-        margin-bottom: 14px;
-      }
-
-      .top-tab {
-        min-height: 42px;
-        padding: 8px 10px;
-        font-size: 11px;
-        letter-spacing: 0.04em;
-      }
-
-      .page-title {
-        font-size: clamp(28px, 12vw, 56px);
-        margin: 6px 0 20px;
-      }
-
       .page-wrap {
         width: 100%;
         padding: 22px 14px 80px;
       }
 
       .intro {
-        margin-bottom: 8px;
+        margin-bottom: 12px;
       }
 
       .sequence-label {
         margin-bottom: 8px;
       }
 
+      .page-title {
+        margin: 6px 0 18px;
+      }
+
+      .device-gallery {
+        gap: 18px;
+      }
+
       .phone-shell {
-        width: min(100%, 390px);
-        border-radius: 38px;
-        padding: 11px;
+        max-width: 360px;
+        border-radius: 40px;
+        padding: 12px;
       }
 
       .phone-inner {
         border-radius: 30px;
       }
 
-      .phone-camera {
-        top: 9px;
-        width: 15px;
-        height: 15px;
-      }
-
       .phone-ui {
-        inset: 40px 0 0;
-        padding: 20px 14px 14px;
-      }
-
-      .app-kicker {
-        font-size: 9px;
+        padding: 18px 14px 14px;
       }
 
       .app-title {
-        font-size: 24px;
+        font-size: 28px;
       }
 
       .app-toggle-btn {
-        min-width: 86px;
+        min-width: 84px;
         min-height: 38px;
+        padding: 10px 12px;
         font-size: 11px;
       }
 
-      .phone-card {
-        padding: 14px;
-        margin-bottom: 10px;
-      }
-
-      .phone-clock {
-        font-size: 46px;
-      }
-
-      .phone-interval strong {
-        font-size: 40px;
-      }
-
-      .phone-voice-row {
-        grid-template-columns: 1fr;
-      }
-
-      .reference-panel {
-        margin-top: 4px;
-      }
-
-      .reference-image,
-      .reference-copy {
-        border-radius: 22px;
-      }
-
-      .reference-copy {
-        padding: 18px 18px;
-      }
-
-      .reference-title {
-        font-size: 22px;
-        margin-bottom: 12px;
-      }
-
-      .reference-text {
-        font-size: 14px;
-        line-height: 1.75;
-      }
-
-      .bottom-btn {
-        min-width: 140px;
-        padding: 13px 18px;
-        font-size: 13px;
+      .preview-card {
+        padding: 18px;
       }
     }
   </style>
 </head>
 <body id="top">
-
-  <header class="topbar">
-    <a href="../index.html" class="logo">DKsequence</a>
-    <button class="menu-btn" id="menuBtn" aria-label="Menu">☰</button>
-  </header>
-
-  <nav class="mobile-menu" id="mobileMenu">
-    <a href="../index.html">Home</a>
-    <a href="#top">Time Teller</a>
-    <a href="#time-teller-layout">Layout</a>
-  </nav>
+  <div id="site-header"></div>
 
   <main class="page-wrap">
-    <section class="intro">
-      <div class="sequence-label">SEQUENCE #12</div>
+    <section class="intro" id="sequence12">
+      <div class="sequence-label">Sequence #12</div>
 
-      <div class="top-tabs">
+      <div class="top-tabs" id="content-start">
         <a href="ai_index.html" class="top-tab">1. AI Music Box</a>
         <a href="ai_con.html" class="top-tab">2. AI Short Reels</a>
         <a href="time_teller.html" class="top-tab current">3. Time Teller</a>
@@ -818,388 +479,174 @@
       </div>
 
       <h1 class="page-title">Time Teller</h1>
+    </section>
 
-      <section class="device-gallery" id="time-teller-layout">
-        <div class="device-stage">
-          <div class="device-glow"></div>
+    <section class="device-gallery">
+      <div class="device-stage">
+        <div class="device-glow"></div>
 
-          <div class="phone-shell">
-            <div class="phone-frame-button top"></div>
-            <div class="phone-frame-button mid"></div>
+        <div class="phone-shell">
+          <span class="phone-frame-button top"></span>
+          <span class="phone-frame-button mid"></span>
 
-            <div class="phone-inner">
-              <div class="phone-camera"></div>
+          <div class="phone-inner">
+            <div class="phone-camera"></div>
 
-              <div class="phone-status">
-                <span id="phone-status-time">00:00</span>
-                <div class="phone-status-right">
-                  <div class="signal-dots"><span></span><span></span></div>
-                  <div class="battery"><div class="battery-level"></div></div>
+            <div class="phone-status">
+              <span id="statusClock">9:41</span>
+              <div class="phone-status-right">
+                <div class="signal-dots">
+                  <span></span><span></span><span></span>
+                </div>
+                <div class="battery">
+                  <div class="battery-level"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="phone-ui">
+              <div class="app-kicker">Interesting Experiment</div>
+
+              <div class="app-header-row">
+                <div class="app-title">Time Teller</div>
+                <button class="app-toggle-btn" id="modeToggle">24H</button>
+              </div>
+
+              <div class="phone-card">
+                <div class="mini-label">Interval</div>
+                <div class="phone-interval">
+                  <strong id="intervalValue">60</strong>
+                  <span>sec</span>
+                </div>
+
+                <input
+                  class="phone-slider"
+                  id="intervalSlider"
+                  type="range"
+                  min="10"
+                  max="300"
+                  step="10"
+                  value="60"
+                />
+
+                <div class="phone-row">
+                  <span>10 sec</span>
+                  <span>300 sec</span>
                 </div>
               </div>
 
-              <div class="phone-ui">
-                <div class="app-kicker">DKsequence / Time Teller V1.01</div>
-
-                <div class="app-header-row">
-                  <div class="app-title">Time Teller</div>
-                  <button class="app-toggle-btn" id="phone-toggle-btn" type="button">Start</button>
-                </div>
-
-                <div class="phone-card">
-                  <div class="mini-label">Interval</div>
-                  <div class="phone-interval">
-                    <strong id="phone-interval-num">5</strong>
-                    <span>minutes</span>
-                  </div>
-
-                  <input
-                    class="phone-slider"
-                    type="range"
-                    id="phone-interval"
-                    min="1"
-                    max="60"
-                    value="5"
-                    step="1"
-                  />
-
-                  <div class="phone-range-row">
-                    <span>1 min</span>
-                    <span>60 min</span>
-                  </div>
-                </div>
-
-                <div class="phone-card">
-                  <div class="phone-clock" id="clock">00:00:00</div>
-                  <div class="phone-date" id="clock-date">Loading date...</div>
-                </div>
-
-                <div class="phone-card">
-                  <div class="phone-status-row">
-                    <div class="phone-status-dot" id="phone-status-dot"></div>
-                    <div class="phone-status-text">
-                      <span id="status-text">Press start to activate the time teller.</span><br>
-                      <span class="phone-status-sub" id="next-text"></span>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="phone-card">
-                  <div class="mini-label">Voice</div>
-
-                  <div class="phone-voice-row">
-                    <select class="phone-select" id="voice-select"></select>
-                    <button class="phone-test-btn" id="phone-test-btn" type="button">Test</button>
-                  </div>
-
-                  <button class="phone-speak-btn" id="phone-speak-btn" type="button">Speak now</button>
-                </div>
-
-                <div class="phone-nav">
-                  <div class="home-indicator"></div>
+              <div class="phone-card">
+                <div class="mini-label">Current Mode</div>
+                <div class="phone-row">
+                  <span id="modeLabel">24-hour format</span>
+                  <span id="nextTick">Next update: 60 sec</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-        <aside class="reference-panel">
-          <div class="reference-stack">
-            <img
-              src="../lab/mockup.jpg"
-              alt="Time Teller work image"
-              class="reference-image"
-            />
-
-            <div class="reference-copy">
-              <div class="reference-kicker">Application for Android</div>
-              <h2 class="reference-title">Time Teller — Voice-based time notification system</h2>
-              <p class="reference-text">
-                A minimal time-based interaction tool designed to announce the current time at defined intervals.
-                The interface focuses on clarity, rhythm, and presence, allowing users to experience time not as
-                numbers, but as a continuous auditory sequence.
-              </p>
-              <p class="reference-text">
-                Designed with a dark minimal UI and structured layout, this application bridges utility and
-                emotional awareness through voice interaction. The right-side section works as a presentation area,
-                pairing the Android application capture with a concise project description so the desktop layout
-                feels more complete and balanced against the live mobile mockup on the left.
-              </p>
-            </div>
-          </div>
-        </aside>
-      </section>
-
-      <div class="footer-note">
-        Time Teller mobile mockup layout with live voice announcement control.
       </div>
 
-      <div class="bottom-actions">
-        <a href="#top" class="bottom-btn">Back to Top</a>
-        <a href="../index.html" class="bottom-btn">Home</a>
+      <div class="preview-panel">
+        <div class="preview-card">
+          <div class="time-preview" id="mainClock">00:00</div>
+          <div class="sub-time" id="dateText">Loading date</div>
+        </div>
+
+        <div class="preview-card">
+          <h2>Experiment Note</h2>
+          <p>
+            Time Teller is a simple visual time experience page.
+            It shows the current time clearly and lets you preview a timer-style interval setting.
+          </p>
+        </div>
       </div>
     </section>
+
+    <div class="footer-note">
+      Time Teller is a simple experiment page focused on readable time display and visual UI interaction.
+    </div>
+
+    <div id="site-footer"></div>
   </main>
 
+  <script src="./js/layout.js"></script>
   <script>
-    var active = false;
-    var intervalMin = 5;
-    var voices = [];
-    var selectedVoice = null;
-    var nextAnnounce = null;
-    var lastSpokenKey = '';
-    var wakeLock = null;
+    const mainClock = document.getElementById("mainClock");
+    const statusClock = document.getElementById("statusClock");
+    const dateText = document.getElementById("dateText");
+    const intervalSlider = document.getElementById("intervalSlider");
+    const intervalValue = document.getElementById("intervalValue");
+    const nextTick = document.getElementById("nextTick");
+    const modeToggle = document.getElementById("modeToggle");
+    const modeLabel = document.getElementById("modeLabel");
 
-    var DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    let is24Hour = true;
 
-    var menuBtn = document.getElementById('menuBtn');
-    var mobileMenu = document.getElementById('mobileMenu');
-
-    if (menuBtn && mobileMenu) {
-      menuBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        mobileMenu.classList.toggle('active');
-      });
-
-      mobileMenu.querySelectorAll('a').forEach(function (link) {
-        link.addEventListener('click', function () {
-          mobileMenu.classList.remove('active');
-        });
-      });
-
-      document.addEventListener('click', function (e) {
-        if (!mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-          mobileMenu.classList.remove('active');
-        }
-      });
+    function pad(num) {
+      return String(num).padStart(2, "0");
     }
 
-    var phoneToggleBtn = document.getElementById('phone-toggle-btn');
-    var phoneSpeakBtn = document.getElementById('phone-speak-btn');
-    var phoneTestBtn = document.getElementById('phone-test-btn');
-    var phoneInterval = document.getElementById('phone-interval');
-    var phoneIntervalNum = document.getElementById('phone-interval-num');
-    var phoneStatusDot = document.getElementById('phone-status-dot');
-    var phoneStatusTime = document.getElementById('phone-status-time');
-    var voiceSelect = document.getElementById('voice-select');
-    var clock = document.getElementById('clock');
-    var clockDate = document.getElementById('clock-date');
-    var statusText = document.getElementById('status-text');
-    var nextText = document.getElementById('next-text');
+    function formatTime(date) {
+      let hours = date.getHours();
+      const minutes = date.getMinutes();
 
-    phoneToggleBtn.addEventListener('click', toggleActive);
-    phoneSpeakBtn.addEventListener('click', speakNow);
-    phoneTestBtn.addEventListener('click', testVoice);
-
-    phoneInterval.addEventListener('input', function () {
-      updateInterval(this.value);
-    });
-
-    voiceSelect.addEventListener('change', function () {
-      onVoiceChange(this.value);
-    });
-
-    async function requestWakeLock() {
-      try {
-        if ('wakeLock' in navigator && document.visibilityState === 'visible') {
-          wakeLock = await navigator.wakeLock.request('screen');
-
-          wakeLock.addEventListener('release', function () {
-            wakeLock = null;
-            if (active) {
-              statusText.textContent = 'Speaking every ' + intervalMin + ' minutes.';
-            }
-          });
-        }
-      } catch (err) {
-        console.log('Wake Lock error:', err);
+      if (is24Hour) {
+        return `${pad(hours)}:${pad(minutes)}`;
       }
+
+      const suffix = hours >= 12 ? "PM" : "AM";
+      hours = hours % 12 || 12;
+      return `${hours}:${pad(minutes)} ${suffix}`;
     }
 
-    async function releaseWakeLock() {
-      try {
-        if (wakeLock) {
-          await wakeLock.release();
-          wakeLock = null;
-        }
-      } catch (err) {
-        console.log('Wake Lock release error:', err);
-      }
+    function formatStatusTime(date) {
+      return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
     }
 
-    document.addEventListener('visibilitychange', async function () {
-      if (document.visibilityState === 'visible' && active) {
-        await requestWakeLock();
-        scheduleNext();
-      }
-    });
+    function formatDate(date) {
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      const week = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][date.getDay()];
+      return `${year}.${month}.${day} ${week}`;
+    }
 
     function updateClock() {
-      var now = new Date();
-      var h = String(now.getHours()).padStart(2, '0');
-      var m = String(now.getMinutes()).padStart(2, '0');
-      var s = String(now.getSeconds()).padStart(2, '0');
-
-      clock.textContent = h + ':' + m + ':' + s;
-      phoneStatusTime.textContent = h + ':' + m;
-
-      var year = now.getFullYear();
-      var month = String(now.getMonth() + 1).padStart(2, '0');
-      var date = String(now.getDate()).padStart(2, '0');
-      var day = DAYS[now.getDay()];
-      clockDate.textContent = year + '.' + month + '.' + date + ' / ' + day;
-
-      if (active && nextAnnounce) {
-        var diff = nextAnnounce.getTime() - now.getTime();
-
-        if (diff <= 1500) {
-          var speakKey = now.getFullYear() + '-' +
-            String(now.getMonth() + 1).padStart(2, '0') + '-' +
-            String(now.getDate()).padStart(2, '0') + ' ' +
-            String(now.getHours()).padStart(2, '0') + ':' +
-            String(now.getMinutes()).padStart(2, '0');
-
-          if (lastSpokenKey !== speakKey) {
-            lastSpokenKey = speakKey;
-            speakCurrentTime();
-            scheduleNext();
-          }
-        } else {
-          var totalSec = Math.ceil(diff / 1000);
-          var mm = String(Math.floor(totalSec / 60)).padStart(2, '0');
-          var ss = String(totalSec % 60).padStart(2, '0');
-          nextText.textContent = 'Next in ' + mm + ':' + ss;
-        }
-      }
+      const now = new Date();
+      mainClock.textContent = formatTime(now);
+      statusClock.textContent = formatStatusTime(now);
+      dateText.textContent = formatDate(now);
     }
 
-    function scheduleNext() {
-      var now = new Date();
-      var next = new Date(now);
+    function updateIntervalUI() {
+      const value = intervalSlider.value;
+      intervalValue.textContent = value;
+      nextTick.textContent = `Next update: ${value} sec`;
+    }
 
-      next.setSeconds(0);
-      next.setMilliseconds(0);
-
-      var minute = next.getMinutes();
-      var remainder = minute % intervalMin;
-
-      if (remainder === 0 && now.getSeconds() === 0) {
+    function updateModeUI() {
+      if (is24Hour) {
+        modeToggle.textContent = "24H";
+        modeLabel.textContent = "24-hour format";
       } else {
-        var addMin = remainder === 0 ? intervalMin : (intervalMin - remainder);
-        next.setMinutes(minute + addMin);
+        modeToggle.textContent = "12H";
+        modeLabel.textContent = "12-hour format";
       }
-
-      nextAnnounce = next;
+      updateClock();
     }
 
-    function formatSpeechTime(date) {
-      var hour12 = date.getHours() % 12 || 12;
-      var minute = String(date.getMinutes()).padStart(2, '0');
-      return hour12 + ':' + minute;
-    }
+    intervalSlider.addEventListener("input", updateIntervalUI);
 
-    function speakText(text) {
-      if (!window.speechSynthesis) return;
+    modeToggle.addEventListener("click", function () {
+      is24Hour = !is24Hour;
+      updateModeUI();
+    });
 
-      window.speechSynthesis.cancel();
-
-      var u = new SpeechSynthesisUtterance(text);
-      u.lang = selectedVoice && selectedVoice.lang ? selectedVoice.lang : 'ko-KR';
-      if (selectedVoice) u.voice = selectedVoice;
-      u.rate = 0.95;
-
-      window.speechSynthesis.speak(u);
-    }
-
-    function speakCurrentTime() {
-      var now = new Date();
-      var text = formatSpeechTime(now);
-      speakText(text);
-      statusText.textContent = text;
-    }
-
-    function speakNow() {
-      speakCurrentTime();
-      if (active) {
-        scheduleNext();
-      }
-    }
-
-    function testVoice() {
-      speakText('7:05');
-    }
-
-    function onVoiceChange(val) {
-      selectedVoice = val !== '' ? voices[parseInt(val, 10)] : null;
-    }
-
-    async function toggleActive() {
-      active = !active;
-
-      if (active) {
-        lastSpokenKey = '';
-        scheduleNext();
-        phoneToggleBtn.textContent = 'Stop';
-        phoneToggleBtn.classList.add('is-active');
-        phoneStatusDot.classList.add('on');
-        statusText.textContent = 'Speaking every ' + intervalMin + ' minutes.';
-        await requestWakeLock();
-      } else {
-        nextAnnounce = null;
-        phoneToggleBtn.textContent = 'Start';
-        phoneToggleBtn.classList.remove('is-active');
-        phoneStatusDot.classList.remove('on');
-        statusText.textContent = 'Press start to activate the time teller.';
-        nextText.textContent = '';
-        await releaseWakeLock();
-      }
-    }
-
-    function updateInterval(val) {
-      intervalMin = parseInt(val, 10) || 5;
-      phoneIntervalNum.textContent = intervalMin;
-
-      if (active) {
-        lastSpokenKey = '';
-        scheduleNext();
-        statusText.textContent = 'Speaking every ' + intervalMin + ' minutes.';
-      }
-    }
-
-    function loadVoices() {
-      voices = window.speechSynthesis.getVoices();
-      var koVoices = voices.filter(function(v) {
-        return v.lang && v.lang.startsWith('ko');
-      });
-      var list = koVoices.length > 0 ? koVoices : voices;
-
-      voiceSelect.innerHTML = '';
-
-      if (list.length === 0) {
-        voiceSelect.innerHTML = '<option value="">Default voice</option>';
-        selectedVoice = null;
-        return;
-      }
-
-      list.forEach(function(v) {
-        var idx = voices.indexOf(v);
-        var opt = document.createElement('option');
-        opt.value = idx;
-        opt.textContent = v.name;
-        voiceSelect.appendChild(opt);
-      });
-
-      selectedVoice = list[0];
-      voiceSelect.value = voices.indexOf(list[0]);
-    }
-
-    if (window.speechSynthesis) {
-      window.speechSynthesis.onvoiceschanged = loadVoices;
-    }
-
-    loadVoices();
     updateClock();
-    setInterval(updateClock, 250);
+    updateIntervalUI();
+    updateModeUI();
+    setInterval(updateClock, 1000);
   </script>
 </body>
 </html>
