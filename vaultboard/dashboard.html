@@ -12,6 +12,17 @@
   <script src="./assets/js/common.js"></script>
 
   <style>
+    .page-head{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      margin-bottom:14px;
+    }
+
+    .page-head h1{
+      margin-bottom:4px;
+    }
+
     .toolbar{
       display:flex;
       align-items:center;
@@ -19,32 +30,84 @@
       flex-wrap:wrap;
     }
 
+    .toolbar .btn,
+    .toolbar .mode-chip,
+    .toolbar select{
+      min-height:42px;
+    }
+
+    .toolbar select{
+      min-width:220px;
+    }
+
+    .toolbar .spacer{
+      flex:1 1 auto;
+      min-width:16px;
+    }
+
     .mode-chip{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      min-height:40px;
+      min-height:42px;
       padding:10px 14px;
-      border-radius:10px;
+      border-radius:12px;
       border:1px solid var(--line);
-      background:var(--panel);
-      color:var(--text);
       font-size:14px;
+      font-weight:800;
+      white-space:nowrap;
+    }
+
+    .mode-chip.view{
+      background:rgba(255, 196, 0, .16);
+      border-color:rgba(255, 196, 0, .35);
+      color:#ffd76a;
+    }
+
+    .mode-chip.manage{
+      background:rgba(255, 78, 78, .14);
+      border-color:rgba(255, 78, 78, .34);
+      color:#ff8c8c;
     }
 
     .manage-hidden{
       display:none !important;
     }
 
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:14px;
+      margin:2px 0 2px;
+    }
+
+    .stats .stat{
+      min-height:96px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:8px;
+    }
+
+    .stats .label{
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .stats .value{
+      font-size:24px;
+      font-weight:800;
+    }
+
     .compact-manage{
       display:flex;
       flex-direction:column;
-      gap:14px;
+      gap:12px;
     }
 
     .quick-row{
       display:grid;
-      grid-template-columns: minmax(220px, 320px) 160px 1fr;
+      grid-template-columns:minmax(220px, 320px) 160px 1fr;
       gap:12px;
       align-items:center;
     }
@@ -56,12 +119,12 @@
 
     .service-form-wrap{
       border-top:1px solid rgba(255,255,255,.06);
-      padding-top:14px;
+      padding-top:12px;
     }
 
     .form-top-grid{
       display:grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns:repeat(5, minmax(0, 1fr));
       gap:12px;
       margin-bottom:12px;
     }
@@ -88,7 +151,7 @@
 
     .advanced-grid{
       display:grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns:repeat(2, minmax(0, 1fr));
       gap:12px;
     }
 
@@ -96,16 +159,35 @@
       grid-column:1 / -1;
     }
 
-    .top-filter-bar{
+    .service-head-row{
       display:flex;
       align-items:center;
-      gap:10px;
+      gap:12px;
       flex-wrap:wrap;
-      margin-bottom:16px;
+      margin-bottom:14px;
     }
 
-    .top-filter-bar select{
+    .service-head-row h2{
+      margin:0;
+      white-space:nowrap;
+    }
+
+    .service-head-row .filter-wrap{
+      flex:1 1 280px;
+      min-width:240px;
+    }
+
+    .service-head-row select{
+      width:100%;
       min-height:42px;
+    }
+
+    .tab-row{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:14px;
     }
 
     .category-tabs{
@@ -113,7 +195,8 @@
       align-items:center;
       gap:8px;
       flex-wrap:wrap;
-      margin-bottom:16px;
+      flex:1 1 auto;
+      min-width:280px;
     }
 
     .category-tab{
@@ -126,11 +209,28 @@
       cursor:pointer;
       font-size:14px;
       font-weight:700;
+      white-space:nowrap;
     }
 
     .category-tab.active{
       background:var(--panel-2);
       box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+    }
+
+    .paid-total-chip{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:40px;
+      padding:8px 14px;
+      border-radius:999px;
+      border:1px solid rgba(255, 196, 0, .28);
+      background:rgba(255, 196, 0, .10);
+      color:#ffd76a;
+      font-size:14px;
+      font-weight:800;
+      white-space:nowrap;
+      margin-left:auto;
     }
 
     .service-list{
@@ -146,20 +246,57 @@
       overflow:hidden;
     }
 
-    /* 핵심 수정: 완전 분리 컬럼 */
     .service-summary{
       display:grid;
       grid-template-columns:
-        minmax(220px, 1.15fr)   /* title */
-        170px                   /* category */
-        110px                   /* plan */
-        minmax(280px, 1.1fr)    /* url */
-        110px                   /* cost */
-        minmax(120px, .7fr)     /* summary */
-        108px;                  /* button */
+        minmax(220px, 1.15fr)
+        170px
+        110px
+        minmax(250px, 1fr)
+        110px
+        108px;
       gap:16px;
       align-items:center;
       padding:14px 16px;
+    }
+
+    .title-col{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+
+    .star-toggle{
+      width:34px;
+      min-width:34px;
+      height:34px;
+      border:none;
+      background:transparent;
+      color:var(--text);
+      font-size:28px;
+      line-height:1;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:0;
+      border-radius:8px;
+      transition:transform .12s ease, opacity .12s ease, background .12s ease;
+    }
+
+    .star-toggle:hover{
+      background:rgba(255,255,255,.05);
+      transform:scale(1.06);
+    }
+
+    .star-toggle:active{
+      transform:scale(.96);
+    }
+
+    .star-toggle.starred{
+      color:#ffd76a;
+      text-shadow:0 0 10px rgba(255,215,106,.18);
     }
 
     .service-title{
@@ -175,15 +312,19 @@
     .plan-col,
     .url-col,
     .cost-col,
-    .summary-col,
     .action-col{
       min-width:0;
+    }
+
+    .category-col{
+      display:flex;
+      justify-content:flex-start;
     }
 
     .category-badge{
       display:inline-flex;
       align-items:center;
-      justify-content:center;
+      justify-content:flex-start;
       min-height:36px;
       padding:5px 12px;
       border-radius:999px;
@@ -196,11 +337,11 @@
       max-width:100%;
       overflow:hidden;
       text-overflow:ellipsis;
+      text-align:left;
     }
 
     .url-col,
-    .cost-col,
-    .summary-col{
+    .cost-col{
       color:var(--muted);
       font-size:14px;
       min-width:0;
@@ -219,7 +360,7 @@
 
     .cost-col{
       text-align:right;
-      font-variant-numeric: tabular-nums;
+      font-variant-numeric:tabular-nums;
     }
 
     .action-col{
@@ -279,20 +420,35 @@
     @media (max-width: 1400px){
       .service-summary{
         grid-template-columns:
-          minmax(200px, 1fr)
+          minmax(220px, 1fr)
           150px
           100px
           minmax(220px, 1fr)
           100px
-          minmax(100px, .6fr)
           100px;
         gap:12px;
       }
     }
 
-    @media (max-width: 1280px){
+    @media (max-width: 1200px){
+      .toolbar{
+        gap:8px;
+      }
+
+      .toolbar .spacer{
+        display:none;
+      }
+
+      .stats{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+      }
+
       .form-top-grid{
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns:repeat(3, minmax(0, 1fr));
+      }
+
+      .service-summary{
+        grid-template-columns:1.2fr 140px 90px 1fr 100px 100px;
       }
     }
 
@@ -302,15 +458,32 @@
       }
 
       .form-top-grid{
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns:repeat(2, minmax(0, 1fr));
       }
 
       .advanced-grid{
         grid-template-columns:1fr;
       }
 
+      .service-head-row{
+        align-items:stretch;
+      }
+
+      .service-head-row .filter-wrap{
+        width:100%;
+      }
+
+      .tab-row{
+        align-items:flex-start;
+      }
+
+      .paid-total-chip{
+        margin-left:0;
+      }
+
       .service-summary{
         grid-template-columns:1fr;
+        gap:10px;
         align-items:flex-start;
       }
 
@@ -322,6 +495,10 @@
     }
 
     @media (max-width: 640px){
+      .stats{
+        grid-template-columns:1fr;
+      }
+
       .form-top-grid{
         grid-template-columns:1fr;
       }
@@ -342,31 +519,30 @@
         <p>Manage services in a compact layout with category filters, list view, and expandable details.</p>
       </div>
 
+      <section class="stats" id="dashStats">
+        <div class="stat card"><div class="label">Categories</div><div class="value" id="statCat">—</div></div>
+        <div class="stat card"><div class="label">Services</div><div class="value" id="statSvc">—</div></div>
+        <div class="stat card"><div class="label">Paid</div><div class="value" id="statPaid">—</div></div>
+        <div class="stat card"><div class="label">Starred</div><div class="value" id="statStar">—</div></div>
+      </section>
+
       <div class="toolbar">
-        <span id="modeLabel" class="mode-chip">View Mode</span>
+        <span id="modeLabel" class="mode-chip view">View Mode</span>
         <button class="btn" id="toggleModeBtn" type="button">Enable Manage Mode</button>
         <button class="btn" id="expandAllBtn" type="button">Expand All</button>
         <button class="btn" id="collapseAllBtn" type="button">Collapse All</button>
-
-        <select id="planFilter" class="btn" style="padding-right:36px;">
+        <select id="planFilter" class="btn">
           <option value="all">All Plans</option>
           <option value="paid">Paid Only</option>
           <option value="free">Free Only</option>
           <option value="starred">Starred Only</option>
         </select>
-
+        <div class="spacer"></div>
         <a class="btn" href="./account.html">My Account</a>
       </div>
     </section>
 
     <div data-trial-banner></div>
-
-    <section class="stats" id="dashStats" style="margin:16px 0;">
-      <div class="stat"><div class="label">Categories</div><div class="value" id="statCat">—</div></div>
-      <div class="stat"><div class="label">Services</div><div class="value" id="statSvc">—</div></div>
-      <div class="stat"><div class="label">Paid</div><div class="value" id="statPaid">—</div></div>
-      <div class="stat"><div class="label">Starred</div><div class="value" id="statStar">—</div></div>
-    </section>
 
     <section class="card manage-only" id="managePanel" style="margin-bottom:16px;">
       <div class="compact-manage">
@@ -452,7 +628,7 @@
                 </div>
 
                 <div class="field full">
-                  <label for="memo">Memo</label>
+                  <label for="memo">Memo / Notes</label>
                   <textarea id="memo"></textarea>
                 </div>
               </div>
@@ -470,17 +646,20 @@
     </section>
 
     <section class="card">
-      <div class="section-title">
+      <div class="service-head-row">
         <h2>Services</h2>
+        <div class="filter-wrap">
+          <select id="categoryFilter" class="btn">
+            <option value="all">All Categories</option>
+          </select>
+        </div>
       </div>
 
-      <div class="top-filter-bar">
-        <select id="categoryFilter" class="btn" style="padding-right:36px; min-width:220px;">
-          <option value="all">All Categories</option>
-        </select>
+      <div class="tab-row">
+        <div id="categoryTabs" class="category-tabs"></div>
+        <div id="paidTotalChip" class="paid-total-chip">Paid Total: 0</div>
       </div>
 
-      <div id="categoryTabs" class="category-tabs"></div>
       <div id="serviceList" class="service-list"></div>
     </section>
   </main>
@@ -569,15 +748,23 @@
       localStorage.setItem(DETAIL_OPEN_KEY, JSON.stringify(openDetailIds));
     }
 
+    function moneyText(v) {
+      return AppDB.formatMoney(v || 0);
+    }
+
     function updateModeUI() {
       const modeLabel = document.getElementById('modeLabel');
       const toggleBtn = document.getElementById('toggleModeBtn');
 
+      modeLabel.classList.remove('view', 'manage');
+
       if (isManageMode()) {
         modeLabel.textContent = 'Manage Mode';
+        modeLabel.classList.add('manage');
         toggleBtn.textContent = 'Switch to View Mode';
       } else {
         modeLabel.textContent = 'View Mode';
+        modeLabel.classList.add('view');
         toggleBtn.textContent = 'Enable Manage Mode';
       }
 
@@ -603,10 +790,6 @@
     function applyCategoryFilter(services) {
       if (currentCategoryFilter === 'all') return services;
       return services.filter(s => String(s.categoryId) === String(currentCategoryFilter));
-    }
-
-    function moneyText(v) {
-      return AppDB.formatMoney(v || 0);
     }
 
     function sortServices(services, categoryMap) {
@@ -658,13 +841,32 @@
       wrap.innerHTML = buttons.join('');
     }
 
+    function renderPaidTotal(services) {
+      const total = services
+        .filter(s => s.plan === 'Paid')
+        .reduce((sum, s) => sum + Number(s.monthlyCost || 0), 0);
+
+      document.getElementById('paidTotalChip').textContent = `Paid Total: ${moneyText(total)}`;
+    }
+
     function buildServiceRow(service, categoryName) {
       const isOpen = openDetailIds.includes(service.id);
 
       return `
         <div class="service-row">
           <div class="service-summary">
-            <div class="service-title">${service.important ? '★' : '☆'} ${e(service.title)}</div>
+            <div class="title-col">
+              <button
+                class="star-toggle ${service.important ? 'starred' : ''}"
+                type="button"
+                data-star-toggle="${e(service.id)}"
+                aria-label="${service.important ? 'Remove star' : 'Add star'}"
+                title="${service.important ? 'Remove star' : 'Add star'}"
+              >
+                ${service.important ? '★' : '☆'}
+              </button>
+              <div class="service-title">${e(service.title)}</div>
+            </div>
 
             <div class="category-col">
               <span class="category-badge">${e(categoryName || 'Uncategorized')}</span>
@@ -683,8 +885,6 @@
             </div>
 
             <div class="cost-col">${moneyText(service.monthlyCost || 0)}</div>
-
-            <div class="summary-col">${e(service.summary || '-')}</div>
 
             <div class="action-col">
               <button class="btn" type="button" data-detail-toggle="${e(service.id)}">
@@ -721,7 +921,7 @@
               </div>
 
               <div class="detail-box full">
-                <div class="detail-label">Memo</div>
+                <div class="detail-label">Notes</div>
                 <div>${e(service.memo || '-')}</div>
               </div>
             </div>
@@ -749,6 +949,7 @@
       await renderStats(categories, servicesRaw);
       await fillCategorySelects(categories);
       renderCategoryTabs(categories);
+      renderPaidTotal(services);
 
       const html = services.length
         ? services.map(service => buildServiceRow(service, categoryMap[service.categoryId])).join('')
@@ -765,7 +966,6 @@
       document.getElementById('monthlyCost').value = 0;
       document.getElementById('important').value = 'false';
       document.getElementById('saveBtn').textContent = 'Save';
-
       const advancedPanel = document.getElementById('advancedPanel');
       const advancedBtn = document.getElementById('toggleAdvancedBtn');
       advancedPanel.classList.remove('open');
@@ -775,7 +975,6 @@
     function setAdvanced(open) {
       const panel = document.getElementById('advancedPanel');
       const btn = document.getElementById('toggleAdvancedBtn');
-
       if (open) {
         panel.classList.add('open');
         btn.textContent = 'Hide Advanced Fields';
@@ -785,12 +984,31 @@
       }
     }
 
+    async function toggleStar(serviceId) {
+      const svcs = await AppDB.userServices(user.id);
+      const svc = svcs.find(s => String(s.id) === String(serviceId));
+      if (!svc) return;
+
+      await AppDB.saveService(user.id, {
+        ...svc,
+        important: !svc.important
+      });
+
+      await renderServiceList();
+    }
+
     document.addEventListener('click', async function (ev) {
       const tabBtn = ev.target.closest('[data-category-tab]');
       if (tabBtn) {
         currentCategoryFilter = tabBtn.dataset.categoryTab;
         localStorage.setItem(CATEGORY_FILTER_KEY, currentCategoryFilter);
         await renderServiceList();
+        return;
+      }
+
+      const starBtn = ev.target.closest('[data-star-toggle]');
+      if (starBtn) {
+        await toggleStar(starBtn.dataset.starToggle);
         return;
       }
 
