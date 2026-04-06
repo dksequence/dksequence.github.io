@@ -284,42 +284,39 @@
     }
 
     .service-summary{
-      display:grid;
-      grid-template-columns:minmax(320px, 1.2fr) minmax(220px, .9fr) auto;
-      gap:14px;
+      display:flex;
       align-items:center;
-      padding:14px 16px;
+      gap:14px;
+      padding:12px 16px;
+    }
+
+    .service-summary > .summary-main{
+      flex:1 1 auto;
+      min-width:0;
     }
 
     .summary-main{
       min-width:0;
       display:flex;
-      flex-direction:column;
+      align-items:center;
       gap:10px;
     }
 
+    /* 1줄 레이아웃: top/bottom 구분 제거 */
     .summary-top{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      min-width:0;
+      display:contents; /* 자식들을 summary-main flex 흐름에 직접 참여시킴 */
     }
 
     .summary-bottom{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      min-width:0;
+      display:contents;
     }
 
     .title-col{
       display:flex;
       align-items:center;
-      gap:12px;
+      gap:8px;
       min-width:0;
-      flex:1 1 auto;
+      flex:0 0 auto;
     }
 
     .star-toggle{
@@ -365,6 +362,7 @@
 
     .url-col{
       min-width:0;
+      flex:1 1 120px;
       text-align:right;
       color:var(--muted);
       font-size:14px;
@@ -383,8 +381,9 @@
       min-width:0;
       display:flex;
       align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
+      gap:8px;
+      flex-wrap:nowrap;
+      flex:0 0 auto;
     }
 
     .category-badge{
@@ -420,6 +419,7 @@
       display:flex;
       justify-content:flex-end;
       align-items:center;
+      flex:0 0 auto;
     }
 
     .service-detail{
@@ -476,10 +476,6 @@
         grid-template-columns:repeat(3, minmax(0, 1fr));
       }
 
-      .service-summary{
-        grid-template-columns:minmax(240px,1fr) minmax(180px,.8fr) auto;
-      }
-
       .summary-chip{
         max-width:120px;
       }
@@ -498,13 +494,9 @@
         grid-template-columns:1fr;
       }
 
-      .service-summary{
-        grid-template-columns:1fr;
-        gap:10px;
-      }
-
-      .action-col{
-        justify-content:flex-start;
+      /* 좁은 화면: summary-meta 줄바꿈 허용 */
+      .summary-meta{
+        flex-wrap:wrap;
       }
     }
 
@@ -1058,42 +1050,40 @@
         <div class="service-row">
           <div class="service-summary">
             <div class="summary-main">
-              <div class="summary-top">
-                <div class="title-col">
-                  <button
-                    class="star-toggle ${service.important ? 'starred' : ''}"
-                    type="button"
-                    data-star-toggle="${e(service.id)}"
-                    aria-label="${service.important ? 'Remove star' : 'Add star'}"
-                    title="${service.important ? 'Remove star' : 'Add star'}"
-                  >
-                    ${service.important ? '★' : '☆'}
-                  </button>
-                  <div class="service-title">${e(service.title)}</div>
-                </div>
+              <!-- 별 -->
+              <button
+                class="star-toggle ${service.important ? 'starred' : ''}"
+                type="button"
+                data-star-toggle="${e(service.id)}"
+                aria-label="${service.important ? 'Remove star' : 'Add star'}"
+                title="${service.important ? 'Remove star' : 'Add star'}"
+              >${service.important ? '★' : '☆'}</button>
 
-                <div class="url-col">
-                  ${
-                    service.url
-                      ? `<a href="${e(service.url)}" target="_blank" rel="noopener noreferrer" title="${e(service.url)}">${e(shortUrl(service.url))}</a>`
-                      : '-'
-                  }
-                </div>
+              <!-- 서비스명 -->
+              <div class="service-title">${e(service.title)}</div>
+
+              <!-- 카테고리 + 플랜 + 가격 + 요약 -->
+              <div class="summary-meta">
+                <span class="category-badge">${e(categoryName || 'Uncategorized')}</span>
+                <span class="badge ${service.plan === 'Paid' ? 'warn' : 'info'}">${e(service.plan)}</span>
+                <span class="price-chip">${moneyText(service.monthlyCost || 0)}</span>
+                <span class="summary-chip">${e(service.summary || '')}</span>
               </div>
 
-              <div class="summary-bottom">
-                <div class="summary-meta">
-                  <span class="category-badge">${e(categoryName || 'Uncategorized')}</span>
-                  <span class="badge ${service.plan === 'Paid' ? 'warn' : 'info'}">${e(service.plan)}</span>
-                  <span class="price-chip">${moneyText(service.monthlyCost || 0)}</span>
-                  <span class="summary-chip">${e(service.summary || '-')}</span>
-                </div>
+              <!-- URL (남은 공간 채움) -->
+              <div class="url-col">
+                ${
+                  service.url
+                    ? `<a href="${e(service.url)}" target="_blank" rel="noopener noreferrer" title="${e(service.url)}">${e(shortUrl(service.url))}</a>`
+                    : ''
+                }
+              </div>
 
-                <div class="action-col">
-                  <button class="btn" type="button" data-detail-toggle="${e(service.id)}">
-                    ${isOpen ? 'Close' : 'Details'}
-                  </button>
-                </div>
+              <!-- Details 버튼 -->
+              <div class="action-col">
+                <button class="btn" type="button" data-detail-toggle="${e(service.id)}">
+                  ${isOpen ? 'Close' : 'Details'}
+                </button>
               </div>
             </div>
           </div>
