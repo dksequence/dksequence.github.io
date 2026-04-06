@@ -1,63 +1,121 @@
-<script>
-  document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - VaultBoard</title>
 
-    const msg = document.getElementById('loginMsg');
-    msg.textContent = '';
+  <link rel="stylesheet" href="./assets/css/common.css" />
 
-    const emailOrId = username.value.trim();
-    const passwordValue = password.value;
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./assets/js/supabase-config.js"></script>
+  <script src="./assets/js/supabase-client.js"></script>
+  <script src="./assets/js/app-data.js"></script>
+  <script src="./assets/js/common.js"></script>
+</head>
+<body>
+  <div data-include="site-header"></div>
 
-    if (!window.supabaseClient) {
-      msg.textContent = 'Supabase 연결이 준비되지 않았습니다.';
-      return;
-    }
+  <main class="container" style="max-width:760px;">
+    <section class="page-head">
+      <div>
+        <h1>로그인</h1>
+        <p>현재는 이메일 / Password로 로그인합니다. Trial 계정도 로그인 가능합니다.</p>
+      </div>
+    </section>
 
-    let loginEmail = emailOrId;
+    <section class="card">
+      <form id="loginForm" class="form">
+        <div class="field">
+          <label for="username">이메일</label>
+          <input id="username" type="email" required autofocus />
+        </div>
 
-    // ID만 넣은 경우, profiles에서 username으로 이메일 찾기가 아직 없으므로
-    // 현재는 이메일 로그인만 우선 사용
-    if (!emailOrId.includes('@')) {
-      msg.textContent = '현재는 이메일 형식으로 로그인해 주세요.';
-      return;
-    }
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" type="password" required />
+        </div>
 
-    const { data, error } = await window.supabaseClient.auth.signInWithPassword({
-      email: loginEmail,
-      password: passwordValue
+        <div id="loginMsg" class="help"></div>
+
+        <div class="button-row">
+          <button class="btn primary" type="submit">로그인</button>
+          <a class="btn" href="./signup.html">회원가입</a>
+        </div>
+      </form>
+
+      <p class="notice" style="margin-top:16px;">
+        Supabase에 가입된 이메일 / 비밀번호로 로그인합니다.
+      </p>
+    </section>
+  </main>
+
+  <div data-include="site-footer"></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('loginForm');
+      const msg = document.getElementById('loginMsg');
+
+      if (!form) {
+        console.error('loginForm not found');
+        return;
+      }
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        msg.textContent = '';
+
+        const email = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+
+        if (!window.supabaseClient) {
+          msg.textContent = 'Supabase client가 준비되지 않았습니다.';
+          return;
+        }
+
+        try {
+          const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+          });
+
+          if (error) {
+            msg.textContent = error.message || '로그인에 실패했습니다.';
+            return;
+          }
+
+          if (!data || !data.user) {
+            msg.textContent = '사용자 정보를 찾을 수 없습니다.';
+            return;
+          }
+
+          const { data: profile, error: profileError } = await window.supabaseClient
+            .from('profiles')
+            .select('id, username, role, status')
+            .eq('id', data.user.id)
+            .single();
+
+          if (profileError) {
+            msg.textContent = '프로필 정보를 불러오지 못했습니다.';
+            return;
+          }
+
+          if (profile.status === 'disabled') {
+            await window.supabaseClient.auth.signOut();
+            msg.textContent = '비활성화된 계정입니다.';
+            return;
+          }
+
+          localStorage.setItem('vaultboard_supabase_user', JSON.stringify(profile));
+
+          location.href = './dashboard.html';
+        } catch (err) {
+          console.error(err);
+          msg.textContent = '예상치 못한 오류가 발생했습니다.';
+        }
+      });
     });
-
-    if (error) {
-      msg.textContent = error.message || '로그인에 실패했습니다.';
-      return;
-    }
-
-    const user = data?.user;
-    if (!user) {
-      msg.textContent = '사용자 정보를 찾을 수 없습니다.';
-      return;
-    }
-
-    const { data: profile, error: profileError } = await window.supabaseClient
-      .from('profiles')
-      .select('id, username, role, status')
-      .eq('id', user.id)
-      .single();
-
-    if (profileError) {
-      msg.textContent = '프로필 정보를 불러오지 못했습니다.';
-      return;
-    }
-
-    if (profile.status === 'disabled') {
-      await window.supabaseClient.auth.signOut();
-      msg.textContent = '비활성화된 계정입니다.';
-      return;
-    }
-
-    // 기존 common.js / 페이지 흐름과 맞추기 위한 임시 세션 저장
-    localStorage.setItem('vaultboard_supabase_user', JSON.stringify(profile));
-
-    location.href = './dashboard.html';
-  });
-</script>
+  </script>
+</body>
+</html>
