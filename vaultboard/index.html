@@ -18,7 +18,7 @@
     <section class="page-head">
       <div>
         <h1>Private Vault Board - Personal URL Organizer</h1>
-        <p>GitHub Pages에서 바로 미리볼 수 있는 정적 프런트엔드 세트입니다. 실제 여러 기기 동기화는 Supabase 백엔드와 연결되어 있습니다.</p>
+        <p>Static front-end sets that can be previewed directly from GitHub Pages. Real multiple device syncs are linked to the Suppbase backend</p>
       </div>
 
       <div class="button-row" id="heroAuthButtons"></div>
@@ -26,23 +26,23 @@
 
     <div class="grid cols-2">
       <section class="card">
-        <h2>서비스 개념</h2>
-        <p>유료/무료 URL 소팅 관리를 위한 개인용 관리 보드입니다. 누구나 가입하고 기능을 써볼 수 있지만, 관리자 승인 전에는 Trial 계정으로 간주되어 데이터가 언제든 삭제될 수 있습니다</p>
+        <h2>Service Concepts</h2>
+        <p>Personal management board for managing distributing paid/free URLs. Anyone can sign up and try the feature, but before administrator approval, it is considered a Trial account and data can be deleted at any time</p>
         <div class="button-row" style="margin-top:16px;">
-          <span class="badge warn">Trial 즉시 사용</span>
-          <span class="badge ok">승인 후 계속 사용</span>
-          <span class="badge info">관리자는 전체 열람 가능</span>
+          <span class="badge warn">Trial Immediate Use</span>
+          <span class="badge ok">Continue to use after approval</span>
+          <span class="badge info">Full access for administrators</span>
         </div>
       </section>
 
       <section class="card">
-        <h2>공통 규칙</h2>
-        <p>ID/PASS 필드는 실제 값이 아니라 유추를 위한 값입니다. 일반 ID, 이메일, 전화번호, PASS 모두 변칙 규칙에 맞게만 저장합니다.</p>
+        <h2>Common Rule</h2>
+        <p>The ID/PASS field is not an actual value, it is a value for inference. General ID, email, phone number, and PASS are all stored in accordance with the anomaly rule</p>
         <ul class="notice" style="margin:14px 0 0;padding-left:18px;">
-          <li>초대 없이 가입 가능, 승인 전에는 Trial</li>
-          <li>ID/PASS는 변칙규칙이 적용되어 표기됨</li>
-          <li>ID/PASS 는 저장되지 않음</li>
-           <li>개인정보는 보호되지 않습니다</li>
+          <li>Join without invitation, Trial before approval</li>
+          <li>ID/PASS is marked with anomalous rules applied</li>
+          <li>ID/PASS is not stored</li>
+           <li>Personal information is not protected</li>
                   </ul>
       </section>
     </div>
@@ -52,26 +52,26 @@
     <section class="grid cols-3" style="margin-top:16px;">
       <article class="card">
         <h3>1. Sign Up</h3>
-        <p>누구나 가입 가능합니다. 가입 직후 바로 TRIAL 로그인해서 기능을 써볼 수 있습니다.</p>
+        <p>Anyone can sign up. You can try the feature by logging in to TRIAL right after signing up</p>
       </article>
 
       <article class="card">
         <h3>2. Trial Use</h3>
-        <p>관리자 승인 전에는 Trial 계정입니다. 기능은 써볼 수 있지만 데이터 보존은 보장되지 않습니다.</p>
+        <p>Prior to administrator approval, it is a Trial account. Features can be tried, but data retention is not guaranteed</p>
       </article>
 
       <article class="card">
         <h3>3. Admin Approval</h3>
-        <p>관리자는 전체 사용자와 데이터를 보고, 승인·비활성화·삭제·정원 제한을 관리합니다.</p>
+        <p>Administrators view all users and data and manage approval, deactivation, deletion, and quota restriction.</p>
       </article>
     </section>
 
     <section class="card" style="margin-top:16px;">
-      <h2>데모 안내</h2>
-      <p>Supabase 백엔드와 연결되어 있어 여러 기기에서 동기화됩니다. 기본 관리자 계정으로 Admin 페이지에서 사용자를 관리할 수 있습니다.</p>
+      <h2>Demo Guide</h2>
+      <p>It is connected to the Supabase backend and is synchronized across multiple devices. You can manage users from the Admin page with the default administrator account</p>
       <div class="button-row" style="margin-top:16px;">
-        <a class="btn" href="./trial.html">Trial 정책 보기</a>
-        <a class="btn" href="./admin.html">관리자 페이지 보기</a>
+        <a class="btn" href="./trial.html">Viewing Trial Policies</a>
+        <a class="btn" href="./admin.html">View Administrators Page</a>
       </div>
     </section>
   </main>
@@ -87,13 +87,13 @@
 
       if (currentUser) {
         heroAuthButtons.innerHTML = `
-          <a class="btn primary" href="./dashboard.html">대시보드로 이동</a>
-          <a class="btn" href="./account.html">내 계정</a>
+          <a class="btn primary" href="./dashboard.html">Dashboard</a>
+          <a class="btn" href="./account.html">My account</a>
         `;
       } else {
         heroAuthButtons.innerHTML = `
-          <a class="btn primary" href="./signup.html">바로 가입</a>
-          <a class="btn" href="./login.html">로그인</a>
+          <a class="btn primary" href="./signup.html">Sign up</a>
+          <a class="btn" href="./login.html">Log-in</a>
         `;
       }
     }
@@ -120,7 +120,7 @@
         wrap.innerHTML = `
           <section class="stats">
             <div class="stat">
-              <div class="label">총 사용자</div>
+              <div class="label">Total Users</div>
               <div class="value">${total}</div>
             </div>
             <div class="stat">
@@ -132,7 +132,7 @@
               <div class="value">${active}</div>
             </div>
             <div class="stat">
-              <div class="label">정식 계정 정원</div>
+              <div class="label">full account capacity</div>
               <div class="value">${maxUsers}</div>
             </div>
           </section>
