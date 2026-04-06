@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin User Detail - Private Vault Board</title>
+  <link rel="stylesheet" href="./assets/css/common.css" />
+  <script src="./assets/js/app-data.js"></script>
+  <script src="./assets/js/common.js"></script>
+</head>
+<body data-require-auth="true" data-require-admin="true">
+  <div data-include="site-header"></div>
+  <main class="container">
+    <section class="page-head">
+      <div>
+        <h1>사용자 상세 열람</h1>
+        <p>관리자는 모든 사용자 데이터를 열람할 수 있습니다. 이 페이지는 선택된 사용자의 카테고리와 서비스 목록을 보여줍니다.</p>
+      </div>
+      <div class="button-row"><a class="btn" href="./admin.html">관리자 페이지로</a></div>
+    </section>
+
+    <section class="card" id="userInfo"></section>
+    <div class="grid cols-2" style="margin-top:16px;">
+      <section class="card"><h2>카테고리</h2><div id="cats"></div></section>
+      <section class="card"><h2>서비스</h2><div id="svcs"></div></section>
+    </div>
+  </main>
+  <div data-include="site-footer"></div>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const userId = params.get('userId');
+    const user = AppDB.getUserById(userId);
+    if(!user){ userInfo.innerHTML = '<div class="empty">사용자를 찾을 수 없습니다.</div>'; }
+    else {
+      userInfo.innerHTML = `<h2>${user.displayName || user.username}</h2><p><strong>ID</strong>: ${user.username}</p><p><strong>권한</strong>: ${user.role}</p><p><strong>상태</strong>: ${user.status}</p>`;
+      const categories = AppDB.userCategories(user.id);
+      const services = AppDB.userServices(user.id);
+      cats.innerHTML = categories.map(c=>`<div class="item"><div class="item-title">${c.name}</div></div>`).join('') || '<div class="empty">카테고리 없음</div>';
+      svcs.innerHTML = services.map(s=>`<div class="item"><div class="item-title">${s.title}</div><div class="small" style="margin-top:8px;">ID: ${s.loginId || '-'} / PASS: ${s.loginPass || '-'} / ${AppDB.formatMoney(s.monthlyCost||0)}</div><p style="margin-top:10px;">${s.summary || '-'}</p></div>`).join('') || '<div class="empty">서비스 없음</div>';
+    }
+  </script>
+</body>
+</html>
