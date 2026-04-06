@@ -69,7 +69,11 @@
   <div data-include="site-footer"></div>
 
   <script>
-    const user = AppDB.currentUser();
+    const user = JSON.parse(localStorage.getItem('vaultboard_supabase_user') || 'null');
+
+if (!user) {
+  location.href = './login.html';
+}
     const categoryList = document.getElementById('categoryList');
     const serviceList = document.getElementById('serviceList');
     const categorySelect = document.getElementById('categoryId');
