@@ -23,6 +23,14 @@
       margin-bottom:4px;
     }
 
+    .hide-scrollbar{
+      scrollbar-width:none;
+      -ms-overflow-style:none;
+    }
+    .hide-scrollbar::-webkit-scrollbar{
+      display:none;
+    }
+
     .control-strip{
       display:flex;
       align-items:center;
@@ -31,7 +39,6 @@
       overflow-x:auto;
       overflow-y:hidden;
       -webkit-overflow-scrolling:touch;
-      scrollbar-width:thin;
       padding-bottom:2px;
     }
 
@@ -43,8 +50,8 @@
     }
 
     .control-strip select{
-      min-width:148px;
-      width:148px;
+      min-width:142px;
+      width:142px;
       padding-right:34px;
     }
 
@@ -88,7 +95,6 @@
       overflow-x:auto;
       overflow-y:hidden;
       -webkit-overflow-scrolling:touch;
-      scrollbar-width:thin;
     }
 
     .stats{
@@ -190,7 +196,6 @@
       overflow-x:auto;
       overflow-y:hidden;
       -webkit-overflow-scrolling:touch;
-      scrollbar-width:thin;
     }
 
     .service-head-row h2{
@@ -201,7 +206,7 @@
 
     .service-head-row .filter-wrap{
       flex:1 0 auto;
-      min-width:220px;
+      min-width:200px;
     }
 
     .service-head-row select{
@@ -218,7 +223,6 @@
       overflow-x:auto;
       overflow-y:hidden;
       -webkit-overflow-scrolling:touch;
-      scrollbar-width:thin;
     }
 
     .category-tabs{
@@ -283,12 +287,12 @@
       display:grid;
       grid-template-columns:
         minmax(220px, 1.1fr)
-        160px
-        100px
-        minmax(210px, .95fr)
-        100px
-        minmax(110px, .65fr)
-        98px;
+        150px
+        92px
+        minmax(190px, .9fr)
+        95px
+        minmax(92px, .6fr)
+        96px;
       gap:14px;
       align-items:center;
       padding:14px 16px;
@@ -299,6 +303,7 @@
       align-items:center;
       gap:12px;
       min-width:0;
+      grid-area:title;
     }
 
     .star-toggle{
@@ -354,6 +359,29 @@
     .category-col{
       display:flex;
       justify-content:flex-start;
+      grid-area:category;
+    }
+
+    .plan-col{
+      grid-area:plan;
+    }
+
+    .url-col{
+      grid-area:url;
+    }
+
+    .cost-col{
+      grid-area:price;
+    }
+
+    .summary-col{
+      grid-area:summary;
+    }
+
+    .action-col{
+      grid-area:action;
+      display:flex;
+      justify-content:flex-end;
     }
 
     .category-badge{
@@ -392,16 +420,12 @@
       overflow:hidden;
       text-overflow:ellipsis;
       white-space:nowrap;
+      text-align:right;
     }
 
     .cost-col{
       text-align:right;
       font-variant-numeric:tabular-nums;
-    }
-
-    .action-col{
-      display:flex;
-      justify-content:flex-end;
     }
 
     .service-detail{
@@ -453,20 +477,6 @@
       margin-top:4px;
     }
 
-    @media (max-width: 1400px){
-      .service-summary{
-        grid-template-columns:
-          minmax(220px, 1fr)
-          145px
-          95px
-          minmax(175px, .9fr)
-          95px
-          minmax(95px, .6fr)
-          92px;
-        gap:12px;
-      }
-    }
-
     @media (max-width: 1200px){
       .form-top-grid{
         grid-template-columns:repeat(3, minmax(0, 1fr));
@@ -476,11 +486,12 @@
         grid-template-columns:
           minmax(210px, 1fr)
           130px
-          90px
+          88px
           minmax(150px, .85fr)
-          90px
-          minmax(90px, .55fr)
+          88px
+          minmax(86px, .5fr)
           88px;
+        gap:12px;
       }
     }
 
@@ -498,15 +509,38 @@
       }
 
       .service-summary{
-        grid-template-columns:1fr;
-        gap:10px;
-        align-items:flex-start;
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+          "title url"
+          "category plan"
+          "price action";
+        gap:10px 12px;
+        align-items:center;
       }
 
-      .cost-col,
-      .action-col{
+      .summary-col{
+        display:none;
+      }
+
+      .service-title{
+        font-size:16px;
+      }
+
+      .url-col a{
+        text-align:right;
+        max-width:180px;
+      }
+
+      .plan-col{
+        justify-self:end;
+      }
+
+      .cost-col{
         text-align:left;
-        justify-content:flex-start;
+      }
+
+      .action-col{
+        justify-content:flex-end;
       }
     }
 
@@ -520,13 +554,13 @@
       }
 
       .stats{
-        min-width:430px;
-        grid-template-columns:repeat(4, minmax(98px, 1fr));
+        min-width:420px;
+        grid-template-columns:repeat(4, minmax(96px, 1fr));
       }
 
       .stats .stat{
-        min-height:64px;
-        padding:9px 10px;
+        min-height:60px;
+        padding:8px 10px;
       }
 
       .stats .label{
@@ -538,18 +572,78 @@
       }
 
       .control-strip{
-        gap:8px;
+        gap:6px;
       }
 
       .control-strip select{
-        min-width:124px;
-        width:124px;
+        min-width:112px;
+        width:112px;
       }
 
       .mode-toggle,
       .control-strip .btn,
       .control-strip select{
+        min-height:36px;
+        font-size:13px;
+      }
+
+      .service-head-row .filter-wrap{
+        min-width:170px;
+      }
+
+      .service-head-row select{
         min-height:38px;
+      }
+
+      .category-tab{
+        min-height:34px;
+        padding:6px 11px;
+        font-size:13px;
+      }
+
+      .paid-total-chip{
+        min-height:34px;
+        padding:6px 11px;
+        font-size:13px;
+      }
+
+      .service-summary{
+        padding:12px 14px;
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+          "title url"
+          "category plan"
+          "price action";
+      }
+
+      .title-col{
+        gap:10px;
+      }
+
+      .star-toggle{
+        width:30px;
+        min-width:30px;
+        height:30px;
+        font-size:24px;
+      }
+
+      .service-title{
+        font-size:15px;
+      }
+
+      .url-col a{
+        max-width:148px;
+        font-size:12px;
+      }
+
+      .cost-col{
+        font-size:13px;
+      }
+
+      .action-col .btn{
+        min-height:34px;
+        padding:6px 12px;
+        font-size:13px;
       }
     }
   </style>
@@ -564,7 +658,7 @@
         <p>Manage services in a compact layout with category filters, list view, and expandable details.</p>
       </div>
 
-      <div class="stats-scroll">
+      <div class="stats-scroll hide-scrollbar">
         <section class="stats" id="dashStats">
           <div class="stat card"><div class="label">Categories</div><div class="value" id="statCat">—</div></div>
           <div class="stat card"><div class="label">Services</div><div class="value" id="statSvc">—</div></div>
@@ -573,7 +667,7 @@
         </section>
       </div>
 
-      <div class="control-strip">
+      <div class="control-strip hide-scrollbar">
         <button id="modeToggleBtn" class="mode-toggle view" type="button">View Mode</button>
 
         <select id="planFilter" class="btn">
@@ -692,7 +786,7 @@
     </section>
 
     <section class="card">
-      <div class="service-head-row">
+      <div class="service-head-row hide-scrollbar">
         <h2>Services</h2>
         <div class="filter-wrap">
           <select id="categoryFilter" class="btn">
@@ -701,7 +795,7 @@
         </div>
       </div>
 
-      <div class="tab-row">
+      <div class="tab-row hide-scrollbar">
         <div id="categoryTabs" class="category-tabs"></div>
         <div id="paidTotalChip" class="paid-total-chip">Paid Total: 0</div>
       </div>
@@ -793,16 +887,48 @@
       return AppDB.formatMoney(v || 0);
     }
 
+    function shortUrl(url) {
+      const raw = String(url || '').trim();
+      if (!raw) return '-';
+      try {
+        const normalized = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+        const u = new URL(normalized);
+        return u.hostname.replace(/^www\./i, '');
+      } catch {
+        return raw.replace(/^https?:\/\//i, '').replace(/^www\./i, '').split('/')[0];
+      }
+    }
+
+    function updateResponsiveLabels() {
+      const mobile = window.innerWidth <= 640;
+      const expandBtn = document.getElementById('expandAllBtn');
+      const collapseBtn = document.getElementById('collapseAllBtn');
+      const paidChip = document.getElementById('paidTotalChip');
+      const totalText = paidChip.dataset.totalText || paidChip.textContent;
+
+      expandBtn.textContent = mobile ? 'Open' : 'Expand All';
+      collapseBtn.textContent = mobile ? 'Close' : 'Collapse All';
+
+      if (paidChip.dataset.totalValue) {
+        paidChip.textContent = mobile
+          ? `Paid: ${paidChip.dataset.totalValue}`
+          : `Paid Total: ${paidChip.dataset.totalValue}`;
+      } else {
+        paidChip.textContent = totalText;
+      }
+    }
+
     function updateModeUI() {
       const modeToggleBtn = document.getElementById('modeToggleBtn');
+      const mobile = window.innerWidth <= 640;
 
       modeToggleBtn.classList.remove('view', 'manage');
 
       if (isManageMode()) {
-        modeToggleBtn.textContent = 'Manage Mode';
+        modeToggleBtn.textContent = mobile ? 'Manage' : 'Manage Mode';
         modeToggleBtn.classList.add('manage');
       } else {
-        modeToggleBtn.textContent = 'View Mode';
+        modeToggleBtn.textContent = mobile ? 'View' : 'View Mode';
         modeToggleBtn.classList.add('view');
       }
 
@@ -886,7 +1012,11 @@
         .filter(s => s.plan === 'Paid')
         .reduce((sum, s) => sum + Number(s.monthlyCost || 0), 0);
 
-      document.getElementById('paidTotalChip').textContent = `Paid Total: ${moneyText(total)}`;
+      const valueText = moneyText(total);
+      const chip = document.getElementById('paidTotalChip');
+      chip.dataset.totalValue = valueText;
+      chip.textContent = `Paid Total: ${valueText}`;
+      updateResponsiveLabels();
     }
 
     function buildServiceRow(service, categoryName) {
@@ -919,7 +1049,7 @@
             <div class="url-col">
               ${
                 service.url
-                  ? `<a href="${e(service.url)}" target="_blank" rel="noopener noreferrer">${e(service.url)}</a>`
+                  ? `<a href="${e(service.url)}" target="_blank" rel="noopener noreferrer" title="${e(service.url)}">${e(shortUrl(service.url))}</a>`
                   : '-'
               }
             </div>
@@ -1013,6 +1143,7 @@
       document.getElementById('serviceList').innerHTML = html;
       document.getElementById('planFilter').value = currentFilter;
       updateModeUI();
+      updateResponsiveLabels();
     }
 
     function resetForm() {
@@ -1181,7 +1312,7 @@
       });
     });
 
-    document.getElementById('collapseAllBtn').addEventListener('click', async function () {
+    document.getElementById('collapseAllBtn').addEventListener('click', function () {
       openDetailIds = [];
       document.querySelectorAll('.service-detail').forEach(el => el.classList.remove('open'));
       document.querySelectorAll('[data-detail-toggle]').forEach(btn => btn.textContent = 'Details');
@@ -1197,6 +1328,11 @@
       currentCategoryFilter = ev.target.value;
       localStorage.setItem(CATEGORY_FILTER_KEY, currentCategoryFilter);
       await renderServiceList();
+    });
+
+    window.addEventListener('resize', function () {
+      updateModeUI();
+      updateResponsiveLabels();
     });
 
     renderServiceList();
