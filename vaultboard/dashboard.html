@@ -50,8 +50,8 @@
     }
 
     .control-strip select{
-      min-width:138px;
-      width:138px;
+      min-width:132px;
+      width:132px;
       padding-right:34px;
     }
 
@@ -283,10 +283,9 @@
       overflow:hidden;
     }
 
-    /* desktop: compact but stable */
     .service-summary{
       display:grid;
-      grid-template-columns:minmax(260px,1.2fr) minmax(160px,.8fr) auto;
+      grid-template-columns:minmax(320px, 1.2fr) minmax(220px, .9fr) auto;
       gap:14px;
       align-items:center;
       padding:14px 16px;
@@ -310,8 +309,8 @@
     .summary-bottom{
       display:flex;
       align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
+      justify-content:space-between;
+      gap:12px;
       min-width:0;
     }
 
@@ -367,6 +366,8 @@
     .url-col{
       min-width:0;
       text-align:right;
+      color:var(--muted);
+      font-size:14px;
     }
 
     .url-col a{
@@ -382,7 +383,6 @@
       min-width:0;
       display:flex;
       align-items:center;
-      justify-content:flex-end;
       gap:10px;
       flex-wrap:wrap;
     }
@@ -411,7 +411,7 @@
     }
 
     .summary-chip{
-      max-width:160px;
+      max-width:180px;
       overflow:hidden;
       text-overflow:ellipsis;
     }
@@ -477,7 +477,7 @@
       }
 
       .service-summary{
-        grid-template-columns:minmax(220px,1fr) minmax(140px,.7fr) auto;
+        grid-template-columns:minmax(240px,1fr) minmax(180px,.8fr) auto;
       }
 
       .summary-chip{
@@ -503,13 +503,11 @@
         gap:10px;
       }
 
-      .summary-meta,
       .action-col{
         justify-content:flex-start;
       }
     }
 
-    /* mobile: 2 lines + one compact meta line */
     @media (max-width: 640px){
       .form-top-grid{
         grid-template-columns:1fr;
@@ -605,7 +603,7 @@
       }
 
       .url-col a{
-        max-width:136px;
+        max-width:132px;
         text-align:right;
         font-size:12px;
       }
@@ -629,7 +627,6 @@
 
       .category-badge,
       .price-chip,
-      .summary-chip,
       .summary-meta .badge{
         font-size:12px;
       }
@@ -684,8 +681,8 @@
           <option value="starred">Starred Only</option>
         </select>
 
-        <button class="btn" id="expandAllBtn" type="button">Expand All</button>
-        <button class="btn" id="collapseAllBtn" type="button">Collapse All</button>
+        <button class="btn" id="expandAllBtn" type="button">All View</button>
+        <button class="btn" id="collapseAllBtn" type="button">Small View</button>
       </div>
     </section>
 
@@ -907,19 +904,15 @@
     }
 
     function updateResponsiveLabels() {
-      const mobile = window.innerWidth <= 640;
-      const expandBtn = document.getElementById('expandAllBtn');
-      const collapseBtn = document.getElementById('collapseAllBtn');
       const paidChip = document.getElementById('paidTotalChip');
-
-      expandBtn.textContent = mobile ? 'Open' : 'Expand All';
-      collapseBtn.textContent = mobile ? 'Close' : 'Collapse All';
-
       if (paidChip.dataset.totalValue) {
-        paidChip.textContent = mobile
+        paidChip.textContent = window.innerWidth <= 640
           ? `Paid: ${paidChip.dataset.totalValue}`
           : `Paid Total: ${paidChip.dataset.totalValue}`;
       }
+
+      document.getElementById('expandAllBtn').textContent = 'All View';
+      document.getElementById('collapseAllBtn').textContent = 'Small View';
     }
 
     function updateModeUI() {
@@ -942,6 +935,12 @@
       });
     }
 
+    function toggleMode() {
+      currentMode = isManageMode() ? 'view' : 'manage';
+      localStorage.setItem(MODE_KEY, currentMode);
+      updateModeUI();
+    }
+
     function adjustHeaderForMobile() {
       const mobile = window.innerWidth <= 640;
       const header = document.querySelector('header') || document.querySelector('.site-header') || document.querySelector('[data-site-header]');
@@ -952,14 +951,13 @@
       const admin = links.find(el => el.textContent.trim().toLowerCase() === 'admin');
       const brandText = Array.from(header.querySelectorAll('*')).find(el => el.textContent.trim() === 'Private Vault Board');
 
-      if (!logout || !mobile) {
-        header.querySelectorAll('.mobile-logout-clone').forEach(el => el.remove());
-        return;
-      }
+      header.querySelectorAll('.mobile-logout-clone').forEach(el => el.remove());
+
+      if (!mobile || !logout) return;
 
       if (brandText) {
         const brandRow = brandText.parentElement;
-        if (brandRow && !brandRow.querySelector('.mobile-logout-clone')) {
+        if (brandRow) {
           const clone = logout.cloneNode(true);
           clone.classList.add('mobile-logout-clone');
           clone.style.marginLeft = 'auto';
@@ -970,8 +968,11 @@
         }
       }
 
-      if (admin && logout.parentElement === admin.parentElement) {
-        logout.style.order = '-1';
+      if (logout && logout.parentElement) {
+        logout.style.display = 'none';
+      }
+      if (admin && admin.parentElement) {
+        admin.style.order = '2';
       }
     }
 
