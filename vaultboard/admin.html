@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin - Private Vault Board</title>
+  <link rel="stylesheet" href="./assets/css/common.css" />
+  <script src="./assets/js/app-data.js"></script>
+  <script src="./assets/js/common.js"></script>
+</head>
+<body data-require-auth="true" data-require-admin="true">
+  <div data-include="site-header"></div>
+  <main class="container">
+    <section class="page-head">
+      <div>
+        <h1>관리자 페이지</h1>
+        <p>전체 사용자 상태, 승인 정원, Trial/Active 전환, 삭제, 상세 데이터 열람을 관리합니다.</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-title"><h2>활성 사용자 정원</h2></div>
+      <form id="limitForm" class="inline-form">
+        <input id="maxActive" type="number" min="0" />
+        <button class="btn primary" type="submit">정원 저장</button>
+      </form>
+      <p class="notice" style="margin-top:12px;">Trial 사용자는 즉시 사용 가능하지만, 정식 Active 승인은 이 정원 안에서만 가능합니다.</p>
+    </section>
+
+    <section class="stats" id="adminStats" style="margin:16px 0;"></section>
+
+    <section class="card">
+      <div class="section-title"><h2>사용자 목록</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>이름</th><th>권한</th><th>상태</th><th>생성일</th><th>관리</th></tr></thead>
+          <tbody id="userRows"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <div data-include="site-footer"></div>
+  <script>
+    function renderAdmin(){
+      const db = AppDB.loadDB();
+      maxActive.value = db.settings.maxActiveUsers;
+      const trial = db.users.filter(u=>u.role!=='admin' && u.status==='trial').length;
+      const active = db.users.filter(u=>u.role!=='admin' && u.status==='active').length;
+      const disabled = db.users.filter(u=>u.role!=='admin' && u.status==='disabled').length;
+      adminStats.innerHTML = `
+        <div class="stat"><div class="label">전체 사용자</div><div class="value">${db.users.length}</div></div>
+        <div class="stat"><div class="label">Trial</div><div class="value">${trial}</div></div>
+        <div class="stat"><div class="label">Active</div><div class="value">${active}</div></div>
+        <div class="stat"><div class="label">남은 승인 가능 수</div><div class="value">${Math.max(0, db.settings.maxActiveUsers - active)}</div></div>`;
+      userRows.innerHTML = db.users.map(u => `
+        <tr>
+          <td>${u.username}</td>
+          <td>${u.displayName || '-'}</td>
+          <td>${u.role}</td>
+          <td><span class="badge ${u.status==='active'?'ok':u.status==='trial'?'warn':'danger'}">${u.status}</span></td>
+          <td>${(u.createdAt||'').slice(0,10)}</td>
+          <td>
+            <div class="button-row">
+              ${u.role !== 'admin' ? `<button class="btn" type="button" onclick="approveUser('${u.id}')">Approve</button>
+              <button class="btn" type="button" onclick="setTrial('${u.id}')">Trial</button>
+              <button class="btn" type="button" onclick="disableUser('${u.id}')">Disable</button>
+              <button class="btn danger" type="button" onclick="deleteUser('${u.id}')">Delete</button>` : ''}
+              <a class="btn ghost" href="admin-user.html?userId=${u.id}">View</a>
+            </div>
+          </td>
+        </tr>`).join('');
+    }
+    window.approveUser = function(id){ const r = AppDB.adminApproveUser(id); if(!r.ok) alert(r.error); renderAdmin(); }
+    window.setTrial = function(id){ AppDB.adminRestoreTrial(id); renderAdmin(); }
+    window.disableUser = function(id){ AppDB.adminDisableUser(id); renderAdmin(); }
+    window.deleteUser = function(id){ if(confirm('이 사용자를 삭제하시겠습니까? 해당 데이터도 모두 삭제됩니다.')){ AppDB.adminDeleteUser(id); renderAdmin(); } }
+    document.getElementById('limitForm').addEventListener('submit', e=>{ e.preventDefault(); AppDB.adminSetMaxActiveUsers(maxActive.value); renderAdmin(); });
+    renderAdmin();
+  </script>
+</body>
+</html>
