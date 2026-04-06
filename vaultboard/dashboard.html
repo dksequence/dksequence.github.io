@@ -108,7 +108,7 @@
     }
     .service-summary{
       display:grid;
-      grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto auto auto;
+      grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) auto auto auto;
       gap:12px;
       align-items:center;
       padding:12px 14px;
@@ -165,12 +165,6 @@
       text-align:center;
       color:var(--muted);
     }
-    .top-panels{
-      display:grid;
-      grid-template-columns:1fr;
-      gap:16px;
-      margin-bottom:16px;
-    }
     @media (max-width: 1100px){
       .service-summary{
         grid-template-columns:1fr;
@@ -191,7 +185,7 @@
     <section class="page-head">
       <div>
         <h1>내 대시보드</h1>
-        <p>카테고리를 펼치면 해당 카테고리의 서비스가 한 줄형 리스트로 표시됩니다. 상세 보기에서 ID / PASS / 메모를 확인할 수 있습니다.</p>
+        <p>카테고리를 펼치면 서비스가 한 줄형 리스트로 표시됩니다. 상세 보기에서 가짜 표시 규칙이 적용된 ID / PASS / 메모를 확인할 수 있습니다.</p>
       </div>
 
       <div class="toolbar">
@@ -203,6 +197,7 @@
           <option value="all">All</option>
           <option value="paid">Paid Only</option>
           <option value="free">Free Only</option>
+          <option value="starred">Starred Only</option>
         </select>
         <a class="btn" href="./account.html">내 계정</a>
       </div>
@@ -214,7 +209,7 @@
       <div class="stat"><div class="label">카테고리</div><div class="value" id="statCat">—</div></div>
       <div class="stat"><div class="label">서비스</div><div class="value" id="statSvc">—</div></div>
       <div class="stat"><div class="label">유료</div><div class="value" id="statPaid">—</div></div>
-      <div class="stat"><div class="label">월 총 비용</div><div class="value" id="statCost">—</div></div>
+      <div class="stat"><div class="label">별표</div><div class="value" id="statStar">—</div></div>
     </section>
 
     <section class="card manage-only" id="managePanel" style="margin-bottom:16px;">
@@ -270,7 +265,7 @@
               <label for="important">중요</label>
               <select id="important">
                 <option value="false">일반</option>
-                <option value="true">중요</option>
+                <option value="true">별표</option>
               </select>
             </div>
 
@@ -330,6 +325,82 @@
     let openCategoryIds = JSON.parse(localStorage.getItem(ACCORDION_KEY) || '[]');
     let currentFilter = localStorage.getItem(FILTER_KEY) || 'all';
 
+    function randomChar() {
+      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      return chars[Math.floor(Math.random() * chars.length)];
+    }
+
+    function maskGeneralId(value) {
+      if (!value) return '';
+      if (value.length <= 2) return value;
+
+      const first = value[0];
+      const last = value[value.length - 1];
+      const middleLength = value.length - 2;
+
+      let middle = '';
+      for (let i = 0; i < middleLength; i++) {
+        middle += randomChar();
+      }
+
+      return first + middle + last;
+    }
+
+    function maskEmailId(value) {
+      if (!value || !value.includes('@')) return maskGeneralId(value);
+
+      const [local, domain] = value.split('@');
+      if (!local) return value;
+      if (local.length <= 2) return local + '@' + domain;
+
+      const first = local[0];
+      const last = local[local.length - 1];
+      const middleLength = local.length - 2;
+
+      let middle = '';
+      for (let i = 0; i < middleLength; i++) {
+        middle += randomChar();
+      }
+
+      return first + middle + last + '@' + domain;
+    }
+
+    function maskPhoneId(value) {
+      const digits = String(value || '').replace(/\D/g, '');
+      if (!digits) return '';
+      if (digits.length !== 11 || !digits.startsWith('010')) return maskGeneralId(value);
+
+      let middle = '';
+      for (let i = 0; i < 7; i++) {
+        middle += Math.floor(Math.random() * 10);
+      }
+
+      return '010' + middle + digits[10];
+    }
+
+    function maskDisplayId(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return '';
+
+      const onlyDigits = raw.replace(/\D/g, '');
+
+      if (raw.includes('@')) return maskEmailId(raw);
+      if (onlyDigits.length === 11 && onlyDigits.startsWith('010')) return maskPhoneId(raw);
+
+      return maskGeneralId(raw);
+    }
+
+    function maskDisplayPass(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return '';
+      if (raw.length === 1) return '*';
+      if (raw.length === 2) return '**';
+
+      const fakeFirst = randomChar();
+      const fakeLast = randomChar();
+      return fakeFirst + '*'.repeat(raw.length - 2) + fakeLast;
+    }
+
     function isManageMode() {
       return currentMode === 'manage';
     }
@@ -375,6 +446,7 @@
     function applyPlanFilter(services) {
       if (currentFilter === 'paid') return services.filter(s => s.plan === 'Paid');
       if (currentFilter === 'free') return services.filter(s => s.plan === 'Free');
+      if (currentFilter === 'starred') return services.filter(s => !!s.important);
       return services;
     }
 
@@ -382,15 +454,15 @@
       return AppDB.formatMoney(v || 0);
     }
 
-    async function renderStats(categories, services) {
-      const filtered = applyPlanFilter(services);
+    async function renderStats(categories, servicesRaw) {
+      const filtered = applyPlanFilter(servicesRaw);
       const paid = filtered.filter(s => s.plan === 'Paid').length;
-      const cost = filtered.reduce((sum, s) => sum + Number(s.monthlyCost || 0), 0);
+      const starred = filtered.filter(s => !!s.important).length;
 
       document.getElementById('statCat').textContent = categories.length;
       document.getElementById('statSvc').textContent = filtered.length;
       document.getElementById('statPaid').textContent = paid;
-      document.getElementById('statCost').textContent = moneyText(cost);
+      document.getElementById('statStar').textContent = starred;
     }
 
     async function fillCategorySelect(categories) {
@@ -423,11 +495,11 @@
             <div class="detail-grid">
               <div class="detail-box">
                 <div class="detail-label">ID</div>
-                <div>${e(service.loginId || '-')}</div>
+                <div>${e(maskDisplayId(service.loginId || '')) || '-'}</div>
               </div>
               <div class="detail-box">
                 <div class="detail-label">PASS</div>
-                <div>${e(service.loginPass || '-')}</div>
+                <div>${e(maskDisplayPass(service.loginPass || '')) || '-'}</div>
               </div>
               <div class="detail-box full">
                 <div class="detail-label">메모</div>
