@@ -17,25 +17,25 @@
   <main class="container" style="max-width:760px;">
     <section class="page-head">
       <div>
-        <h1>로그인</h1>
-        <p>이메일 / 비밀번호로 로그인합니다. Trial 계정도 로그인 가능합니다.</p>
+        <h1>Login</h1>
+        <p>Sign in with email/password. Trial account can also be logged in</p>
       </div>
     </section>
 
     <section class="card">
       <form id="loginForm" class="form">
         <div class="field">
-          <label for="email">이메일</label>
+          <label for="email">E-mail</label>
           <input id="email" type="email" required autofocus />
         </div>
         <div class="field">
-          <label for="password">비밀번호</label>
+          <label for="password">Password</label>
           <input id="password" type="password" required />
         </div>
         <div id="loginMsg" class="help" style="color:#ff6b6b;"></div>
         <div class="button-row">
-          <button class="btn primary" type="submit" id="submitBtn">로그인</button>
-          <a class="btn" href="./signup.html">회원가입</a>
+          <button class="btn primary" type="submit" id="submitBtn">Log-in</button>
+          <a class="btn" href="./signup.html">Sign-up</a>
         </div>
       </form>
     </section>
@@ -59,7 +59,7 @@
         e.preventDefault();
         msg.textContent = '';
         submitBtn.disabled = true;
-        submitBtn.textContent = '로그인 중...';
+        submitBtn.textContent = 'Log in...';
 
         const email    = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
@@ -67,9 +67,9 @@
         const result = await AppDB.login({ email, password });
 
         if (!result.ok) {
-          msg.textContent = result.error || '로그인에 실패했습니다.';
+          msg.textContent = result.error || 'Login failed';
           submitBtn.disabled = false;
-          submitBtn.textContent = '로그인';
+          submitBtn.textContent = 'Log-in';
           return;
         }
 
