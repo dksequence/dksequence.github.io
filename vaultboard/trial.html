@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trial Guide - Private Vault Board</title>
+  <link rel="stylesheet" href="./assets/css/common.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./assets/js/supabase-config.js"></script>
+  <script src="./assets/js/supabase-client.js"></script>
+  <script src="./assets/js/app-data.js"></script>
+  <script src="./assets/js/common.js"></script>
+</head>
+<body>
+  <div data-include="site-header"></div>
+  <main class="container">
+    <section class="page-head">
+      <div>
+        <h1>Trial 정책 안내</h1>
+        <p>이 서비스는 가입 즉시 써볼 수 있지만, Trial 계정은 정식 승인 전까지 데이터 보존이 보장되지 않습니다.</p>
+      </div>
+    </section>
+    <div class="grid cols-2">
+      <section class="card">
+        <h2>Trial에서 가능한 것</h2>
+        <ul class="notice" style="padding-left:18px; margin:0;">
+          <li>로그인 가능</li>
+          <li>카테고리 추가/수정/삭제</li>
+          <li>서비스 추가/수정/삭제</li>
+          <li>가짜 ID / PASS 기록 테스트</li>
+        </ul>
+      </section>
+      <section class="card">
+        <h2>Trial에서 보장되지 않는 것</h2>
+        <ul class="notice" style="padding-left:18px; margin:0;">
+          <li>데이터 영구 보존</li>
+          <li>관리자 승인 전 장기 사용</li>
+          <li>삭제된 데이터 복구</li>
+        </ul>
+      </section>
+    </div>
+    <section class="card" style="margin-top:16px;">
+      <h2>정식 승인 기준</h2>
+      <p>관리자는 전체 사용자와 데이터를 열람할 수 있으며, Trial 사용자를 <span class="badge ok">Active</span> 상태로 승인하거나, 필요 시 데이터를 포함해 삭제할 수 있습니다. 관리자 정식 승인 가능한 활성 사용자 수는 별도 정원으로 제한할 수 있습니다.</p>
+    </section>
+  </main>
+  <div data-include="site-footer"></div>
+</body>
+</html>

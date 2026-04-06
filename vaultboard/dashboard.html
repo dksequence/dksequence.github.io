@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - Private Vault Board</title>
+  <link rel="stylesheet" href="./assets/css/common.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./assets/js/supabase-config.js"></script>
+  <script src="./assets/js/supabase-client.js"></script>
+  <script src="./assets/js/app-data.js"></script>
+  <script src="./assets/js/common.js"></script>
+</head>
+<body data-require-auth="true">
+  <div data-include="site-header"></div>
+
+  <main class="container">
+    <section class="page-head">
+      <div>
+        <h1>내 대시보드</h1>
+        <p>가짜 ID/PASS만 기록하는 개인용 보드입니다. 관리자만 전체 사용자를 열람할 수 있고, 일반 사용자는 자기 데이터만 관리합니다.</p>
+      </div>
+      <div class="button-row">
+        <a class="btn" href="./account.html">내 계정</a>
+      </div>
+    </section>
+
+    <div data-trial-banner></div>
+
+    <section class="stats" id="dashStats" style="margin:16px 0;">
+      <div class="stat"><div class="label">카테고리</div><div class="value" id="statCat">—</div></div>
+      <div class="stat"><div class="label">서비스</div><div class="value" id="statSvc">—</div></div>
+      <div class="stat"><div class="label">유료</div><div class="value" id="statPaid">—</div></div>
+      <div class="stat"><div class="label">월 총 비용</div><div class="value" id="statCost">—</div></div>
+    </section>
+
+    <div class="grid cols-2">
+      <!-- 카테고리 -->
+      <section class="card">
+        <div class="section-title">
+          <h2>카테고리</h2>
+        </div>
+        <form id="categoryForm" class="inline-form" style="margin-bottom:14px;">
+          <input id="categoryName" type="text" placeholder="새 카테고리 이름" required />
+          <button class="btn primary" type="submit">추가</button>
+        </form>
+        <div id="categoryList" class="category-list"></div>
+      </section>
+
+      <!-- 서비스 추가/수정 -->
+      <section class="card">
+        <div class="section-title">
+          <h2>서비스 추가 / 수정</h2>
+          <span class="small">Tab으로 입력 이동</span>
+        </div>
+        <form id="serviceForm" class="form-grid">
+          <input type="hidden" id="serviceId" />
+          <div class="field">
+            <label for="title">서비스명</label>
+            <input id="title" required />
+          </div>
+          <div class="field">
+            <label for="categoryId">카테고리</label>
+            <select id="categoryId" required></select>
+          </div>
+          <div class="field">
+            <label for="url">URL</label>
+            <input id="url" />
+          </div>
+          <div class="field">
+            <label for="plan">요금제</label>
+            <select id="plan">
+              <option>Free</option>
+              <option>Paid</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="monthlyCost">월 비용</label>
+            <input id="monthlyCost" type="number" min="0" value="0" />
+          </div>
+          <div class="field">
+            <label for="important">중요</label>
+            <select id="important">
+              <option value="false">일반</option>
+              <option value="true">중요</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="loginId">ID</label>
+            <input id="loginId" placeholder="가짜 ID만 저장" />
+          </div>
+          <div class="field">
+            <label for="loginPass">PASS</label>
+            <input id="loginPass" placeholder="가짜 PASS만 저장" />
+          </div>
+          <div class="field full">
+            <label for="summary">요약</label>
+            <input id="summary" />
+          </div>
+          <div class="field full">
+            <label for="memo">메모</label>
+            <textarea id="memo"></textarea>
+          </div>
+          <div class="field full">
+            <div class="button-row">
+              <button class="btn primary" type="submit" id="saveBtn">저장</button>
+              <button class="btn" id="resetFormBtn" type="button">폼 초기화</button>
+            </div>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <!-- 서비스 목록 -->
+    <section class="card" style="margin-top:16px;">
+      <div class="section-title">
+        <h2>내 서비스 목록</h2>
+      </div>
+      <div id="serviceList" class="service-list"></div>
+    </section>
+  </main>
+
+  <div data-include="site-footer"></div>
+
+  <script>
+    const user = AppDB.getCurrentUser();
+    if (!user) { location.href = './login.html'; }
+
+    const e = AppDB.esc;
+
+    /* ── 통계 렌더 ─────────────────────────────────────── */
+    async function renderStats() {
+      const [cats, svcs] = await Promise.all([
+        AppDB.userCategories(user.id),
+        AppDB.userServices(user.id)
+      ]);
+      const paid = svcs.filter(s => s.plan === 'Paid').length;
+      const cost = svcs.reduce((sum, s) => sum + Number(s.monthlyCost || 0), 0);
+      document.getElementById('statCat').textContent  = cats.length;
+      document.getElementById('statSvc').textContent  = svcs.length;
+      document.getElementById('statPaid').textContent = paid;
+      document.getElementById('statCost').textContent = AppDB.formatMoney(cost);
+    }
+
+    /* ── 카테고리 렌더 ─────────────────────────────────── */
+    async function renderCategories() {
+      const cats = await AppDB.userCategories(user.id);
+      const sel  = document.getElementById('categoryId');
+      sel.innerHTML = cats.map(c => `<option value="${e(c.id)}">${e(c.name)}</option>`).join('');
+
+      document.getElementById('categoryList').innerHTML =
+        cats.map(c => `
+          <div class="item">
+            <div class="item-head">
+              <div class="item-title">${e(c.name)}</div>
+              <div class="button-row">
+                <button class="btn ghost" type="button"
+                  data-cat-rename="${e(c.id)}"
+                  data-cat-name="${e(c.name)}">이름 변경</button>
+                <button class="btn danger" type="button"
+                  data-cat-delete="${e(c.id)}">삭제</button>
+              </div>
+            </div>
+          </div>`).join('') || '<div class="empty">카테고리가 없습니다.</div>';
+    }
+
+    /* ── 서비스 렌더 ───────────────────────────────────── */
+    async function renderServices() {
+      const [cats, svcs] = await Promise.all([
+        AppDB.userCategories(user.id),
+        AppDB.userServices(user.id)
+      ]);
+      const catMap = Object.fromEntries(cats.map(c => [c.id, c.name]));
+
+      document.getElementById('serviceList').innerHTML =
+        svcs.map(s => `
+          <div class="item">
+            <div class="item-head">
+              <div class="item-title">${s.important ? '★' : '☆'} ${e(s.title)}</div>
+              <div class="item-meta">
+                <span class="badge ${s.plan === 'Paid' ? 'warn' : 'info'}">${e(s.plan)}</span>
+                <span class="small">${AppDB.formatMoney(s.monthlyCost || 0)}</span>
+              </div>
+            </div>
+            <p style="margin:12px 0 0;">${e(s.summary || '-')}</p>
+            <div class="small" style="margin-top:10px;">
+              Category: ${e(catMap[s.categoryId] || '-')} / ID: ${e(s.loginId || '-')} / PASS: ${e(s.loginPass || '-')}
+            </div>
+            <div class="button-row" style="margin-top:12px;">
+              <button class="btn" type="button" data-svc-edit="${e(s.id)}">수정</button>
+              <button class="btn danger" type="button" data-svc-delete="${e(s.id)}">삭제</button>
+            </div>
+          </div>`).join('') || '<div class="empty">등록된 서비스가 없습니다.</div>';
+    }
+
+    async function renderAll() {
+      await Promise.all([renderStats(), renderCategories(), renderServices()]);
+    }
+
+    /* ── 폼 초기화 ─────────────────────────────────────── */
+    function resetForm() {
+      document.getElementById('serviceForm').reset();
+      document.getElementById('serviceId').value = '';
+      document.getElementById('monthlyCost').value = 0;
+      document.getElementById('important').value = 'false';
+      document.getElementById('saveBtn').textContent = '저장';
+    }
+
+    /* ── 이벤트 위임: 카테고리 & 서비스 버튼 ──────────── */
+    document.addEventListener('click', async function (ev) {
+      const btn = ev.target.closest('button[data-cat-rename], button[data-cat-delete], button[data-svc-edit], button[data-svc-delete]');
+      if (!btn) return;
+
+      if (btn.dataset.catRename) {
+        const name = prompt('새 카테고리 이름', btn.dataset.catName);
+        if (!name) return;
+        await AppDB.updateCategory(btn.dataset.catRename, name.trim());
+        await renderAll();
+      }
+      if (btn.dataset.catDelete) {
+        if (!confirm('이 카테고리를 삭제하시겠습니까? 서비스는 ETC로 이동합니다.')) return;
+        await AppDB.deleteCategory(btn.dataset.catDelete);
+        await renderAll();
+      }
+      if (btn.dataset.svcEdit) {
+        const svcs = await AppDB.userServices(user.id);
+        const svc  = svcs.find(s => s.id === btn.dataset.svcEdit);
+        if (!svc) return;
+        document.getElementById('serviceId').value   = svc.id;
+        document.getElementById('title').value       = svc.title;
+        document.getElementById('categoryId').value  = svc.categoryId;
+        document.getElementById('url').value         = svc.url || '';
+        document.getElementById('plan').value        = svc.plan || 'Free';
+        document.getElementById('monthlyCost').value = svc.monthlyCost || 0;
+        document.getElementById('important').value   = String(!!svc.important);
+        document.getElementById('loginId').value     = svc.loginId || '';
+        document.getElementById('loginPass').value   = svc.loginPass || '';
+        document.getElementById('summary').value     = svc.summary || '';
+        document.getElementById('memo').value        = svc.memo || '';
+        document.getElementById('saveBtn').textContent = '수정 저장';
+        document.getElementById('title').focus();
+      }
+      if (btn.dataset.svcDelete) {
+        if (!confirm('이 서비스를 삭제하시겠습니까?')) return;
+        await AppDB.deleteService(user.id, btn.dataset.svcDelete);
+        await renderAll();
+      }
+    });
+
+    /* ── 카테고리 추가 ─────────────────────────────────── */
+    document.getElementById('categoryForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const nameInput = document.getElementById('categoryName');
+      await AppDB.addCategory(user.id, nameInput.value.trim());
+      nameInput.value = '';
+      await renderAll();
+    });
+
+    /* ── 서비스 저장 ───────────────────────────────────── */
+    document.getElementById('serviceForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const btn = document.getElementById('saveBtn');
+      btn.disabled = true;
+
+      await AppDB.saveService(user.id, {
+        id:          document.getElementById('serviceId').value || undefined,
+        title:       document.getElementById('title').value.trim(),
+        categoryId:  document.getElementById('categoryId').value,
+        url:         document.getElementById('url').value.trim(),
+        summary:     document.getElementById('summary').value.trim(),
+        plan:        document.getElementById('plan').value,
+        monthlyCost: Number(document.getElementById('monthlyCost').value || 0),
+        important:   document.getElementById('important').value === 'true',
+        loginId:     document.getElementById('loginId').value.trim(),
+        loginPass:   document.getElementById('loginPass').value.trim(),
+        memo:        document.getElementById('memo').value.trim()
+      });
+
+      resetForm();
+      btn.disabled = false;
+      await renderAll();
+    });
+
+    document.getElementById('resetFormBtn').addEventListener('click', resetForm);
+
+    /* ── 초기 렌더 ─────────────────────────────────────── */
+    renderAll();
+  </script>
+</body>
+</html>

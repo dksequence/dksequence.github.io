@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up - Private Vault Board</title>
+  <link rel="stylesheet" href="./assets/css/common.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./assets/js/supabase-config.js"></script>
+  <script src="./assets/js/supabase-client.js"></script>
+  <script src="./assets/js/app-data.js"></script>
+  <script src="./assets/js/common.js"></script>
+</head>
+<body>
+  <div data-include="site-header"></div>
+  <main class="container" style="max-width:860px;">
+    <section class="page-head">
+      <div>
+        <h1>회원가입</h1>
+        <p>가입 즉시 Trial 계정으로 바로 사용할 수 있습니다. 단, 최종 승인 전 데이터는 언제든 삭제될 수 있습니다.</p>
+      </div>
+    </section>
+
+    <div class="alert trial" style="margin-bottom:16px;">
+      가입 직후 바로 기능을 써볼 수 있습니다. 하지만 Trial 상태에서는 관리자 판단에 따라 데이터가 삭제될 수 있습니다.
+    </div>
+
+    <section class="card">
+      <form id="signupForm" class="form-grid">
+        <div class="field">
+          <label for="displayName">표시 이름</label>
+          <input id="displayName" type="text" required />
+        </div>
+        <div class="field">
+          <label for="username">사용할 ID (닉네임)</label>
+          <input id="username" type="text" required />
+        </div>
+        <div class="field">
+          <label for="email">이메일</label>
+          <input id="email" type="email" required />
+        </div>
+        <div class="field">
+          <label for="password">비밀번호</label>
+          <input id="password" type="password" required minlength="6" />
+        </div>
+        <div class="field">
+          <label for="password2">비밀번호 확인</label>
+          <input id="password2" type="password" required minlength="6" />
+        </div>
+        <div class="field full">
+          <div id="signupMsg" class="help" style="color:#ff6b6b;"></div>
+        </div>
+        <div class="field full">
+          <div class="button-row">
+            <button class="btn primary" type="submit" id="submitBtn">가입하고 바로 사용하기</button>
+            <a class="btn" href="./login.html">이미 계정 있음</a>
+          </div>
+        </div>
+      </form>
+    </section>
+  </main>
+  <div data-include="site-footer"></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form      = document.getElementById('signupForm');
+      const msg       = document.getElementById('signupMsg');
+      const submitBtn = document.getElementById('submitBtn');
+
+      // 이미 로그인 상태면 대시보드로
+      if (AppDB.getCurrentUser()) {
+        location.href = './dashboard.html';
+        return;
+      }
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        msg.textContent = '';
+
+        const displayName = document.getElementById('displayName').value.trim();
+        const username    = document.getElementById('username').value.trim();
+        const email       = document.getElementById('email').value.trim();
+        const password    = document.getElementById('password').value;
+        const password2   = document.getElementById('password2').value;
+
+        if (password !== password2) {
+          msg.textContent = '비밀번호 확인이 일치하지 않습니다.';
+          return;
+        }
+        if (password.length < 6) {
+          msg.textContent = '비밀번호는 최소 6자 이상이어야 합니다.';
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = '가입 중...';
+
+        const result = await AppDB.signup({ email, password, displayName, username });
+
+        if (!result.ok) {
+          msg.textContent = result.error || '가입에 실패했습니다.';
+          submitBtn.disabled = false;
+          submitBtn.textContent = '가입하고 바로 사용하기';
+          return;
+        }
+
+        location.href = './dashboard.html';
+      });
+    });
+  </script>
+</body>
+</html>
