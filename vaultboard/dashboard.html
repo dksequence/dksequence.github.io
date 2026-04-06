@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,6 +18,7 @@
       gap:10px;
       flex-wrap:wrap;
     }
+
     .mode-chip{
       display:inline-flex;
       align-items:center;
@@ -30,89 +31,138 @@
       color:var(--text);
       font-size:14px;
     }
+
     .manage-hidden{
       display:none !important;
     }
-    .accordion-list{
+
+    .compact-manage{
       display:flex;
       flex-direction:column;
+      gap:14px;
+    }
+
+    .quick-row{
+      display:grid;
+      grid-template-columns: minmax(220px, 320px) 160px 1fr;
       gap:12px;
+      align-items:center;
     }
-    .accordion-item{
-      border:1px solid var(--line);
-      border-radius:16px;
-      background:#121721;
-      overflow:hidden;
+
+    .quick-row .hint{
+      color:var(--muted);
+      font-size:13px;
     }
-    .accordion-head{
+
+    .service-form-wrap{
+      border-top:1px solid rgba(255,255,255,.06);
+      padding-top:14px;
+    }
+
+    .form-top-grid{
+      display:grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap:12px;
+      margin-bottom:12px;
+    }
+
+    .advanced-toggle-row{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:14px;
-      padding:14px 16px;
+      gap:12px;
+      margin-bottom:12px;
     }
-    .accordion-left{
+
+    .advanced-panel{
+      display:none;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      background:#101724;
+    }
+
+    .advanced-panel.open{
+      display:block;
+    }
+
+    .advanced-grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap:12px;
+    }
+
+    .advanced-grid .field.full{
+      grid-column:1 / -1;
+    }
+
+    .top-filter-bar{
       display:flex;
       align-items:center;
-      gap:12px;
-      min-width:0;
-      flex:1;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:16px;
     }
-    .accordion-title{
-      font-size:20px;
-      font-weight:800;
-      white-space:nowrap;
+
+    .top-filter-bar .btn-like,
+    .top-filter-bar select{
+      min-height:42px;
+    }
+
+    .category-tabs{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:16px;
+    }
+
+    .category-tab{
+      min-height:40px;
+      padding:8px 14px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:var(--panel);
+      color:var(--text);
+      cursor:pointer;
+      font-size:14px;
+      font-weight:700;
+    }
+
+    .category-tab.active{
+      background:var(--panel-2);
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+    }
+
+    .service-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .service-row{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#0f141d;
       overflow:hidden;
-      text-overflow:ellipsis;
     }
-    .accordion-sub{
-      color:var(--muted);
-      font-size:13px;
-      white-space:nowrap;
+
+    .service-summary{
+      display:grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(160px, .8fr) minmax(0, 1fr) auto auto auto;
+      gap:12px;
+      align-items:center;
+      padding:14px 16px;
     }
-    .accordion-actions{
+
+    .service-main{
+      min-width:0;
       display:flex;
       align-items:center;
       gap:10px;
       flex-wrap:wrap;
     }
-    .expand-btn{
-      min-width:42px;
-      min-height:42px;
-      border-radius:12px;
-      border:1px solid var(--line);
-      background:var(--panel-2);
-      color:var(--text);
-      cursor:pointer;
-      font-size:18px;
-      line-height:1;
-    }
-    .accordion-body{
-      display:none;
-      border-top:1px solid rgba(255,255,255,.06);
-      padding:12px 16px 16px;
-    }
-    .accordion-item.open .accordion-body{
-      display:block;
-    }
 
-    .service-row{
-      border:1px solid var(--line);
-      border-radius:12px;
-      background:#0f141d;
-      margin-bottom:10px;
-      overflow:hidden;
-    }
-    .service-row:last-child{
-      margin-bottom:0;
-    }
-    .service-summary{
-      display:grid;
-      grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) auto auto auto;
-      gap:12px;
-      align-items:center;
-      padding:12px 14px;
-    }
     .service-title{
       font-weight:800;
       font-size:17px;
@@ -121,6 +171,21 @@
       text-overflow:ellipsis;
       white-space:nowrap;
     }
+
+    .category-badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:5px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.08);
+      background:#151c29;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+      white-space:nowrap;
+    }
+
     .service-url,
     .service-note{
       color:var(--muted);
@@ -130,48 +195,90 @@
       text-overflow:ellipsis;
       white-space:nowrap;
     }
+
     .service-detail{
       display:none;
       border-top:1px dashed rgba(255,255,255,.12);
-      padding:12px 14px 14px;
+      padding:14px 16px 16px;
       background:#101724;
     }
+
     .service-detail.open{
       display:block;
     }
+
     .detail-grid{
       display:grid;
       grid-template-columns:1fr 1fr;
       gap:10px 12px;
     }
+
     .detail-box{
       border:1px solid var(--line);
       border-radius:12px;
       padding:12px;
       background:#111826;
     }
+
     .detail-label{
       color:var(--muted);
       font-size:12px;
       margin-bottom:6px;
     }
+
     .detail-box.full{
       grid-column:1 / -1;
     }
+
     .empty-inner{
-      padding:14px;
+      padding:18px;
       border:1px dashed var(--line);
-      border-radius:12px;
+      border-radius:14px;
       text-align:center;
       color:var(--muted);
+      background:#0f141d;
     }
-    @media (max-width: 1100px){
+
+    .section-subtext{
+      color:var(--muted);
+      font-size:14px;
+      margin-top:4px;
+    }
+
+    @media (max-width: 1280px){
+      .form-top-grid{
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .service-summary{
+        grid-template-columns: minmax(0, 1.2fr) minmax(140px, .7fr) minmax(0, 1fr) auto auto auto;
+      }
+    }
+
+    @media (max-width: 980px){
+      .quick-row{
+        grid-template-columns:1fr;
+      }
+
+      .form-top-grid{
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .advanced-grid{
+        grid-template-columns:1fr;
+      }
+
       .service-summary{
         grid-template-columns:1fr;
         align-items:flex-start;
       }
     }
-    @media (max-width: 800px){
+
+    @media (max-width: 640px){
+      .form-top-grid{
+        grid-template-columns:1fr;
+      }
+
       .detail-grid{
         grid-template-columns:1fr;
       }
@@ -184,127 +291,151 @@
   <main class="container">
     <section class="page-head">
       <div>
-        <h1>내 대시보드</h1>
-        <p>카테고리를 펼치면 서비스가 한 줄형 리스트로 표시됩니다. 상세 보기에서 가짜 표시 규칙이 적용된 ID / PASS / 메모를 확인할 수 있습니다.</p>
+        <h1>My Dashboard</h1>
+        <p>Manage services in a compact layout with category filters, list view, and expandable details.</p>
       </div>
 
       <div class="toolbar">
         <span id="modeLabel" class="mode-chip">View Mode</span>
-        <button class="btn" id="toggleModeBtn" type="button">Manage Mode 켜기</button>
+        <button class="btn" id="toggleModeBtn" type="button">Enable Manage Mode</button>
         <button class="btn" id="expandAllBtn" type="button">Expand All</button>
         <button class="btn" id="collapseAllBtn" type="button">Collapse All</button>
+
         <select id="planFilter" class="btn" style="padding-right:36px;">
-          <option value="all">All</option>
+          <option value="all">All Plans</option>
           <option value="paid">Paid Only</option>
           <option value="free">Free Only</option>
           <option value="starred">Starred Only</option>
         </select>
-        <a class="btn" href="./account.html">내 계정</a>
+
+        <a class="btn" href="./account.html">My Account</a>
       </div>
     </section>
 
     <div data-trial-banner></div>
 
     <section class="stats" id="dashStats" style="margin:16px 0;">
-      <div class="stat"><div class="label">카테고리</div><div class="value" id="statCat">—</div></div>
-      <div class="stat"><div class="label">서비스</div><div class="value" id="statSvc">—</div></div>
-      <div class="stat"><div class="label">유료</div><div class="value" id="statPaid">—</div></div>
-      <div class="stat"><div class="label">별표</div><div class="value" id="statStar">—</div></div>
+      <div class="stat"><div class="label">Categories</div><div class="value" id="statCat">—</div></div>
+      <div class="stat"><div class="label">Services</div><div class="value" id="statSvc">—</div></div>
+      <div class="stat"><div class="label">Paid</div><div class="value" id="statPaid">—</div></div>
+      <div class="stat"><div class="label">Starred</div><div class="value" id="statStar">—</div></div>
     </section>
 
     <section class="card manage-only" id="managePanel" style="margin-bottom:16px;">
-      <div class="grid cols-2">
-        <section>
-          <div class="section-title">
-            <h2>카테고리 추가</h2>
+      <div class="compact-manage">
+        <div>
+          <div class="section-title" style="margin-bottom:10px;">
+            <h2>Quick Category Add</h2>
           </div>
-          <form id="categoryForm" class="inline-form">
-            <input id="categoryName" type="text" placeholder="새 카테고리 이름" required />
-            <button class="btn primary" type="submit">추가</button>
+
+          <form id="categoryForm" class="quick-row">
+            <input id="categoryName" type="text" placeholder="New category name" required />
+            <button class="btn primary" type="submit">Add Category</button>
+            <div class="hint">Keep categories short and clear for faster filtering.</div>
           </form>
-        </section>
+        </div>
 
-        <section>
+        <div class="service-form-wrap">
           <div class="section-title">
-            <h2>서비스 추가 / 수정</h2>
-            <span class="small">Tab으로 입력 이동</span>
+            <h2>Add / Edit Service</h2>
+            <span class="small">Press Tab to move between inputs</span>
           </div>
 
-          <form id="serviceForm" class="form-grid">
+          <form id="serviceForm">
             <input type="hidden" id="serviceId" />
 
-            <div class="field">
-              <label for="title">서비스명</label>
-              <input id="title" required />
+            <div class="form-top-grid">
+              <div class="field">
+                <label for="title">Service Name</label>
+                <input id="title" required />
+              </div>
+
+              <div class="field">
+                <label for="categoryId">Category</label>
+                <select id="categoryId" required></select>
+              </div>
+
+              <div class="field">
+                <label for="url">URL</label>
+                <input id="url" placeholder="https://example.com" />
+              </div>
+
+              <div class="field">
+                <label for="plan">Plan</label>
+                <select id="plan">
+                  <option>Free</option>
+                  <option>Paid</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="monthlyCost">Monthly Cost</label>
+                <input id="monthlyCost" type="number" min="0" value="0" />
+              </div>
             </div>
 
-            <div class="field">
-              <label for="categoryId">카테고리</label>
-              <select id="categoryId" required></select>
+            <div class="advanced-toggle-row">
+              <div class="section-subtext">Optional fields are hidden by default to save space.</div>
+              <button class="btn" type="button" id="toggleAdvancedBtn">Show Advanced Fields</button>
             </div>
 
-            <div class="field">
-              <label for="url">URL</label>
-              <input id="url" />
+            <div class="advanced-panel" id="advancedPanel">
+              <div class="advanced-grid">
+                <div class="field">
+                  <label for="important">Priority</label>
+                  <select id="important">
+                    <option value="false">Normal</option>
+                    <option value="true">Starred</option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label for="summary">Summary</label>
+                  <input id="summary" placeholder="Short note" />
+                </div>
+
+                <div class="field">
+                  <label for="loginId">ID</label>
+                  <input id="loginId" placeholder="Store fake ID only" />
+                </div>
+
+                <div class="field">
+                  <label for="loginPass">Password</label>
+                  <input id="loginPass" placeholder="Store fake password only" />
+                </div>
+
+                <div class="field full">
+                  <label for="memo">Memo</label>
+                  <textarea id="memo"></textarea>
+                </div>
+              </div>
             </div>
 
-            <div class="field">
-              <label for="plan">요금제</label>
-              <select id="plan">
-                <option>Free</option>
-                <option>Paid</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="monthlyCost">월 비용</label>
-              <input id="monthlyCost" type="number" min="0" value="0" />
-            </div>
-
-            <div class="field">
-              <label for="important">중요</label>
-              <select id="important">
-                <option value="false">일반</option>
-                <option value="true">별표</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="loginId">ID</label>
-              <input id="loginId" placeholder="가짜 ID만 저장" />
-            </div>
-
-            <div class="field">
-              <label for="loginPass">PASS</label>
-              <input id="loginPass" placeholder="가짜 PASS만 저장" />
-            </div>
-
-            <div class="field full">
-              <label for="summary">요약 / 노트</label>
-              <input id="summary" />
-            </div>
-
-            <div class="field full">
-              <label for="memo">메모</label>
-              <textarea id="memo"></textarea>
-            </div>
-
-            <div class="field full">
+            <div class="field full" style="margin-top:12px;">
               <div class="button-row">
-                <button class="btn primary" type="submit" id="saveBtn">저장</button>
-                <button class="btn" id="resetFormBtn" type="button">폼 초기화</button>
+                <button class="btn primary" type="submit" id="saveBtn">Save</button>
+                <button class="btn" id="resetFormBtn" type="button">Reset Form</button>
               </div>
             </div>
           </form>
-        </section>
+        </div>
       </div>
     </section>
 
     <section class="card">
       <div class="section-title">
-        <h2>카테고리별 서비스 보기</h2>
+        <h2>Services</h2>
       </div>
-      <div id="accordionList" class="accordion-list"></div>
+
+      <div class="top-filter-bar">
+        <select id="categoryFilter" class="btn" style="padding-right:36px; min-width:220px;">
+          <option value="all">All Categories</option>
+        </select>
+      </div>
+
+      <div id="categoryTabs" class="category-tabs"></div>
+
+      <div id="serviceList" class="service-list"></div>
     </section>
   </main>
 
@@ -312,8 +443,9 @@
 
   <script>
     const MODE_KEY = 'vaultboard_dashboard_mode';
-    const ACCORDION_KEY = 'vaultboard_dashboard_open_categories';
     const FILTER_KEY = 'vaultboard_dashboard_plan_filter';
+    const CATEGORY_FILTER_KEY = 'vaultboard_dashboard_category_filter';
+    const DETAIL_OPEN_KEY = 'vaultboard_dashboard_open_details';
 
     const user = AppDB.getCurrentUser();
     if (!user) {
@@ -322,8 +454,9 @@
 
     const e = AppDB.esc;
     let currentMode = localStorage.getItem(MODE_KEY) || 'view';
-    let openCategoryIds = JSON.parse(localStorage.getItem(ACCORDION_KEY) || '[]');
     let currentFilter = localStorage.getItem(FILTER_KEY) || 'all';
+    let currentCategoryFilter = localStorage.getItem(CATEGORY_FILTER_KEY) || 'all';
+    let openDetailIds = JSON.parse(localStorage.getItem(DETAIL_OPEN_KEY) || '[]');
 
     function randomChar() {
       const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -405,8 +538,8 @@
       return currentMode === 'manage';
     }
 
-    function saveAccordionState() {
-      localStorage.setItem(ACCORDION_KEY, JSON.stringify(openCategoryIds));
+    function saveOpenDetailState() {
+      localStorage.setItem(DETAIL_OPEN_KEY, JSON.stringify(openDetailIds));
     }
 
     function updateModeUI() {
@@ -415,10 +548,10 @@
 
       if (isManageMode()) {
         modeLabel.textContent = 'Manage Mode';
-        toggleBtn.textContent = 'View Mode로 전환';
+        toggleBtn.textContent = 'Switch to View Mode';
       } else {
         modeLabel.textContent = 'View Mode';
-        toggleBtn.textContent = 'Manage Mode 켜기';
+        toggleBtn.textContent = 'Enable Manage Mode';
       }
 
       document.querySelectorAll('.manage-only').forEach(el => {
@@ -433,16 +566,6 @@
       updateModeUI();
     }
 
-    function expandAll(categories) {
-      openCategoryIds = categories.map(c => c.id);
-      saveAccordionState();
-    }
-
-    function collapseAll() {
-      openCategoryIds = [];
-      saveAccordionState();
-    }
-
     function applyPlanFilter(services) {
       if (currentFilter === 'paid') return services.filter(s => s.plan === 'Paid');
       if (currentFilter === 'free') return services.filter(s => s.plan === 'Free');
@@ -450,12 +573,26 @@
       return services;
     }
 
+    function applyCategoryFilter(services) {
+      if (currentCategoryFilter === 'all') return services;
+      return services.filter(s => String(s.categoryId) === String(currentCategoryFilter));
+    }
+
     function moneyText(v) {
       return AppDB.formatMoney(v || 0);
     }
 
+    function sortServices(services, categoryMap) {
+      return [...services].sort((a, b) => {
+        const catA = (categoryMap[a.categoryId] || '').toLowerCase();
+        const catB = (categoryMap[b.categoryId] || '').toLowerCase();
+        if (catA !== catB) return catA.localeCompare(catB);
+        return String(a.title || '').localeCompare(String(b.title || ''));
+      });
+    }
+
     async function renderStats(categories, servicesRaw) {
-      const filtered = applyPlanFilter(servicesRaw);
+      const filtered = applyCategoryFilter(applyPlanFilter(servicesRaw));
       const paid = filtered.filter(s => s.plan === 'Paid').length;
       const starred = filtered.filter(s => !!s.important).length;
 
@@ -465,114 +602,131 @@
       document.getElementById('statStar').textContent = starred;
     }
 
-    async function fillCategorySelect(categories) {
-      const sel = document.getElementById('categoryId');
-      sel.innerHTML = categories.map(c => `<option value="${e(c.id)}">${e(c.name)}</option>`).join('');
+    async function fillCategorySelects(categories) {
+      const serviceCategory = document.getElementById('categoryId');
+      serviceCategory.innerHTML = categories.map(c => `<option value="${e(c.id)}">${e(c.name)}</option>`).join('');
+
+      const filterSelect = document.getElementById('categoryFilter');
+      filterSelect.innerHTML =
+        `<option value="all">All Categories</option>` +
+        categories.map(c => `<option value="${e(c.id)}">${e(c.name)}</option>`).join('');
+
+      filterSelect.value = currentCategoryFilter;
+    }
+
+    function renderCategoryTabs(categories) {
+      const wrap = document.getElementById('categoryTabs');
+      const buttons = [
+        `<button type="button" class="category-tab ${currentCategoryFilter === 'all' ? 'active' : ''}" data-category-tab="all">All</button>`,
+        ...categories.map(c => `
+          <button
+            type="button"
+            class="category-tab ${String(currentCategoryFilter) === String(c.id) ? 'active' : ''}"
+            data-category-tab="${e(c.id)}"
+          >
+            ${e(c.name)}
+          </button>
+        `)
+      ];
+      wrap.innerHTML = buttons.join('');
     }
 
     function buildServiceRow(service, categoryName) {
+      const isOpen = openDetailIds.includes(service.id);
+
       return `
         <div class="service-row">
           <div class="service-summary">
-            <div class="service-title">${service.important ? '★' : '☆'} ${e(service.title)}</div>
-            <div class="service-url">
-              ${service.url ? `<a href="${e(service.url)}" target="_blank" rel="noopener noreferrer">${e(service.url)}</a>` : '-'}
+            <div class="service-main">
+              <div class="service-title">${service.important ? '★' : '☆'} ${e(service.title)}</div>
+              <span class="category-badge">${e(categoryName || 'Uncategorized')}</span>
             </div>
+
             <div>
               <span class="badge ${service.plan === 'Paid' ? 'warn' : 'info'}">${e(service.plan)}</span>
             </div>
+
+            <div class="service-url">
+              ${
+                service.url
+                  ? `<a href="${e(service.url)}" target="_blank" rel="noopener noreferrer">${e(service.url)}</a>`
+                  : '-'
+              }
+            </div>
+
             <div class="service-note">${moneyText(service.monthlyCost || 0)}</div>
+
+            <div class="service-note">${e(service.summary || '-')}</div>
+
             <div class="button-row" style="justify-content:flex-end;">
-              <button class="btn" type="button" data-detail-toggle="${e(service.id)}">상세 보기</button>
+              <button class="btn" type="button" data-detail-toggle="${e(service.id)}">
+                ${isOpen ? 'Close' : 'Details'}
+              </button>
             </div>
           </div>
 
-          <div id="detail-${e(service.id)}" class="service-detail">
-            <div class="service-line" style="margin-bottom:12px;color:var(--muted);">
-              카테고리: ${e(categoryName || '-')} / 노트: ${e(service.summary || '-')}
-            </div>
-
+          <div id="detail-${e(service.id)}" class="service-detail ${isOpen ? 'open' : ''}">
             <div class="detail-grid">
+              <div class="detail-box">
+                <div class="detail-label">Category</div>
+                <div>${e(categoryName || '-')}</div>
+              </div>
+
+              <div class="detail-box">
+                <div class="detail-label">Monthly Cost</div>
+                <div>${moneyText(service.monthlyCost || 0)}</div>
+              </div>
+
               <div class="detail-box">
                 <div class="detail-label">ID</div>
                 <div>${e(maskDisplayId(service.loginId || '')) || '-'}</div>
               </div>
+
               <div class="detail-box">
-                <div class="detail-label">PASS</div>
+                <div class="detail-label">Password</div>
                 <div>${e(maskDisplayPass(service.loginPass || '')) || '-'}</div>
               </div>
+
               <div class="detail-box full">
-                <div class="detail-label">메모</div>
+                <div class="detail-label">Summary</div>
+                <div>${e(service.summary || '-')}</div>
+              </div>
+
+              <div class="detail-box full">
+                <div class="detail-label">Memo</div>
                 <div>${e(service.memo || '-')}</div>
               </div>
             </div>
 
             <div class="button-row manage-only" style="margin-top:12px;">
-              <button class="btn" type="button" data-svc-edit="${e(service.id)}">수정</button>
-              <button class="btn danger" type="button" data-svc-delete="${e(service.id)}">삭제</button>
+              <button class="btn" type="button" data-svc-edit="${e(service.id)}">Edit</button>
+              <button class="btn danger" type="button" data-svc-delete="${e(service.id)}">Delete</button>
             </div>
           </div>
         </div>
       `;
     }
 
-    async function renderAccordion() {
+    async function renderServiceList() {
       const [categories, servicesRaw] = await Promise.all([
         AppDB.userCategories(user.id),
         AppDB.userServices(user.id)
       ]);
 
-      const services = applyPlanFilter(servicesRaw);
+      const categoryMap = Object.fromEntries(categories.map(c => [c.id, c.name]));
+      let services = applyPlanFilter(servicesRaw);
+      services = applyCategoryFilter(services);
+      services = sortServices(services, categoryMap);
 
       await renderStats(categories, servicesRaw);
-      await fillCategorySelect(categories);
+      await fillCategorySelects(categories);
+      renderCategoryTabs(categories);
 
-      const categoryMap = Object.fromEntries(categories.map(c => [c.id, c.name]));
-      const grouped = {};
-      categories.forEach(c => { grouped[c.id] = []; });
-      services.forEach(s => {
-        if (!grouped[s.categoryId]) grouped[s.categoryId] = [];
-        grouped[s.categoryId].push(s);
-      });
+      const html = services.length
+        ? services.map(service => buildServiceRow(service, categoryMap[service.categoryId])).join('')
+        : `<div class="empty-inner">No services found for the current filter.</div>`;
 
-      const html = categories.map(category => {
-        const isOpen = openCategoryIds.includes(category.id);
-        const items = grouped[category.id] || [];
-
-        return `
-          <div class="accordion-item ${isOpen ? 'open' : ''}" data-acc-id="${e(category.id)}">
-            <div class="accordion-head">
-              <div class="accordion-left">
-                <button class="expand-btn" type="button" data-acc-toggle="${e(category.id)}">
-                  ${isOpen ? '▼' : '▶'}
-                </button>
-                <div class="accordion-title">${e(category.name)}</div>
-                <div class="accordion-sub">서비스 ${items.length}개</div>
-              </div>
-
-              <div class="accordion-actions">
-                <div class="button-row manage-only">
-                  <button class="btn ghost" type="button"
-                    data-cat-rename="${e(category.id)}"
-                    data-cat-name="${e(category.name)}">이름 변경</button>
-                  <button class="btn danger" type="button"
-                    data-cat-delete="${e(category.id)}">삭제</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="accordion-body">
-              ${
-                items.length
-                  ? items.map(item => buildServiceRow(item, categoryMap[item.categoryId])).join('')
-                  : `<div class="empty-inner">이 카테고리에 등록된 서비스가 없습니다.</div>`
-              }
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      document.getElementById('accordionList').innerHTML = html || '<div class="empty">카테고리가 없습니다.</div>';
+      document.getElementById('serviceList').innerHTML = html;
       document.getElementById('planFilter').value = currentFilter;
       updateModeUI();
     }
@@ -582,51 +736,60 @@
       document.getElementById('serviceId').value = '';
       document.getElementById('monthlyCost').value = 0;
       document.getElementById('important').value = 'false';
-      document.getElementById('saveBtn').textContent = '저장';
+      document.getElementById('saveBtn').textContent = 'Save';
+
+      const advancedPanel = document.getElementById('advancedPanel');
+      const advancedBtn = document.getElementById('toggleAdvancedBtn');
+      advancedPanel.classList.remove('open');
+      advancedBtn.textContent = 'Show Advanced Fields';
+    }
+
+    function setAdvanced(open) {
+      const panel = document.getElementById('advancedPanel');
+      const btn = document.getElementById('toggleAdvancedBtn');
+
+      if (open) {
+        panel.classList.add('open');
+        btn.textContent = 'Hide Advanced Fields';
+      } else {
+        panel.classList.remove('open');
+        btn.textContent = 'Show Advanced Fields';
+      }
     }
 
     document.addEventListener('click', async function (ev) {
-      const accBtn = ev.target.closest('[data-acc-toggle]');
-      if (accBtn) {
-        const id = accBtn.dataset.accToggle;
-        if (openCategoryIds.includes(id)) {
-          openCategoryIds = openCategoryIds.filter(x => x !== id);
-        } else {
-          openCategoryIds.push(id);
-        }
-        saveAccordionState();
-        await renderAccordion();
+      const tabBtn = ev.target.closest('[data-category-tab]');
+      if (tabBtn) {
+        currentCategoryFilter = tabBtn.dataset.categoryTab;
+        localStorage.setItem(CATEGORY_FILTER_KEY, currentCategoryFilter);
+        await renderServiceList();
         return;
       }
 
       const detailBtn = ev.target.closest('[data-detail-toggle]');
       if (detailBtn) {
-        const detail = document.getElementById(`detail-${detailBtn.dataset.detailToggle}`);
+        const serviceId = detailBtn.dataset.detailToggle;
+        const detail = document.getElementById(`detail-${serviceId}`);
+
         if (detail) {
           detail.classList.toggle('open');
-          detailBtn.textContent = detail.classList.contains('open') ? '닫기' : '상세 보기';
+
+          if (detail.classList.contains('open')) {
+            if (!openDetailIds.includes(serviceId)) openDetailIds.push(serviceId);
+            detailBtn.textContent = 'Close';
+          } else {
+            openDetailIds = openDetailIds.filter(id => id !== serviceId);
+            detailBtn.textContent = 'Details';
+          }
+
+          saveOpenDetailState();
         }
         return;
       }
 
-      const btn = ev.target.closest('button[data-cat-rename], button[data-cat-delete], button[data-svc-edit], button[data-svc-delete]');
+      const btn = ev.target.closest('button[data-svc-edit], button[data-svc-delete]');
       if (!btn) return;
       if (!isManageMode()) return;
-
-      if (btn.dataset.catRename) {
-        const name = prompt('새 카테고리 이름', btn.dataset.catName);
-        if (!name) return;
-        await AppDB.updateCategory(btn.dataset.catRename, name.trim());
-        await renderAccordion();
-      }
-
-      if (btn.dataset.catDelete) {
-        if (!confirm('이 카테고리를 삭제하시겠습니까? 서비스는 ETC로 이동합니다.')) return;
-        await AppDB.deleteCategory(btn.dataset.catDelete);
-        openCategoryIds = openCategoryIds.filter(x => x !== btn.dataset.catDelete);
-        saveAccordionState();
-        await renderAccordion();
-      }
 
       if (btn.dataset.svcEdit) {
         const svcs = await AppDB.userServices(user.id);
@@ -645,30 +808,36 @@
         document.getElementById('summary').value = svc.summary || '';
         document.getElementById('memo').value = svc.memo || '';
 
-        document.getElementById('saveBtn').textContent = '수정 저장';
+        document.getElementById('saveBtn').textContent = 'Save Changes';
+        setAdvanced(true);
         document.getElementById('title').focus();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
       if (btn.dataset.svcDelete) {
-        if (!confirm('이 서비스를 삭제하시겠습니까?')) return;
+        if (!confirm('Delete this service?')) return;
         await AppDB.deleteService(user.id, btn.dataset.svcDelete);
-        await renderAccordion();
+        openDetailIds = openDetailIds.filter(id => id !== btn.dataset.svcDelete);
+        saveOpenDetailState();
+        await renderServiceList();
       }
     });
 
-    document.getElementById('categoryForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
+    document.getElementById('categoryForm').addEventListener('submit', async function (ev) {
+      ev.preventDefault();
       if (!isManageMode()) return;
 
       const nameInput = document.getElementById('categoryName');
-      await AppDB.addCategory(user.id, nameInput.value.trim());
+      const value = nameInput.value.trim();
+      if (!value) return;
+
+      await AppDB.addCategory(user.id, value);
       nameInput.value = '';
-      await renderAccordion();
+      await renderServiceList();
     });
 
-    document.getElementById('serviceForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
+    document.getElementById('serviceForm').addEventListener('submit', async function (ev) {
+      ev.preventDefault();
       if (!isManageMode()) return;
 
       const btn = document.getElementById('saveBtn');
@@ -690,30 +859,45 @@
 
       resetForm();
       btn.disabled = false;
-      await renderAccordion();
+      await renderServiceList();
     });
 
     document.getElementById('resetFormBtn').addEventListener('click', resetForm);
     document.getElementById('toggleModeBtn').addEventListener('click', toggleMode);
 
+    document.getElementById('toggleAdvancedBtn').addEventListener('click', function () {
+      const panel = document.getElementById('advancedPanel');
+      setAdvanced(!panel.classList.contains('open'));
+    });
+
     document.getElementById('expandAllBtn').addEventListener('click', async function () {
-      const categories = await AppDB.userCategories(user.id);
-      expandAll(categories);
-      await renderAccordion();
+      const services = await AppDB.userServices(user.id);
+      let filtered = applyPlanFilter(services);
+      filtered = applyCategoryFilter(filtered);
+      openDetailIds = filtered.map(s => s.id);
+      saveOpenDetailState();
+      await renderServiceList();
     });
 
     document.getElementById('collapseAllBtn').addEventListener('click', async function () {
-      collapseAll();
-      await renderAccordion();
+      openDetailIds = [];
+      saveOpenDetailState();
+      await renderServiceList();
     });
 
-    document.getElementById('planFilter').addEventListener('change', async function (e) {
-      currentFilter = e.target.value;
+    document.getElementById('planFilter').addEventListener('change', async function (ev) {
+      currentFilter = ev.target.value;
       localStorage.setItem(FILTER_KEY, currentFilter);
-      await renderAccordion();
+      await renderServiceList();
     });
 
-    renderAccordion();
+    document.getElementById('categoryFilter').addEventListener('change', async function (ev) {
+      currentCategoryFilter = ev.target.value;
+      localStorage.setItem(CATEGORY_FILTER_KEY, currentCategoryFilter);
+      await renderServiceList();
+    });
+
+    renderServiceList();
   </script>
 </body>
 </html>
