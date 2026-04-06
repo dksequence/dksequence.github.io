@@ -16,35 +16,35 @@
   <main class="container" style="max-width:860px;">
     <section class="page-head">
       <div>
-        <h1>회원가입</h1>
-        <p>가입 즉시 Trial 계정으로 바로 사용할 수 있습니다. 단, 최종 승인 전 데이터는 언제든 삭제될 수 있습니다.</p>
+        <h1>join membership</h1>
+        <p>Immediately after signing up, you can use it as a Trial account; however, data before final approval may be deleted at any time</p>
       </div>
     </section>
 
     <div class="alert trial" style="margin-bottom:16px;">
-      가입 직후 바로 기능을 써볼 수 있습니다. 하지만 Trial 상태에서는 관리자 판단에 따라 데이터가 삭제될 수 있습니다.
+      You can try the feature right after you sign up, but in the Trial state, the data may be deleted at the discretion of the administrator
     </div>
 
     <section class="card">
       <form id="signupForm" class="form-grid">
         <div class="field">
-          <label for="displayName">표시 이름</label>
+          <label for="displayName">Display Name</label>
           <input id="displayName" type="text" required />
         </div>
         <div class="field">
-          <label for="username">사용할 ID (닉네임)</label>
+          <label for="username">ID to use (nickname)</label>
           <input id="username" type="text" required />
         </div>
         <div class="field">
-          <label for="email">이메일</label>
+          <label for="email">E-mail</label>
           <input id="email" type="email" required />
         </div>
         <div class="field">
-          <label for="password">비밀번호</label>
+          <label for="password">Password</label>
           <input id="password" type="password" required minlength="6" />
         </div>
         <div class="field">
-          <label for="password2">비밀번호 확인</label>
+          <label for="password2">Confirm Pass</label>
           <input id="password2" type="password" required minlength="6" />
         </div>
         <div class="field full">
@@ -52,8 +52,8 @@
         </div>
         <div class="field full">
           <div class="button-row">
-            <button class="btn primary" type="submit" id="submitBtn">가입하고 바로 사용하기</button>
-            <a class="btn" href="./login.html">이미 계정 있음</a>
+            <button class="btn primary" type="submit" id="submitBtn">Sign up and use</button>
+            <a class="btn" href="./login.html">Already have an account</a>
           </div>
         </div>
       </form>
@@ -84,23 +84,23 @@
         const password2   = document.getElementById('password2').value;
 
         if (password !== password2) {
-          msg.textContent = '비밀번호 확인이 일치하지 않습니다.';
+          msg.textContent = 'Password validation does not match.';
           return;
         }
         if (password.length < 6) {
-          msg.textContent = '비밀번호는 최소 6자 이상이어야 합니다.';
+          msg.textContent = 'Password must be at least 6 characters';
           return;
         }
 
         submitBtn.disabled = true;
-        submitBtn.textContent = '가입 중...';
+        submitBtn.textContent = 'Signing up...';
 
         const result = await AppDB.signup({ email, password, displayName, username });
 
         if (!result.ok) {
-          msg.textContent = result.error || '가입에 실패했습니다.';
+          msg.textContent = result.error || 'Subscription failed.';
           submitBtn.disabled = false;
-          submitBtn.textContent = '가입하고 바로 사용하기';
+          submitBtn.textContent = 'Sign up and use it right away';
           return;
         }
 
