@@ -8,16 +8,16 @@
     return `
       <header class="site-header">
         <div class="inner">
-          <a class="brand" href="index.html">
+          <a class="brand" href="./index.html">
             <span class="brand-badge">◆</span>
             <span>Private Vault Board</span>
           </a>
           <nav class="nav">
-            <a href="index.html" class="${path==='index.html'?'active':''}">Home</a>
-            ${loggedIn ? `<a href="dashboard.html" class="${path==='dashboard.html'?'active':''}">Dashboard</a>` : `<a href="login.html" class="${path==='login.html'?'active':''}">Login</a>`}
-            ${loggedIn ? `<a href="account.html" class="${path==='account.html'?'active':''}">My Account</a>` : `<a href="signup.html" class="${path==='signup.html'?'active':''}">Sign Up</a>`}
-            <a href="trial.html" class="${path==='trial.html'?'active':''}">Trial Guide</a>
-            ${isAdmin ? `<a href="admin.html" class="${path==='admin.html' || path==='admin-user.html' ?'active':''}">Admin</a>` : ''}
+            <a href="./index.html" class="${path==='index.html'?'active':''}">Home</a>
+            ${loggedIn ? `<a href="./dashboard.html" class="${path==='dashboard.html'?'active':''}">Dashboard</a>` : `<a href="./login.html" class="${path==='login.html'?'active':''}">Login</a>`}
+            ${loggedIn ? `<a href="./account.html" class="${path==='account.html'?'active':''}">My Account</a>` : `<a href="./signup.html" class="${path==='signup.html'?'active':''}">Sign Up</a>`}
+            <a href="./trial.html" class="${path==='trial.html'?'active':''}">Trial Guide</a>
+            ${isAdmin ? `<a href="./admin.html" class="${path==='admin.html' || path==='admin-user.html' ?'active':''}">Admin</a>` : ''}
             ${loggedIn ? `<button type="button" id="globalLogoutBtn">Logout</button>` : ''}
           </nav>
         </div>
@@ -33,15 +33,15 @@
     document.querySelectorAll('[data-include="site-footer"]').forEach(el => el.outerHTML = footer());
     const logout = document.getElementById('globalLogoutBtn');
     if(logout){
-      logout.addEventListener('click', () => { AppDB.logout(); location.href = 'login.html'; });
+      logout.addEventListener('click', () => { AppDB.logout(); location.href = './login.html'; });
     }
   }
 
   function gate(){
     const needAuth = document.body.dataset.requireAuth === 'true';
     const needAdmin = document.body.dataset.requireAdmin === 'true';
-    if(needAuth && !user){ location.href = 'login.html'; return; }
-    if(needAdmin && user?.role !== 'admin'){ location.href = 'dashboard.html'; return; }
+    if(needAuth && !user){ location.href = './login.html'; return; }
+    if(needAdmin && user?.role !== 'admin'){ location.href = './dashboard.html'; return; }
   }
 
   function trialBanner(){
