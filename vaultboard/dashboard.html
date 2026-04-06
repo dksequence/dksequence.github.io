@@ -104,7 +104,6 @@
       margin-bottom:16px;
     }
 
-    .top-filter-bar .btn-like,
     .top-filter-bar select{
       min-height:42px;
     }
@@ -147,20 +146,20 @@
       overflow:hidden;
     }
 
+    /* 핵심 수정: 완전 분리 컬럼 */
     .service-summary{
       display:grid;
-      grid-template-columns: minmax(0, 1.4fr) minmax(160px, .8fr) minmax(0, 1fr) auto auto auto;
-      gap:12px;
+      grid-template-columns:
+        minmax(220px, 1.15fr)   /* title */
+        170px                   /* category */
+        110px                   /* plan */
+        minmax(280px, 1.1fr)    /* url */
+        110px                   /* cost */
+        minmax(120px, .7fr)     /* summary */
+        108px;                  /* button */
+      gap:16px;
       align-items:center;
       padding:14px 16px;
-    }
-
-    .service-main{
-      min-width:0;
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
     }
 
     .service-title{
@@ -172,11 +171,21 @@
       white-space:nowrap;
     }
 
+    .category-col,
+    .plan-col,
+    .url-col,
+    .cost-col,
+    .summary-col,
+    .action-col{
+      min-width:0;
+    }
+
     .category-badge{
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      padding:5px 10px;
+      min-height:36px;
+      padding:5px 12px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,.08);
       background:#151c29;
@@ -184,16 +193,38 @@
       font-size:12px;
       font-weight:700;
       white-space:nowrap;
+      max-width:100%;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
-    .service-url,
-    .service-note{
+    .url-col,
+    .cost-col,
+    .summary-col{
       color:var(--muted);
       font-size:14px;
       min-width:0;
       overflow:hidden;
       text-overflow:ellipsis;
       white-space:nowrap;
+    }
+
+    .url-col a{
+      display:block;
+      min-width:0;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    .cost-col{
+      text-align:right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .action-col{
+      display:flex;
+      justify-content:flex-end;
     }
 
     .service-detail{
@@ -245,13 +276,23 @@
       margin-top:4px;
     }
 
+    @media (max-width: 1400px){
+      .service-summary{
+        grid-template-columns:
+          minmax(200px, 1fr)
+          150px
+          100px
+          minmax(220px, 1fr)
+          100px
+          minmax(100px, .6fr)
+          100px;
+        gap:12px;
+      }
+    }
+
     @media (max-width: 1280px){
       .form-top-grid{
         grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-
-      .service-summary{
-        grid-template-columns: minmax(0, 1.2fr) minmax(140px, .7fr) minmax(0, 1fr) auto auto auto;
       }
     }
 
@@ -271,6 +312,12 @@
       .service-summary{
         grid-template-columns:1fr;
         align-items:flex-start;
+      }
+
+      .cost-col,
+      .action-col{
+        text-align:left;
+        justify-content:flex-start;
       }
     }
 
@@ -434,7 +481,6 @@
       </div>
 
       <div id="categoryTabs" class="category-tabs"></div>
-
       <div id="serviceList" class="service-list"></div>
     </section>
   </main>
@@ -466,35 +512,24 @@
     function maskGeneralId(value) {
       if (!value) return '';
       if (value.length <= 2) return value;
-
       const first = value[0];
       const last = value[value.length - 1];
       const middleLength = value.length - 2;
-
       let middle = '';
-      for (let i = 0; i < middleLength; i++) {
-        middle += randomChar();
-      }
-
+      for (let i = 0; i < middleLength; i++) middle += randomChar();
       return first + middle + last;
     }
 
     function maskEmailId(value) {
       if (!value || !value.includes('@')) return maskGeneralId(value);
-
       const [local, domain] = value.split('@');
       if (!local) return value;
       if (local.length <= 2) return local + '@' + domain;
-
       const first = local[0];
       const last = local[local.length - 1];
       const middleLength = local.length - 2;
-
       let middle = '';
-      for (let i = 0; i < middleLength; i++) {
-        middle += randomChar();
-      }
-
+      for (let i = 0; i < middleLength; i++) middle += randomChar();
       return first + middle + last + '@' + domain;
     }
 
@@ -502,24 +537,17 @@
       const digits = String(value || '').replace(/\D/g, '');
       if (!digits) return '';
       if (digits.length !== 11 || !digits.startsWith('010')) return maskGeneralId(value);
-
       let middle = '';
-      for (let i = 0; i < 7; i++) {
-        middle += Math.floor(Math.random() * 10);
-      }
-
+      for (let i = 0; i < 7; i++) middle += Math.floor(Math.random() * 10);
       return '010' + middle + digits[10];
     }
 
     function maskDisplayId(value) {
       const raw = String(value || '').trim();
       if (!raw) return '';
-
       const onlyDigits = raw.replace(/\D/g, '');
-
       if (raw.includes('@')) return maskEmailId(raw);
       if (onlyDigits.length === 11 && onlyDigits.startsWith('010')) return maskPhoneId(raw);
-
       return maskGeneralId(raw);
     }
 
@@ -528,7 +556,6 @@
       if (!raw) return '';
       if (raw.length === 1) return '*';
       if (raw.length === 2) return '**';
-
       const fakeFirst = randomChar();
       const fakeLast = randomChar();
       return fakeFirst + '*'.repeat(raw.length - 2) + fakeLast;
@@ -637,16 +664,17 @@
       return `
         <div class="service-row">
           <div class="service-summary">
-            <div class="service-main">
-              <div class="service-title">${service.important ? '★' : '☆'} ${e(service.title)}</div>
+            <div class="service-title">${service.important ? '★' : '☆'} ${e(service.title)}</div>
+
+            <div class="category-col">
               <span class="category-badge">${e(categoryName || 'Uncategorized')}</span>
             </div>
 
-            <div>
+            <div class="plan-col">
               <span class="badge ${service.plan === 'Paid' ? 'warn' : 'info'}">${e(service.plan)}</span>
             </div>
 
-            <div class="service-url">
+            <div class="url-col">
               ${
                 service.url
                   ? `<a href="${e(service.url)}" target="_blank" rel="noopener noreferrer">${e(service.url)}</a>`
@@ -654,11 +682,11 @@
               }
             </div>
 
-            <div class="service-note">${moneyText(service.monthlyCost || 0)}</div>
+            <div class="cost-col">${moneyText(service.monthlyCost || 0)}</div>
 
-            <div class="service-note">${e(service.summary || '-')}</div>
+            <div class="summary-col">${e(service.summary || '-')}</div>
 
-            <div class="button-row" style="justify-content:flex-end;">
+            <div class="action-col">
               <button class="btn" type="button" data-detail-toggle="${e(service.id)}">
                 ${isOpen ? 'Close' : 'Details'}
               </button>
