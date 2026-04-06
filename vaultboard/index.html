@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Private Vault Board</title>
+  <link rel="stylesheet" href="./assets/css/common.css" />
+  <script src="./assets/js/app-data.js"></script>
+  <script src="./assets/js/common.js"></script>
+</head>
+<body>
+  <div data-include="site-header"></div>
+  <main class="container">
+    <section class="page-head">
+      <div>
+        <h1>초대 없이 가입 가능, 승인 전에는 Trial</h1>
+        <p>이 버전은 GitHub Pages에서 바로 미리볼 수 있도록 만든 정적 프런트엔드 세트입니다. 실제 여러 기기 동기화는 나중에 별도 백엔드 또는 BaaS를 연결해야 합니다.</p>
+      </div>
+      <div class="button-row">
+        <a class="btn primary" href="./signup.html">바로 가입</a>
+        <a class="btn" href="./login.html">로그인</a>
+      </div>
+    </section>
+
+    <div class="grid cols-2">
+      <section class="card">
+        <h2>서비스 개념</h2>
+        <p>가짜 ID/PASS만 저장하는 개인용 관리 보드입니다. 누구나 가입하고 기능을 써볼 수 있지만, 관리자 승인 전에는 Trial 계정으로 간주되어 데이터가 언제든 삭제될 수 있습니다.</p>
+        <div class="button-row" style="margin-top:16px;">
+          <span class="badge warn">Trial 즉시 사용</span>
+          <span class="badge ok">승인 후 계속 사용</span>
+          <span class="badge info">관리자는 전체 열람 가능</span>
+        </div>
+      </section>
+      <section class="card">
+        <h2>공통 규칙</h2>
+        <p>ID/PASS 필드는 실제 값이 아니라 가짜 기록용 값입니다. 일반 ID, 이메일, 전화번호, PASS 모두 위장 규칙에 맞게만 저장합니다.</p>
+        <ul class="notice" style="margin:14px 0 0;padding-left:18px;">
+          <li>일반 ID: 첫 글자/끝 글자 유지, 중간 랜덤, 길이 동일</li>
+          <li>이메일: 도메인 유지, 앞부분만 위장</li>
+          <li>전화번호: 010 유지, 마지막 숫자 유지, 중간 랜덤</li>
+          <li>PASS: 첫/끝 문자처럼 보이는 것까지 모두 가짜</li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="stats" id="homeStats" style="margin-top:16px;"></section>
+
+    <section class="grid cols-3" style="margin-top:16px;">
+      <article class="card">
+        <h3>1. Sign Up</h3>
+        <p>누구나 가입 가능합니다. 가입 직후 바로 로그인해서 기능을 써볼 수 있습니다.</p>
+      </article>
+      <article class="card">
+        <h3>2. Trial Use</h3>
+        <p>관리자 승인 전에는 Trial 계정입니다. 기능은 써볼 수 있지만 데이터 보존은 보장되지 않습니다.</p>
+      </article>
+      <article class="card">
+        <h3>3. Admin Approval</h3>
+        <p>관리자는 전체 사용자와 데이터를 보고, 승인·비활성화·삭제·정원 제한을 관리합니다.</p>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:16px;">
+      <h2>데모 안내</h2>
+      <p>정적 데모이기 때문에 처음 실행하면 브라우저 localStorage에만 저장됩니다. 기본 관리자 계정은 <span class="kbd">admin</span> / <span class="kbd">admin123!</span> 입니다. GitHub Pages만으로는 서버 측 인증·공유 DB를 제공하지 않으므로, 실제 여러 기기 동기화가 필요하면 외부 백엔드를 붙여야 합니다. GitHub Pages는 HTML·CSS·JavaScript 정적 파일을 배포하는 정적 호스팅 서비스입니다. citeturn150417search4turn150417search0</p>
+      <div class="button-row" style="margin-top:16px;">
+        <a class="btn" href="./trial.html">Trial 정책 보기</a>
+        <a class="btn" href="./admin.html">관리자 페이지 보기</a>
+      </div>
+    </section>
+  </main>
+  <div data-include="site-footer"></div>
+
+  <script>
+    const db = AppDB.loadDB();
+    const stats = document.getElementById('homeStats');
+    stats.innerHTML = `
+      <div class="stat"><div class="label">총 사용자</div><div class="value">${db.users.length}</div></div>
+      <div class="stat"><div class="label">Trial</div><div class="value">${db.users.filter(u=>u.status==='trial').length}</div></div>
+      <div class="stat"><div class="label">Active</div><div class="value">${db.users.filter(u=>u.status==='active').length}</div></div>
+      <div class="stat"><div class="label">정식 계정 정원</div><div class="value">${db.settings.maxActiveUsers}</div></div>`;
+  </script>
+</body>
+</html>
