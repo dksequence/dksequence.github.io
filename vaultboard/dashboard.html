@@ -50,8 +50,8 @@
     }
 
     .control-strip select{
-      min-width:142px;
-      width:142px;
+      min-width:138px;
+      width:138px;
       padding-right:34px;
     }
 
@@ -283,19 +283,36 @@
       overflow:hidden;
     }
 
+    /* desktop: compact but stable */
     .service-summary{
       display:grid;
-      grid-template-columns:
-        minmax(220px, 1.1fr)
-        150px
-        92px
-        minmax(190px, .9fr)
-        95px
-        minmax(92px, .6fr)
-        96px;
+      grid-template-columns:minmax(260px,1.2fr) minmax(160px,.8fr) auto;
       gap:14px;
       align-items:center;
       padding:14px 16px;
+    }
+
+    .summary-main{
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .summary-top{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      min-width:0;
+    }
+
+    .summary-bottom{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      min-width:0;
     }
 
     .title-col{
@@ -303,7 +320,7 @@
       align-items:center;
       gap:12px;
       min-width:0;
-      grid-area:title;
+      flex:1 1 auto;
     }
 
     .star-toggle{
@@ -347,41 +364,27 @@
       white-space:nowrap;
     }
 
-    .category-col,
-    .plan-col,
-    .url-col,
-    .cost-col,
-    .summary-col,
-    .action-col{
-      min-width:0;
-    }
-
-    .category-col{
-      display:flex;
-      justify-content:flex-start;
-      grid-area:category;
-    }
-
-    .plan-col{
-      grid-area:plan;
-    }
-
     .url-col{
-      grid-area:url;
+      min-width:0;
+      text-align:right;
     }
 
-    .cost-col{
-      grid-area:price;
+    .url-col a{
+      display:block;
+      min-width:0;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      color:inherit;
     }
 
-    .summary-col{
-      grid-area:summary;
-    }
-
-    .action-col{
-      grid-area:action;
+    .summary-meta{
+      min-width:0;
       display:flex;
+      align-items:center;
       justify-content:flex-end;
+      gap:10px;
+      flex-wrap:wrap;
     }
 
     .category-badge{
@@ -397,35 +400,26 @@
       font-size:12px;
       font-weight:700;
       white-space:nowrap;
-      max-width:100%;
-      overflow:hidden;
-      text-overflow:ellipsis;
       text-align:left;
     }
 
-    .url-col,
-    .cost-col,
-    .summary-col{
+    .price-chip,
+    .summary-chip{
       color:var(--muted);
       font-size:14px;
-      min-width:0;
-      overflow:hidden;
-      text-overflow:ellipsis;
       white-space:nowrap;
     }
 
-    .url-col a{
-      display:block;
-      min-width:0;
+    .summary-chip{
+      max-width:160px;
       overflow:hidden;
       text-overflow:ellipsis;
-      white-space:nowrap;
-      text-align:right;
     }
 
-    .cost-col{
-      text-align:right;
-      font-variant-numeric:tabular-nums;
+    .action-col{
+      display:flex;
+      justify-content:flex-end;
+      align-items:center;
     }
 
     .service-detail{
@@ -483,15 +477,11 @@
       }
 
       .service-summary{
-        grid-template-columns:
-          minmax(210px, 1fr)
-          130px
-          88px
-          minmax(150px, .85fr)
-          88px
-          minmax(86px, .5fr)
-          88px;
-        gap:12px;
+        grid-template-columns:minmax(220px,1fr) minmax(140px,.7fr) auto;
+      }
+
+      .summary-chip{
+        max-width:120px;
       }
     }
 
@@ -509,41 +499,17 @@
       }
 
       .service-summary{
-        grid-template-columns: 1fr auto;
-        grid-template-areas:
-          "title url"
-          "category plan"
-          "price action";
-        gap:10px 12px;
-        align-items:center;
+        grid-template-columns:1fr;
+        gap:10px;
       }
 
-      .summary-col{
-        display:none;
-      }
-
-      .service-title{
-        font-size:16px;
-      }
-
-      .url-col a{
-        text-align:right;
-        max-width:180px;
-      }
-
-      .plan-col{
-        justify-self:end;
-      }
-
-      .cost-col{
-        text-align:left;
-      }
-
+      .summary-meta,
       .action-col{
-        justify-content:flex-end;
+        justify-content:flex-start;
       }
     }
 
+    /* mobile: 2 lines + one compact meta line */
     @media (max-width: 640px){
       .form-top-grid{
         grid-template-columns:1fr;
@@ -609,11 +575,14 @@
 
       .service-summary{
         padding:12px 14px;
-        grid-template-columns: 1fr auto;
-        grid-template-areas:
-          "title url"
-          "category plan"
-          "price action";
+      }
+
+      .summary-main{
+        gap:8px;
+      }
+
+      .summary-top{
+        gap:10px;
       }
 
       .title-col{
@@ -631,19 +600,57 @@
         font-size:15px;
       }
 
-      .url-col a{
-        max-width:148px;
+      .url-col{
         font-size:12px;
       }
 
-      .cost-col{
-        font-size:13px;
+      .url-col a{
+        max-width:136px;
+        text-align:right;
+        font-size:12px;
+      }
+
+      .summary-bottom{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:8px;
+        flex-wrap:nowrap;
+      }
+
+      .summary-meta{
+        display:flex;
+        align-items:center;
+        gap:8px;
+        flex-wrap:nowrap;
+        overflow:hidden;
+        min-width:0;
+      }
+
+      .category-badge,
+      .price-chip,
+      .summary-chip,
+      .summary-meta .badge{
+        font-size:12px;
+      }
+
+      .category-badge{
+        min-height:30px;
+        padding:4px 9px;
+      }
+
+      .summary-chip{
+        display:none;
+      }
+
+      .action-col{
+        flex:0 0 auto;
       }
 
       .action-col .btn{
-        min-height:34px;
-        padding:6px 12px;
-        font-size:13px;
+        min-height:32px;
+        padding:6px 11px;
+        font-size:12px;
       }
     }
   </style>
@@ -904,7 +911,6 @@
       const expandBtn = document.getElementById('expandAllBtn');
       const collapseBtn = document.getElementById('collapseAllBtn');
       const paidChip = document.getElementById('paidTotalChip');
-      const totalText = paidChip.dataset.totalText || paidChip.textContent;
 
       expandBtn.textContent = mobile ? 'Open' : 'Expand All';
       collapseBtn.textContent = mobile ? 'Close' : 'Collapse All';
@@ -913,8 +919,6 @@
         paidChip.textContent = mobile
           ? `Paid: ${paidChip.dataset.totalValue}`
           : `Paid Total: ${paidChip.dataset.totalValue}`;
-      } else {
-        paidChip.textContent = totalText;
       }
     }
 
@@ -938,10 +942,37 @@
       });
     }
 
-    function toggleMode() {
-      currentMode = isManageMode() ? 'view' : 'manage';
-      localStorage.setItem(MODE_KEY, currentMode);
-      updateModeUI();
+    function adjustHeaderForMobile() {
+      const mobile = window.innerWidth <= 640;
+      const header = document.querySelector('header') || document.querySelector('.site-header') || document.querySelector('[data-site-header]');
+      if (!header) return;
+
+      const links = Array.from(header.querySelectorAll('a, button'));
+      const logout = links.find(el => el.textContent.trim().toLowerCase() === 'logout');
+      const admin = links.find(el => el.textContent.trim().toLowerCase() === 'admin');
+      const brandText = Array.from(header.querySelectorAll('*')).find(el => el.textContent.trim() === 'Private Vault Board');
+
+      if (!logout || !mobile) {
+        header.querySelectorAll('.mobile-logout-clone').forEach(el => el.remove());
+        return;
+      }
+
+      if (brandText) {
+        const brandRow = brandText.parentElement;
+        if (brandRow && !brandRow.querySelector('.mobile-logout-clone')) {
+          const clone = logout.cloneNode(true);
+          clone.classList.add('mobile-logout-clone');
+          clone.style.marginLeft = 'auto';
+          brandRow.style.display = 'flex';
+          brandRow.style.alignItems = 'center';
+          brandRow.style.gap = '12px';
+          brandRow.appendChild(clone);
+        }
+      }
+
+      if (admin && logout.parentElement === admin.parentElement) {
+        logout.style.order = '-1';
+      }
     }
 
     function applyPlanFilter(services) {
@@ -1025,43 +1056,44 @@
       return `
         <div class="service-row">
           <div class="service-summary">
-            <div class="title-col">
-              <button
-                class="star-toggle ${service.important ? 'starred' : ''}"
-                type="button"
-                data-star-toggle="${e(service.id)}"
-                aria-label="${service.important ? 'Remove star' : 'Add star'}"
-                title="${service.important ? 'Remove star' : 'Add star'}"
-              >
-                ${service.important ? '★' : '☆'}
-              </button>
-              <div class="service-title">${e(service.title)}</div>
-            </div>
+            <div class="summary-main">
+              <div class="summary-top">
+                <div class="title-col">
+                  <button
+                    class="star-toggle ${service.important ? 'starred' : ''}"
+                    type="button"
+                    data-star-toggle="${e(service.id)}"
+                    aria-label="${service.important ? 'Remove star' : 'Add star'}"
+                    title="${service.important ? 'Remove star' : 'Add star'}"
+                  >
+                    ${service.important ? '★' : '☆'}
+                  </button>
+                  <div class="service-title">${e(service.title)}</div>
+                </div>
 
-            <div class="category-col">
-              <span class="category-badge">${e(categoryName || 'Uncategorized')}</span>
-            </div>
+                <div class="url-col">
+                  ${
+                    service.url
+                      ? `<a href="${e(service.url)}" target="_blank" rel="noopener noreferrer" title="${e(service.url)}">${e(shortUrl(service.url))}</a>`
+                      : '-'
+                  }
+                </div>
+              </div>
 
-            <div class="plan-col">
-              <span class="badge ${service.plan === 'Paid' ? 'warn' : 'info'}">${e(service.plan)}</span>
-            </div>
+              <div class="summary-bottom">
+                <div class="summary-meta">
+                  <span class="category-badge">${e(categoryName || 'Uncategorized')}</span>
+                  <span class="badge ${service.plan === 'Paid' ? 'warn' : 'info'}">${e(service.plan)}</span>
+                  <span class="price-chip">${moneyText(service.monthlyCost || 0)}</span>
+                  <span class="summary-chip">${e(service.summary || '-')}</span>
+                </div>
 
-            <div class="url-col">
-              ${
-                service.url
-                  ? `<a href="${e(service.url)}" target="_blank" rel="noopener noreferrer" title="${e(service.url)}">${e(shortUrl(service.url))}</a>`
-                  : '-'
-              }
-            </div>
-
-            <div class="cost-col">${moneyText(service.monthlyCost || 0)}</div>
-
-            <div class="summary-col">${e(service.summary || '-')}</div>
-
-            <div class="action-col">
-              <button class="btn" type="button" data-detail-toggle="${e(service.id)}">
-                ${isOpen ? 'Close' : 'Details'}
-              </button>
+                <div class="action-col">
+                  <button class="btn" type="button" data-detail-toggle="${e(service.id)}">
+                    ${isOpen ? 'Close' : 'Details'}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1144,6 +1176,7 @@
       document.getElementById('planFilter').value = currentFilter;
       updateModeUI();
       updateResponsiveLabels();
+      setTimeout(adjustHeaderForMobile, 80);
     }
 
     function resetForm() {
@@ -1333,6 +1366,11 @@
     window.addEventListener('resize', function () {
       updateModeUI();
       updateResponsiveLabels();
+      adjustHeaderForMobile();
+    });
+
+    window.addEventListener('load', function () {
+      setTimeout(adjustHeaderForMobile, 120);
     });
 
     renderServiceList();
