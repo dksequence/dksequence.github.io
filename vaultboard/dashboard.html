@@ -10,7 +10,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="./assets/js/supabase-config.js"></script>
   <script src="./assets/js/supabase-client.js"></script>
-  <script src="./assets/js/app-data.js"></script>
   <script src="./assets/js/common.js"></script>
 </head>
 <body>
@@ -20,7 +19,7 @@
     <section class="page-head">
       <div>
         <h1>내 대시보드</h1>
-        <p>가짜 ID/PASS만 기록하는 개인용 보드입니다. 관리자만 전체 사용자를 열람할 수 있고, 일반 사용자는 자기 데이터만 관리합니다.</p>
+        <p>현재 단계는 읽기 전용입니다. Supabase에서 내 카테고리와 내 서비스 목록만 불러옵니다.</p>
       </div>
       <div class="button-row">
         <a class="btn" href="./account.html">내 계정</a>
@@ -35,123 +34,57 @@
       <section class="card">
         <div class="section-title">
           <h2>카테고리</h2>
+          <span class="small">Supabase Read Only</span>
         </div>
-
-        <form id="categoryForm" class="inline-form" style="margin-bottom:14px;">
-          <input id="categoryName" type="text" placeholder="새 카테고리 이름" required />
-          <button class="btn primary" type="submit">추가</button>
-        </form>
-
         <div id="categoryList" class="category-list"></div>
       </section>
 
       <section class="card">
         <div class="section-title">
-          <h2>서비스 추가 / 수정</h2>
-          <span class="small">Tab으로 입력 이동</span>
+          <h2>서비스 목록</h2>
+          <span class="small">Supabase Read Only</span>
         </div>
-
-        <form id="serviceForm" class="form-grid">
-          <input type="hidden" id="serviceId" />
-
-          <div class="field">
-            <label for="title">서비스명</label>
-            <input id="title" required />
-          </div>
-
-          <div class="field">
-            <label for="categoryId">카테고리</label>
-            <select id="categoryId" required></select>
-          </div>
-
-          <div class="field">
-            <label for="url">URL</label>
-            <input id="url" />
-          </div>
-
-          <div class="field">
-            <label for="plan">요금제</label>
-            <select id="plan">
-              <option>Free</option>
-              <option>Paid</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label for="monthlyCost">월 비용</label>
-            <input id="monthlyCost" type="number" min="0" value="0" />
-          </div>
-
-          <div class="field">
-            <label for="important">중요</label>
-            <select id="important">
-              <option value="false">일반</option>
-              <option value="true">중요</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label for="loginId">ID</label>
-            <input id="loginId" placeholder="가짜 ID만 저장" />
-          </div>
-
-          <div class="field">
-            <label for="loginPass">PASS</label>
-            <input id="loginPass" placeholder="가짜 PASS만 저장" />
-          </div>
-
-          <div class="field full">
-            <label for="summary">요약</label>
-            <input id="summary" />
-          </div>
-
-          <div class="field full">
-            <label for="memo">메모</label>
-            <textarea id="memo"></textarea>
-          </div>
-
-          <div class="field full">
-            <div class="button-row">
-              <button class="btn primary" type="submit">저장</button>
-              <button class="btn" id="resetFormBtn" type="button">폼 초기화</button>
-            </div>
-          </div>
-        </form>
+        <div id="serviceList" class="service-list"></div>
       </section>
     </div>
 
     <section class="card" style="margin-top:16px;">
       <div class="section-title">
-        <h2>내 서비스 목록</h2>
+        <h2>현재 상태</h2>
       </div>
-      <div id="serviceList" class="service-list"></div>
+      <div id="dashboardStatus" class="notice">불러오는 중...</div>
     </section>
   </main>
 
   <div data-include="site-footer"></div>
 
   <script>
-    const user = JSON.parse(localStorage.getItem('vaultboard_supabase_user') || 'null');
-
-    if (!user) {
-      location.href = './login.html';
-    }
-
+    const stats = document.getElementById('dashStats');
     const categoryList = document.getElementById('categoryList');
     const serviceList = document.getElementById('serviceList');
-    const categorySelect = document.getElementById('categoryId');
-    const stats = document.getElementById('dashStats');
-    const serviceForm = document.getElementById('serviceForm');
+    const dashboardStatus = document.getElementById('dashboardStatus');
 
-    function renderStats() {
-      const services = AppDB.userServices(user.id);
+    function money(value) {
+      return Number(value || 0).toLocaleString('ko-KR') + '원';
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function renderStats(categories, services) {
       const paid = services.filter(s => s.plan === 'Paid').length;
-      const cost = services.reduce((sum, s) => sum + Number(s.monthlyCost || 0), 0);
+      const cost = services.reduce((sum, s) => sum + Number(s.monthly_cost || 0), 0);
 
       stats.innerHTML = `
         <div class="stat">
           <div class="label">카테고리</div>
-          <div class="value">${AppDB.userCategories(user.id).length}</div>
+          <div class="value">${categories.length}</div>
         </div>
         <div class="stat">
           <div class="label">서비스</div>
@@ -163,148 +96,138 @@
         </div>
         <div class="stat">
           <div class="label">월 총 비용</div>
-          <div class="value">${AppDB.formatMoney(cost)}</div>
+          <div class="value">${money(cost)}</div>
         </div>
       `;
     }
 
-    function renderCategories() {
-      const categories = AppDB.userCategories(user.id);
-
-      categorySelect.innerHTML = categories
-        .map(c => `<option value="${c.id}">${c.name}</option>`)
-        .join('');
-
+    function renderCategories(categories) {
       categoryList.innerHTML =
-        categories
-          .map(c => `
-            <div class="item">
-              <div class="item-head">
-                <div class="item-title">${c.name}</div>
-                <div class="button-row">
-                  <button class="btn ghost" type="button" onclick="renameCategory('${c.id}','${c.name.replace(/'/g, "\\'")}')">이름 변경</button>
-                  <button class="btn danger" type="button" onclick="removeCategory('${c.id}')">삭제</button>
-                </div>
+        categories.map(category => `
+          <div class="item">
+            <div class="item-head">
+              <div class="item-title">${escapeHtml(category.name)}</div>
+              <div class="item-meta">
+                <span class="small">order: ${category.sort_order}</span>
               </div>
             </div>
-          `)
-          .join('') || '<div class="empty">카테고리가 없습니다.</div>';
+          </div>
+        `).join('') || '<div class="empty">카테고리가 없습니다.</div>';
     }
 
-    function renderServices() {
-      const services = AppDB.userServices(user.id);
-      const catMap = Object.fromEntries(
-        AppDB.userCategories(user.id).map(c => [c.id, c.name])
+    function renderServices(categories, services) {
+      const categoryMap = Object.fromEntries(
+        categories.map(category => [category.id, category.name])
       );
 
       serviceList.innerHTML =
-        services
-          .map(s => `
-            <div class="item">
-              <div class="item-head">
-                <div class="item-title">${s.important ? '★' : '☆'} ${s.title}</div>
-                <div class="item-meta">
-                  <span class="badge ${s.plan === 'Paid' ? 'warn' : 'info'}">${s.plan}</span>
-                  <span class="small">${AppDB.formatMoney(s.monthlyCost || 0)}</span>
-                </div>
+        services.map(service => `
+          <div class="item">
+            <div class="item-head">
+              <div class="item-title">
+                ${service.important ? '★' : '☆'} ${escapeHtml(service.title)}
               </div>
-
-              <p style="margin:12px 0 0;">${s.summary || '-'}</p>
-
-              <div class="small" style="margin-top:10px;">
-                Category: ${catMap[s.categoryId] || '-'} / ID: ${s.loginId || '-'} / PASS: ${s.loginPass || '-'}
-              </div>
-
-              <div class="button-row" style="margin-top:12px;">
-                <button class="btn" type="button" onclick="editService('${s.id}')">수정</button>
-                <button class="btn danger" type="button" onclick="deleteServiceItem('${s.id}')">삭제</button>
+              <div class="item-meta">
+                <span class="badge ${service.plan === 'Paid' ? 'warn' : 'info'}">${escapeHtml(service.plan)}</span>
+                <span class="small">${money(service.monthly_cost || 0)}</span>
               </div>
             </div>
-          `)
-          .join('') || '<div class="empty">등록된 서비스가 없습니다.</div>';
+
+            <p style="margin:12px 0 0;">${escapeHtml(service.summary || '-')}</p>
+
+            <div class="small" style="margin-top:10px;">
+              Category: ${escapeHtml(categoryMap[service.category_id] || '-')}
+              / ID: ${escapeHtml(service.login_id || '-')}
+              / PASS: ${escapeHtml(service.login_pass || '-')}
+            </div>
+
+            <div class="small" style="margin-top:8px;">
+              URL: ${service.url ? `<a href="${escapeHtml(service.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(service.url)}</a>` : '-'}
+            </div>
+
+            <div class="small" style="margin-top:8px;">
+              Memo: ${escapeHtml(service.memo || '-')}
+            </div>
+          </div>
+        `).join('') || '<div class="empty">등록된 서비스가 없습니다.</div>';
     }
 
-    window.renameCategory = function (catId, currentName) {
-      const name = prompt('새 카테고리 이름', currentName);
-      if (!name) return;
-      AppDB.updateCategory(catId, name);
-      renderAll();
-    };
+    async function loadDashboard() {
+      dashboardStatus.textContent = '세션 확인 중...';
 
-    window.removeCategory = function (catId) {
-      if (!confirm('이 카테고리를 삭제하시겠습니까? 서비스는 ETC로 이동합니다.')) return;
-      AppDB.deleteCategory(catId);
-      renderAll();
-    };
+      if (!window.supabaseClient) {
+        dashboardStatus.textContent = 'Supabase client가 준비되지 않았습니다.';
+        return;
+      }
 
-    window.editService = function (serviceId) {
-      const svc = AppDB.userServices(user.id).find(s => s.id === serviceId);
-      if (!svc) return;
+      const { data: userData, error: userError } = await window.supabaseClient.auth.getUser();
 
-      document.getElementById('serviceId').value = svc.id;
-      title.value = svc.title;
-      categoryId.value = svc.categoryId;
-      url.value = svc.url || '';
-      plan.value = svc.plan || 'Free';
-      monthlyCost.value = svc.monthlyCost || 0;
-      important.value = String(!!svc.important);
-      loginId.value = svc.loginId || '';
-      loginPass.value = svc.loginPass || '';
-      summary.value = svc.summary || '';
-      memo.value = svc.memo || '';
-      title.focus();
-    };
+      if (userError || !userData || !userData.user) {
+        localStorage.removeItem('vaultboard_supabase_user');
+        location.href = './login.html';
+        return;
+      }
 
-    window.deleteServiceItem = function (serviceId) {
-      if (!confirm('이 서비스를 삭제하시겠습니까?')) return;
-      AppDB.deleteService(user.id, serviceId);
-      renderAll();
-    };
+      dashboardStatus.textContent = '프로필 확인 중...';
 
-    function resetForm() {
-      serviceForm.reset();
-      serviceId.value = '';
-      monthlyCost.value = 0;
-      important.value = 'false';
+      const { data: profile, error: profileError } = await window.supabaseClient
+        .from('profiles')
+        .select('id, username, display_name, role, status')
+        .eq('id', userData.user.id)
+        .single();
+
+      if (profileError || !profile) {
+        console.error('Profile fetch error:', profileError);
+        dashboardStatus.textContent = '프로필을 불러오지 못했습니다.';
+        return;
+      }
+
+      if (profile.status === 'disabled') {
+        await window.supabaseClient.auth.signOut();
+        localStorage.removeItem('vaultboard_supabase_user');
+        location.href = './login.html';
+        return;
+      }
+
+      localStorage.setItem('vaultboard_supabase_user', JSON.stringify(profile));
+
+      dashboardStatus.textContent = '카테고리 불러오는 중...';
+
+      const { data: categories, error: categoriesError } = await window.supabaseClient
+        .from('categories')
+        .select('id, name, sort_order')
+        .order('sort_order', { ascending: true });
+
+      if (categoriesError) {
+        console.error('Categories fetch error:', categoriesError);
+        dashboardStatus.textContent = '카테고리를 불러오지 못했습니다.';
+        return;
+      }
+
+      dashboardStatus.textContent = '서비스 불러오는 중...';
+
+      const { data: services, error: servicesError } = await window.supabaseClient
+        .from('services')
+        .select('id, category_id, title, url, summary, plan, monthly_cost, important, login_id, login_pass, memo, created_at')
+        .order('created_at', { ascending: false });
+
+      if (servicesError) {
+        console.error('Services fetch error:', servicesError);
+        dashboardStatus.textContent = '서비스를 불러오지 못했습니다.';
+        return;
+      }
+
+      renderStats(categories || [], services || []);
+      renderCategories(categories || []);
+      renderServices(categories || [], services || []);
+
+      dashboardStatus.innerHTML = `
+        <span class="badge ${profile.status === 'active' ? 'ok' : 'warn'}">${escapeHtml(profile.status)}</span>
+        <span style="margin-left:8px;">${escapeHtml(profile.display_name || profile.username || '사용자')} 님의 데이터를 읽었습니다.</span>
+      `;
     }
 
-    function renderAll() {
-      renderStats();
-      renderCategories();
-      renderServices();
-    }
-
-    document.getElementById('categoryForm').addEventListener('submit', e => {
-      e.preventDefault();
-      AppDB.addCategory(user.id, categoryName.value.trim());
-      categoryName.value = '';
-      renderAll();
-    });
-
-    document.getElementById('serviceForm').addEventListener('submit', e => {
-      e.preventDefault();
-
-      AppDB.saveService(user.id, {
-        id: serviceId.value || undefined,
-        title: title.value.trim(),
-        categoryId: categoryId.value,
-        url: url.value.trim(),
-        summary: summary.value.trim(),
-        plan: plan.value,
-        monthlyCost: Number(monthlyCost.value || 0),
-        important: important.value === 'true',
-        loginId: loginId.value.trim(),
-        loginPass: loginPass.value.trim(),
-        memo: memo.value.trim()
-      });
-
-      resetForm();
-      renderAll();
-    });
-
-    document.getElementById('resetFormBtn').addEventListener('click', resetForm);
-
-    renderAll();
+    document.addEventListener('DOMContentLoaded', loadDashboard);
   </script>
 </body>
 </html>
