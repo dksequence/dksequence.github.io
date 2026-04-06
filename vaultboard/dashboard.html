@@ -40,11 +40,6 @@
       min-width:220px;
     }
 
-    .toolbar .spacer{
-      flex:1 1 auto;
-      min-width:16px;
-    }
-
     .mode-chip{
       display:inline-flex;
       align-items:center;
@@ -60,7 +55,7 @@
 
     .mode-chip.view{
       background:rgba(255, 196, 0, .16);
-      border-color:rgba(255, 196, 0, .35);
+      border-color:rgba(255, 196, 0, .38);
       color:#ffd76a;
     }
 
@@ -70,15 +65,29 @@
       color:#ff8c8c;
     }
 
+    .manage-toggle-btn{
+      border:1px solid rgba(255,255,255,.18) !important;
+      box-shadow:inset 0 0 0 1px rgba(0,0,0,.35);
+      background:linear-gradient(180deg, rgba(29,37,56,.95), rgba(22,29,44,.95));
+    }
+
     .manage-hidden{
       display:none !important;
     }
 
+    .stats-scroll{
+      overflow-x:auto;
+      overflow-y:hidden;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:thin;
+    }
+
     .stats{
       display:grid;
-      grid-template-columns:repeat(4, minmax(0, 1fr));
+      grid-template-columns:repeat(4, minmax(160px, 1fr));
       gap:14px;
       margin:2px 0 2px;
+      min-width:680px;
     }
 
     .stats .stat{
@@ -163,17 +172,18 @@
       display:flex;
       align-items:center;
       gap:12px;
-      flex-wrap:wrap;
+      flex-wrap:nowrap;
       margin-bottom:14px;
     }
 
     .service-head-row h2{
       margin:0;
       white-space:nowrap;
+      flex:0 0 auto;
     }
 
     .service-head-row .filter-wrap{
-      flex:1 1 280px;
+      flex:1 1 auto;
       min-width:240px;
     }
 
@@ -186,17 +196,21 @@
       display:flex;
       align-items:center;
       gap:12px;
-      flex-wrap:wrap;
+      flex-wrap:nowrap;
       margin-bottom:14px;
+      overflow-x:auto;
+      overflow-y:hidden;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:thin;
     }
 
     .category-tabs{
       display:flex;
       align-items:center;
       gap:8px;
-      flex-wrap:wrap;
+      flex-wrap:nowrap;
       flex:1 1 auto;
-      min-width:280px;
+      min-width:max-content;
     }
 
     .category-tab{
@@ -210,6 +224,7 @@
       font-size:14px;
       font-weight:700;
       white-space:nowrap;
+      flex:0 0 auto;
     }
 
     .category-tab.active{
@@ -230,6 +245,7 @@
       font-size:14px;
       font-weight:800;
       white-space:nowrap;
+      flex:0 0 auto;
       margin-left:auto;
     }
 
@@ -249,11 +265,12 @@
     .service-summary{
       display:grid;
       grid-template-columns:
-        minmax(220px, 1.15fr)
+        minmax(220px, 1.1fr)
         170px
         110px
-        minmax(250px, 1fr)
+        minmax(220px, .95fr)
         110px
+        minmax(120px, .7fr)
         108px;
       gap:16px;
       align-items:center;
@@ -312,6 +329,7 @@
     .plan-col,
     .url-col,
     .cost-col,
+    .summary-col,
     .action-col{
       min-width:0;
     }
@@ -341,7 +359,8 @@
     }
 
     .url-col,
-    .cost-col{
+    .cost-col,
+    .summary-col{
       color:var(--muted);
       font-size:14px;
       min-width:0;
@@ -423,8 +442,9 @@
           minmax(220px, 1fr)
           150px
           100px
-          minmax(220px, 1fr)
+          minmax(180px, .95fr)
           100px
+          minmax(100px, .65fr)
           100px;
         gap:12px;
       }
@@ -435,20 +455,19 @@
         gap:8px;
       }
 
-      .toolbar .spacer{
-        display:none;
-      }
-
-      .stats{
-        grid-template-columns:repeat(2, minmax(0, 1fr));
-      }
-
       .form-top-grid{
         grid-template-columns:repeat(3, minmax(0, 1fr));
       }
 
       .service-summary{
-        grid-template-columns:1.2fr 140px 90px 1fr 100px 100px;
+        grid-template-columns:
+          minmax(220px, 1fr)
+          140px
+          90px
+          minmax(170px, .9fr)
+          90px
+          minmax(90px, .6fr)
+          96px;
       }
     }
 
@@ -465,20 +484,30 @@
         grid-template-columns:1fr;
       }
 
+      .toolbar{
+        overflow-x:auto;
+        overflow-y:hidden;
+        flex-wrap:nowrap;
+        -webkit-overflow-scrolling:touch;
+        scrollbar-width:thin;
+      }
+
+      .toolbar .btn,
+      .toolbar .mode-chip,
+      .toolbar select{
+        flex:0 0 auto;
+      }
+
       .service-head-row{
-        align-items:stretch;
+        overflow-x:auto;
+        overflow-y:hidden;
+        -webkit-overflow-scrolling:touch;
+        scrollbar-width:thin;
       }
 
       .service-head-row .filter-wrap{
-        width:100%;
-      }
-
-      .tab-row{
-        align-items:flex-start;
-      }
-
-      .paid-total-chip{
-        margin-left:0;
+        min-width:260px;
+        flex:1 0 auto;
       }
 
       .service-summary{
@@ -495,16 +524,16 @@
     }
 
     @media (max-width: 640px){
-      .stats{
-        grid-template-columns:1fr;
-      }
-
       .form-top-grid{
         grid-template-columns:1fr;
       }
 
       .detail-grid{
         grid-template-columns:1fr;
+      }
+
+      .stats{
+        min-width:620px;
       }
     }
   </style>
@@ -519,26 +548,26 @@
         <p>Manage services in a compact layout with category filters, list view, and expandable details.</p>
       </div>
 
-      <section class="stats" id="dashStats">
-        <div class="stat card"><div class="label">Categories</div><div class="value" id="statCat">—</div></div>
-        <div class="stat card"><div class="label">Services</div><div class="value" id="statSvc">—</div></div>
-        <div class="stat card"><div class="label">Paid</div><div class="value" id="statPaid">—</div></div>
-        <div class="stat card"><div class="label">Starred</div><div class="value" id="statStar">—</div></div>
-      </section>
+      <div class="stats-scroll">
+        <section class="stats" id="dashStats">
+          <div class="stat card"><div class="label">Categories</div><div class="value" id="statCat">—</div></div>
+          <div class="stat card"><div class="label">Services</div><div class="value" id="statSvc">—</div></div>
+          <div class="stat card"><div class="label">Paid</div><div class="value" id="statPaid">—</div></div>
+          <div class="stat card"><div class="label">Starred</div><div class="value" id="statStar">—</div></div>
+        </section>
+      </div>
 
       <div class="toolbar">
         <span id="modeLabel" class="mode-chip view">View Mode</span>
-        <button class="btn" id="toggleModeBtn" type="button">Enable Manage Mode</button>
-        <button class="btn" id="expandAllBtn" type="button">Expand All</button>
-        <button class="btn" id="collapseAllBtn" type="button">Collapse All</button>
+        <button class="btn manage-toggle-btn" id="toggleModeBtn" type="button">Enable Manage Mode</button>
         <select id="planFilter" class="btn">
           <option value="all">All Plans</option>
           <option value="paid">Paid Only</option>
           <option value="free">Free Only</option>
           <option value="starred">Starred Only</option>
         </select>
-        <div class="spacer"></div>
-        <a class="btn" href="./account.html">My Account</a>
+        <button class="btn" id="expandAllBtn" type="button">Expand All</button>
+        <button class="btn" id="collapseAllBtn" type="button">Collapse All</button>
       </div>
     </section>
 
@@ -614,7 +643,7 @@
 
                 <div class="field">
                   <label for="summary">Summary</label>
-                  <input id="summary" placeholder="Short note" />
+                  <input id="summary" placeholder="One-line summary" />
                 </div>
 
                 <div class="field">
@@ -628,7 +657,7 @@
                 </div>
 
                 <div class="field full">
-                  <label for="memo">Memo / Notes</label>
+                  <label for="memo">Notes</label>
                   <textarea id="memo"></textarea>
                 </div>
               </div>
@@ -670,7 +699,6 @@
     const MODE_KEY = 'vaultboard_dashboard_mode';
     const FILTER_KEY = 'vaultboard_dashboard_plan_filter';
     const CATEGORY_FILTER_KEY = 'vaultboard_dashboard_category_filter';
-    const DETAIL_OPEN_KEY = 'vaultboard_dashboard_open_details';
 
     const user = AppDB.getCurrentUser();
     if (!user) {
@@ -681,7 +709,7 @@
     let currentMode = localStorage.getItem(MODE_KEY) || 'view';
     let currentFilter = localStorage.getItem(FILTER_KEY) || 'all';
     let currentCategoryFilter = localStorage.getItem(CATEGORY_FILTER_KEY) || 'all';
-    let openDetailIds = JSON.parse(localStorage.getItem(DETAIL_OPEN_KEY) || '[]');
+    let openDetailIds = [];
 
     function randomChar() {
       const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -742,10 +770,6 @@
 
     function isManageMode() {
       return currentMode === 'manage';
-    }
-
-    function saveOpenDetailState() {
-      localStorage.setItem(DETAIL_OPEN_KEY, JSON.stringify(openDetailIds));
     }
 
     function moneyText(v) {
@@ -886,6 +910,8 @@
 
             <div class="cost-col">${moneyText(service.monthlyCost || 0)}</div>
 
+            <div class="summary-col">${e(service.summary || '-')}</div>
+
             <div class="action-col">
               <button class="btn" type="button" data-detail-toggle="${e(service.id)}">
                 ${isOpen ? 'Close' : 'Details'}
@@ -903,6 +929,17 @@
               <div class="detail-box">
                 <div class="detail-label">Monthly Cost</div>
                 <div>${moneyText(service.monthlyCost || 0)}</div>
+              </div>
+
+              <div class="detail-box full">
+                <div class="detail-label">Address / URL</div>
+                <div>
+                  ${
+                    service.url
+                      ? `<a href="${e(service.url)}" target="_blank" rel="noopener noreferrer">${e(service.url)}</a>`
+                      : '-'
+                  }
+                </div>
               </div>
 
               <div class="detail-box">
@@ -936,6 +973,8 @@
     }
 
     async function renderServiceList() {
+      openDetailIds = [];
+
       const [categories, servicesRaw] = await Promise.all([
         AppDB.userCategories(user.id),
         AppDB.userServices(user.id)
@@ -1027,8 +1066,6 @@
             openDetailIds = openDetailIds.filter(id => id !== serviceId);
             detailBtn.textContent = 'Details';
           }
-
-          saveOpenDetailState();
         }
         return;
       }
@@ -1063,8 +1100,6 @@
       if (btn.dataset.svcDelete) {
         if (!confirm('Delete this service?')) return;
         await AppDB.deleteService(user.id, btn.dataset.svcDelete);
-        openDetailIds = openDetailIds.filter(id => id !== btn.dataset.svcDelete);
-        saveOpenDetailState();
         await renderServiceList();
       }
     });
@@ -1121,14 +1156,19 @@
       let filtered = applyPlanFilter(services);
       filtered = applyCategoryFilter(filtered);
       openDetailIds = filtered.map(s => s.id);
-      saveOpenDetailState();
-      await renderServiceList();
+
+      filtered.forEach(s => {
+        const detail = document.getElementById(`detail-${s.id}`);
+        const button = document.querySelector(`[data-detail-toggle="${s.id}"]`);
+        if (detail) detail.classList.add('open');
+        if (button) button.textContent = 'Close';
+      });
     });
 
     document.getElementById('collapseAllBtn').addEventListener('click', async function () {
       openDetailIds = [];
-      saveOpenDetailState();
-      await renderServiceList();
+      document.querySelectorAll('.service-detail').forEach(el => el.classList.remove('open'));
+      document.querySelectorAll('[data-detail-toggle]').forEach(btn => btn.textContent = 'Details');
     });
 
     document.getElementById('planFilter').addEventListener('change', async function (ev) {
