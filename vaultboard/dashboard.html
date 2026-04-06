@@ -15,8 +15,8 @@
     .page-head{
       display:flex;
       flex-direction:column;
-      gap:14px;
-      margin-bottom:14px;
+      gap:12px;
+      margin-bottom:12px;
     }
 
     .page-head h1{
@@ -34,6 +34,7 @@
     .toolbar .mode-chip,
     .toolbar select{
       min-height:42px;
+      flex:0 0 auto;
     }
 
     .toolbar select{
@@ -84,28 +85,32 @@
 
     .stats{
       display:grid;
-      grid-template-columns:repeat(4, minmax(160px, 1fr));
-      gap:14px;
-      margin:2px 0 2px;
-      min-width:680px;
+      grid-template-columns:repeat(4, minmax(116px, 1fr));
+      gap:10px;
+      min-width:500px;
+      margin:0;
     }
 
     .stats .stat{
-      min-height:96px;
+      min-height:74px;
+      padding:10px 14px;
       display:flex;
       flex-direction:column;
       justify-content:center;
-      gap:8px;
+      gap:6px;
+      border-radius:16px;
     }
 
     .stats .label{
       color:var(--muted);
-      font-size:14px;
+      font-size:13px;
+      line-height:1.1;
     }
 
     .stats .value{
-      font-size:24px;
+      font-size:22px;
       font-weight:800;
+      line-height:1;
     }
 
     .compact-manage{
@@ -174,6 +179,10 @@
       gap:12px;
       flex-wrap:nowrap;
       margin-bottom:14px;
+      overflow-x:auto;
+      overflow-y:hidden;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:thin;
     }
 
     .service-head-row h2{
@@ -183,8 +192,8 @@
     }
 
     .service-head-row .filter-wrap{
-      flex:1 1 auto;
-      min-width:240px;
+      flex:1 0 auto;
+      min-width:260px;
     }
 
     .service-head-row select{
@@ -492,24 +501,6 @@
         scrollbar-width:thin;
       }
 
-      .toolbar .btn,
-      .toolbar .mode-chip,
-      .toolbar select{
-        flex:0 0 auto;
-      }
-
-      .service-head-row{
-        overflow-x:auto;
-        overflow-y:hidden;
-        -webkit-overflow-scrolling:touch;
-        scrollbar-width:thin;
-      }
-
-      .service-head-row .filter-wrap{
-        min-width:260px;
-        flex:1 0 auto;
-      }
-
       .service-summary{
         grid-template-columns:1fr;
         gap:10px;
@@ -533,7 +524,21 @@
       }
 
       .stats{
-        min-width:620px;
+        min-width:460px;
+        grid-template-columns:repeat(4, minmax(105px, 1fr));
+      }
+
+      .stats .stat{
+        min-height:68px;
+        padding:9px 12px;
+      }
+
+      .stats .label{
+        font-size:12px;
+      }
+
+      .stats .value{
+        font-size:18px;
       }
     }
   </style>
@@ -838,7 +843,9 @@
 
     async function fillCategorySelects(categories) {
       const serviceCategory = document.getElementById('categoryId');
-      serviceCategory.innerHTML = categories.map(c => `<option value="${e(c.id)}">${e(c.name)}</option>`).join('');
+      if (serviceCategory) {
+        serviceCategory.innerHTML = categories.map(c => `<option value="${e(c.id)}">${e(c.name)}</option>`).join('');
+      }
 
       const filterSelect = document.getElementById('categoryFilter');
       filterSelect.innerHTML =
