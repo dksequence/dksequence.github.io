@@ -64,7 +64,7 @@
 
   async function signup({ email, password, displayName, username }) {
     const client = sb();
-    if (!client) return { ok: false, error: 'Supabase 클라이언트가 준비되지 않았습니다.' };
+    if (!client) return { ok: false, error: 'Supabase Client not ready.' };
 
     const { data: authData, error: authError } = await client.auth.signUp({
       email,
@@ -82,7 +82,7 @@
     }
 
     if (!authData?.user) {
-      return { ok: false, error: '계정 생성에 실패했습니다.' };
+      return { ok: false, error: 'Account creation failed.' };
     }
 
     // profiles/categories는 DB 트리거가 생성
@@ -111,18 +111,18 @@
 
   async function login({ email, password }) {
     const client = sb();
-    if (!client) return { ok: false, error: 'Supabase 클라이언트가 준비되지 않았습니다.' };
+    if (!client) return { ok: false, error: 'Supabase Client not ready.' };
 
     const { data, error } = await client.auth.signInWithPassword({ email, password });
     if (error) return { ok: false, error: error.message };
-    if (!data?.user) return { ok: false, error: '사용자 정보를 찾을 수 없습니다.' };
+    if (!data?.user) return { ok: false, error: 'User information not found.' };
 
     const profile = await fetchMyProfile(data.user.id);
-    if (!profile) return { ok: false, error: '프로필 조회 실패' };
+    if (!profile) return { ok: false, error: 'Profile Lookup Failed' };
 
     if (profile.status === 'disabled') {
       await client.auth.signOut();
-      return { ok: false, error: '비활성화된 계정입니다.' };
+      return { ok: false, error: 'Invalid account.' };
     }
 
     setCurrentUser(profile);
@@ -140,7 +140,7 @@
 
   async function updateOwnAccount(userId, payload) {
     const client = sb();
-    if (!client) return { ok: false, error: 'Supabase 클라이언트가 준비되지 않았습니다.' };
+    if (!client) return { ok: false, error: 'Supabase Client not ready.' };
 
     const update = {};
     if (payload.displayName !== undefined) update.display_name = payload.displayName;
@@ -167,7 +167,7 @@
 
   async function deleteOwnAccount(userId) {
     const client = sb();
-    if (!client) return { ok: false, error: 'Supabase 클라이언트가 준비되지 않았습니다.' };
+    if (!client) return { ok: false, error: 'Supabase Client not ready.' };
 
     await client.from('services').delete().eq('owner_id', userId);
     await client.from('categories').delete().eq('owner_id', userId);
@@ -217,7 +217,7 @@
 
     const activeCount = db.users.filter(u => u.role !== 'admin' && u.status === 'active').length;
     if (activeCount >= db.settings.maxActiveUsers) {
-      return { ok: false, error: '승인 가능한 활성 사용자 수를 초과했습니다.' };
+      return { ok: false, error: 'The number of active users that can be approved has been exceeded.' };
     }
 
     const { error } = await client
@@ -341,7 +341,7 @@
       .eq('id', catId)
       .single();
 
-    if (!cat) return { ok: false, error: '카테고리를 찾을 수 없습니다.' };
+    if (!cat) return { ok: false, error: 'Category not found.' };
 
     const ownerId = cat.owner_id;
 
