@@ -22,7 +22,7 @@
               : `<a href="./login.html"     class="${path === 'login.html'     ? 'active' : ''}">Login</a>`}
             ${!loggedIn ? `<a href="./signup.html" class="${path === 'signup.html' ? 'active' : ''}">Sign Up</a>` : ''}
             <a href="./trial.html" class="${path === 'trial.html' ? 'active' : ''}">Trial Guide</a>
-            ${loggedIn ? `<a href="./account.html" class="${path === 'account.html' ? 'active' : ''}">내 계정</a>` : ''}
+            ${loggedIn ? `<a href="./account.html" class="${path === 'account.html' ? 'active' : ''}">My account</a>` : ''}
             ${isAdmin  ? `<a href="./admin.html"   class="${path === 'admin.html' || path === 'admin-user.html' ? 'active' : ''}">Admin</a>` : ''}
             ${loggedIn ? `<button type="button" id="globalLogoutBtn">Logout</button>` : ''}
           </nav>
