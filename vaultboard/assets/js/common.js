@@ -75,8 +75,8 @@
     if (user.status === 'trial') {
       holder.innerHTML = `
         <div class="alert trial">
-          현재 계정은 임시 체험(Trial) 상태입니다.
-          관리자 최종 승인 전에는 데이터가 언제든 삭제될 수 있습니다.
+          Your current account is in a Trial status.
+          Data may be deleted at any time before administrator final approval.
         </div>`;
     }
   }
