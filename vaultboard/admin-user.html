@@ -16,26 +16,26 @@
   <main class="container">
     <section class="page-head">
       <div>
-        <h1>사용자 상세 열람</h1>
-        <p>관리자는 모든 사용자 데이터를 열람할 수 있습니다.</p>
+        <h1>Viewing User Details</h1>
+        <p>Administrators can view all user data.</p>
       </div>
       <div class="button-row">
-        <a class="btn" href="./admin.html">관리자 페이지로</a>
+        <a class="btn" href="./admin.html">On the Administrator page</a>
       </div>
     </section>
 
     <section class="card" id="userInfo">
-      <div class="notice">불러오는 중...</div>
+      <div class="notice">Bringing in...</div>
     </section>
 
     <div class="grid cols-2" style="margin-top:16px;">
       <section class="card">
-        <h2>카테고리</h2>
-        <div id="cats"><div class="notice">로딩 중...</div></div>
+        <h2>Category</h2>
+        <div id="cats"><div class="notice">Loading...</div></div>
       </section>
       <section class="card">
-        <h2>서비스</h2>
-        <div id="svcs"><div class="notice">로딩 중...</div></div>
+        <h2>service</h2>
+        <div id="svcs"><div class="notice">Loading...</div></div>
       </section>
     </div>
   </main>
@@ -49,7 +49,7 @@
       const userId = params.get('userId');
 
       if (!userId) {
-        document.getElementById('userInfo').innerHTML = '<div class="empty">userId 파라미터가 없습니다.</div>';
+        document.getElementById('userInfo').innerHTML = '<div class="empty">userId No parameters.</div>';
         return;
       }
 
@@ -60,7 +60,7 @@
       ]);
 
       if (!user) {
-        document.getElementById('userInfo').innerHTML = '<div class="empty">사용자를 찾을 수 없습니다.</div>';
+        document.getElementById('userInfo').innerHTML = '<div class="empty">User not found.</div>';
         document.getElementById('cats').innerHTML = '';
         document.getElementById('svcs').innerHTML = '';
         return;
@@ -76,7 +76,7 @@
         categories.map(c => `
           <div class="item">
             <div class="item-title">${e(c.name)}</div>
-          </div>`).join('') || '<div class="empty">카테고리 없음</div>';
+          </div>`).join('') || '<div class="empty">No Category</div>';
 
       document.getElementById('svcs').innerHTML =
         services.map(s => `
@@ -86,7 +86,7 @@
               ID: ${e(s.loginId || '-')} / PASS: ${e(s.loginPass || '-')} / ${AppDB.formatMoney(s.monthlyCost || 0)}
             </div>
             <p style="margin-top:10px;">${e(s.summary || '-')}</p>
-          </div>`).join('') || '<div class="empty">서비스 없음</div>';
+          </div>`).join('') || '<div class="empty">no service</div>';
     })();
   </script>
 </body>
