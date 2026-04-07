@@ -87,10 +87,10 @@
       });
 
       if (!result.ok) {
-        msg.textContent = result.error || '저장에 실패했습니다.';
+        msg.textContent = result.error || 'Failed to save.';
         msg.style.color = '#ff6b6b';
       } else {
-        msg.textContent = '저장되었습니다.';
+        msg.textContent = 'saved.';
         document.getElementById('newPassword').value = '';
       }
       saveBtn.disabled = false;
