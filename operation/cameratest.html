@@ -1,1 +1,24 @@
-
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;gap:20px;">
+<video id="v" autoplay playsinline muted style="width:100%;max-width:400px;"></video>
+<button id="btn" style="padding:20px 40px;font-size:18px;border-radius:20px;background:#0071e3;color:#fff;border:none;" onclick="start()">카메라 시작</button>
+<div id="msg" style="color:#fff;font-size:14px;"></div>
+<script>
+function start() {
+  document.getElementById('msg').textContent = '요청 중...';
+  navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'},audio:false})
+    .then(function(s){
+      document.getElementById('v').srcObject = s;
+      document.getElementById('msg').textContent = '성공!';
+    })
+    .catch(function(e){
+      document.getElementById('msg').textContent = e.name + ': ' + e.message;
+    });
+}
+</script>
+</body>
+</html>
