@@ -1,1 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#000;font-family:'Inter',sans-serif;color:#fff;height:100vh;display:flex;flex-direction:column;}
+#nameboard{background:#0a0a18;padding:20px 24px;text-align:center;border-bottom:2px solid #abc7ff;}
+#nb-time{font-size:18px;color:rgba(171,199,255,.6);letter-spacing:.1em;margin-bottom:4px;font-family:monospace;}
+#nb-resno{font-size:16px;color:rgba(171,199,255,.4);letter-spacing:.08em;margin-bottom:10px;font-family:monospace;}
+#nb-name{font-size:64px;font-weight:700;color:#fff;line-height:1.0;letter-spacing:-0.02em;}
+#nb-product{font-size:22px;color:rgba(171,199,255,.6);margin-top:8px;}
+#nb-brand{font-size:12px;color:rgba(255,255,255,.15);margin-top:6px;letter-spacing:.1em;}
+#video-wrap{flex:1;position:relative;background:#000;}
+video{width:100%;height:100%;object-fit:cover;display:block;}
+#btn-flip{position:absolute;top:14px;left:14px;padding:12px 22px;border-radius:2rem;
+  background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:18px;cursor:pointer;}
+#cam-status{position:absolute;top:14px;right:14px;font-size:15px;color:rgba(255,255,255,.6);
+  background:rgba(0,0,0,.4);padding:8px 14px;border-radius:1rem;}
+#btn-start{width:100%;padding:32px;background:linear-gradient(135deg,#abc7ff,#0071e3);
+  color:#fff;font-size:30px;font-weight:800;border:none;cursor:pointer;display:block;}
+#btn-shutter{width:100%;padding:32px;background:linear-gradient(135deg,#abc7ff,#0071e3);
+  color:#fff;font-size:30px;font-weight:800;border:none;cursor:pointer;display:none;}
+</style>
+</head>
+<body>
+<div id="nameboard">
+  <div id="nb-time"></div>
+  <div id="nb-resno"></div>
+  <div id="nb-name">이름</div>
+  <div id="nb-product"></div>
+  <div id="nb-brand">DKsequence × 중문별장</div>
+</div>
+<div id="video-wrap">
+  <video id="videoEl" autoplay playsinline muted></video>
+  <button id="btn-flip" onclick="flip()" style="display:none;">전/후면 FLIP</button>
+  <div id="cam-status">대기 중 WAITING</div>
+</div>
+<canvas id="canvasEl" style="display:none;"></canvas>
+<button id="btn-start" onclick="startCam()">
+  카메라 시작<br>
+  <span style="font-size:20px;font-weight:500;opacity:.85;">START CAMERA</span>
+</button>
+<button id="btn-shutter" onclick="shoot()">
+  촬영하기<br>
+  <span style="font-size:20px;font-weight:500;opacity:.85;">TAKE PHOTO</span>
+</button>
+
+<script>
+var STREAM = null;
+var FACING = 'environment';
+var DATA = {};
+
+// 부모 창에서 데이터 수신
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.type === 'INIT_CAMERA') {
+    DATA = e.data;
+    document.getElementById('nb-time').textContent    = DATA.time || '';
+    document.getElementById('nb-resno').textContent   = DATA.resno || '';
+    document.getElementById('nb-name').textContent    = DATA.realname || '이름';
+    document.getElementById('nb-product').textContent = (DATA.product || '') + ' · ' + (DATA.people || '') + '인';
+  }
+});
+
+function startCam() {
+  document.getElementById('btn-start').style.display = 'none';
+  document.getElementById('btn-shutter').style.display = 'block';
+  document.getElementById('btn-flip').style.display = 'block';
+  document.getElementById('cam-status').textContent = '연결 중... CONNECTING';
+
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: FACING }, audio: false })
+  .then(function(stream) {
+    STREAM = stream;
+    var v = document.getElementById('videoEl');
+    v.srcObject = stream;
+    v.play();
+    document.getElementById('cam-status').textContent = '준비 완료 READY';
+  })
+  .catch(function(err) {
+    document.getElementById('cam-status').textContent = err.name;
+    document.getElementById('btn-start').style.display = 'block';
+    document.getElementById('btn-shutter').style.display = 'none';
+  });
+}
+
+function flip() {
+  FACING = FACING === 'environment' ? 'user' : 'environment';
+  if (STREAM) { STREAM.getTracks().forEach(function(t){ t.stop(); }); STREAM = null; }
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: FACING }, audio: false })
+  .then(function(stream) {
+    STREAM = stream;
+    var v = document.getElementById('videoEl');
+    v.srcObject = stream;
+    v.play();
+  });
+}
+
+function shoot() {
+  var video  = document.getElementById('videoEl');
+  var canvas = document.getElementById('canvasEl');
+  canvas.width  = video.videoWidth  || 1280;
+  canvas.height = video.videoHeight || 960;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  var base64 = canvas.toDataURL('image/jpeg', 0.92).split(',')[1];
+
+  // 부모 창으로 사진 전송
+  if (window.opener) {
+    window.opener.postMessage({
+      type:   'PHOTO_TAKEN',
+      base64: base64,
+      filename: DATA.filename || 'photo.jpg'
+    }, '*');
+    window.close();
+  }
+}
+</script>
+</body>
+</html>
 
