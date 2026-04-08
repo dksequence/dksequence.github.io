@@ -323,7 +323,7 @@ html,body{height:100%;background:var(--surface);font-family:'Inter',sans-serif;c
 </div>
 
 <!-- ════════════════ 촬영 ════════════════ -->
-<div id="s-camera" class="screen">
+<div id="s-camera" class="screen" style="display:none;flex-direction:column;min-height:100vh;">
   <div class="topbar">
     <button class="back-btn" onclick="stopCamera();show('s-checkin')">← 체크인</button>
     <div style="text-align:center;">
@@ -332,22 +332,33 @@ html,body{height:100%;background:var(--surface);font-family:'Inter',sans-serif;c
     </div>
     <div style="width:60px;"></div>
   </div>
-  <div class="nameboard-area">
+  <!-- 네임보드: 상단 컴팩트 -->
+  <div class="nameboard-area" style="padding:20px 20px 16px;">
     <div class="nb-glow"></div>
-    <div class="nb-time" id="nb-time"></div>
-    <div class="nb-resno" id="nb-resno"></div>
-    <div class="nb-name" id="nb-name"></div>
-    <div class="nb-product" id="nb-product"></div>
-    <div class="nb-brand">DKsequence × 중문별장</div>
-  </div>
-  <div class="camera-wrap">
-    <video id="videoEl" autoplay playsinline muted style="max-height:300px;"></video>
-    <canvas id="canvasEl"></canvas>
-    <div class="camera-ui">
-      <button class="cam-flip-btn" onclick="flipCamera()">전/후면</button>
-      <button class="shutter-btn" id="shutter-btn" onclick="takePhoto()"></button>
-      <div class="cam-status" id="cam-status">준비 중</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div style="text-align:left;">
+        <div class="nb-time" id="nb-time" style="margin-bottom:2px;"></div>
+        <div class="nb-resno" id="nb-resno" style="margin-bottom:6px;"></div>
+        <div class="nb-name" id="nb-name" style="font-size:36px;"></div>
+        <div class="nb-product" id="nb-product" style="margin-top:4px;"></div>
+      </div>
+      <div class="nb-brand" style="writing-mode:vertical-rl;text-orientation:mixed;font-size:10px;opacity:.3;">DKsequence × 중문별장</div>
     </div>
+  </div>
+  <!-- 카메라: 최대한 크게 -->
+  <div class="camera-wrap" style="position:relative;background:#000;flex:1;">
+    <video id="videoEl" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;display:block;max-height:60vh;"></video>
+    <canvas id="canvasEl" style="display:none;"></canvas>
+    <!-- 전/후면 — 왼쪽 상단 -->
+    <button class="cam-flip-btn" onclick="flipCamera()" style="position:absolute;top:16px;left:16px;">전/후면</button>
+    <!-- 상태 표시 — 왼쪽 하단 -->
+    <div class="cam-status" id="cam-status" style="position:absolute;bottom:24px;left:20px;font-size:12px;color:rgba(255,255,255,.5);">준비 중</div>
+    <!-- 셔터 버튼 — 오른쪽 하단 크게 -->
+    <button class="shutter-btn" id="shutter-btn" onclick="takePhoto()"
+      style="position:absolute;bottom:16px;right:20px;width:80px;height:80px;border-radius:50%;
+      background:linear-gradient(135deg,#abc7ff 0%,#0071e3 100%);border:4px solid rgba(255,255,255,.3);
+      cursor:pointer;box-shadow:0 0 32px rgba(0,113,227,.6);">
+    </button>
   </div>
 </div>
 
@@ -584,8 +595,13 @@ function getTodayLabel() {
 
 // ── 화면 전환 ─────────────────────────────────────────
 function show(id) {
-  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
-  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.screen').forEach(function(s){
+    s.classList.remove('active');
+    s.style.display = 'none';
+  });
+  var el = document.getElementById(id);
+  el.classList.add('active');
+  el.style.display = (id === 's-camera') ? 'flex' : 'block';
   window.scrollTo(0, 0);
   if (id === 's-new') initNewScreen();
 }
@@ -815,57 +831,52 @@ function startSaving() {
   resetSteps();
   show('s-saving');
 
-  // Step 1: 체크인 + 폴더 생성
-  setStep(1, 'loading', '폴더 생성 및 시트 기록 중...');
-  callApi({
-    action:        'checkin',
-    date:          getToday(),
-    time:          CUR.time,
-    resno:         CUR.resno,
-    maskedName:    CUR.maskedName || '',
-    realName:      CUR.realname,
-    product:       CUR.product,
-    people:        CUR.people,
-    email:         CUR.email,
-    phone:         CUR.phone,
-    privacyConsent: CUR.privacyConsent,
-    snsConsent:    CUR.snsConsent,
-    memo:          CUR.memo,
-    isNew:         CUR.isNew || false,
-  }, function(err, res) {
-    if (err || !res.ok) {
-      setStep(1, 'error', '실패: ' + (err ? err.message : res.error));
-      showToast('체크인 저장 실패');
+  // Step 1: 사진 → 드라이브 (form POST — base64 전송)
+  setStep(1, 'loading', '구글 드라이브 업로드 중...');
+  postPhoto(CUR.base64, CUR.filename, function(err, photoRes) {
+    if (err || !photoRes.ok) {
+      setStep(1, 'error', '사진 업로드 실패');
+      showToast('사진 저장 실패: ' + (err ? err.message : photoRes.error));
       return;
     }
-    setStep(1, 'ok', '시트 기록 완료');
-    CUR.rowNum   = res.rowNum;
-    CUR.folderId = res.folderId;
+    CUR.folderId = photoRes.folderId;
+    CUR.fileUrl  = photoRes.fileUrl;
+    CUR.rowNum   = null;
+    setStep(1, 'ok', CUR.filename);
 
-    // Step 2: 사진 업로드
-    setStep(2, 'loading', '구글 드라이브 업로드 중...');
+    // Step 2: 체크인 데이터 → 시트 (JSONP — 텍스트만)
+    setStep(2, 'loading', '스프레드시트 기록 중...');
     callApi({
-      action:   'savePhoto',
-      folderId: CUR.folderId,
-      filename: CUR.filename,
-      base64:   CUR.base64,
-      mimeType: 'image/jpeg',
-      rowNum:   CUR.rowNum,
+      action:         'checkin',
+      date:           getToday(),
+      time:           CUR.time,
+      resno:          CUR.resno,
+      maskedName:     CUR.maskedName || '',
+      realName:       CUR.realname,
+      product:        CUR.product,
+      people:         CUR.people,
+      email:          CUR.email,
+      phone:          CUR.phone,
+      privacyConsent: CUR.privacyConsent,
+      snsConsent:     CUR.snsConsent,
+      memo:           CUR.memo,
+      isNew:          CUR.isNew || false,
+      folderId:       CUR.folderId,
+      fileUrl:        CUR.fileUrl,
     }, function(err2, res2) {
       if (err2 || !res2.ok) {
-        setStep(2, 'error', '업로드 실패');
-        showToast('사진 저장 실패');
+        setStep(2, 'error', '시트 기록 실패: ' + (err2 ? err2.message : res2.error));
+        showToast('시트 저장 실패');
         return;
       }
-      CUR.fileUrl = res2.fileUrl;
-      setStep(2, 'ok', CUR.filename);
+      setStep(2, 'ok', '기록 완료');
 
       // Step 3: 완료
       setStep(3, 'loading', '완료 처리 중...');
       setTimeout(function() {
         setStep(3, 'ok', '완료');
-        setTimeout(showDone, 500);
-      }, 600);
+        setTimeout(showDone, 400);
+      }, 500);
     });
   });
 }
@@ -969,6 +980,33 @@ function goNewCamera() {
 
   show('s-camera');
   startCamera();
+}
+
+// ── 사진 POST 전송 (base64 → 앱스 스크립트) ──────────
+function postPhoto(base64, filename, cb) {
+  var formData = new FormData();
+  formData.append('action',   'savePhotoPost');
+  formData.append('filename', filename);
+  formData.append('mimeType', 'image/jpeg');
+  formData.append('date',     getToday());
+  formData.append('time',     CUR.time);
+  formData.append('resno',    CUR.resno);
+  formData.append('realName', CUR.realname);
+
+  // base64 → Blob
+  var byteStr = atob(base64);
+  var arr     = new Uint8Array(byteStr.length);
+  for (var i = 0; i < byteStr.length; i++) arr[i] = byteStr.charCodeAt(i);
+  var blob = new Blob([arr], {type: 'image/jpeg'});
+  formData.append('file', blob, filename);
+
+  fetch(GAS_URL, { method: 'POST', body: formData })
+    .then(function(r){ return r.text(); })
+    .then(function(text){
+      try { cb(null, JSON.parse(text)); }
+      catch(e) { cb(null, {ok:true, folderId:'', fileUrl:''}); }
+    })
+    .catch(function(err){ cb(err); });
 }
 
 // ── 초기화 ───────────────────────────────────────────
