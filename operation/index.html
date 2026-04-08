@@ -8,12 +8,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --surface:#131313;--surface-low:#1b1b1b;--surface-high:#2a2a2a;--surface-highest:#353535;
-  --outline:rgba(65,71,83,0.18);--on-surface:#e2e2e2;--on-surface-variant:#c1c6d6;
-  --on-surface-dim:#888;--primary:#abc7ff;--primary-container:#0071e3;
+  --surface:#000000;--surface-low:#0d0d0d;--surface-high:#1a1a1a;--surface-highest:#252525;
+  --outline:rgba(255,255,255,0.15);--on-surface:#ffffff;--on-surface-variant:#e0e0e0;
+  --on-surface-dim:#aaaaaa;--primary:#abc7ff;--primary-container:#0071e3;
   --danger:#ff6b6b;--success:#4ecba1;--warn:#f0a500;
 }
-html,body{height:100%;background:var(--surface);font-family:'Inter',sans-serif;color:var(--on-surface);overflow-x:hidden;}
+html,body{background:#000!important;color:#fff!important;}
+html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;overflow-x:hidden;font-size:18px;}
 .screen{display:none;min-height:100vh;}
 .screen.active{display:block;}
 
@@ -21,64 +22,64 @@ html,body{height:100%;background:var(--surface);font-family:'Inter',sans-serif;c
 .topbar{background:rgba(27,27,27,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   padding:16px 20px;display:flex;align-items:center;justify-content:space-between;
   border-bottom:1px solid var(--outline);position:sticky;top:0;z-index:10;}
-.topbar-title{font-size:15px;font-weight:500;}
-.topbar-sub{font-size:11px;color:var(--on-surface-dim);margin-top:2px;}
-.topbar-brand{font-size:11px;letter-spacing:.12em;color:var(--on-surface-dim);text-transform:uppercase;}
-.topbar-date{font-size:12px;color:var(--on-surface-dim);margin-top:1px;}
+.topbar-title{font-size:22px;font-weight:600;color:#fff;}
+.topbar-sub{font-size:15px;color:rgba(255,255,255,0.6);margin-top:2px;}
+.topbar-brand{font-size:16px;letter-spacing:.08em;color:#fff;font-weight:500;}
+.topbar-date{font-size:16px;color:rgba(255,255,255,0.7);margin-top:2px;}
 .back-btn{font-size:12px;color:var(--primary);cursor:pointer;padding:6px 14px;border-radius:2rem;
   background:rgba(171,199,255,.08);border:none;font-family:'Inter',sans-serif;}
 
 .time-tabs{display:flex;gap:6px;padding:16px 20px 0;overflow-x:auto;-webkit-overflow-scrolling:touch;}
-.tab{font-size:12px;padding:6px 18px;border-radius:2rem;cursor:pointer;color:var(--on-surface-dim);
+.tab{font-size:18px;padding:10px 22px;border-radius:2rem;cursor:pointer;color:rgba(255,255,255,0.5);
   background:transparent;border:none;white-space:nowrap;font-family:'Inter',sans-serif;letter-spacing:.04em;}
-.tab.active{background:var(--surface-highest);color:var(--on-surface);font-weight:500;}
+.tab.active{background:var(--surface-highest);color:#fff;font-weight:600;}
 
 .stat-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:16px 20px;}
 .stat-card{background:var(--surface-low);border-radius:1rem;padding:14px 16px;}
-.stat-label{font-size:11px;color:var(--on-surface-dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
-.stat-val{font-size:28px;font-weight:600;letter-spacing:-0.02em;}
+.stat-label{font-size:16px;color:rgba(255,255,255,0.6);letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px;}
+.stat-val{font-size:42px;font-weight:700;letter-spacing:-0.02em;}
 .stat-val.all{color:var(--on-surface);}.stat-val.done{color:var(--success);}.stat-val.wait{color:var(--warn);}
 
-.section-label{padding:6px 20px 10px;font-size:11px;color:var(--on-surface-dim);letter-spacing:.08em;text-transform:uppercase;}
+.section-label{padding:8px 20px 12px;font-size:16px;color:rgba(255,255,255,0.6);letter-spacing:.06em;text-transform:uppercase;}
 .list{padding:0 20px 16px;display:flex;flex-direction:column;gap:8px;}
 .customer-card{background:var(--surface-high);border-radius:1rem;padding:14px 18px;cursor:pointer;
   display:flex;align-items:center;gap:14px;transition:background .15s;}
 .customer-card:active{background:var(--surface-highest);}
 .customer-card.done{opacity:.35;pointer-events:none;}
-.avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-size:14px;font-weight:600;flex-shrink:0;}
+.avatar{width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:700;flex-shrink:0;}
 .av-wait{background:rgba(171,199,255,.1);color:var(--primary);}
 .av-done{background:rgba(78,203,161,.1);color:var(--success);}
 .card-info{flex:1;min-width:0;}
-.card-name{font-size:14px;font-weight:500;}
+.card-name{font-size:20px;font-weight:600;color:#fff;}
 .card-realname{font-size:12px;color:var(--on-surface-dim);}
-.card-meta{font-size:12px;color:var(--on-surface-variant);margin-top:2px;}
-.card-resno{font-size:11px;color:var(--on-surface-dim);margin-top:2px;font-family:monospace;letter-spacing:.04em;}
-.badge{font-size:11px;padding:4px 12px;border-radius:2rem;font-weight:500;flex-shrink:0;}
+.card-meta{font-size:16px;color:rgba(255,255,255,0.7);margin-top:4px;}
+.card-resno{font-size:14px;color:rgba(255,255,255,0.45);margin-top:4px;font-family:monospace;letter-spacing:.06em;}
+.badge{font-size:15px;padding:6px 16px;border-radius:2rem;font-weight:600;flex-shrink:0;}
 .badge-wait{background:rgba(240,165,0,.12);color:var(--warn);}
 .badge-done{background:rgba(78,203,161,.1);color:var(--success);}
-.add-btn{margin:0 20px 24px;width:calc(100% - 40px);padding:14px;border-radius:1rem;
-  border:1px dashed rgba(65,71,83,.4);background:transparent;color:var(--on-surface-dim);
-  font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;}
+.add-btn{margin:0 20px 24px;width:calc(100% - 40px);padding:18px;border-radius:1rem;
+  border:1px dashed rgba(255,255,255,.3);background:transparent;color:rgba(255,255,255,0.6);
+  font-size:20px;cursor:pointer;font-family:'Inter',sans-serif;}
 
 /* ── 체크인 폼 ── */
 .checkin-body{padding:20px 20px 100px;}
 .info-block{background:var(--surface-low);border-radius:1rem;padding:16px 18px;margin-bottom:18px;}
-.info-block-label{font-size:10px;color:var(--on-surface-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;}
+.info-block-label{font-size:15px;color:rgba(255,255,255,0.45);letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px;}
 .info-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;font-size:13px;}
 .info-row+.info-row{border-top:1px solid var(--outline);}
-.info-key{color:var(--on-surface-dim);}
-.info-val{color:var(--on-surface);font-weight:500;}
+.info-key{color:rgba(255,255,255,0.55);font-size:17px;}
+.info-val{color:#fff;font-weight:600;font-size:19px;}
 .info-val.mono{font-family:monospace;font-size:12px;color:var(--primary);}
-.realname-notice{font-size:11px;color:var(--warn);background:rgba(240,165,0,.08);border-radius:.5rem;padding:8px 12px;margin-bottom:14px;}
+.realname-notice{font-size:17px;color:var(--warn);background:rgba(240,165,0,.1);border-radius:.75rem;padding:12px 16px;margin-bottom:16px;font-weight:500;}
 .field-group{margin-bottom:16px;}
-.field-label{font-size:11px;color:var(--on-surface-variant);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
+.field-label{font-size:17px;color:rgba(255,255,255,0.75);letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px;}
 .req{color:var(--danger);margin-left:3px;}
 .opt{color:var(--on-surface-dim);font-size:10px;}
-.field-input{width:100%;padding:11px 14px;border-radius:.75rem;border:1px solid var(--outline);
-  background:var(--surface-low);font-size:14px;color:var(--on-surface);font-family:'Inter',sans-serif;}
-.field-input::placeholder{color:var(--on-surface-dim);}
-.field-input:focus{outline:none;border-color:rgba(171,199,255,.3);background:var(--surface-high);}
+.field-input{width:100%;padding:16px 18px;border-radius:.75rem;border:1px solid rgba(255,255,255,0.2);
+  background:#111;font-size:20px;color:#fff;font-family:'Inter',sans-serif;}
+.field-input::placeholder{color:rgba(255,255,255,0.3);}
+.field-input:focus{outline:none;border-color:rgba(171,199,255,.5);background:#1a1a1a;}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
 
 /* ── 동의 블록 ── */
@@ -87,7 +88,7 @@ html,body{height:100%;background:var(--surface);font-family:'Inter',sans-serif;c
 .consent-row:last-child{border-bottom:none;}
 .consent-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
 .consent-left{display:flex;align-items:center;gap:10px;flex:1;}
-.consent-title{font-size:13px;color:var(--on-surface);}
+.consent-title{font-size:19px;color:#fff;font-weight:500;}
 .consent-tag{font-size:10px;padding:2px 8px;border-radius:2rem;}
 .tag-req{background:rgba(255,107,107,.12);color:var(--danger);}
 .tag-opt{background:rgba(65,71,83,.3);color:var(--on-surface-dim);}
@@ -120,10 +121,10 @@ html,body{height:100%;background:var(--surface);font-family:'Inter',sans-serif;c
 .nameboard-area{background:#0a0a12;padding:40px 20px 28px;text-align:center;position:relative;}
 .nb-glow{position:absolute;top:0;left:50%;transform:translateX(-50%);width:200px;height:2px;
   background:linear-gradient(90deg,transparent,var(--primary),transparent);}
-.nb-time{font-size:11px;color:rgba(171,199,255,.4);letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px;font-family:monospace;}
-.nb-resno{font-size:11px;color:rgba(171,199,255,.25);letter-spacing:.08em;margin-bottom:14px;font-family:monospace;}
-.nb-name{font-size:52px;font-weight:600;color:#fff;line-height:1.05;letter-spacing:-0.02em;}
-.nb-product{font-size:13px;color:rgba(171,199,255,.45);margin-top:10px;}
+.nb-time{font-size:18px;color:rgba(171,199,255,.6);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;font-family:monospace;}
+.nb-resno{font-size:16px;color:rgba(171,199,255,.4);letter-spacing:.08em;margin-bottom:14px;font-family:monospace;}
+.nb-name{font-size:68px;font-weight:700;color:#fff;line-height:1.0;letter-spacing:-0.02em;}
+.nb-product{font-size:20px;color:rgba(171,199,255,.6);margin-top:10px;font-weight:500;}
 .nb-brand{font-size:11px;color:rgba(255,255,255,.15);margin-top:8px;letter-spacing:.1em;text-transform:uppercase;}
 
 /* ── 카메라 영역 ── */
@@ -150,9 +151,9 @@ html,body{height:100%;background:var(--surface);font-family:'Inter',sans-serif;c
 .step-icon.loading{background:rgba(171,199,255,.1);}
 .step-icon.ok{background:rgba(78,203,161,.1);}
 .step-info{flex:1;text-align:left;}
-.step-title{font-size:13px;font-weight:500;}
-.step-sub{font-size:11px;color:var(--on-surface-dim);margin-top:2px;}
-.step-status{font-size:12px;}
+.step-title{font-size:20px;font-weight:600;color:#fff;}
+.step-sub{font-size:15px;color:rgba(255,255,255,0.5);margin-top:4px;}
+.step-status{font-size:17px;font-weight:600;}
 .step-status.ok{color:var(--success);}.step-status.loading{color:var(--primary);}.step-status.pending{color:var(--on-surface-dim);}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(171,199,255,.3);
   border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;}
@@ -163,8 +164,8 @@ html,body{height:100%;background:var(--surface);font-family:'Inter',sans-serif;c
 .done-icon{width:64px;height:64px;border-radius:50%;background:rgba(78,203,161,.1);
   display:flex;align-items:center;justify-content:center;margin:0 auto 22px;
   box-shadow:0 0 32px rgba(78,203,161,.15);}
-.done-name{font-size:22px;font-weight:600;letter-spacing:-0.01em;margin-bottom:6px;}
-.done-sub{font-size:13px;color:var(--on-surface-dim);margin-bottom:14px;}
+.done-name{font-size:34px;font-weight:700;letter-spacing:-0.01em;margin-bottom:8px;color:#fff;}
+.done-sub{font-size:20px;color:rgba(255,255,255,0.6);margin-bottom:16px;}
 .done-tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;}
 .done-tag{font-size:11px;padding:4px 12px;border-radius:2rem;}
 .done-tag.file{background:rgba(171,199,255,.1);color:var(--primary);font-family:monospace;}
@@ -174,11 +175,11 @@ html,body{height:100%;background:var(--surface);font-family:'Inter',sans-serif;c
   font-size:12px;color:var(--on-surface-variant);line-height:2;}
 
 /* ── CTA 버튼 ── */
-.cta-btn{width:100%;padding:15px;border-radius:1rem;
+.cta-btn{width:100%;padding:20px;border-radius:1rem;
   background:linear-gradient(135deg,var(--primary) 0%,var(--primary-container) 100%);
-  color:#fff;font-size:15px;font-weight:600;border:none;cursor:pointer;
+  color:#fff;font-size:22px;font-weight:700;border:none;cursor:pointer;
   font-family:'Inter',sans-serif;letter-spacing:.02em;
-  box-shadow:0 20px 40px rgba(0,113,227,.25);margin-top:12px;}
+  box-shadow:0 20px 40px rgba(0,113,227,.25);margin-top:16px;}
 .cta-btn:active{opacity:.9;}
 .cta-btn:disabled{opacity:.35;cursor:not-allowed;}
 
@@ -215,7 +216,7 @@ html,body{height:100%;background:var(--surface);font-family:'Inter',sans-serif;c
       시간대를 선택하세요
     </div>
   </div>
-  <button class="add-btn" onclick="show('s-new')">+ 신규 고객 추가 (현장 결제)</button>
+  <button class="add-btn" onclick="show('s-new')">+ 신규 고객 추가<br><span style="font-size:15px;opacity:0.6;">ADD NEW CUSTOMER (WALK-IN)</span></button>
 </div>
 
 <!-- ════════════════ 체크인 ════════════════ -->
@@ -318,7 +319,7 @@ html,body{height:100%;background:var(--surface);font-family:'Inter',sans-serif;c
       <div class="field-label">메모 <span class="opt">선택</span></div>
       <input class="field-input" type="text" id="ci-memo" placeholder="특이사항"/>
     </div>
-    <button class="cta-btn" onclick="goCamera()">촬영하기</button>
+    <button class="cta-btn" onclick="goCamera()">촬영하기<br><span style="font-size:16px;font-weight:500;opacity:0.8;">TAKE PHOTO</span></button>
   </div>
 </div>
 
@@ -351,18 +352,22 @@ html,body{height:100%;background:var(--surface);font-family:'Inter',sans-serif;c
     <canvas id="canvasEl" style="display:none;"></canvas>
     <!-- 카메라 시작 오버레이 — iOS 사용자 제스처 필요 -->
     <div id="cam-start-overlay" style="position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;">
-      <div style="font-size:14px;color:rgba(255,255,255,0.7);">카메라를 시작하려면 아래 버튼을 탭하세요</div>
-      <button onclick="userStartCamera()" style="padding:16px 40px;border-radius:2rem;background:linear-gradient(135deg,#abc7ff,#0071e3);color:#fff;font-size:16px;font-weight:600;border:none;cursor:pointer;">카메라 시작</button>
+      <div style="font-size:20px;color:rgba(255,255,255,0.8);text-align:center;line-height:1.6;">카메라를 시작하려면<br><span style="font-size:16px;color:rgba(255,255,255,0.5);">TAP THE BUTTON BELOW TO START CAMERA</span></div>
+      <button onclick="userStartCamera()" style="padding:22px 60px;border-radius:2rem;background:linear-gradient(135deg,#abc7ff,#0071e3);color:#fff;font-size:26px;font-weight:700;border:none;cursor:pointer;letter-spacing:0.04em;">카메라 시작<br><span style="font-size:17px;font-weight:500;opacity:0.85;">START CAMERA</span></button>
     </div>
     <!-- 전/후면 — 왼쪽 상단 -->
-    <button class="cam-flip-btn" onclick="flipCamera()" style="position:absolute;top:16px;left:16px;display:none;" id="btn-flip">전/후면</button>
+    <button class="cam-flip-btn" onclick="flipCamera()" style="position:absolute;top:16px;left:16px;display:none;font-size:17px;padding:10px 20px;border-radius:2rem;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.5);color:#fff;" id="btn-flip">전/후면<br><span style="font-size:12px;opacity:0.7;">FLIP</span></button>
     <!-- 상태 표시 — 왼쪽 하단 -->
     <div class="cam-status" id="cam-status" style="position:absolute;bottom:24px;left:20px;font-size:12px;color:rgba(255,255,255,.5);">준비 중</div>
-    <!-- 셔터 버튼 — 오른쪽 하단 크게 -->
+    <!-- 셔터 버튼 — 하단 가로 전체 -->
     <button id="shutter-btn" onclick="takePhoto()"
-      style="position:absolute;bottom:16px;right:20px;width:80px;height:80px;border-radius:50%;
-      background:linear-gradient(135deg,#abc7ff 0%,#0071e3 100%);border:4px solid rgba(255,255,255,.3);
-      cursor:pointer;box-shadow:0 0 32px rgba(0,113,227,.6);display:none;">
+      style="position:absolute;bottom:0;left:0;right:0;width:100%;height:100px;
+      background:linear-gradient(135deg,#abc7ff 0%,#0071e3 100%);
+      border:none;border-top:2px solid rgba(255,255,255,.2);
+      cursor:pointer;box-shadow:0 -4px 32px rgba(0,113,227,.5);
+      display:none;flex-direction:column;align-items:center;justify-content:center;gap:4px;">
+      <span style="font-size:30px;font-weight:800;color:#fff;letter-spacing:0.06em;">촬영하기</span>
+      <span style="font-size:18px;color:rgba(255,255,255,0.75);letter-spacing:0.15em;font-weight:500;">TAKE PHOTO</span>
     </button>
   </div>
 </div>
@@ -421,7 +426,7 @@ html,body{height:100%;background:var(--surface);font-family:'Inter',sans-serif;c
       <span class="done-tag drive">드라이브 저장 완료</span>
     </div>
     <div class="saved-summary" id="saved-summary"></div>
-    <button class="cta-btn" onclick="show('s-dashboard')">다음 고객</button>
+    <button class="cta-btn" onclick="show('s-dashboard')">다음 고객<br><span style="font-size:16px;font-weight:500;opacity:0.8;">NEXT CUSTOMER</span></button>
   </div>
 </div>
 
@@ -775,56 +780,36 @@ function goCamera() {
 
 // ── 카메라 제어 ───────────────────────────────────────
 function userStartCamera() {
-  // iOS Safari: 사용자 직접 탭 → 카메라 권한 요청
-  document.getElementById('cam-start-overlay').style.display = 'none';
-  document.getElementById('btn-flip').style.display = 'block';
-  document.getElementById('shutter-btn').style.display = 'block';
-  startCamera();
+  // 오버레이 숨기고 버튼 표시
+  var overlay = document.getElementById('cam-start-overlay');
+  if (overlay) overlay.style.display = 'none';
+  var btnFlip = document.getElementById('btn-flip');
+  if (btnFlip) btnFlip.style.display = 'block';
+  var shutterBtn = document.getElementById('shutter-btn');
+  if (shutterBtn) shutterBtn.style.display = 'block';
+
+  // 테스트 페이지와 동일한 단순 방식
+  document.getElementById('cam-status').textContent = '카메라 연결 중';
+  navigator.mediaDevices.getUserMedia({
+    video: { facingMode: FACING },
+    audio: false
+  })
+  .then(function(stream) {
+    STREAM = stream;
+    var v = document.getElementById('videoEl');
+    v.srcObject = stream;
+    v.play();
+    document.getElementById('cam-status').textContent = '준비 완료';
+  })
+  .catch(function(err) {
+    document.getElementById('cam-status').textContent = '오류';
+    showToast(err.name + ': ' + err.message);
+  });
 }
 
 function startCamera() {
-  stopCamera();
-  document.getElementById('cam-status').textContent = '카메라 연결 중';
-  var constraints = {
-    video: { facingMode: FACING, width: { ideal: 1280 }, height: { ideal: 960 } },
-    audio: false
-  };
-  // mediaDevices 지원 여부 먼저 확인
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    document.getElementById('cam-status').textContent = '카메라 미지원';
-    // script.google.com 환경에서 카메라 차단 시 GitHub Pages로 이동
-    if (window.location.hostname.indexOf('google.com') !== -1) {
-      showToast('카메라 권한 오류. GitHub 페이지로 이동합니다...');
-      setTimeout(function(){
-        window.location.href = 'https://dksequence.github.io/operation';
-      }, 1500);
-    } else {
-      showToast('이 브라우저는 카메라를 지원하지 않습니다. Safari를 사용해주세요.');
-    }
-    return;
-  }
-
-  navigator.mediaDevices.getUserMedia(constraints)
-    .then(function(stream) {
-      STREAM = stream;
-      var v = document.getElementById('videoEl');
-      v.srcObject = stream;
-      v.onloadedmetadata = function() {
-        v.play();
-        document.getElementById('cam-status').textContent = '준비 완료';
-      };
-    })
-    .catch(function(err) {
-      var msg = err.name + ': ' + err.message;
-      document.getElementById('cam-status').textContent = '오류';
-      showToast(msg);
-      // 후면 카메라 실패시 전면으로 재시도
-      if (FACING === 'environment') {
-        FACING = 'user';
-        showToast('후면 카메라 실패. 전면으로 재시도 중...');
-        setTimeout(startCamera, 800);
-      }
-    });
+  // 자동 호출용 — userStartCamera와 동일
+  userStartCamera();
 }
 
 function stopCamera() {
