@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover" />
+<meta name="color-scheme" content="light only" />
+<title>토너먼트 대진표 A4 최종판</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;800;900&display=swap');
+
+:root{
+  --app-bg:#e5e5e5;
+  --panel:#1a2237;
+  --panel-input:#28314a;
+  --panel-accent:#93b2ff;
+  --paper:#ececec;
+  --line:#253b67;
+  --line-soft:#86a8f5;
+  --text:#111;
+  --slot-bg:#efefef;
+  --name-bg:#d7e4ef;
+  --seed-bg:#ece2bf;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:light only;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{min-height:100vh;background:var(--app-bg);font-family:'Noto Sans KR',sans-serif;color:var(--text)}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;padding:12px 16px;background:var(--panel);color:#dfe7ff}
+.ctrl label{font-size:13px;font-weight:800;white-space:nowrap}
+.ctrl input,.ctrl button{height:40px;border-radius:0;border:1px solid #5b6889;font-family:inherit;appearance:none;-webkit-appearance:none;outline:none}
+.ctrl input[type="number"],.ctrl input[type="text"]{background:var(--panel-input);color:#fff;padding:0 12px}
+.ctrl input[type="number"]{width:84px;font-size:15px}
+.ctrl input[type="text"]{width:220px;font-size:15px}
+.ctrl button{padding:0 16px;background:transparent;color:var(--panel-accent);border-color:var(--panel-accent);font-size:13px;font-weight:800;cursor:pointer}
+.ctrl button:hover{background:rgba(147,178,255,.12)}
+.hint{font-size:11px;color:#b6c2df;line-height:1.35;max-width:980px}
+@media (max-width:860px){
+  .ctrl{display:grid;grid-template-columns:88px 1fr;gap:10px}
+  .ctrl input[type="number"],.ctrl input[type="text"]{width:100%}
+  .hint,.btns{grid-column:1/-1}
+}
+.sheet{padding:18px}
+.fit-stage{width:100%;overflow:hidden;position:relative}
+.fit-box{width:max-content;transform-origin:top left}
+.page-stack{display:flex;flex-direction:column;gap:20px;align-items:flex-start}
+.page{width:297mm;height:210mm;background:var(--paper);position:relative;overflow:hidden;box-shadow:0 2px 14px rgba(0,0,0,.08)}
+.page-title{position:absolute;left:0;right:0;top:13mm;text-align:center;font-size:9mm;line-height:1;font-weight:900;letter-spacing:-.2px}
+.page-subtitle{position:absolute;left:0;right:0;top:24mm;text-align:center;font-size:4.2mm;line-height:1;font-weight:800;color:#35435e}
+.board{position:absolute;left:12mm;top:36mm;width:273mm;height:168mm}
+.lines{position:absolute;inset:0;pointer-events:none}
+.slot-wrap{position:absolute}
+.slot-box{position:absolute;background:var(--slot-bg);border:0.55mm solid var(--line);overflow:hidden;display:block}
+.slot-input{display:block;width:100%;height:50%;min-height:0;border:0;background:transparent;font-family:inherit;color:var(--text);text-align:center;font-weight:700;padding:0.8mm 1.2mm;outline:none;line-height:1.15}
+.slot-input + .slot-input{border-top:0.22mm solid rgba(16,16,16,.45)}
+.chip-box,.seed-box{position:absolute;border:0.55mm solid var(--line);border-radius:2.2mm;overflow:hidden}
+.chip-box{background:var(--name-bg)}
+.seed-box{background:var(--seed-bg)}
+.chip-input,.seed-input{width:100%;height:100%;border:0;background:transparent;text-align:center;font-family:inherit;color:var(--text);outline:none}
+.chip-input{font-weight:800;padding:0 1mm}
+.seed-input{font-weight:900;padding:0 1mm}
+.seed-input::-webkit-outer-spin-button,.seed-input::-webkit-inner-spin-button{margin:0}
+.slot-input:focus,.chip-input:focus,.seed-input:focus{background:rgba(124,162,255,.10)}
+.review{margin-top:10px;font-size:12px;color:#5f687a}
+@media print{
+  @page{size:A4 landscape;margin:0}
+  html,body{background:#fff !important;height:auto}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .ctrl{display:none !important}
+  .sheet{padding:0 !important;background:#fff !important}
+  .fit-stage,.fit-box{overflow:visible !important;transform:none !important;width:auto !important;height:auto !important}
+  .page-stack{display:block !important}
+  .page{box-shadow:none !important;margin:0 !important;break-after:page;page-break-after:always;background:#fff !important}
+  .page:last-child{break-after:auto;page-break-after:auto}
+}
+</style>
+</head>
+<body>
+<div class="ctrl">
+  <label for="teamCount">팀 수</label>
+  <input id="teamCount" type="number" min="2" max="30" value="8" />
+
+  <label for="titleInput">대회명</label>
+  <input id="titleInput" type="text" value="Tournament" />
+
+  <div class="btns" style="display:flex;gap:10px;flex-wrap:wrap">
+    <button id="buildBtn">표 만들기</button>
+    <button id="printBtn">인쇄</button>
+  </div>
+
+  <span class="hint">A4 가로 실제 인쇄 기준 설계. 2~8팀은 1Page, 9~16팀은 A조 / B조 / Final 3Pages, 17~30팀은 A/B/C/D조 + 준결승·결승 5Pages. 하단 파란칸과 번호칸, 모든 경기칸은 수정가능.</span>
+</div>
+
+<div class="sheet">
+  <div class="fit-stage" id="fitStage">
+    <div class="fit-box" id="fitBox">
+      <div class="page-stack" id="pages"></div>
+    </div>
+  </div>
+  <div class="review">Made by DKsequence.</div>
+</div>
+
+<script>
+const pagesEl = document.getElementById('pages');
+const fitStageEl = document.getElementById('fitStage');
+const fitBoxEl = document.getElementById('fitBox');
+const teamCountEl = document.getElementById('teamCount');
+const titleInputEl = document.getElementById('titleInput');
+
+const BOARD = { x:12, y:30, w:273, h:168 };
+const PAGE = { w:297, h:210 };
+const BOX_H = 18;
+const CHIP_H = 10;
+const SEED_H = 9;
+const CHIP_GAP = 4;
+const SEED_GAP = 4;
+const BOTTOM_STACK = BOX_H + CHIP_GAP + CHIP_H + SEED_GAP + SEED_H;
+const TOP_PAD = 6;
+const BOTTOM_PAD = 47;
+const SIDE_PAD = 4;
+const STROKE = 0.5;
+const LIGHT = '#86a8f5';
+const DARK = '#253b67';
+
+function mm(v){ return `${v}mm`; }
+function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+function avg(a,b){ return (a+b)/2; }
+function nextPow2(n){ let p=1; while(p<n) p*=2; return p; }
+
+function getTeamCount(){
+  const n = parseInt(teamCountEl.value,10);
+  if(Number.isNaN(n) || n < 2){ alert('팀 수는 2 이상이어야 합니다.'); return null; }
+  if(n > 30){ alert('이 파일은 30팀까지 지원합니다.'); return null; }
+  return n;
+}
+
+function build(){
+  const n = getTeamCount();
+  if(!n) return;
+  pagesEl.innerHTML = '';
+  const title = (titleInputEl.value || '토너먼트').trim();
+
+  if(n <= 8){
+    pagesEl.appendChild(createBracketPage(title, '', n, 1));
+  }else if(n <= 16){
+    const groups = splitIntoGroups(n, 2);
+    pagesEl.appendChild(createBracketPage(title, `A조 (${groups[0]}팀)`, groups[0], 1));
+    pagesEl.appendChild(createBracketPage(title, `B조 (${groups[1]}팀)`, groups[1], groups[0] + 1));
+    pagesEl.appendChild(createFinalPage(title));
+  }else{
+    const groupNames = ['A','B','C','D'];
+    const groups = splitIntoGroups(n, 4);
+    let seedStart = 1;
+    groups.forEach((count, index) => {
+      pagesEl.appendChild(createBracketPage(title, `${groupNames[index]}조 (${count}팀)`, count, seedStart));
+      seedStart += count;
+    });
+    pagesEl.appendChild(createSemiFinalFinalPage(title));
+  }
+  requestAnimationFrame(fitToScreen);
+}
+
+function fitToScreen(){
+  if(!pagesEl.firstElementChild) return;
+  fitBoxEl.style.transform = 'scale(1)';
+  fitStageEl.style.height = 'auto';
+  const naturalW = fitBoxEl.offsetWidth;
+  const naturalH = fitBoxEl.offsetHeight;
+  const availW = fitStageEl.clientWidth;
+  if(!naturalW || !availW) return;
+  const scale = Math.min(1, availW / naturalW);
+  fitBoxEl.style.transform = `scale(${scale})`;
+  fitStageEl.style.height = `${naturalH * scale}px`;
+}
+
+
+function splitIntoGroups(total, groupCount){
+  const base = Math.floor(total / groupCount);
+  const remainder = total % groupCount;
+  return Array.from({length:groupCount}, (_, index) => base + (index < remainder ? 1 : 0));
+}
+
+function layoutForCount(n){
+  const gap = n >= 8 ? 3 : n >= 6 ? 4 : 6;
+  const usable = BOARD.w - SIDE_PAD*2 - gap*(n-1);
+  const leafW = clamp(usable / n, 26, 42);
+  const totalLeafSpan = leafW*n + gap*(n-1);
+  const startX = (BOARD.w - totalLeafSpan) / 2;
+  const centers = Array.from({length:n}, (_,i) => startX + leafW/2 + i*(leafW+gap));
+  const levelCount = 1 + maxLevelForCount(n);
+  const step = (BOARD.h - TOP_PAD - BOTTOM_PAD - BOX_H) / Math.max(1, levelCount - 1);
+  const yForLevel = (level) => BOARD.h - BOTTOM_PAD - BOX_H - level*step;
+  const matchW = clamp(leafW + 6, 30, 48);
+  const finalW = clamp(leafW + 10, 34, 54);
+  return { gap, leafW, matchW, finalW, centers, yForLevel };
+}
+
+function maxLevelForCount(n){
+  if(n === 2) return 1;
+  if(n === 3 || n === 4) return 2;
+  return 3;
+}
+
+function templateForCount(n, geom){
+  const nodes = [];
+  const edges = [];
+  const addLeaf = (idx) => {
+    const id = `s${idx}`;
+    nodes.push({ id, type:'leaf', level:0, cx: geom.centers[idx-1], w: geom.leafW, seed:String(idx), label:'' });
+    return id;
+  };
+  const addMatch = (id, level, a, b, cx = null) => {
+    const center = cx == null ? avg(centerOf(a), centerOf(b)) : cx;
+    const isFinal = level === maxLevelForCount(n);
+    nodes.push({ id, type:'match', level, cx:center, w:isFinal ? geom.finalW : geom.matchW });
+    edges.push({ fromA:a, fromB:b, to:id });
+    return id;
+  };
+  const centerMap = {};
+  const centerOf = (id) => centerMap[id];
+  for(let i=1;i<=n;i++) centerMap[`s${i}`] = geom.centers[i-1], addLeaf(i);
+
+  if(n === 2){ centerMap.m1 = avg(centerMap.s1, centerMap.s2); addMatch('m1',1,'s1','s2',centerMap.m1); }
+  if(n === 3){ centerMap.m1 = avg(centerMap.s2, centerMap.s3); addMatch('m1',1,'s2','s3',centerMap.m1); centerMap.m2 = avg(centerMap.s1, centerMap.m1); addMatch('m2',2,'s1','m1',centerMap.m2); }
+  if(n === 4){ centerMap.m1 = avg(centerMap.s1, centerMap.s2); addMatch('m1',1,'s1','s2',centerMap.m1); centerMap.m2 = avg(centerMap.s3, centerMap.s4); addMatch('m2',1,'s3','s4',centerMap.m2); centerMap.m3 = avg(centerMap.m1, centerMap.m2); addMatch('m3',2,'m1','m2',centerMap.m3); }
+  if(n === 5){ centerMap.m1 = avg(centerMap.s2, centerMap.s3); addMatch('m1',1,'s2','s3',centerMap.m1); centerMap.m2 = avg(centerMap.s1, centerMap.m1); addMatch('m2',2,'s1','m1',centerMap.m2); centerMap.m3 = avg(centerMap.s4, centerMap.s5); addMatch('m3',2,'s4','s5',centerMap.m3); centerMap.m4 = avg(centerMap.m2, centerMap.m3); addMatch('m4',3,'m2','m3',centerMap.m4); }
+  if(n === 6){ centerMap.m1 = avg(centerMap.s2, centerMap.s3); addMatch('m1',1,'s2','s3',centerMap.m1); centerMap.m2 = avg(centerMap.s4, centerMap.s5); addMatch('m2',1,'s4','s5',centerMap.m2); centerMap.m3 = avg(centerMap.s1, centerMap.m1); addMatch('m3',2,'s1','m1',centerMap.m3); centerMap.m4 = avg(centerMap.m2, centerMap.s6); addMatch('m4',2,'m2','s6',centerMap.m4); centerMap.m5 = avg(centerMap.m3, centerMap.m4); addMatch('m5',3,'m3','m4',centerMap.m5); }
+  if(n === 7){ centerMap.m1 = avg(centerMap.s1, centerMap.s2); addMatch('m1',1,'s1','s2',centerMap.m1); centerMap.m2 = avg(centerMap.s3, centerMap.s4); addMatch('m2',1,'s3','s4',centerMap.m2); centerMap.m3 = avg(centerMap.s5, centerMap.s6); addMatch('m3',1,'s5','s6',centerMap.m3); centerMap.m4 = avg(centerMap.m1, centerMap.m2); addMatch('m4',2,'m1','m2',centerMap.m4); centerMap.m5 = avg(centerMap.m3, centerMap.s7); addMatch('m5',2,'m3','s7',centerMap.m5); centerMap.m6 = avg(centerMap.m4, centerMap.m5); addMatch('m6',3,'m4','m5',centerMap.m6); }
+  if(n === 8){ centerMap.m1 = avg(centerMap.s1, centerMap.s2); addMatch('m1',1,'s1','s2',centerMap.m1); centerMap.m2 = avg(centerMap.s3, centerMap.s4); addMatch('m2',1,'s3','s4',centerMap.m2); centerMap.m3 = avg(centerMap.s5, centerMap.s6); addMatch('m3',1,'s5','s6',centerMap.m3); centerMap.m4 = avg(centerMap.s7, centerMap.s8); addMatch('m4',1,'s7','s8',centerMap.m4); centerMap.m5 = avg(centerMap.m1, centerMap.m2); addMatch('m5',2,'m1','m2',centerMap.m5); centerMap.m6 = avg(centerMap.m3, centerMap.m4); addMatch('m6',2,'m3','m4',centerMap.m6); centerMap.m7 = avg(centerMap.m5, centerMap.m6); addMatch('m7',3,'m5','m6',centerMap.m7); }
+
+  for(const node of nodes) node.y = geom.yForLevel(node.level);
+  return { nodes, edges };
+}
+
+function createBracketPage(title, subtitle, n, seedStart){
+  const page = createPageBase(title, subtitle);
+  const board = page.querySelector('.board');
+  const svg = page.querySelector('svg');
+  const geom = layoutForCount(n);
+  const tpl = templateForCount(n, geom);
+  const metrics = {};
+
+  tpl.nodes.forEach(node => {
+    const wrap = document.createElement('div');
+    wrap.className = 'slot-wrap';
+    wrap.style.left = mm(node.cx - node.w/2);
+    wrap.style.top = mm(node.y);
+
+    const slot = document.createElement('div');
+    slot.className = 'slot-box';
+    slot.style.width = mm(node.w);
+    slot.style.height = mm(BOX_H);
+
+    const line1 = document.createElement('input');
+    line1.type = 'text';
+    line1.className = 'slot-input';
+    line1.style.fontSize = mm(clamp(node.w*0.14, 3.4, 5.0));
+
+    const line2 = document.createElement('input');
+    line2.type = 'text';
+    line2.className = 'slot-input';
+    line2.style.fontSize = mm(clamp(node.w*0.14, 3.4, 5.0));
+
+    slot.appendChild(line1);
+    slot.appendChild(line2);
+    wrap.appendChild(slot);
+    board.appendChild(wrap);
+
+    const cx = node.cx;
+    metrics[node.id] = {
+      x: node.cx - node.w/2,
+      y: node.y,
+      w: node.w,
+      h: BOX_H,
+      cx,
+      cy: node.y + BOX_H/2,
+      left: node.cx - node.w/2,
+      right: node.cx + node.w/2,
+      top: node.y,
+      bottom: node.y + BOX_H,
+    };
+
+    if(node.type === 'leaf'){
+      const chipW = clamp(node.w - 4, 22, 38);
+      const chipX = cx - chipW/2;
+      const chipY = node.y + BOX_H + CHIP_GAP;
+      const seedY = chipY + CHIP_H + SEED_GAP;
+
+      const chip = document.createElement('div');
+      chip.className = 'chip-box';
+      chip.style.left = mm(chipX);
+      chip.style.top = mm(chipY);
+      chip.style.width = mm(chipW);
+      chip.style.height = mm(CHIP_H);
+      const chipInput = document.createElement('input');
+      chipInput.type = 'text';
+      chipInput.className = 'chip-input';
+      chipInput.style.fontSize = mm(clamp(chipW*0.16, 3.7, 5.2));
+      chip.appendChild(chipInput);
+      board.appendChild(chip);
+
+      const seed = document.createElement('div');
+      seed.className = 'seed-box';
+      seed.style.left = mm(chipX);
+      seed.style.top = mm(seedY);
+      seed.style.width = mm(chipW);
+      seed.style.height = mm(SEED_H);
+      const seedInput = document.createElement('input');
+      seedInput.type = 'text';
+      seedInput.className = 'seed-input';
+      seedInput.style.fontSize = mm(clamp(chipW*0.18, 4.0, 5.6));
+seedInput.value = String(seedStart + parseInt(node.seed, 10) - 1);
+      seed.appendChild(seedInput);
+      board.appendChild(seed);
+    }
+  });
+
+  tpl.edges.forEach(edge => drawConnector(svg, metrics[edge.fromA], metrics[edge.fromB], metrics[edge.to]));
+  return page;
+}
+
+function drawConnector(svg, a, b, t){
+  const joinX = t.cx;
+  const joinY = Math.min(a.top, b.top) - 6;
+  addLine(svg, a.cx, a.top, a.cx, joinY);
+  addLine(svg, b.cx, b.top, b.cx, joinY);
+  addLine(svg, a.cx, joinY, b.cx, joinY);
+  addLine(svg, joinX, joinY, joinX, t.bottom);
+}
+
+function addLine(svg, x1, y1, x2, y2){
+  const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  line.setAttribute('x1', x1);
+  line.setAttribute('y1', y1);
+  line.setAttribute('x2', x2);
+  line.setAttribute('y2', y2);
+  line.setAttribute('stroke', LIGHT);
+  line.setAttribute('stroke-width', STROKE);
+  line.setAttribute('vector-effect', 'non-scaling-stroke');
+  line.setAttribute('shape-rendering', 'geometricPrecision');
+  svg.appendChild(line);
+}
+
+function createFinalPage(title){
+  const page = createPageBase(title, '최종전');
+  const board = page.querySelector('.board');
+  const svg = page.querySelector('svg');
+
+  const finalW = 52;
+  const sideW = 46;
+  const topY = 12;
+  const bottomY = 110;
+  const leftCx = 72;
+  const rightCx = BOARD.w - 72;
+  const finalCx = BOARD.w / 2;
+
+  const nodes = [
+    { id:'A', cx:leftCx, y:bottomY, w:sideW },
+    { id:'B', cx:rightCx, y:bottomY, w:sideW },
+    { id:'F', cx:finalCx, y:topY, w:finalW },
+  ];
+  const metrics = {};
+
+  nodes.forEach(node => {
+    const wrap = document.createElement('div');
+    wrap.className = 'slot-wrap';
+    wrap.style.left = mm(node.cx - node.w/2);
+    wrap.style.top = mm(node.y);
+
+    const slot = document.createElement('div');
+    slot.className = 'slot-box';
+    slot.style.width = mm(node.w);
+    slot.style.height = mm(BOX_H);
+    const i1 = document.createElement('input');
+    i1.type = 'text'; i1.className = 'slot-input'; i1.style.fontSize = mm(5.2);
+    const i2 = document.createElement('input');
+    i2.type = 'text'; i2.className = 'slot-input'; i2.style.fontSize = mm(5.2);
+    slot.appendChild(i1); slot.appendChild(i2); wrap.appendChild(slot); board.appendChild(wrap);
+
+    metrics[node.id] = { cx:node.cx, top:node.y, bottom:node.y+BOX_H };
+
+    if(node.id !== 'F'){
+      const chipW = 34;
+      const chipX = node.cx - chipW/2;
+      const chipY = node.y + BOX_H + CHIP_GAP;
+      const seedY = chipY + CHIP_H + SEED_GAP;
+
+      const chip = document.createElement('div');
+      chip.className = 'chip-box';
+      chip.style.left = mm(chipX);
+      chip.style.top = mm(chipY);
+      chip.style.width = mm(chipW);
+      chip.style.height = mm(CHIP_H);
+      const chipInput = document.createElement('input');
+      chipInput.type = 'text'; chipInput.className = 'chip-input'; chipInput.style.fontSize = mm(4.8);
+      chipInput.value = node.id === 'A' ? 'A조 우승' : 'B조 우승';
+      chip.appendChild(chipInput); board.appendChild(chip);
+
+      const seed = document.createElement('div');
+      seed.className = 'seed-box';
+      seed.style.left = mm(chipX);
+      seed.style.top = mm(seedY);
+      seed.style.width = mm(chipW);
+      seed.style.height = mm(SEED_H);
+      const seedInput = document.createElement('input');
+      seedInput.type = 'text'; seedInput.className = 'seed-input'; seedInput.style.fontSize = mm(5.2);
+      seedInput.value = '';
+      seed.appendChild(seedInput); board.appendChild(seed);
+    }
+  });
+
+  addLine(svg, metrics.A.cx, metrics.A.top, metrics.A.cx, 82);
+  addLine(svg, metrics.B.cx, metrics.B.top, metrics.B.cx, 82);
+  addLine(svg, metrics.A.cx, 82, metrics.B.cx, 82);
+  addLine(svg, metrics.F.cx, 82, metrics.F.cx, metrics.F.bottom);
+  return page;
+}
+
+function createSemiFinalFinalPage(title){
+  const page = createPageBase(title, '준결승 · 결승');
+  const board = page.querySelector('.board');
+  const svg = page.querySelector('svg');
+
+  const finalW = 52;
+  const semiW = 46;
+  const championW = 38;
+  const finalY = 12;
+  const semiY = 78;
+  const championY = 132;
+  const finalCx = BOARD.w / 2;
+  const leftSemiCx = 74;
+  const rightSemiCx = BOARD.w - 74;
+  const champCenters = [24, 86, BOARD.w - 86, BOARD.w - 24];
+
+  const nodes = [
+    { id:'SA', cx:leftSemiCx, y:semiY, w:semiW },
+    { id:'SB', cx:rightSemiCx, y:semiY, w:semiW },
+    { id:'F', cx:finalCx, y:finalY, w:finalW },
+    { id:'A', cx:champCenters[0], y:championY, w:championW, label:'A조 우승' },
+    { id:'B', cx:champCenters[1], y:championY, w:championW, label:'B조 우승' },
+    { id:'C', cx:champCenters[2], y:championY, w:championW, label:'C조 우승' },
+    { id:'D', cx:champCenters[3], y:championY, w:championW, label:'D조 우승' },
+  ];
+  const metrics = {};
+
+  nodes.forEach(node => {
+    const wrap = document.createElement('div');
+    wrap.className = 'slot-wrap';
+    wrap.style.left = mm(node.cx - node.w/2);
+    wrap.style.top = mm(node.y);
+
+    const slot = document.createElement('div');
+    slot.className = 'slot-box';
+    slot.style.width = mm(node.w);
+    slot.style.height = mm(BOX_H);
+
+    const i1 = document.createElement('input');
+    i1.type = 'text';
+    i1.className = 'slot-input';
+    i1.style.fontSize = mm(node.id === 'F' ? 5.2 : 4.8);
+
+    const i2 = document.createElement('input');
+    i2.type = 'text';
+    i2.className = 'slot-input';
+    i2.style.fontSize = mm(node.id === 'F' ? 5.2 : 4.8);
+
+    slot.appendChild(i1);
+    slot.appendChild(i2);
+    wrap.appendChild(slot);
+    board.appendChild(wrap);
+
+    metrics[node.id] = { cx:node.cx, top:node.y, bottom:node.y + BOX_H };
+
+    if(node.id !== 'F' && node.id !== 'SA' && node.id !== 'SB'){
+      const chipW = 30;
+      const chipX = node.cx - chipW/2;
+      const chipY = node.y + BOX_H + CHIP_GAP;
+      const seedY = chipY + CHIP_H + SEED_GAP;
+
+      const chip = document.createElement('div');
+      chip.className = 'chip-box';
+      chip.style.left = mm(chipX);
+      chip.style.top = mm(chipY);
+      chip.style.width = mm(chipW);
+      chip.style.height = mm(CHIP_H);
+      const chipInput = document.createElement('input');
+      chipInput.type = 'text';
+      chipInput.className = 'chip-input';
+      chipInput.style.fontSize = mm(4.0);
+      chipInput.value = node.label;
+      chip.appendChild(chipInput);
+      board.appendChild(chip);
+
+      const seed = document.createElement('div');
+      seed.className = 'seed-box';
+      seed.style.left = mm(chipX);
+      seed.style.top = mm(seedY);
+      seed.style.width = mm(chipW);
+      seed.style.height = mm(SEED_H);
+      const seedInput = document.createElement('input');
+      seedInput.type = 'text';
+      seedInput.className = 'seed-input';
+      seedInput.style.fontSize = mm(5.0);
+      seedInput.value = '';
+      seed.appendChild(seedInput);
+      board.appendChild(seed);
+    }
+  });
+
+  const championJoinY = 120;
+  addLine(svg, metrics.A.cx, metrics.A.top, metrics.A.cx, championJoinY);
+  addLine(svg, metrics.B.cx, metrics.B.top, metrics.B.cx, championJoinY);
+  addLine(svg, metrics.A.cx, championJoinY, metrics.B.cx, championJoinY);
+  addLine(svg, metrics.SA.cx, metrics.SA.bottom, metrics.SA.cx, championJoinY);
+
+  addLine(svg, metrics.C.cx, metrics.C.top, metrics.C.cx, championJoinY);
+  addLine(svg, metrics.D.cx, metrics.D.top, metrics.D.cx, championJoinY);
+  addLine(svg, metrics.C.cx, championJoinY, metrics.D.cx, championJoinY);
+  addLine(svg, metrics.SB.cx, metrics.SB.bottom, metrics.SB.cx, championJoinY);
+
+  const semiJoinY = 62;
+  addLine(svg, metrics.SA.cx, metrics.SA.top, metrics.SA.cx, semiJoinY);
+  addLine(svg, metrics.SB.cx, metrics.SB.top, metrics.SB.cx, semiJoinY);
+  addLine(svg, metrics.SA.cx, semiJoinY, metrics.SB.cx, semiJoinY);
+  addLine(svg, metrics.F.cx, semiJoinY, metrics.F.cx, metrics.F.bottom);
+  return page;
+}
+
+function createPageBase(title, subtitle){
+  const page = document.createElement('section');
+  page.className = 'page';
+
+  const titleEl = document.createElement('div');
+  titleEl.className = 'page-title';
+  titleEl.textContent = title;
+  page.appendChild(titleEl);
+
+  const subtitleEl = document.createElement('div');
+  subtitleEl.className = 'page-subtitle';
+  subtitleEl.textContent = subtitle || '';
+  page.appendChild(subtitleEl);
+
+  const board = document.createElement('div');
+  board.className = 'board';
+  page.appendChild(board);
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('class', 'lines');
+  svg.setAttribute('viewBox', `0 0 ${BOARD.w} ${BOARD.h}`);
+  svg.setAttribute('width', '100%');
+  svg.setAttribute('height', '100%');
+  board.appendChild(svg);
+
+  return page;
+}
+
+document.getElementById('buildBtn').addEventListener('click', build);
+document.getElementById('printBtn').addEventListener('click', () => { build(); window.print(); });
+titleInputEl.addEventListener('input', build);
+window.addEventListener('resize', fitToScreen);
+window.addEventListener('orientationchange', () => setTimeout(fitToScreen,120));
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(build);
+else build();
+</script>
+</body>
+</html>
