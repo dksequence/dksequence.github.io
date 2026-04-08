@@ -1,1 +1,874 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DKsequence On-Site Operations System — Maintenance Document</title>
+<style>
+:root {
+  --black: #0a0a0a;
+  --dark: #141414;
+  --card: #1c1c1c;
+  --border: rgba(255,255,255,0.1);
+  --white: #f0f0f0;
+  --dim: #888;
+  --blue: #4fa3f7;
+  --green: #4ecba1;
+  --amber: #f0a500;
+  --purple: #a78bfa;
+  --red: #ff6b6b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--black); color: var(--white); font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; font-size: 16px; line-height: 1.8; }
+.wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 80px; }
 
+/* Header */
+.doc-header { text-align: center; padding: 48px 0 56px; border-bottom: 1px solid var(--border); margin-bottom: 56px; }
+.doc-badge { display: inline-block; background: rgba(79,163,247,0.15); color: var(--blue); font-size: 13px; padding: 5px 16px; border-radius: 2rem; margin-bottom: 20px; letter-spacing: 0.06em; }
+.doc-title { font-size: 36px; font-weight: 700; line-height: 1.3; margin-bottom: 12px; }
+.doc-sub { font-size: 16px; color: var(--dim); }
+.doc-meta { margin-top: 24px; display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+.meta-item { font-size: 13px; color: var(--dim); }
+.meta-item span { color: var(--white); }
+
+/* Sections */
+.section { margin-bottom: 64px; }
+.section-num { font-size: 12px; color: var(--blue); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+.section-title { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+.section-desc { font-size: 15px; color: var(--dim); margin-bottom: 32px; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+
+/* Cards */
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 24px 28px; margin-bottom: 16px; }
+.card-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+.card-sub { font-size: 14px; color: var(--dim); margin-bottom: 16px; }
+
+/* Flow Diagram */
+.flow { display: flex; flex-direction: column; gap: 0; }
+.flow-item { display: flex; gap: 16px; }
+.flow-left { display: flex; flex-direction: column; align-items: center; width: 48px; flex-shrink: 0; }
+.flow-dot { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
+.flow-line { width: 2px; background: var(--border); flex: 1; min-height: 24px; }
+.flow-content { padding: 8px 0 32px; flex: 1; }
+.flow-label { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+.flow-name { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+.flow-detail { font-size: 14px; color: var(--dim); line-height: 1.7; }
+.flow-tag { display: inline-block; font-size: 12px; padding: 3px 10px; border-radius: 2rem; margin-top: 8px; margin-right: 6px; }
+
+/* File Table */
+.file-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.file-table th { text-align: left; font-size: 12px; color: var(--dim); letter-spacing: 0.06em; text-transform: uppercase; padding: 8px 16px; border-bottom: 1px solid var(--border); }
+.file-table td { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: top; }
+.file-table tr:last-child td { border-bottom: none; }
+.file-name { font-family: monospace; font-size: 14px; color: var(--blue); font-weight: 600; }
+.file-loc { font-size: 13px; color: var(--dim); margin-top: 4px; }
+.badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 2rem; font-weight: 600; }
+.badge-blue { background: rgba(79,163,247,0.15); color: var(--blue); }
+.badge-green { background: rgba(78,203,161,0.15); color: var(--green); }
+.badge-amber { background: rgba(240,165,0,0.15); color: var(--amber); }
+.badge-purple { background: rgba(167,139,250,0.15); color: var(--purple); }
+.badge-red { background: rgba(255,107,107,0.15); color: var(--red); }
+
+/* URL Box */
+.url-box { background: #0d0d0d; border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; font-family: monospace; font-size: 13px; color: var(--green); word-break: break-all; margin: 12px 0; }
+.url-label { font-size: 12px; color: var(--dim); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+
+/* Step Boxes */
+.step-list { display: flex; flex-direction: column; gap: 12px; }
+.step-item { display: flex; gap: 16px; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+.step-num { width: 36px; height: 36px; border-radius: 50%; background: rgba(79,163,247,0.15); color: var(--blue); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; flex-shrink: 0; }
+.step-body { flex: 1; }
+.step-title { font-size: 17px; font-weight: 600; margin-bottom: 4px; }
+.step-desc { font-size: 14px; color: var(--dim); line-height: 1.7; }
+
+/* Warning/Tip Boxes */
+.tip { background: rgba(78,203,161,0.08); border: 1px solid rgba(78,203,161,0.2); border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+.tip-label { font-size: 12px; color: var(--green); font-weight: 700; letter-spacing: 0.06em; margin-bottom: 6px; }
+.tip-text { font-size: 14px; color: var(--dim); line-height: 1.7; }
+.warn { background: rgba(240,165,0,0.08); border: 1px solid rgba(240,165,0,0.2); border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+.warn-label { font-size: 12px; color: var(--amber); font-weight: 700; letter-spacing: 0.06em; margin-bottom: 6px; }
+.warn-text { font-size: 14px; color: var(--dim); line-height: 1.7; }
+
+/* Column Table */
+.col-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.col-table th { text-align: left; font-size: 12px; color: var(--dim); padding: 8px 12px; border-bottom: 1px solid var(--border); }
+.col-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.col-table tr:last-child td { border-bottom: none; }
+.col-name { font-family: monospace; color: var(--blue); }
+
+/* Troubleshooting */
+.trouble-item { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 12px; }
+.trouble-q { background: var(--card); padding: 16px 20px; font-size: 16px; font-weight: 600; }
+.trouble-q::before { content: "Q. "; color: var(--red); }
+.trouble-a { padding: 16px 20px; font-size: 14px; color: var(--dim); line-height: 1.8; border-top: 1px solid var(--border); }
+.trouble-a::before { content: "A. "; color: var(--green); font-weight: 700; }
+
+/* Contents */
+.toc { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 24px 28px; margin-bottom: 48px; }
+.toc-title { font-size: 14px; color: var(--dim); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 16px; }
+.toc-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.toc-list a { color: var(--white); text-decoration: none; font-size: 15px; display: flex; align-items: center; gap: 10px; }
+.toc-list a:hover { color: var(--blue); }
+.toc-num { font-size: 12px; color: var(--dim); width: 24px; }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+
+  <!-- Header -->
+  <div class="doc-header">
+    <div class="doc-badge" style="text-align: center;">Maintenance Document v2.0</div>
+    <div class="doc-title" style="text-align: center;">On-Site Operations Automation System</div>
+    <div class="doc-sub" style="text-align: center;">Complete workflow from Naver booking to customer photo capture and storage</div>
+    <div class="doc-meta">
+      <div class="meta-item"></div>
+      <div class="meta-item" style="text-align: center;">By DKsequence</div><br class="">
+      
+    </div><p class="" style="text-align: center; color: rgb(217, 119, 6);">This document summarizes the development and testing process of the operating system. Unauthorized disclosure of this information and its source code is prohibited. However, the technical approach used to develop this type of service is sufficiently open that you could adapt the idea and create a similar system on their own. By analyzing this document in full with AI, it would be relatively easy to derive ideas tailored to one’s own needs.</p>
+  </div>
+
+  <!-- Contents -->
+  
+
+
+  <!-- Diagram Section -->
+  <div class="section" id="s0">
+    <div class="section-num" style="color: rgb(22, 163, 74); font-weight: bold;"></div>
+    <div class="section-title" style="color: rgb(22, 163, 74); font-weight: bold;">00 System Overview at a Glance</div>
+    <div class="section-desc">A one-page view of where the data comes from and where it goes</div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:40px 24px;overflow-x:auto;">
+
+      <!-- Primary Automation Line -->
+      <div style="margin-bottom:12px;font-size:11px;color:var(--amber);letter-spacing:.1em;text-transform:uppercase;font-weight:700;">Primary Automation — Booking Intake and Logging</div>
+      <div style="display:flex;align-items:center;gap:0;margin-bottom:48px;flex-wrap:nowrap;min-width:600px;">
+
+        <!-- Naver -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;min-width:90px;">
+          <div style="width:64px;height:64px;border-radius:14px;background:#03C75A;display:flex;align-items:center;justify-content:center;">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
+              <text x="4" y="18" font-size="14" font-weight="800" fill="white" font-family="Arial">N</text>
+              <rect x="2" y="4" width="8" height="16" rx="1" fill="white" opacity="0.9"></rect>
+              <rect x="14" y="4" width="8" height="16" rx="1" fill="white" opacity="0.9"></rect>
+              <polygon points="10,4 14,11 10,11" fill="white" opacity="0.9"></polygon>
+            </svg>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:13px;font-weight:700;color:var(--white);">Naver Booking</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:2px;">Customer books and pays</div>
+          </div>
+        </div>
+
+        <!-- Arrow + Email -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;">
+          <div style="font-size:11px;color:var(--dim);">Booking Confirmation Email</div>
+          <div style="display:flex;align-items:center;width:100%;">
+            <div style="flex:1;height:2px;background:linear-gradient(90deg,#03C75A,var(--border));"></div>
+            <div style="color:var(--dim);font-size:16px;">✉️</div>
+            <div style="flex:1;height:2px;background:linear-gradient(90deg,var(--border),#ff6b00);"></div>
+          </div>
+          <div style="font-size:11px;color:var(--dim);">Auto-received</div>
+        </div>
+
+        <!-- Make -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;min-width:90px;">
+          <div style="width:64px;height:64px;border-radius:14px;background:#6D00CC;display:flex;align-items:center;justify-content:center;">
+            <svg width="40" height="40" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="40" fill="none" stroke="white" stroke-width="8"></circle>
+              <circle cx="50" cy="20" r="10" fill="white"></circle>
+              <circle cx="50" cy="80" r="10" fill="white"></circle>
+              <circle cx="20" cy="50" r="10" fill="white"></circle>
+              <circle cx="80" cy="50" r="10" fill="white"></circle>
+            </svg>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:13px;font-weight:700;color:var(--white);">Make.com</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:2px;">Email parsing &amp; automation</div>
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;">
+          <div style="font-size:11px;color:var(--dim);">Data extraction</div>
+          <div style="display:flex;align-items:center;width:100%;">
+            <div style="flex:1;height:2px;background:linear-gradient(90deg,#6D00CC,#0F9D58);"></div>
+            <div style="font-size:14px;">▶</div>
+          </div>
+          <div style="font-size:11px;color:var(--dim);">Auto-logging</div>
+        </div>
+
+        <!-- Google Sheets -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;min-width:90px;">
+          <div style="width:64px;height:64px;border-radius:14px;background:#0F9D58;display:flex;align-items:center;justify-content:center;">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="white">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"></path>
+              <path d="M14 2v6h6" fill="none" stroke="#0F9D58" stroke-width="1.5"></path>
+              <line x1="8" y1="13" x2="16" y2="13" stroke="#0F9D58" stroke-width="1.5"></line>
+              <line x1="8" y1="17" x2="16" y2="17" stroke="#0F9D58" stroke-width="1.5"></line>
+              <line x1="12" y1="13" x2="12" y2="17" stroke="#0F9D58" stroke-width="1.5"></line>
+            </svg>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:13px;font-weight:700;color:var(--white);">Primary Sheet</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:2px;" class="">your sheet name</div>
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;">
+          <div style="font-size:11px;color:var(--dim);">Calendar registration</div>
+          <div style="display:flex;align-items:center;width:100%;">
+            <div style="flex:1;height:2px;background:linear-gradient(90deg,#0F9D58,#4285F4);"></div>
+            <div style="font-size:14px;">▶</div>
+          </div>
+          <div style="font-size:11px;color:var(--dim);">Notification setup</div>
+        </div>
+
+        <!-- Google Calendar -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;min-width:90px;">
+          <div style="width:64px;height:64px;border-radius:14px;background:#4285F4;display:flex;align-items:center;justify-content:center;">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="white">
+              <rect x="3" y="4" width="18" height="18" rx="2" fill="white"></rect>
+              <rect x="3" y="4" width="18" height="5" rx="2" fill="#4285F4"></rect>
+              <rect x="7" y="2" width="2" height="4" rx="1" fill="#4285F4"></rect>
+              <rect x="15" y="2" width="2" height="4" rx="1" fill="#4285F4"></rect>
+              <text x="8" y="18" font-size="7" font-weight="800" fill="#4285F4" font-family="Arial">28</text>
+            </svg>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:13px;font-weight:700;color:var(--white);">Google Calendar</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:2px;">Schedule + notifications</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Connector Arrow (Primary → Secondary) -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-left:36px;">
+        <div style="width:2px;height:40px;background:linear-gradient(180deg,#0F9D58,#4fa3f7);margin-left:8px;"></div>
+        <div style="font-size:12px;color:var(--dim);">On check-in day, the system loads data from the primary sheet to begin on-site operations</div>
+      </div>
+
+      <!-- Secondary Operations Line -->
+      <div style="margin-bottom:12px;font-size:11px;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;font-weight:700;">Secondary Operations — On-site Check-in and Photo Capture Storage</div>
+      <div style="display:flex;align-items:center;gap:0;flex-wrap:nowrap;min-width:600px;">
+
+        <!-- Apps Script (Main App) -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;min-width:90px;">
+          <div style="width:64px;height:64px;border-radius:14px;background:#4285F4;display:flex;align-items:center;justify-content:center;">
+            <svg width="36" height="36" viewBox="0 0 24 24">
+              <rect width="24" height="24" rx="4" fill="#4285F4"></rect>
+              <path d="M7 8l-4 4 4 4M17 8l4 4-4 4M13 6l-2 12" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"></path>
+            </svg>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:13px;font-weight:700;color:var(--white);">Apps Script</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:2px;">Dashboard + backend</div>
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;">
+          <div style="font-size:11px;color:var(--dim);">Open in Safari</div>
+          <div style="display:flex;align-items:center;width:100%;">
+            <div style="flex:1;height:2px;background:linear-gradient(90deg,#4285F4,#888);"></div>
+            <div style="font-size:14px;">▶</div>
+          </div>
+          <div style="font-size:11px;color:var(--dim);">Check-in screen</div>
+        </div>
+
+        <!-- iPad -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;min-width:90px;">
+          <div style="width:64px;height:64px;border-radius:14px;background:#1c1c1e;border:2px solid #444;display:flex;align-items:center;justify-content:center;">
+            <svg width="32" height="40" viewBox="0 0 32 40" fill="none">
+              <rect x="2" y="1" width="28" height="38" rx="4" fill="#2c2c2e" stroke="#555" stroke-width="1.5"></rect>
+              <rect x="5" y="4" width="22" height="32" rx="2" fill="#1a1a2e"></rect>
+              <circle cx="16" cy="37" r="1.5" fill="#555"></circle>
+              <!-- Check-in shown on screen -->
+              <rect x="7" y="10" width="18" height="3" rx="1" fill="#4fa3f7" opacity="0.8"></rect>
+              <rect x="7" y="15" width="12" height="2" rx="1" fill="#666"></rect>
+              <rect x="7" y="19" width="15" height="2" rx="1" fill="#666"></rect>
+              <rect x="7" y="24" width="18" height="5" rx="2" fill="#0071e3"></rect>
+            </svg>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:13px;font-weight:700;color:var(--white);">iPad</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:2px;">Check-in + capture</div>
+          </div>
+        </div>
+
+        <!-- Arrow -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;">
+          <div style="font-size:11px;color:var(--dim);">Open popup</div>
+          <div style="display:flex;align-items:center;width:100%;">
+            <div style="flex:1;height:2px;background:linear-gradient(90deg,#888,#24292e);"></div>
+            <div style="font-size:14px;">▶</div>
+          </div>
+          <div style="font-size:11px;color:var(--dim);">Camera capture</div>
+        </div>
+
+        <!-- GitHub -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;min-width:90px;">
+          <div style="width:64px;height:64px;border-radius:14px;background:#24292e;display:flex;align-items:center;justify-content:center;">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="white">
+              <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"></path>
+            </svg>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:13px;font-weight:700;color:var(--white);">GitHub Pages</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:2px;">camera.html</div>
+          </div>
+        </div>
+
+        <!-- Arrow branch -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;">
+          <div style="font-size:11px;color:var(--dim);">Capture complete</div>
+          <div style="display:flex;align-items:center;width:100%;">
+            <div style="flex:1;height:2px;background:linear-gradient(90deg,#24292e,#4ecba1);"></div>
+            <div style="font-size:14px;">▶</div>
+          </div>
+          <div style="font-size:11px;color:var(--dim);">Auto-save</div>
+        </div>
+
+        <!-- Save Results (2 items) -->
+        <div style="display:flex;flex-direction:column;gap:10px;min-width:90px;">
+
+          <!-- Google Drive -->
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:48px;height:48px;border-radius:12px;background:#0F9D58;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+                <path d="M12 2L2 19.5h20L12 2z" opacity="0.3"></path>
+                <path d="M7.5 14L2 19.5h10L7.5 14zM16.5 14L22 19.5H12L16.5 14z" opacity="0.6"></path>
+                <path d="M12 2l4.5 8h-9L12 2z"></path>
+              </svg>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--white);">Google Drive</div>
+              <div style="font-size:11px;color:var(--dim);">Photos saved automatically</div>
+            </div>
+          </div>
+
+          <!-- Secondary Sheet -->
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:48px;height:48px;border-radius:12px;background:#0F9D58;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"></path>
+                <path d="M14 2v6h6" fill="none" stroke="#0F9D58" stroke-width="1.5"></path>
+                <line x1="8" y1="13" x2="16" y2="13" stroke="#0F9D58" stroke-width="1.5"></line>
+                <line x1="8" y1="17" x2="16" y2="17" stroke="#0F9D58" stroke-width="1.5"></line>
+              </svg>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--white);">Secondary Sheet</div>
+              <div style="font-size:11px;color:var(--dim);">Check-in log</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Legend -->
+      <div style="margin-top:36px;padding-top:24px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:16px;">
+        <div style="font-size:11px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;width:100%;margin-bottom:4px;">Legend</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim);">
+          <div style="width:12px;height:12px;border-radius:3px;background:#6D00CC;"></div>Make.com automation
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim);">
+          <div style="width:12px;height:12px;border-radius:3px;background:#4285F4;"></div>Google services
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim);">
+          <div style="width:12px;height:12px;border-radius:3px;background:#0F9D58;"></div>Google storage
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim);">
+          <div style="width:12px;height:12px;border-radius:3px;background:#24292e;border:1px solid #555;"></div>GitHub Pages
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim);">
+          <div style="width:12px;height:12px;border-radius:3px;background:#03C75A;"></div>Naver
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="divider">
+  <!-- 01 -->
+  <div class="section" id="s1">
+    <div class="section-num" style="color: rgb(22, 163, 74); font-weight: bold;"></div>
+    <br class=""><div class="section-title" style="color: rgb(22, 163, 74); font-weight: bold;">001  What is this system?</div>
+    <div class="section-desc">Explained simply enough for a middle school student to understand</div>
+
+    <div class="card">
+      <div class="card-title">Simply put</div>
+      <div class="card-sub">When a customer books through Naver, the booking automatically appears on the tablet list, and after on-site check-in and photo capture, the files are automatically saved to Google Drive.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;">
+        <div style="background:#0d0d0d;border-radius:10px;padding:16px;">
+          <div style="font-size:12px;color:var(--amber);margin-bottom:8px;font-weight:700;">Primary Automation (Completed)</div>
+          <div style="font-size:14px;color:var(--dim);line-height:1.8;">Naver booking email → Make → automatic logging to Google Sheets + Calendar</div>
+        </div>
+        <div style="background:#0d0d0d;border-radius:10px;padding:16px;">
+          <div style="font-size:12px;color:var(--blue);margin-bottom:8px;font-weight:700;">Secondary Automation (Completed)</div>
+          <div style="font-size:14px;color:var(--dim);line-height:1.8;">iPad check-in + capture → automatic save to Drive + Sheet</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 02 -->
+  <div class="section" id="s2">
+    <div class="section-num" style="color: rgb(22, 163, 74); font-weight: bold;"></div>
+    <br class=""><div class="section-title" style="color: rgb(22, 163, 74); font-weight: bold;">002 Complete Flow</div>
+    <div class="section-desc">What happens from start to finish</div>
+
+    <div class="flow">
+
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot" style="background:rgba(240,165,0,0.15);color:var(--amber);">1</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-label" style="color:var(--amber);">Customer Action</div>
+          <div class="flow-name">Book on Naver</div>
+          <div class="flow-detail">The customer selects a date, time, and product in the Naver booking service and completes payment. At that moment, Naver automatically sends a booking confirmation email.</div>
+          <span class="flow-tag" style="background:rgba(240,165,0,0.1);color:var(--amber);">Naver Booking</span>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot" style="background:rgba(167,139,250,0.15);color:var(--purple);">2</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-label" style="color:var(--purple);">Automation — Make</div>
+          <div class="flow-name">Receive email → parse data</div>
+          <div class="flow-detail">Make.com monitors the Naver mailbox and automatically catches new booking emails. It extracts the booking number, date, time, product name, number of people, and other details from the email.<br><br><b style="color:var(--white);">Scenario name:</b> Integration Email, Google Sheets</div>
+          <span class="flow-tag" style="background:rgba(167,139,250,0.1);color:var(--purple);">Make.com</span>
+          <span class="flow-tag" style="background:rgba(167,139,250,0.1);color:var(--purple);">Runs automatically</span>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot" style="background:rgba(78,203,161,0.15);color:var(--green);">3</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-label" style="color:var(--green);">Primary Storage</div>
+          <div class="flow-name">Log to Google Sheets + Calendar</div>
+          <div class="flow-detail">The booking data extracted by Make is added to Google Sheets one row at a time. At the same time, an event is added to Google Calendar so you can receive reminders for the shoot date.
+
+Stored in sheet: your_sheet → reservations tab</div>
+          <span class="flow-tag" style="background:rgba(78,203,161,0.1);color:var(--green);">Google Sheets</span>
+          <span class="flow-tag" style="background:rgba(78,203,161,0.1);color:var(--green);">Google Calendar</span>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot" style="background:rgba(79,163,247,0.15);color:var(--blue);">4</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-label" style="color:var(--blue);">On-Site Operations — iPad</div>
+          <div class="flow-name">Check booking list in dashboard</div>
+          <div class="flow-detail">On the day of the shoot, the operator opens the operations web app in Safari on the iPad. Tapping a time tab (13:00–17:00) automatically loads the list of customers booked for that slot.<br><br><b style="color:var(--white);">App URL:</b> script.google.com Apps Script web app URL</div>
+          <span class="flow-tag" style="background:rgba(79,163,247,0.1);color:var(--blue);">iPad</span>
+          <span class="flow-tag" style="background:rgba(79,163,247,0.1);color:var(--blue);">Safari</span>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot" style="background:rgba(79,163,247,0.15);color:var(--blue);">5</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-label" style="color:var(--blue);">Check-in</div>
+          <div class="flow-name">Tap customer card → enter information</div>
+          <div class="flow-detail">When the customer arrives, tap that customer card in the list. The primary booking info (booking number, product, time) appears automatically. The operator enters the real name, email, and phone number, and collects privacy consent.</div>
+          <span class="flow-tag" style="background:rgba(79,163,247,0.1);color:var(--blue);">Verify real name</span>
+          <span class="flow-tag" style="background:rgba(79,163,247,0.1);color:var(--blue);">Collect consent</span>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot" style="background:rgba(79,163,247,0.15);color:var(--blue);">6</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-label" style="color:var(--blue);">Capture</div>
+          <div class="flow-name">Open capture window → name board + camera</div>
+          <div class="flow-detail">Pressing the “Open Capture Window” button opens a popup. A name board with the customer’s name appears large at the top, and the camera view appears below. Use “Start Camera” → “Take Photo” to capture a mugshot.
+
+Popup URL: your_id.github.io/operation/camera.html</div>
+          <span class="flow-tag" style="background:rgba(79,163,247,0.1);color:var(--blue);">GitHub Pages popup</span>
+          <span class="flow-tag" style="background:rgba(79,163,247,0.1);color:var(--blue);">iPad camera</span>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot" style="background:rgba(78,203,161,0.15);color:var(--green);">7</div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-label" style="color:var(--green);">Auto-save</div>
+          <div class="flow-name">Drive + Secondary Sheet Auto-logging</div>
+          <div class="flow-detail">As soon as capture is complete, three steps run automatically.<br>① The photo file is saved to Google Drive (filename: date_bookingnumber_realname.jpg)<br>② The check-in info is added as one row in the secondary spreadsheet<br>③ That customer is marked as “Completed” in the dashboard</div>
+          <span class="flow-tag" style="background:rgba(78,203,161,0.1);color:var(--green);">Google Drive</span>
+          <span class="flow-tag" style="background:rgba(78,203,161,0.1);color:var(--green);">Secondary Sheet Log</span>
+          <span class="flow-tag" style="background:rgba(78,203,161,0.1);color:var(--green);">Completion status</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 03 -->
+  <div class="section" id="s3">
+    <div class="section-num" style="color: rgb(22, 163, 74); font-weight: bold;"></div>
+    <br class=""><div class="section-title" style="color: rgb(22, 163, 74); font-weight: bold;">003 File Map</div>
+    <div class="section-desc">See where everything is at a glance for sample</div>
+
+    <table class="file-table">
+      <tbody><tr>
+        <th>Filename</th>
+        <th>Location</th>
+        <th>Role</th>
+        <th>Type</th>
+      </tr>
+      <tr>
+        <td>
+          <div class="file-name">Code.gs</div>
+          <div class="file-loc">Inside Apps Script project</div>
+        </td>
+        <td style="font-size:14px;color:var(--dim);" class="">Google Apps Script 01_YOUR_FILE_NAME_v101</td>
+        <td style="font-size:14px;" class="">The brain of the system. Handles booking lookup, check-in saving, Drive folder creation, and photo saving.</td>
+        <td><span class="badge badge-purple">Backend</span></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="file-name">index.html</div>
+          <div class="file-loc">Inside Apps Script project</div>
+        </td>
+        <td style="font-size:14px;color:var(--dim);" class="">Google Apps Script 01_YOUR_FILE_NAME_v101</td>
+        <td style="font-size:14px;">The main screen shown on the iPad. Dashboard, check-in form, consent screen, saving screen, and completion screen.</td>
+        <td><span class="badge badge-blue">Frontend</span></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="file-name">camera.html</div>
+          <div class="file-loc">GitHub Pages
+/your folder/ folder</div>
+        </td>
+        <td style="font-size:14px;color:var(--dim);" class="">github.IO/YOUR_FOLDER</td>
+        <td style="font-size:14px;">Popup page dedicated to the camera. Shows the name board + captures photo. Separated to work around iOS Safari camera permission issues.</td>
+        <td><span class="badge badge-green">Camera Popup</span></td>
+      </tr>
+      <tr>
+        <td class="">YOUR_Reservation_
+Google Spreadsheet</td>
+        <td style="font-size:14px;color:var(--dim);" class="">Google Sheets
+Tab: your sheet</td>
+        <td style="font-size:14px;">Primary data. Make receives Naver booking emails and logs them here automatically, including booking number, date, time, product name, and number of people.</td>
+        <td><span class="badge badge-amber">Primary Data</span></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="file-name">YOUR_PhotoManagement_DOC</div>
+          <div class="file-loc">Google Spreadsheet</div>
+        </td>
+        <td style="font-size:14px;color:var(--dim);" class="">Google Sheets<br>Tab: Secondary_Checkin</td>
+        <td style="font-size:14px;">Secondary data. Logged automatically during on-site check-in, including real name, email, phone, consent status, photo URL, and Drive folder URL.</td>
+        <td><span class="badge badge-blue">Secondary Data</span></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="file-name">YOUR</div>
+          <div class="file-loc">Google Drive</div>
+        </td>
+        <td style="font-size:14px;color:var(--dim);" class="">My Drive → YOUR_file</td>
+        <td style="font-size:14px;">Root folder for photo storage. Subfolders are created automatically by date / time / customer name.</td>
+        <td><span class="badge badge-green">Photo Storage</span></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="file-name">Integration Email, Google Sheets</div>
+          <div class="file-loc">Make.com</div>
+        </td>
+        <td style="font-size:14px;color:var(--dim);" class="">make.com → My Organization → Scenarios</td>
+        <td style="font-size:14px;">Primary automation scenario. Monitors Naver mail → parses data → logs to Google Sheets + Calendar</td>
+        <td><span class="badge badge-red">Automation</span></td>
+      </tr>
+    </tbody></table>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 04 -->
+  <div class="section" id="s4">
+    <div class="section-num" style="color: rgb(22, 163, 74); font-weight: bold;"></div>
+    <br class=""><div class="section-title" style="color: rgb(22, 163, 74); font-weight: bold;">004 Actual URLs &amp; IDs</div>
+    <div class="section-desc">Important addresses — keep them safe because they are hard to recover if lost</div>
+
+    <div class="warn">
+      <div class="warn-label">Caution</div>
+      <div class="warn-text">Do not share the IDs and URLs below externally. They can allow unauthorized access to Google Drive and spreadsheets.</div>
+    </div>
+
+    <div class="card">
+      <div class="url-label">On-Site Operations App (opened on the iPad)</div>
+      <div class="url-box">https://script.google.com/macros/YOUR_URLS</div>
+
+      <div class="url-label" style="margin-top:20px;">Camera Popup Page (opens automatically; no need to open manually)</div>
+      <div class="url-box">https://YOUR.github.io/YOUR_FOLDER/your.html</div>
+
+      <div class="url-label" style="margin-top:20px;">Apps Script editor URL (for code edits)</div>
+      <div class="url-box">https://script.google.com/home/projects/YOUR_URL/edit</div>
+
+      <div class="url-label" style="margin-top:20px;">Primary Spreadsheet ID</div>
+      <div class="url-box">YOUR_ID
+</div>
+
+      <div class="url-label" style="margin-top:20px;">Secondary Spreadsheet ID</div>
+      <div class="url-box">YOUR_ID</div>
+
+      <div class="url-label" style="margin-top:20px;">Google Drive Root Folder ID</div>
+      <div class="url-box">YOUR_ID</div>
+
+      <div class="url-label" style="margin-top:20px;">GitHub Repository</div>
+      <div class="url-box">github.com/YOUR_ID/YOUR_ID.github.io → /your/ folder</div>
+
+      <div class="url-label" style="margin-top:20px;">Make.com Scenario</div>
+      <div class="url-box">make.com → My Organization → Scenarios → Integration Email, Google Sheets</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 05 -->
+  <div class="section" id="s5">
+    <div class="section-num" style="color: rgb(22, 163, 74); font-weight: bold;"></div>
+    <br class=""><div class="section-title" style="color: rgb(22, 163, 74); font-weight: bold;">005 Spreadsheet Column Guide</div>
+    <div class="section-desc">What data each sheet contains</div>
+
+    <div class="card" style="margin-bottom:24px;">
+      <div class="card-title">Primary Sheet — DK_Reservation_Master → reservations tab</div>
+      <div class="card-sub">Make receives Naver emails and logs them automatically (do not edit manually)</div>
+      <table class="col-table">
+        <tbody><tr><th>Column Name</th><th>Content</th><th>Example</th></tr>
+        <tr><td class="col-name">received_at</td><td>Email received time</td><td class="">2026-01-01T...</td></tr>
+        <tr><td class="col-name">mail_subject</td><td>Email subject</td><td class="">[Naver Booking] KIM*WON</td></tr>
+        <tr><td class="col-name">reservation_name</td><td>Booker name (masked)</td><td class="">KIM*WON</td></tr>
+        <tr><td class="col-name">reservation_applied_at</td><td>Booking request time</td><td class="">2026.01.01. 10:30:00</td></tr>
+        <tr><td class="col-name">reservation_no</td><td>Booking number (10 digits)</td><td class="">1231231234</td></tr>
+        <tr><td class="col-name">product_name</td><td>Product name</td><td>Two-Cut Editorial</td></tr>
+        <tr><td class="col-name">use_date</td><td>Shoot date</td><td class="">2026.01.05</td></tr>
+        <tr><td class="col-name">use_time</td><td>Shoot time</td><td class="">14:00</td></tr>
+        <tr><td class="col-name">people_count</td><td>Number of people</td><td>2</td></tr>
+        <tr><td class="col-name">booking_status</td><td>Booking status</td><td>Confirmed</td></tr>
+        <tr><td class="col-name">calendar_registered</td><td>Calendar registered</td><td>Y</td></tr>
+      </tbody></table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Secondary Sheet — first sheet → Secondary_Checkin tab</div>
+      <div class="card-sub">Apps Script automatically logs data during on-site check-in</div>
+      <table class="col-table">
+        <tbody><tr><th>Column Name</th><th>Content</th><th>Notes</th></tr>
+        <tr><td class="col-name">checkin_at</td><td class="">Check-in time</td><td>Auto</td></tr>
+        <tr><td class="col-name">date</td><td class="">Shoot date (20260101)</td><td>Auto</td></tr>
+        <tr><td class="col-name">time</td><td>Time slot (14:00)</td><td>Auto</td></tr>
+        <tr><td class="col-name">reservation_no</td><td>Booking number or walk-in code</td><td>Auto</td></tr>
+        <tr><td class="col-name">masked_name</td><td class="">Masked name (KIM*WON)</td><td>Auto</td></tr>
+        <tr><td class="col-name">real_name</td><td>Real name (verified on site)</td><td>Entered by operator</td></tr>
+        <tr><td class="col-name">product</td><td>Product name</td><td>Auto</td></tr>
+        <tr><td class="col-name">people</td><td>People</td><td>Auto</td></tr>
+        <tr><td class="col-name">email</td><td class="">Email</td><td>Customer input</td></tr>
+        <tr><td class="col-name">phone</td><td>Phone number</td><td>Customer input</td></tr>
+        <tr><td class="col-name">privacy_consent</td><td>Privacy consent Y/N</td><td>Required</td></tr>
+        <tr><td class="col-name">sns_consent</td><td>SNS usage consent Y/N</td><td>Optional</td></tr>
+        <tr><td class="col-name">memo</td><td>Notes / special details</td><td>Optional</td></tr>
+        <tr><td class="col-name">type</td><td>Booking / walk-in</td><td>Auto</td></tr>
+        <tr><td class="col-name">photo_path</td><td>Mugshot Drive URL</td><td>Auto</td></tr>
+        <tr><td class="col-name">folder_url</td><td>Customer folder URL</td><td>Auto</td></tr>
+        <tr><td class="col-name">delivery_status</td><td>Delivery status</td><td>Manual update</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 06 -->
+  <div class="section" id="s6">
+    <div class="section-num" style="color: rgb(22, 163, 74); font-weight: bold;"></div>
+    <br class=""><div class="section-title" style="color: rgb(22, 163, 74); font-weight: bold;">006 How to Operate On Site</div>
+    <div class="section-desc">Steps for the operator on the shoot day</div>
+
+    <div class="step-list">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Open the app in iPad Safari</div>
+          <div class="step-desc">Tap the “DKsequence On-Site Operations” icon saved on the home screen, or enter the script.google.com app URL directly in Safari.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Select a time tab</div>
+          <div class="step-desc">Tap the current time tab at the top (for example, 14:00). The booking list for that time slot loads automatically. Completed customers appear dimmed.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Tap customer card → check-in screen</div>
+          <div class="step-desc">Tap the card of the arriving customer. On the check-in screen, verify and enter the real name. Enter the email and phone number, and collect privacy consent. (Press ▼ to view the details.)</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Open capture window → start camera → capture</div>
+          <div class="step-desc">Tap “Open Capture Window” → in the popup tap “Start Camera” → allow permission → use “Take Photo” to capture the mugshot. After capture, the popup closes automatically.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-title">Confirm auto-save, then move to the next customer</div>
+          <div class="step-desc">On the saving screen, the three steps (save to Drive → log to sheet → mark as completed) finish in order. Tap the “Next Customer” button to return to the dashboard.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip" style="margin-top:24px;">
+      <div class="tip-label">On-site paying customers (walk-ins without a booking)</div>
+      <div class="tip-text">Tap the '+ Add New Customer' button at the bottom of the dashboard. A reception code is generated automatically (format: 20260405-W1), then enter the name, time, product, and payment method and proceed with capture.</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 07 -->
+  <div class="section" id="s7">
+    <div class="section-num" style="color: rgb(22, 163, 74); font-weight: bold;"></div>
+    <br class=""><div class="section-title" style="color: rgb(22, 163, 74); font-weight: bold;">007 Drive Folder Structure</div>
+    <div class="section-desc">How and where photos are stored</div>
+
+    <div class="card">
+      <pre style="font-family:monospace;font-size:14px;line-height:2;color:var(--dim);" class=""><span style="color:var(--white);">My Drive</span>
+└── <span style="color:var(--white);" class="">0001_DKsequence_file</span>
+    └── <span style="color:var(--amber);" class="">DKsequence_PLACE</span>  ← Root folder (ID: 1MJlGEFWKN...)
+        └── <span style="color:var(--white);">2026</span>               ← Year (auto-created)
+            └── <span style="color:var(--white);" class="">20260105</span>        ← Shoot date (auto-created)
+                ├── <span style="color:var(--blue);">13:00</span>        ← Time slot (auto-created)
+                │   ├── <span style="color:var(--green);" class="">1231231234_KIMMINWON</span>  ← Customer folder (auto-created)
+                │   │   └── <span style="color:var(--green);" class="">20260105_1231231234_KIMMINWON.jpg</span>  ← Mugshot
+                │   └── <span style="color:var(--green);" class="">20260105-W1_GANGMINSU</span>  ← Walk-in customer
+                ├── <span style="color:var(--blue);">14:00</span>
+                └── <span style="color:var(--blue);">15:00</span>
+      </pre>
+      <div class="tip" style="margin-top:16px;">
+        <div class="tip-label">Planned for Phase 3</div>
+        <div class="tip-text">Mirrorless main-shoot photos will also be added to the same customer folder. Use the mugshot to identify who is who before organizing the folders.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 08 -->
+  <div class="section" id="s8">
+    <div class="section-num" style="color: rgb(22, 163, 74); font-weight: bold;"></div>
+    <br class=""><div class="section-title" style="color: rgb(22, 163, 74); font-weight: bold;">008 Troubleshooting Guide</div>
+    <div class="section-desc">Check here when something is not working</div>
+
+    <div class="trouble-item">
+      <div class="trouble-q">The booking list shows a loading failure</div>
+      <div class="trouble-a">Check whether the primary spreadsheet (DK_Reservation_Master) contains data for that date. Also confirm that the Apps Script deployment is the latest version. (Deploy → Manage deployments → check version)</div>
+    </div>
+    <div class="trouble-item">
+      <div class="trouble-q">The camera will not open</div>
+      <div class="trouble-a">Go to iPad Settings → Safari → make sure Camera is set to “Ask” or “Allow.” If popups are blocked, change Safari settings to allow popups.</div>
+    </div>
+    <div class="trouble-item">
+      <div class="trouble-q">The photo was saved, but the sheet was not updated</div>
+      <div class="trouble-a">Check the error in the Apps Script execution log. (Code editor → Execution log tab) Also verify that the secondary spreadsheet ID is correctly entered in the Code.gs CONFIG.</div>
+    </div>
+    <div class="trouble-item">
+      <div class="trouble-q">It seems the Make automation has stopped</div>
+      <div class="trouble-a">Go to make.com and check whether the “Integration Email, Google Sheets” scenario is turned on. (If the toggle on the right is blue, it is ON.) Also check the run history for errors.</div>
+    </div>
+    <div class="trouble-item">
+      <div class="trouble-q">Changes are not reflected on the iPad after editing the code</div>
+      <div class="trouble-a">After editing Apps Script code, you must redeploy. Deploy → Manage deployments → pencil icon → New version → Deploy. Then refresh Safari to see the changes.</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 09 -->
+  <div class="section" id="s9">
+    <div class="section-num" style="color: rgb(22, 163, 74); font-weight: bold;"></div>
+    <br class=""><div class="section-title" style="color: rgb(22, 163, 74); font-weight: bold;">009 How to Redeploy After Editing Code</div>
+    <div class="section-desc">When you edit Code.gs or index.html</div>
+
+    <div class="step-list">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Open script.google.com</div>
+          <div class="step-desc">Open the 20260101_YOUR_DOC_v101 project.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Edit the code and save</div>
+          <div class="step-desc">Edit Code.gs or index.html and save with Ctrl+S.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Deploy → Manage deployments</div>
+          <div class="step-desc">Click the “Deploy” button in the upper-right corner → click “Manage deployments” (not New deployment!)</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Pencil icon → New version → Deploy</div>
+          <div class="step-desc">Click the pencil (✏️) to the right of the existing deployment → select “New version” from the version dropdown → click the “Deploy” button</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-title">When editing camera.html — GitHub only</div>
+          <div class="step-desc">camera.html exists only on GitHub. github.com/YOUR_ID/YOUR_ID.github.io → operation/camera.html → ✏️ Edit → modify → Commit changes</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="warn" style="margin-top:24px;">
+      <div class="warn-label">Important</div>
+      <div class="warn-text">Never change the three values in the CONFIG block of Code.gs: ROOT_FOLDER_ID, SHEET_1ST_ID, and SHEET_2ND_ID. If they change, the data will be saved in the wrong place.</div>
+    </div>
+  </div>
+
+</div>
+
+
+</body>
+</html>
