@@ -733,7 +733,15 @@
         scroll-margin-top: 96px;
       }
     }
-  </style>
+  
+/* image protection */
+img {
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+</style>
 </head>
 <body id="top">
 
@@ -1411,5 +1419,32 @@
     renderRandomTriptych('sequence01-grid', sequence01Images, 'Sequence 01 thumbnail');
     renderRandomTriptych('sequence02-grid', sequence02Images, 'Sequence 02 thumbnail');
   </script>
+
+<script>
+(function () {
+  function isProtectedImageTarget(target) {
+    return !!(target && (target.tagName === 'IMG' || target.closest('img')));
+  }
+
+  document.addEventListener('contextmenu', function (e) {
+    if (isProtectedImageTarget(e.target)) {
+      e.preventDefault();
+    }
+  });
+
+  document.addEventListener('dragstart', function (e) {
+    if (isProtectedImageTarget(e.target)) {
+      e.preventDefault();
+    }
+  });
+
+  document.addEventListener('selectstart', function (e) {
+    if (isProtectedImageTarget(e.target)) {
+      e.preventDefault();
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
