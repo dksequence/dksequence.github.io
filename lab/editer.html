@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML Visual Editor</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#f0eeea;--surface:#fff;--bd:rgba(0,0,0,.1);--bdm:rgba(0,0,0,.18);
+  --tx:#1a1a1a;--mt:#888;--ac:#2563eb;--acbg:#eff6ff;
+  --dg:#dc2626;--gn:#16a34a;
+}
+body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--tx);font-size:13px;height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+
+/* Toolbar */
+.bar{height:50px;background:var(--surface);border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:5px;padding:0 14px;flex-shrink:0;}
+.brand{font-size:14px;font-weight:700;display:flex;align-items:center;gap:5px;margin-right:6px;}
+.brand svg{width:17px;height:17px;color:var(--ac);}
+.sep{width:1px;height:22px;background:var(--bd);margin:0 3px;}
+.btn{height:30px;padding:0 10px;border:1px solid var(--bdm);background:var(--surface);color:var(--tx);border-radius:5px;cursor:pointer;font-size:12px;font-family:inherit;white-space:nowrap;display:flex;align-items:center;gap:4px;}
+.btn:hover{background:var(--bg);}
+.btn:disabled{opacity:.3;cursor:not-allowed;}
+.btn.ok{background:var(--gn);color:#fff;border-color:var(--gn);}
+.btn.ok:hover{background:#15803d;}
+.btn.pri{background:var(--ac);color:#fff;border-color:var(--ac);}
+.btn svg{width:13px;height:13px;flex-shrink:0;}
+.badge{margin-left:auto;font-size:11px;background:var(--acbg);color:var(--ac);padding:2px 9px;border-radius:20px;font-weight:600;}
+#fi{display:none;}
+
+/* Layout */
+.layout{display:flex;flex:1;overflow:hidden;}
+
+/* Left tree */
+.lpanel{width:240px;background:var(--surface);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;}
+.ph{padding:8px 12px;font-size:10px;font-weight:700;color:var(--mt);letter-spacing:.07em;text-transform:uppercase;border-bottom:1px solid var(--bd);flex-shrink:0;}
+.tb{flex:1;overflow-y:auto;padding:4px 0;}
+.ti{display:flex;align-items:center;gap:5px;padding:5px 10px;cursor:pointer;border-left:3px solid transparent;}
+.ti:hover{background:var(--bg);}
+.ti.sel{background:var(--acbg);border-left-color:var(--ac);}
+.ti .tg{font-family:monospace;font-size:10px;color:var(--mt);background:var(--bg);padding:1px 4px;border-radius:3px;flex-shrink:0;}
+.ti.sel .tg{background:#dbeafe;color:var(--ac);}
+.ti .tv{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;font-size:11px;color:var(--mt);}
+.d1{padding-left:22px;}.d2{padding-left:36px;}.d3{padding-left:50px;}.d4{padding-left:64px;}
+.empty{padding:20px;text-align:center;color:var(--mt);font-size:12px;line-height:1.8;}
+
+/* Center */
+.mid{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);}
+.cbar{height:32px;background:var(--surface);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 12px;gap:8px;font-size:11px;color:var(--mt);flex-shrink:0;}
+.curl{flex:1;background:var(--bg);border:1px solid var(--bd);border-radius:14px;padding:2px 12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cwrap{flex:1;overflow:auto;padding:16px;display:flex;justify-content:center;align-items:flex-start;}
+
+/* Drop zone */
+.drop{width:100%;max-width:880px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border:2px dashed var(--bdm);border-radius:12px;padding:60px;color:var(--mt);cursor:pointer;text-align:center;transition:all .15s;}
+.drop:hover,.drop.over{border-color:var(--ac);background:var(--acbg);color:var(--ac);}
+.drop svg{width:36px;height:36px;opacity:.35;}
+.drop strong{font-size:14px;color:var(--tx);}
+
+/* Edit canvas */
+#canvas{width:100%;max-width:880px;background:#fff;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,.09);padding:20px;min-height:300px;display:none;}
+/* Hover & selection highlight */
+#canvas *{cursor:pointer !important;}
+#canvas *:hover{outline:1.5px dashed rgba(37,99,235,.4) !important;outline-offset:2px;}
+.el-sel{outline:2px solid var(--ac) !important;outline-offset:3px !important;background-color:rgba(37,99,235,.03) !important;}
+
+/* Right properties panel */
+.rpanel{width:272px;background:var(--surface);border-left:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;}
+.rscr{flex:1;overflow-y:auto;}
+.ps{padding:12px 14px;border-bottom:1px solid var(--bd);}
+.pst{font-size:10px;font-weight:700;color:var(--mt);letter-spacing:.07em;text-transform:uppercase;margin-bottom:9px;}
+.pr{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;}
+.pl{font-size:11px;color:var(--mt);width:50px;flex-shrink:0;padding-top:7px;}
+.pi{flex:1;border:1px solid var(--bdm);border-radius:5px;padding:5px 8px;font-size:12px;font-family:inherit;color:var(--tx);background:var(--surface);resize:vertical;min-height:32px;}
+.pi:focus{outline:none;border-color:var(--ac);box-shadow:0 0 0 2px rgba(37,99,235,.12);}
+.cr{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;}
+.cd{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;flex-shrink:0;transition:transform .1s;}
+.cd:hover{transform:scale(1.15);}
+.cd.on{border-color:var(--ac);}
+.fr{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px;}
+.fb{padding:3px 8px;border:1px solid var(--bdm);background:var(--surface);border-radius:4px;cursor:pointer;font-size:12px;font-family:inherit;}
+.fb:hover{background:var(--bg);}
+.fb.on{background:var(--ac);color:#fff;border-color:var(--ac);}
+
+/* Status bar */
+.sbar{height:24px;background:var(--surface);border-top:1px solid var(--bd);display:flex;align-items:center;padding:0 14px;gap:14px;font-size:11px;color:var(--mt);flex-shrink:0;}
+.dot{width:6px;height:6px;border-radius:50%;background:#ccc;}
+.dot.on{background:var(--gn);}
+
+/* Toast */
+.toast{position:fixed;bottom:34px;left:50%;transform:translateX(-50%) translateY(8px);background:#111;color:#fff;padding:7px 16px;border-radius:8px;font-size:12px;opacity:0;transition:opacity .18s,transform .18s;pointer-events:none;z-index:9999;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Modal */
+.mover{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:500;align-items:center;justify-content:center;}
+.mover.open{display:flex;}
+.modal{background:var(--surface);border-radius:12px;padding:22px;width:460px;box-shadow:0 8px 32px rgba(0,0,0,.15);}
+.modal h3{font-size:15px;font-weight:600;margin-bottom:14px;}
+.modal label{font-size:11px;color:var(--mt);display:block;margin-bottom:3px;margin-top:10px;}
+.modal select,.modal textarea,.modal input{width:100%;border:1px solid var(--bdm);border-radius:5px;padding:6px 9px;font-size:12px;font-family:inherit;color:var(--tx);background:var(--surface);resize:vertical;}
+.modal select:focus,.modal textarea:focus,.modal input:focus{outline:none;border-color:var(--ac);}
+.ma{display:flex;justify-content:flex-end;gap:8px;margin-top:16px;}
+</style>
+</head>
+<body>
+<input type="file" id="fi" accept=".html,.htm">
+
+<!-- Toolbar -->
+<div class="bar">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+    HTML Editor
+  </div>
+  <div class="sep"></div>
+  <button class="btn" onclick="document.getElementById('fi').click()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    Open File
+  </button>
+  <button class="btn" id="btnSpacer" onclick="insertSpacer()" disabled>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><line x1="5" y1="7" x2="19" y2="7"/><line x1="5" y1="17" x2="19" y2="17"/></svg>
+    Spacer
+  </button>
+  <button class="btn" id="btnAdd" onclick="openAddModal()" disabled>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Add Block
+  </button>
+  <button class="btn" id="btnDel" onclick="deleteEl()" disabled>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+    Delete
+  </button>
+  <button class="btn" id="btnUp" onclick="moveEl(-1)" disabled>▲ Up</button>
+  <button class="btn" id="btnDn" onclick="moveEl(1)" disabled>▼ Down</button>
+  <div class="sep"></div>
+  <button class="btn" id="btnUndo" onclick="doUndo()" disabled>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.27"/></svg>
+    Undo (Ctrl+Z)
+  </button>
+  <div class="sep"></div>
+  <button class="btn" id="btnPreview" onclick="openPreview()" disabled>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+    Preview
+  </button>
+  <button class="btn ok" id="btnSave" onclick="saveFile()" disabled>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Save HTML
+  </button>
+  <span class="badge" id="badge">No file</span>
+</div>
+
+<div class="layout">
+  <!-- Left tree -->
+  <div class="lpanel">
+    <div class="ph">Structure Tree</div>
+    <div class="tb" id="treeBox"><div class="empty">Open a file to<br>see the structure</div></div>
+  </div>
+
+  <!-- Center canvas -->
+  <div class="mid">
+    <div class="cbar">
+      <span id="selInfo" class="curl">Open a file and click an element to select it</span>
+    </div>
+    <div class="cwrap">
+      <div class="drop" id="drop" onclick="document.getElementById('fi').click()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="12" y1="12" x2="12" y2="18"/></svg>
+        <strong>Open HTML File</strong>
+        Click or drag and drop a file here<br>
+        <small style="opacity:.5">.html / .htm files supported</small>
+      </div>
+      <div id="canvas"></div>
+    </div>
+  </div>
+
+  <!-- Right properties -->
+  <div class="rpanel">
+    <div class="ph">Properties</div>
+    <div class="rscr" id="propsBox">
+      <div class="empty">Click an element<br>to edit it here</div>
+    </div>
+  </div>
+</div>
+
+<!-- Status bar -->
+<div class="sbar">
+  <div style="display:flex;align-items:center;gap:5px"><div class="dot" id="dot"></div><span id="stxt">Idle</span></div>
+  <span id="fnameEl" style="margin-left:auto;display:none"></span>
+  <span id="ecntEl"></span>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Add block modal -->
+<div class="mover" id="addModal">
+  <div class="modal">
+    <h3>Add Block</h3>
+    <label>Insert position</label>
+    <select id="mPos">
+      <option value="after">After selected element</option>
+      <option value="before">Before selected element</option>
+      <option value="inside">Inside selected element</option>
+      <option value="end">End of document</option>
+    </select>
+    <label>Block type</label>
+    <select id="mType" onchange="updateHint()">
+      <option value="p">Paragraph (p)</option>
+      <option value="h1">Heading 1 (h1)</option>
+      <option value="h2">Heading 2 (h2)</option>
+      <option value="h3">Heading 3 (h3)</option>
+      <option value="div">Box (div)</option>
+      <option value="ul">List (ul)</option>
+      <option value="img">Image (img)</option>
+      <option value="a">Link (a)</option>
+      <option value="hr">Divider (hr)</option>
+      <option value="custom">Custom HTML</option>
+    </select>
+    <label>Content</label>
+    <textarea id="mContent" rows="3"></textarea>
+    <div class="ma">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn pri" onclick="insertBlock()">Add</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Global state ── */
+let fileName = '';
+let savedHead = '<head><meta charset="UTF-8"></head>';
+let selEl = null;
+let undoStack = [];
+const UNDO_MAX = 40;
+
+const canvas   = document.getElementById('canvas');
+const treeBox  = document.getElementById('treeBox');
+const propsBox = document.getElementById('propsBox');
+const drop     = document.getElementById('drop');
+
+/* ── File load ── */
+document.getElementById('fi').addEventListener('change', e => {
+  if (e.target.files[0]) loadFile(e.target.files[0]);
+});
+drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('over'); });
+drop.addEventListener('dragleave', () => drop.classList.remove('over'));
+drop.addEventListener('drop', e => {
+  e.preventDefault(); drop.classList.remove('over');
+  const f = e.dataTransfer.files[0];
+  if (f && /\.html?$/i.test(f.name)) loadFile(f);
+  else showToast('Only HTML files (.html) are supported');
+});
+
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey||e.metaKey) && e.key === 'z') { e.preventDefault(); doUndo(); }
+  if ((e.ctrlKey||e.metaKey) && e.key === 's') { e.preventDefault(); saveFile(); }
+});
+
+function loadFile(file) {
+  fileName = file.name;
+  const r = new FileReader();
+  r.onload = ev => {
+    const raw = ev.target.result;
+    /* Save head */
+    const hm = raw.match(/<head[\s\S]*?<\/head>/i);
+    if (hm) savedHead = hm[0];
+    /* Extract body content */
+    const bm = raw.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+    const bodyHTML = bm ? bm[1] : raw;
+    /* Inject directly into canvas */
+    canvas.innerHTML = bodyHTML;
+    canvas.style.display = 'block';
+    drop.style.display = 'none';
+    pushUndo();
+    attachClicks();
+    buildTree();
+    countEl();
+    enableUI();
+    showToast(fileName + ' opened');
+  };
+  r.readAsText(file, 'UTF-8');
+}
+
+/* ── Click events — core
+   Handled at capture phase to block default link behavior
+─────────────────────────────── */
+function attachClicks() {
+  /* Prevent duplicate listeners: one capture listener on canvas */
+  canvas.removeEventListener('click', canvasClick, true);
+  canvas.addEventListener('click', canvasClick, true);
+}
+
+function canvasClick(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  const t = e.target;
+  if (t === canvas) return;
+  selectEl(t);
+}
+
+/* ── Element selection ── */
+function selectEl(el) {
+  if (selEl) selEl.classList.remove('el-sel');
+  selEl = el;
+  selEl.classList.add('el-sel');
+
+  const tag = el.tagName.toLowerCase();
+  const idStr = el.id ? '#' + el.id : '';
+  document.getElementById('selInfo').textContent = '<' + tag + idStr + '> selected — edit in the right panel';
+  document.getElementById('badge').textContent = 'Editing — ' + tag;
+  document.getElementById('btnDel').disabled = false;
+  document.getElementById('btnUp').disabled  = false;
+  document.getElementById('btnDn').disabled  = false;
+
+  highlightTree(el);
+  renderProps(el);
+}
+
+/* ── Tree ── */
+const SKIP_TAGS = new Set(['script','style','meta','link','noscript']);
+
+function buildTree() {
+  let html = '';
+  const allEls = [];
+
+  function walk(node, depth) {
+    if (node.nodeType !== 1) return;
+    const tag = node.tagName.toLowerCase();
+    if (SKIP_TAGS.has(tag)) return;
+    const idx = allEls.length;
+    allEls.push(node);
+    /* Assign index attribute to node */
+    node.dataset.editorIdx = idx;
+    const txt = (node.textContent || '').replace(/\s+/g,' ').trim().slice(0,24);
+    const dc  = depth > 0 ? ' d' + Math.min(depth, 4) : '';
+    html += `<div class="ti${dc}" onclick="treeClick(${idx})">
+      <span class="tg">${tag}</span><span class="tv">${txt || '—'}</span>
+    </div>`;
+    Array.from(node.children).forEach(c => walk(c, depth + 1));
+  }
+  Array.from(canvas.children).forEach(c => walk(c, 0));
+  treeBox.innerHTML = html || '<div class="empty">No elements</div>';
+  /* Store globally */
+  window._treeEls = allEls;
+}
+
+function treeClick(idx) {
+  const el = window._treeEls && window._treeEls[idx];
+  if (el) selectEl(el);
+}
+
+function highlightTree(el) {
+  const idx = el.dataset && el.dataset.editorIdx;
+  document.querySelectorAll('#treeBox .ti').forEach((ti, i) => {
+    ti.classList.toggle('sel', String(i) === String(idx));
+  });
+}
+
+/* ── Properties panel render ── */
+function renderProps(el) {
+  const tag     = el.tagName.toLowerCase();
+  const hasText = !['img','hr','br','input','select'].includes(tag);
+  const hasSrc  = tag === 'img';
+  const hasHref = tag === 'a';
+
+  let h = `<div class="ps"><div class="pst">Tag &lt;${tag}&gt;</div>`;
+
+  if (hasText) h += `<div class="pr"><span class="pl">Content</span>
+    <textarea class="pi" rows="3" id="pText" oninput="applyText()">${esc(el.innerText || '')}</textarea></div>`;
+
+  if (hasSrc) h += `
+    <div class="pr"><span class="pl">src</span><input class="pi" id="pSrc" value="${attr(el,'src')}" oninput="applyAttr('src','pSrc')"></div>
+    <div class="pr"><span class="pl">alt</span><input class="pi" id="pAlt" value="${attr(el,'alt')}" oninput="applyAttr('alt','pAlt')"></div>`;
+
+  if (hasHref) h += `<div class="pr"><span class="pl">Link</span>
+    <input class="pi" id="pHref" value="${attr(el,'href')}" oninput="applyAttr('href','pHref')"></div>`;
+
+  h += `
+    <div class="pr"><span class="pl">Class</span>
+      <input class="pi" id="pCls" value="${(el.className||'').replace(/\bel-sel\b/g,'').trim()}" oninput="applyClass()"></div>
+    <div class="pr"><span class="pl">ID</span>
+      <input class="pi" id="pId" value="${el.id||''}" oninput="applyAttr('id','pId')"></div>
+  </div>`;
+
+  /* Text color */
+  h += `<div class="ps"><div class="pst">Text Color</div><div class="cr" id="crTxt">
+    ${['#1a1a1a','#2563eb','#dc2626','#16a34a','#d97706','#7c3aed','#0891b2','#ffffff'].map(c =>
+      `<div class="cd" style="background:${c};border:1.5px solid ${c==='#ffffff'?'#ccc':c}" onclick="pickColor('color','${c}',this,'crTxt')"></div>`
+    ).join('')}
+  </div>
+  <div class="pst" style="margin-top:10px">Background</div><div class="cr" id="crBg">
+    ${['transparent','#f5f4f0','#eff6ff','#fef2f2','#f0fdf4','#fffbeb','#e8e8e8','#1a1a1a'].map(c =>
+      `<div class="cd" style="background:${c==='transparent'?'repeating-linear-gradient(45deg,#ddd 0,#ddd 2px,#fff 0,#fff 6px)':c};border:1.5px solid ${['transparent'].includes(c)?'#ccc':'#0001'}" onclick="pickColor('background-color','${c}',this,'crBg')"></div>`
+    ).join('')}
+  </div></div>`;
+
+  /* Font */
+  h += `<div class="ps"><div class="pst">Font & Align</div>
+  <div class="fr">
+    <button class="fb" style="font-weight:700" id="fbB" onclick="toggleFb('font-weight','bold','fbB')">B</button>
+    <button class="fb" style="font-style:italic" id="fbI" onclick="toggleFb('font-style','italic','fbI')">I</button>
+    <button class="fb" style="text-decoration:underline" id="fbU" onclick="toggleFb('text-decoration','underline','fbU')">U</button>
+  </div>
+  <div class="fr" style="margin-top:5px">
+    ${['12','14','16','18','22','28','36','48'].map(s =>
+      `<button class="fb" onclick="setCSS('font-size','${s}px')">${s}</button>`
+    ).join('')}
+  </div>
+  <div class="fr" style="margin-top:5px">
+    ${[['left','←'],['center','↔'],['right','→'],['justify','≡']].map(([v,lb]) =>
+      `<button class="fb" onclick="setCSS('text-align','${v}')">${lb}</button>`
+    ).join('')}
+  </div></div>`;
+
+  /* Layout */
+  h += `<div class="ps"><div class="pst">Layout</div>
+    <div class="pr"><span class="pl">Margin</span><input class="pi" placeholder="e.g. 8px 0" value="${gcs(el,'margin')}" oninput="setCSS('margin',this.value)"></div>
+    <div class="pr"><span class="pl">Padding</span><input class="pi" placeholder="e.g. 16px" value="${gcs(el,'padding')}" oninput="setCSS('padding',this.value)"></div>
+    <div class="pr"><span class="pl">Width</span><input class="pi" placeholder="e.g. 100% / 320px" value="${gcs(el,'width')}" oninput="setCSS('width',this.value)"></div>
+    <div class="pr"><span class="pl">Height</span><input class="pi" placeholder="e.g. auto / 200px" value="${gcs(el,'height')}" oninput="setCSS('height',this.value)"></div>
+  </div>`;
+
+  /* Raw CSS */
+  h += `<div class="ps"><div class="pst">Raw CSS</div>
+    <textarea class="pi" rows="3" id="pRaw" placeholder="color:red; font-size:18px" oninput="applyRaw()">${el.getAttribute('style')||''}</textarea>
+  </div>`;
+
+  propsBox.innerHTML = h;
+}
+
+/* ── Edit functions ── */
+function esc(s){ return String(s).replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function attr(el, a){ return esc(el.getAttribute(a)||''); }
+function gcs(el, prop){ return el.style[toCamel(prop)] || ''; }
+function toCamel(s){ return s.replace(/-([a-z])/g,(_,c)=>c.toUpperCase()); }
+
+function applyText() {
+  if (!selEl) return;
+  pushUndo();
+  selEl.textContent = document.getElementById('pText').value;
+  buildTree();
+}
+
+function applyAttr(a, id) {
+  if (!selEl) return;
+  pushUndo();
+  const v = document.getElementById(id).value;
+  v ? selEl.setAttribute(a, v) : selEl.removeAttribute(a);
+  buildTree();
+}
+
+function applyClass() {
+  if (!selEl) return;
+  pushUndo();
+  const v = document.getElementById('pCls').value.trim();
+  selEl.className = (v ? v + ' ' : '') + 'el-sel';
+}
+
+function pickColor(prop, val, dot, rowId) {
+  if (!selEl) return;
+  pushUndo();
+  selEl.style[toCamel(prop)] = val === 'transparent' ? '' : val;
+  document.querySelectorAll('#' + rowId + ' .cd').forEach(d => d.classList.remove('on'));
+  dot.classList.add('on');
+  syncRaw();
+}
+
+function toggleFb(prop, val, btnId) {
+  if (!selEl) return;
+  pushUndo();
+  const cur = selEl.style[toCamel(prop)];
+  selEl.style[toCamel(prop)] = cur === val ? '' : val;
+  const btn = document.getElementById(btnId);
+  if (btn) btn.classList.toggle('on', selEl.style[toCamel(prop)] === val);
+  syncRaw();
+}
+
+function setCSS(prop, val) {
+  if (!selEl) return;
+  pushUndo();
+  selEl.style[toCamel(prop)] = val;
+  syncRaw();
+}
+
+function applyRaw() {
+  if (!selEl) return;
+  pushUndo();
+  selEl.setAttribute('style', document.getElementById('pRaw').value.trim());
+}
+
+function syncRaw() {
+  const el = document.getElementById('pRaw');
+  if (el && selEl) el.value = selEl.getAttribute('style') || '';
+}
+
+/* ── Delete / Move ── */
+function deleteEl() {
+  if (!selEl) return;
+  if (!confirm('Delete this element?')) return;
+  pushUndo();
+  selEl.remove();
+  selEl = null;
+  propsBox.innerHTML = '<div class="empty">Select an element</div>';
+  document.getElementById('selInfo').textContent = 'Open a file and click an element to select it';
+  document.getElementById('badge').textContent = 'Editing';
+  ['btnDel','btnUp','btnDn'].forEach(id => document.getElementById(id).disabled = true);
+  buildTree(); countEl();
+  showToast('Deleted');
+}
+
+function moveEl(dir) {
+  if (!selEl || !selEl.parentElement) return;
+  pushUndo();
+  const p = selEl.parentElement;
+  if (dir < 0) {
+    const prev = selEl.previousElementSibling;
+    if (prev && prev !== canvas) p.insertBefore(selEl, prev);
+  } else {
+    const next = selEl.nextElementSibling;
+    if (next) next.after(selEl);
+  }
+  selEl.scrollIntoView({ block: 'nearest' });
+  buildTree(); highlightTree(selEl);
+  showToast(dir < 0 ? 'Moved up' : 'Moved down');
+}
+
+/* ── Undo ── */
+function pushUndo() {
+  undoStack.push(canvas.innerHTML);
+  if (undoStack.length > UNDO_MAX) undoStack.shift();
+  document.getElementById('btnUndo').disabled = undoStack.length < 2;
+}
+
+function doUndo() {
+  if (undoStack.length < 2) return;
+  undoStack.pop();
+  canvas.innerHTML = undoStack[undoStack.length - 1];
+  selEl = null;
+  propsBox.innerHTML = '<div class="empty">Select an element</div>';
+  document.getElementById('selInfo').textContent = 'Open a file and click an element to select it';
+  document.getElementById('btnUndo').disabled = undoStack.length < 2;
+  attachClicks(); buildTree(); countEl();
+  showToast('Undone');
+}
+
+/* ── Add block ── */
+const HINTS = { p:'Enter paragraph content.', h1:'Heading 1', h2:'Heading 2', h3:'Heading 3',
+  div:'Box content', ul:'Item 1\nItem 2\nItem 3', img:'https://via.placeholder.com/600x200',
+  a:'Link text', hr:'', custom:'<div style="padding:16px;background:#f0f0f0">Content</div>' };
+
+function openAddModal() { document.getElementById('addModal').classList.add('open'); updateHint(); }
+function closeModal()    { document.getElementById('addModal').classList.remove('open'); }
+function updateHint()    { document.getElementById('mContent').value = HINTS[document.getElementById('mType').value] || ''; }
+
+function insertBlock() {
+  pushUndo();
+  const type    = document.getElementById('mType').value;
+  const content = document.getElementById('mContent').value.trim();
+  const pos     = document.getElementById('mPos').value;
+
+  let el;
+  if (type === 'custom') {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = content;
+    el = tmp.firstElementChild || tmp;
+  } else if (type === 'ul') {
+    el = document.createElement('ul');
+    (content || 'Item').split('\n').forEach(it => {
+      const li = document.createElement('li');
+      li.textContent = it.trim();
+      el.appendChild(li);
+    });
+  } else if (type === 'img') {
+    el = document.createElement('img');
+    el.src = content || 'https://via.placeholder.com/600x200';
+    el.alt = 'Image'; el.style.maxWidth = '100%';
+  } else if (type === 'a') {
+    el = document.createElement('a');
+    el.textContent = content || 'Link'; el.href = '#';
+  } else if (type === 'hr') {
+    el = document.createElement('hr');
+  } else {
+    el = document.createElement(type);
+    el.textContent = content || (type.startsWith('h') ? 'Heading' : 'Content');
+  }
+
+  if (pos === 'end' || !selEl)       canvas.appendChild(el);
+  else if (pos === 'after')          selEl.after(el);
+  else if (pos === 'before')         selEl.before(el);
+  else if (pos === 'inside')         selEl.appendChild(el);
+
+  closeModal();
+  attachClicks(); buildTree(); countEl(); selectEl(el);
+  showToast('Block added');
+}
+
+/* ── Preview ── */
+function openPreview() {
+  const clone = canvas.cloneNode(true);
+  clone.querySelectorAll('.el-sel').forEach(e => e.classList.remove('el-sel'));
+  clone.querySelectorAll('[data-editor-idx]').forEach(e => delete e.dataset.editorIdx);
+  const html = `<!DOCTYPE html>\n<html lang="en">\n${savedHead}\n<body>\n${clone.innerHTML}\n</body>\n</html>`;
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const win  = window.open(url, '_blank');
+  /* Revoke blob URL once the tab loads */
+  if (win) win.addEventListener('load', () => URL.revokeObjectURL(url), { once: true });
+  showToast('Preview opened in new tab');
+}
+
+/* ── Spacer ── */
+function insertSpacer() {
+  pushUndo();
+  const sp = document.createElement('div');
+  sp.style.height  = '32px';
+  sp.style.display = 'block';
+  sp.setAttribute('data-spacer', '1');
+  /* Label visible in editor only; spacer div is kept on save */
+  sp.innerHTML = '<span style="font-size:10px;color:#aaa;pointer-events:none;user-select:none;">— spacer 32px —</span>';
+  if (selEl) selEl.after(sp);
+  else canvas.appendChild(sp);
+  sp.addEventListener('click', canvasClick, true);
+  buildTree(); countEl(); selectEl(sp);
+  showToast('Spacer inserted');
+}
+
+/* ── Save ── */
+function saveFile() {
+  const clone = canvas.cloneNode(true);
+  /* Remove editor classes/attributes */
+  clone.querySelectorAll('.el-sel').forEach(e => e.classList.remove('el-sel'));
+  clone.querySelectorAll('[data-editor-idx]').forEach(e => delete e.dataset.editorIdx);
+  /* Spacer: strip label span, keep empty div */
+  clone.querySelectorAll('[data-spacer]').forEach(e => { e.innerHTML = ''; });
+
+  const bodyContent = clone.innerHTML;
+  const html = `<!DOCTYPE html>\n<html lang="ko">\n${savedHead}\n<body>\n${bodyContent}\n</body>\n</html>`;
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = (fileName || 'document').replace(/\.html?$/i, '') + '_edited.html';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Saved — ' + a.download);
+}
+
+/* ── UI helpers ── */
+function enableUI() {
+  document.getElementById('btnAdd').disabled     = false;
+  document.getElementById('btnSave').disabled    = false;
+  document.getElementById('btnPreview').disabled = false;
+  document.getElementById('btnSpacer').disabled  = false;
+  document.getElementById('dot').classList.add('on');
+  document.getElementById('stxt').textContent = 'Ready to edit';
+  document.getElementById('fnameEl').textContent = fileName;
+  document.getElementById('fnameEl').style.display = 'inline';
+  document.getElementById('badge').textContent = 'Editing';
+}
+
+function countEl() {
+  document.getElementById('ecntEl').textContent = canvas.querySelectorAll('*').length + ' elements';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 2200);
+}
+</script>
+</body>
+</html>

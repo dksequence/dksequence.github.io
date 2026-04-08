@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML Visual Editor — Introduction</title>
+<style>
+:root {
+  --black: #0a0a0a;
+  --dark: #141414;
+  --card: #1c1c1c;
+  --border: rgba(255,255,255,0.1);
+  --white: #f0f0f0;
+  --dim: #888;
+  --blue: #4fa3f7;
+  --green: #4ecba1;
+  --amber: #f0a500;
+  --purple: #a78bfa;
+  --red: #ff6b6b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--black); color: var(--white); font-family: -apple-system, 'Segoe UI', sans-serif; font-size: 16px; line-height: 1.8; }
+.wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 100px; }
+
+/* Header */
+.doc-header { text-align: center; padding: 56px 0 64px; border-bottom: 1px solid var(--border); margin-bottom: 64px; }
+.doc-badge { display: inline-block; background: rgba(79,163,247,0.15); color: var(--blue); font-size: 13px; padding: 5px 16px; border-radius: 2rem; margin-bottom: 20px; letter-spacing: 0.06em; }
+.doc-title { font-size: 40px; font-weight: 700; line-height: 1.25; margin-bottom: 14px; letter-spacing: -0.5px; }
+.doc-sub { font-size: 16px; color: var(--dim); max-width: 560px; margin: 0 auto; }
+.doc-meta { margin-top: 28px; display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+.meta-item { font-size: 13px; color: var(--dim); }
+.meta-item span { color: var(--white); }
+
+/* Sections */
+.section { margin-bottom: 72px; }
+.section-num { font-size: 12px; color: var(--blue); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+.section-title { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+.section-desc { font-size: 15px; color: var(--dim); margin-bottom: 32px; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 56px 0; }
+
+/* Cards */
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 24px 28px; margin-bottom: 16px; }
+.card-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+.card-sub { font-size: 14px; color: var(--dim); margin-bottom: 16px; line-height: 1.7; }
+
+/* Step boxes */
+.step-list { display: flex; flex-direction: column; gap: 12px; }
+.step-item { display: flex; gap: 16px; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+.step-num { width: 36px; height: 36px; border-radius: 50%; background: rgba(79,163,247,0.15); color: var(--blue); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; flex-shrink: 0; }
+.step-body { flex: 1; }
+.step-title { font-size: 17px; font-weight: 600; margin-bottom: 4px; }
+.step-desc { font-size: 14px; color: var(--dim); line-height: 1.7; }
+
+/* Tip / Warn */
+.tip { background: rgba(78,203,161,0.08); border: 1px solid rgba(78,203,161,0.2); border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+.tip-label { font-size: 12px; color: var(--green); font-weight: 700; letter-spacing: 0.06em; margin-bottom: 6px; }
+.tip-text { font-size: 14px; color: var(--dim); line-height: 1.7; }
+.warn { background: rgba(240,165,0,0.08); border: 1px solid rgba(240,165,0,0.2); border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+.warn-label { font-size: 12px; color: var(--amber); font-weight: 700; letter-spacing: 0.06em; margin-bottom: 6px; }
+.warn-text { font-size: 14px; color: var(--dim); line-height: 1.7; }
+
+/* Badges */
+.badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 2rem; font-weight: 600; }
+.badge-blue { background: rgba(79,163,247,0.15); color: var(--blue); }
+.badge-green { background: rgba(78,203,161,0.15); color: var(--green); }
+.badge-amber { background: rgba(240,165,0,0.15); color: var(--amber); }
+.badge-purple { background: rgba(167,139,250,0.15); color: var(--purple); }
+.badge-red { background: rgba(255,107,107,0.15); color: var(--red); }
+
+/* TOC */
+.toc { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 24px 28px; margin-bottom: 56px; }
+.toc-title { font-size: 14px; color: var(--dim); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 16px; }
+.toc-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.toc-list a { color: var(--white); text-decoration: none; font-size: 15px; display: flex; align-items: center; gap: 10px; }
+.toc-list a:hover { color: var(--blue); }
+.toc-num { font-size: 12px; color: var(--dim); width: 24px; }
+
+/* Flow */
+.flow { display: flex; flex-direction: column; gap: 0; }
+.flow-item { display: flex; gap: 16px; }
+.flow-left { display: flex; flex-direction: column; align-items: center; width: 48px; flex-shrink: 0; }
+.flow-dot { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
+.flow-line { width: 2px; background: var(--border); flex: 1; min-height: 24px; }
+.flow-content { padding: 8px 0 32px; flex: 1; }
+.flow-label { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+.flow-name { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+.flow-detail { font-size: 14px; color: var(--dim); line-height: 1.7; }
+.flow-tag { display: inline-block; font-size: 12px; padding: 3px 10px; border-radius: 2rem; margin-top: 8px; margin-right: 6px; }
+
+/* Feature grid */
+.feat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 8px; }
+.feat-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; }
+.feat-icon { font-size: 22px; margin-bottom: 10px; }
+.feat-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.feat-desc { font-size: 13px; color: var(--dim); line-height: 1.6; }
+
+/* UI mock */
+.ui-mock { background: #111; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin: 20px 0; }
+.mock-bar { background: #1a1a1a; border-bottom: 1px solid var(--border); padding: 8px 12px; display: flex; align-items: center; gap: 5px; flex-wrap: nowrap; overflow: hidden; }
+.mock-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.mock-btn { height: 22px; padding: 0 7px; background: #2a2a2a; border: 1px solid rgba(255,255,255,0.12); border-radius: 4px; font-size: 10px; color: #aaa; display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; flex-shrink: 0; }
+.mock-btn.green { background: rgba(78,203,161,0.15); border-color: rgba(78,203,161,0.3); color: var(--green); }
+.mock-btn.blue { background: rgba(79,163,247,0.15); border-color: rgba(79,163,247,0.3); color: var(--blue); }
+.mock-sep { width: 1px; height: 14px; background: rgba(255,255,255,0.1); margin: 0 1px; flex-shrink: 0; }
+.mock-badge { margin-left: auto; font-size: 10px; background: rgba(79,163,247,0.15); color: var(--blue); padding: 2px 8px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
+.mock-body { display: flex; height: 280px; }
+.mock-left { width: 160px; background: #161616; border-right: 1px solid var(--border); padding: 10px 0; flex-shrink: 0; }
+.mock-left-title { font-size: 9px; font-weight: 700; color: #555; letter-spacing: .08em; text-transform: uppercase; padding: 4px 12px 8px; }
+.mock-tree-item { padding: 5px 12px; font-size: 11px; color: #555; display: flex; align-items: center; gap: 6px; }
+.mock-tree-item.active { background: rgba(79,163,247,0.1); color: var(--blue); border-left: 2px solid var(--blue); }
+.mock-tree-item .tag { font-family: monospace; font-size: 9px; background: rgba(255,255,255,0.05); padding: 1px 4px; border-radius: 2px; }
+.mock-center { flex: 1; padding: 14px; overflow: hidden; }
+.mock-canvas { background: #fff; border-radius: 6px; padding: 16px; height: 100%; }
+.mock-canvas-title { font-size: 18px; font-weight: 700; color: #111; margin-bottom: 6px; outline: 2px solid #2563eb; outline-offset: 2px; background: rgba(37,99,235,.03); }
+.mock-canvas-text { font-size: 12px; color: #444; line-height: 1.6; margin-bottom: 10px; }
+.mock-canvas-img { width: 100%; height: 60px; background: #e5e7eb; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #999; }
+.mock-right { width: 200px; background: #161616; border-left: 1px solid var(--border); padding: 10px 0; overflow: hidden; flex-shrink: 0; }
+.mock-right-title { font-size: 9px; font-weight: 700; color: #555; letter-spacing: .08em; text-transform: uppercase; padding: 4px 12px 8px; }
+.mock-prop { padding: 6px 12px; }
+.mock-prop-label { font-size: 9px; color: #555; margin-bottom: 3px; text-transform: uppercase; letter-spacing: .06em; }
+.mock-prop-input { background: #222; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; padding: 4px 8px; font-size: 11px; color: #ccc; width: 100%; }
+.mock-prop-input.focus { border-color: var(--blue); }
+.mock-color-row { display: flex; gap: 4px; padding: 4px 12px; }
+.mock-color-dot { width: 16px; height: 16px; border-radius: 50%; }
+.mock-font-row { display: flex; gap: 3px; padding: 2px 12px; }
+.mock-font-btn { padding: 2px 6px; background: #222; border: 1px solid rgba(255,255,255,0.1); border-radius: 3px; font-size: 10px; color: #aaa; }
+.mock-font-btn.on { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+/* Scenario */
+.scenario { background: #0d0d0d; border: 1px solid var(--border); border-radius: 14px; padding: 28px; margin-bottom: 20px; }
+.scenario-who { font-size: 12px; color: var(--amber); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+.scenario-title { font-size: 19px; font-weight: 700; margin-bottom: 10px; }
+.scenario-body { font-size: 14px; color: var(--dim); line-height: 1.8; }
+.scenario-body strong { color: var(--white); }
+.scenario-quote { border-left: 3px solid var(--blue); padding: 10px 16px; margin: 14px 0; background: rgba(79,163,247,0.05); border-radius: 0 8px 8px 0; font-size: 14px; color: #ccc; font-style: italic; line-height: 1.7; }
+
+/* Comparison table */
+.cmp-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 8px; }
+.cmp-table th { text-align: left; font-size: 12px; color: var(--dim); padding: 8px 14px; border-bottom: 1px solid var(--border); }
+.cmp-table td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top; }
+.cmp-table tr:last-child td { border-bottom: none; }
+.cmp-yes { color: var(--green); font-weight: 600; }
+.cmp-no { color: #555; }
+.cmp-partial { color: var(--amber); }
+
+/* Trouble Q&A */
+.trouble-item { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 12px; }
+.trouble-q { background: var(--card); padding: 16px 20px; font-size: 15px; font-weight: 600; }
+.trouble-q::before { content: "Q. "; color: var(--red); }
+.trouble-a { padding: 16px 20px; font-size: 14px; color: var(--dim); line-height: 1.8; border-top: 1px solid var(--border); }
+.trouble-a::before { content: "A. "; color: var(--green); font-weight: 700; }
+
+@media (max-width: 640px) {
+  .feat-grid { grid-template-columns: 1fr; }
+  .mock-right { display: none; }
+  .mock-left { width: 120px; }
+  .doc-title { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+
+
+
+<div class="wrap">
+
+  <!-- Header -->
+  <div class="doc-header">
+    <div class="doc-badge" style="text-align: center;">Tool Introduction v1.0</div>
+    <div class="doc-title" style="text-align: center;">HTML Simple Text Editor</div>
+    <div class="doc-sub" style="text-align: center;">Edit any HTML file directly in your browser By DKsequence</div>
+    <div style="margin-top:28px;text-align:center;">
+      <a href="https://dksequence.github.io/lab/edit.html" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;font-size:15px;font-weight:700;padding:12px 28px;border-radius:2rem;text-decoration:none;letter-spacing:0.02em;transition:opacity .15s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+        Go to Editor
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+      </a>
+    </div>
+    <div class="doc-meta">
+      <div data-spacer="1" class="" style="height: 12px; display: block;"></div>
+      <div class="meta-item"></div>
+      
+    </div>
+  </div>
+
+  <!-- TOC -->
+  
+
+  <!-- 01 What is this -->
+  <div class="section" id="s1">
+    
+    <div class="section-title" style="color: rgb(22, 163, 74); font-weight: bold;">001 What is this tool?</div>
+    <div class="section-desc">A point-and-click editor for HTML files that runs entirely inside your browser</div>
+
+    <div class="card">
+      <div class="card-title">The simplest possible explanation</div>
+      <div class="card-sub">
+        You have an HTML file — a webpage, a document, a flyer. You want to change the text, tweak a color, or rearrange a section. Normally that means opening a code editor and hunting through hundreds of lines of markup. This tool lets you skip all of that.
+      </div>
+      <div class="card-sub" style="margin-bottom:0">
+        Open the editor in your browser, drag your HTML file in, and <strong style="color:var(--white)">click directly on the element you want to change.</strong> The right panel immediately shows you everything editable about that element — text, colors, font size, spacing — and any change you make reflects on the page in real time. When you're done, click Save and download the updated HTML file.
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:8px;">
+      <div class="card" style="margin-bottom:0;text-align:center;padding:20px 16px">
+        <div style="font-size:28px;margin-bottom:8px">🖱️</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:4px">Click to select</div>
+        <div style="font-size:12px;color:var(--dim)">Click any element on the page to select and edit it</div>
+      </div>
+      <div class="card" style="margin-bottom:0;text-align:center;padding:20px 16px">
+        <div style="font-size:28px;margin-bottom:8px">⚡</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:4px">Instant preview</div>
+        <div style="font-size:12px;color:var(--dim)">See changes live as you type — no refresh needed</div>
+      </div>
+      <div class="card" style="margin-bottom:0;text-align:center;padding:20px 16px">
+        <div style="font-size:28px;margin-bottom:8px">💾</div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:4px">Download as HTML</div>
+        <div style="font-size:12px;color:var(--dim)">One click exports a clean, ready-to-publish file</div>
+      </div>
+    </div>
+
+    <div class="tip" style="margin-top:20px">
+      <div class="tip-label">Who is it for?</div>
+      <div class="tip-text">Anyone who works with HTML files but doesn't want to edit raw code. Designers updating copy, photographers maintaining their portfolio page, small business owners refreshing a flyer, or developers who just want a faster way to make visual tweaks.</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 02 Interface -->
+  <div class="section" id="s2">
+    
+    <div class="section-title" style="color: rgb(22, 163, 74); font-weight: bold;">002 Interface at a glance</div>
+    <div class="section-desc">Three panels, one toolbar — everything visible at once</div>
+
+    <!-- UI Mock -->
+    <div class="ui-mock">
+      <div class="mock-bar">
+        <div class="mock-dot" style="background:#ff5f57"></div>
+        <div class="mock-dot" style="background:#febc2e"></div>
+        <div class="mock-dot" style="background:#28c840"></div>
+        <span style="font-size:10px;color:#444;margin-left:6px;font-weight:600;flex-shrink:0">HTML Editor</span>
+        <div class="mock-sep"></div>
+        <div class="mock-btn">Open File</div>
+        <div class="mock-btn blue">+ Add Block</div>
+        <div class="mock-btn">Delete</div>
+        <div class="mock-btn">▲ Up</div>
+        <div class="mock-btn">▼ Down</div>
+        <div class="mock-sep"></div>
+        <div class="mock-btn">Undo</div>
+        <div class="mock-sep"></div>
+        <div class="mock-btn">Preview</div>
+        <div class="mock-btn green">Save HTML</div>
+        <div class="mock-badge">Editing — h2</div>
+      </div>
+      <div class="mock-body">
+        <!-- Left tree -->
+        <div class="mock-left">
+          <div class="mock-left-title">Structure Tree</div>
+          <div class="mock-tree-item"><span class="tag">div</span> wrap</div>
+          <div class="mock-tree-item" style="padding-left:20px"><span class="tag">h2</span> Main Title</div>
+          <div class="mock-tree-item active" style="padding-left:20px"><span class="tag">h2</span> Section Head...</div>
+          <div class="mock-tree-item" style="padding-left:20px"><span class="tag">p</span> Lorem ipsum...</div>
+          <div class="mock-tree-item" style="padding-left:20px"><span class="tag">img</span> —</div>
+          <div class="mock-tree-item" style="padding-left:20px"><span class="tag">p</span> Footer text</div>
+        </div>
+        <!-- Canvas -->
+        <div class="mock-center">
+          <div class="mock-canvas">
+            <div style="font-size:11px;color:#111;font-weight:700;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #eee">Annual Photography Exhibition 2026</div>
+            <div class="mock-canvas-title">Venue &amp; Schedule</div>
+            <div class="mock-canvas-text">The exhibition runs from April 15 to May 3, 2026 at the Grand Arts Center, Hall B. Admission is free for all visitors during opening hours (10am – 7pm).</div>
+            <div class="mock-canvas-img">[ hero image ]</div>
+          </div>
+        </div>
+        <!-- Right panel -->
+        <div class="mock-right">
+          <div class="mock-right-title">Properties</div>
+          <div class="mock-prop">
+            <div class="mock-prop-label">Tag &lt;h2&gt;</div>
+          </div>
+          <div class="mock-prop">
+            <div class="mock-prop-label">Content</div>
+            <div class="mock-prop-input focus">Venue &amp; Schedule</div>
+          </div>
+          <div class="mock-prop">
+            <div class="mock-prop-label">Text Color</div>
+            <div class="mock-color-row">
+              <div class="mock-color-dot" style="background:#1a1a1a;border:1.5px solid #444"></div>
+              <div class="mock-color-dot" style="background:#2563eb"></div>
+              <div class="mock-color-dot" style="background:#dc2626"></div>
+              <div class="mock-color-dot" style="background:#16a34a"></div>
+              <div class="mock-color-dot" style="background:#d97706"></div>
+            </div>
+          </div>
+          <div class="mock-prop">
+            <div class="mock-prop-label">Font &amp; Align</div>
+            <div class="mock-font-row">
+              <div class="mock-font-btn on" style="font-weight:700">B</div>
+              <div class="mock-font-btn" style="font-style:italic">I</div>
+              <div class="mock-font-btn" style="text-decoration:underline">U</div>
+            </div>
+          </div>
+          <div class="mock-prop">
+            <div class="mock-prop-label">Margin</div>
+            <div class="mock-prop-input">16px 0</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:20px">
+      <div class="card" style="margin-bottom:0;border-color:rgba(79,163,247,0.3)">
+        <div style="font-size:11px;color:var(--blue);font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px">Left Panel</div>
+        <div class="card-title" style="font-size:15px">Structure Tree</div>
+        <div style="font-size:13px;color:var(--dim);line-height:1.6">All elements in the HTML file listed hierarchically. Click any row to jump straight to that element in the canvas.</div>
+      </div>
+      <div class="card" style="margin-bottom:0;border-color:rgba(78,203,161,0.3)">
+        <div style="font-size:11px;color:var(--green);font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px">Center Panel</div>
+        <div class="card-title" style="font-size:15px">Live Canvas</div>
+        <div style="font-size:13px;color:var(--dim);line-height:1.6">The actual HTML rendered as a webpage. Hover any element to see its outline. Click to select. Changes appear instantly.</div>
+      </div>
+      <div class="card" style="margin-bottom:0;border-color:rgba(167,139,250,0.3)">
+        <div style="font-size:11px;color:var(--purple);font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px">Right Panel</div>
+        <div class="card-title" style="font-size:15px">Properties</div>
+        <div style="font-size:13px;color:var(--dim);line-height:1.6">Edit text, colors, font size, bold/italic, margins, padding, width, and raw CSS — all without touching any code.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 03 How to use -->
+  <div class="section" id="s3">
+    
+    <div class="section-title" style="color: rgb(22, 163, 74); font-weight: bold;">003 How to use — step by step</div>
+    <div class="section-desc">From zero to edited file in under two minutes</div>
+
+    <div class="step-list">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Open the editor</div>
+          <div class="step-desc">Double-click <code style="background:#222;padding:1px 6px;border-radius:3px;font-size:13px">html-editor-EN.html</code> to open it in Chrome or Safari. No installation, no account, no internet connection required.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Load your HTML file</div>
+          <div class="step-desc">Click <strong style="color:var(--white)">Open File</strong> in the toolbar, or simply drag and drop your <code style="background:#222;padding:1px 6px;border-radius:3px;font-size:13px">.html</code> file onto the drop zone. The page renders immediately in the canvas.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Click what you want to edit</div>
+          <div class="step-desc">Hover over any part of the page — a blue dashed outline appears around elements. Click the one you want. It becomes highlighted in blue, and the right panel fills with all its editable properties.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Make your changes</div>
+          <div class="step-desc">Type new text in the Content field. Pick a color from the swatches. Adjust font size, bold, alignment, margins. Every change updates the canvas in real time — what you see is what you get.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-title">Preview in a real browser tab</div>
+          <div class="step-desc">Click <strong style="color:var(--white)">Preview</strong> anytime to open the current state of your document in a new tab — exactly as it would look when published. No need to save first.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="step-title">Save your file</div>
+          <div class="step-desc">Click <strong style="color:var(--white)">Save HTML</strong> when done. The browser downloads <code style="background:#222;padding:1px 6px;border-radius:3px;font-size:13px">yourfilename_edited.html</code> — a clean, complete HTML file with your original styles and structure fully preserved, ready to upload or share.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip" style="margin-top:20px">
+      <div class="tip-label">Keyboard shortcuts</div>
+      <div class="tip-text"><strong style="color:var(--white)">Ctrl + Z</strong> (or Cmd + Z on Mac) — Undo the last change, up to 40 steps back. &nbsp;&nbsp;<strong style="color:var(--white)">Ctrl + S</strong> — Save the file instantly without reaching for the button.</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 04 Feature overview -->
+  <div class="section" id="s4">
+    
+    <div class="section-title" style="color: rgb(22, 163, 74); font-weight: bold;">04 Feature overview</div>
+    <div class="section-desc">Everything you can do once a file is loaded</div>
+
+    <div class="feat-grid">
+      <div class="feat-item">
+        <div class="feat-icon">✏️</div>
+        <div class="feat-title">Text editing</div>
+        <div class="feat-desc">Edit the text content of any element — headings, paragraphs, links, buttons. Multi-line text supported. Changes reflect instantly.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">🎨</div>
+        <div class="feat-title">Color picker</div>
+        <div class="feat-desc">One-click color swatches for text color and background color. Eight preset options for each. Works on any element.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">🔤</div>
+        <div class="feat-title">Font controls</div>
+        <div class="feat-desc">Bold, italic, underline toggles. Font size in one click from 12px to 48px. Left / center / right / justify alignment.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">📐</div>
+        <div class="feat-title">Layout controls</div>
+        <div class="feat-desc">Set margin, padding, width, and height directly — type any valid CSS value. Perfect for spacing adjustments without touching code.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">🖼️</div>
+        <div class="feat-title">Image &amp; link editing</div>
+        <div class="feat-desc">Change image source (src) and alt text for any image. Update href link targets. Works with both local and remote URLs.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">⌨️</div>
+        <div class="feat-title">Raw CSS input</div>
+        <div class="feat-desc">For those rare cases where you need more control — type any CSS directly into the style field and it applies immediately.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">➕</div>
+        <div class="feat-title">Add Block</div>
+        <div class="feat-desc">Insert new elements — paragraph, heading, image, list, link, divider, custom HTML — before, after, or inside any selected element.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">⬜</div>
+        <div class="feat-title">Spacer insert</div>
+        <div class="feat-desc">One-click to add a 32px blank spacing div after the selected element. Labeled in the editor, outputs as clean empty div on save.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">↕️</div>
+        <div class="feat-title">Move elements</div>
+        <div class="feat-desc">Reorder any element up or down within its parent using the ▲ and ▼ toolbar buttons. The structure tree updates instantly.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">🗑️</div>
+        <div class="feat-title">Delete elements</div>
+        <div class="feat-desc">Remove the selected element with a confirmation prompt. Combine with Undo if you delete something by mistake.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">↩️</div>
+        <div class="feat-title">Undo (40 steps)</div>
+        <div class="feat-desc">Every edit is recorded. Press Ctrl + Z or click Undo to step back through your changes, up to 40 actions.</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">👁️</div>
+        <div class="feat-title">Preview tab</div>
+        <div class="feat-desc">Open the current document in a new browser tab at any time to see exactly how it will look when published — with all editor markers removed.</div>
+      </div>
+    </div>
+
+    <div class="warn" style="margin-top:24px">
+      <div class="warn-label">What it doesn't do</div>
+      <div class="warn-text">This tool edits the content and inline styles of existing elements. It doesn't modify the document's <code style="background:rgba(255,255,255,0.06);padding:1px 5px;border-radius:3px">&lt;style&gt;</code> stylesheet or restructure deeply nested layouts. For those needs, a code editor like VS Code is the right tool.</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 05 Scenarios -->
+  <div class="section" id="s5">
+    
+    <div class="section-title" style="color: rgb(22, 163, 74); font-weight: bold;">05 Real scenarios</div>
+    <div class="section-desc">Three situations where this tool saves significant time</div>
+
+    <div class="scenario">
+      <div class="scenario-who">Scenario A — Photographer</div>
+      <div class="scenario-title">Updating a portfolio page before an exhibition</div>
+      <div class="scenario-body">
+        <strong>Mia</strong> is a photographer preparing for a group show. Her portfolio is a single HTML file she received from a designer two years ago. The show details have changed — new venue, updated dates, one image replaced. She's never opened the code.
+        <div class="scenario-quote">"I just opened the editor, clicked on the venue name, typed the new one, clicked on the date — done. Found the old image in the tree, swapped the src. Total time maybe eight minutes. Then hit Preview to double-check and saved."</div>
+        Previously this would have meant emailing the designer, waiting a day, and paying a revision fee. With the editor, <strong>she did it herself on the morning of the opening</strong>, on her phone using Safari.
+      </div>
+    </div>
+
+    <div class="scenario">
+      <div class="scenario-who">Scenario B — Studio Operations</div>
+      <div class="scenario-title">Weekly update of a booking information document</div>
+      <div class="scenario-body">
+        <strong>A photography studio</strong> sends clients a branded HTML document before each shoot — pricing, location, what to bring. The content is 80% the same every week but a few details always change: the specific date, a product name, a contact note.
+        <div class="scenario-quote">"Before, whoever handled admin had to ask me to update the file every week. Now they open the editor themselves, change the three fields that need changing, hit save, and send it. The structure and design stay exactly the same."</div>
+        The studio now has a clean workflow: <strong>one person owns the design, another updates the content</strong> — no handoffs, no risk of accidentally breaking the layout.
+      </div>
+    </div>
+
+    <div class="scenario">
+      <div class="scenario-who">Scenario C — Event Organizer</div>
+      <div class="scenario-title">Last-minute corrections to an event flyer</div>
+      <div class="scenario-body">
+        <strong>An arts collective</strong> built a beautiful HTML flyer for a pop-up event. Two hours before the event, the venue entrance changed and a performer cancelled. Updating the HTML flyer was urgent — but the person who built it wasn't reachable.
+        <div class="scenario-quote">"Someone on the team had never touched HTML in their life. We opened the editor, I pointed at the address on screen and said 'click that'. She clicked it, it highlighted, she typed the new address. Done in 30 seconds."</div>
+        The flyer was updated, re-saved, and the new link sent out — <strong>all within five minutes</strong>, by someone with zero prior HTML experience.
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 06 Comparison -->
+  <div class="section" id="s6">
+    
+    <div class="section-title" style="color: rgb(22, 163, 74); font-weight: bold;">06 vs. Other methods</div>
+    <div class="section-desc">How this tool compares to common alternatives</div>
+
+    <div class="card">
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Install needed?</th>
+            <th>Edit without code?</th>
+            <th>Keep original design?</th>
+            <th>Works offline?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color:var(--white)">HTML Visual Editor</strong> <span class="badge badge-blue">this tool</span></td>
+            <td class="cmp-yes">None</td>
+            <td class="cmp-yes">Yes — click to edit</td>
+            <td class="cmp-yes">Yes — fully</td>
+            <td class="cmp-yes">Yes</td>
+          </tr>
+          <tr>
+            <td>VS Code + Live Server</td>
+            <td class="cmp-no">App install required</td>
+            <td class="cmp-no">No — raw code only</td>
+            <td class="cmp-yes">Yes</td>
+            <td class="cmp-yes">Yes</td>
+          </tr>
+          <tr>
+            <td>Online HTML editor (Codepen, etc.)</td>
+            <td class="cmp-partial">Account / browser</td>
+            <td class="cmp-no">No — code editor</td>
+            <td class="cmp-partial">Partial</td>
+            <td class="cmp-no">No — requires internet</td>
+          </tr>
+          <tr>
+            <td>Ask Claude / AI to edit</td>
+            <td class="cmp-yes">None</td>
+            <td class="cmp-yes">Yes — describe changes</td>
+            <td class="cmp-partial">Usually yes</td>
+            <td class="cmp-no">No — requires internet</td>
+          </tr>
+          <tr>
+            <td>Ask the original developer</td>
+            <td class="cmp-yes">None</td>
+            <td class="cmp-yes">Yes</td>
+            <td class="cmp-yes">Yes</td>
+            <td class="cmp-no">Depends on availability</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tip">
+      <div class="tip-label">Best combined workflow</div>
+      <div class="tip-text">Use Claude (or another AI) to build or structurally redesign HTML files, then use this editor for all ongoing content updates. Claude handles the complex parts; the editor handles the routine parts — without needing Claude every time.</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 07 FAQ -->
+  <div class="section" id="s7">
+    
+    <div class="section-title" style="color: rgb(22, 163, 74); font-weight: bold;">07 FAQ</div>
+    <div class="section-desc">Common questions</div>
+
+    <div class="trouble-item">
+      <div class="trouble-q">I clicked on the page but nothing gets selected</div>
+      <div class="trouble-a">Make sure you have a file loaded first — the drop zone should be hidden and the canvas should show your HTML content. If you opened the editor file itself (not your HTML file), load your file via Open File or drag-and-drop. Once a file is loaded, clicking anywhere in the canvas selects elements.</div>
+    </div>
+    <div class="trouble-item">
+      <div class="trouble-q">I edited the text but the canvas didn't change</div>
+      <div class="trouble-a">The Content field uses the oninput event — it updates as you type, not on Enter. Make sure you're typing into the Content textarea in the right panel (it should have a blue focus border). If the element has complex child markup, text changes will replace its inner content with plain text.</div>
+    </div>
+    <div class="trouble-item">
+      <div class="trouble-q">The saved file looks different from what I saw in the editor</div>
+      <div class="trouble-a">The editor canvas inherits some base styles from the editor itself. Use the Preview button (not the canvas) to see the true saved output before downloading. The Preview opens a fully isolated version of your file — exactly as it will look when opened independently.</div>
+    </div>
+    <div class="trouble-item">
+      <div class="trouble-q">I accidentally deleted something. Can I get it back?</div>
+      <div class="trouble-a">Yes — press Ctrl + Z (or Cmd + Z on Mac) immediately. The editor stores up to 40 undo steps. Note that undo history is lost if you reload the page, so save frequently when making major structural changes.</div>
+    </div>
+    <div class="trouble-item">
+      <div class="trouble-q">Can I use this on my phone or tablet?</div>
+      <div class="trouble-a">Yes, it works in Safari on iPad and iPhone. The layout adapts for smaller screens — the right properties panel is hidden on very small displays but can still be accessed by selecting elements. For comfortable use, a tablet or larger screen is recommended.</div>
+    </div>
+    <div class="trouble-item">
+      <div class="trouble-q">Will my HTML file's original CSS and fonts be preserved?</div>
+      <div class="trouble-a">Yes. The editor extracts and stores your file's entire &lt;head&gt; section — including all &lt;style&gt; blocks, font imports, and meta tags — and re-inserts it untouched when you save. Only the body content is editable; the stylesheet is never modified.</div>
+    </div>
+  </div>
+
+</div>
+
+
+
+</body>
+</html>
