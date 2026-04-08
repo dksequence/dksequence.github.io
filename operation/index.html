@@ -349,15 +349,20 @@ html,body{height:100%;background:var(--surface);font-family:'Inter',sans-serif;c
   <div class="camera-wrap" style="position:relative;background:#000;flex:1;">
     <video id="videoEl" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;display:block;max-height:60vh;"></video>
     <canvas id="canvasEl" style="display:none;"></canvas>
+    <!-- 카메라 시작 오버레이 — iOS 사용자 제스처 필요 -->
+    <div id="cam-start-overlay" style="position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;">
+      <div style="font-size:14px;color:rgba(255,255,255,0.7);">카메라를 시작하려면 아래 버튼을 탭하세요</div>
+      <button onclick="userStartCamera()" style="padding:16px 40px;border-radius:2rem;background:linear-gradient(135deg,#abc7ff,#0071e3);color:#fff;font-size:16px;font-weight:600;border:none;cursor:pointer;">카메라 시작</button>
+    </div>
     <!-- 전/후면 — 왼쪽 상단 -->
-    <button class="cam-flip-btn" onclick="flipCamera()" style="position:absolute;top:16px;left:16px;">전/후면</button>
+    <button class="cam-flip-btn" onclick="flipCamera()" style="position:absolute;top:16px;left:16px;display:none;" id="btn-flip">전/후면</button>
     <!-- 상태 표시 — 왼쪽 하단 -->
     <div class="cam-status" id="cam-status" style="position:absolute;bottom:24px;left:20px;font-size:12px;color:rgba(255,255,255,.5);">준비 중</div>
     <!-- 셔터 버튼 — 오른쪽 하단 크게 -->
-    <button class="shutter-btn" id="shutter-btn" onclick="takePhoto()"
+    <button id="shutter-btn" onclick="takePhoto()"
       style="position:absolute;bottom:16px;right:20px;width:80px;height:80px;border-radius:50%;
       background:linear-gradient(135deg,#abc7ff 0%,#0071e3 100%);border:4px solid rgba(255,255,255,.3);
-      cursor:pointer;box-shadow:0 0 32px rgba(0,113,227,.6);">
+      cursor:pointer;box-shadow:0 0 32px rgba(0,113,227,.6);display:none;">
     </button>
   </div>
 </div>
@@ -756,11 +761,27 @@ function goCamera() {
   document.getElementById('nb-name').textContent    = realname;
   document.getElementById('nb-product').textContent = CUR.product + ' · ' + CUR.people + '인';
 
+  // 오버레이 초기화
+  var overlay = document.getElementById('cam-start-overlay');
+  if (overlay) overlay.style.display = 'flex';
+  var btnFlip = document.getElementById('btn-flip');
+  if (btnFlip) btnFlip.style.display = 'none';
+  var shutterBtn = document.getElementById('shutter-btn');
+  if (shutterBtn) shutterBtn.style.display = 'none';
+
   show('s-camera');
-  startCamera();
+  // iOS: startCamera는 userStartCamera 버튼 탭 후 실행
 }
 
 // ── 카메라 제어 ───────────────────────────────────────
+function userStartCamera() {
+  // iOS Safari: 사용자 직접 탭 → 카메라 권한 요청
+  document.getElementById('cam-start-overlay').style.display = 'none';
+  document.getElementById('btn-flip').style.display = 'block';
+  document.getElementById('shutter-btn').style.display = 'block';
+  startCamera();
+}
+
 function startCamera() {
   stopCamera();
   document.getElementById('cam-status').textContent = '카메라 연결 중';
@@ -987,8 +1008,15 @@ function goNewCamera() {
   document.getElementById('nb-name').textContent    = name;
   document.getElementById('nb-product').textContent = CUR.product + ' · ' + CUR.people + '인';
 
+  // 오버레이 초기화
+  var overlay = document.getElementById('cam-start-overlay');
+  if (overlay) overlay.style.display = 'flex';
+  var btnFlip = document.getElementById('btn-flip');
+  if (btnFlip) btnFlip.style.display = 'none';
+  var shutterBtn = document.getElementById('shutter-btn');
+  if (shutterBtn) shutterBtn.style.display = 'none';
+
   show('s-camera');
-  startCamera();
 }
 
 // ── 사진 POST 전송 (base64 → 앱스 스크립트) ──────────
