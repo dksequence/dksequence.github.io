@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover" />
 <meta name="color-scheme" content="light only" />
-<title>Tournament league</title>
+<title>토너먼트 대진표 A4 최종판</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;800;900&display=swap');
 
@@ -424,7 +424,7 @@ function createSemiFinalFinalPage(title){
   const championW = 38;
   const finalY = 12;
   const semiY = 78;
-  const championY = 132;
+  const championY = 114;
   const finalCx = BOARD.w / 2;
   const leftSemiCx = 74;
   const rightSemiCx = BOARD.w - 74;
@@ -505,7 +505,7 @@ function createSemiFinalFinalPage(title){
     }
   });
 
-  const championJoinY = 120;
+  const championJoinY = 102;
   addLine(svg, metrics.A.cx, metrics.A.top, metrics.A.cx, championJoinY);
   addLine(svg, metrics.B.cx, metrics.B.top, metrics.B.cx, championJoinY);
   addLine(svg, metrics.A.cx, championJoinY, metrics.B.cx, championJoinY);
