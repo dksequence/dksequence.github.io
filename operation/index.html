@@ -614,28 +614,26 @@ function showToast(msg) {
   setTimeout(function(){ t.classList.remove('show'); }, 3000);
 }
 
-// ── 앱스 스크립트 API 호출 (JSONP — CORS 우회) ───────
-var _cbIdx = 0;
+// ── 앱스 스크립트 API 호출 ────────────────────────────
+// GAS는 리다이렉트를 하므로 XMLHttpRequest로 처리
 function callApi(payload, cb) {
-  var cbName = '_gasCb' + (++_cbIdx);
-  window[cbName] = function(res) {
-    delete window[cbName];
-    document.head.removeChild(document.getElementById(cbName));
-    cb(null, res);
-  };
   var url = GAS_URL
-    + '?callback=' + cbName
-    + '&action='   + encodeURIComponent(payload.action)
-    + '&payload='  + encodeURIComponent(JSON.stringify(payload));
-  var s = document.createElement('script');
-  s.id  = cbName;
-  s.src = url;
-  s.onerror = function() {
-    delete window[cbName];
-    document.head.removeChild(s);
-    cb(new Error('네트워크 오류'));
+    + '?action='  + encodeURIComponent(payload.action)
+    + '&payload=' + encodeURIComponent(JSON.stringify(payload));
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', url, true);
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState !== 4) return;
+    try {
+      var res = JSON.parse(xhr.responseText);
+      cb(null, res);
+    } catch(e) {
+      cb(new Error('응답 파싱 오류: ' + xhr.responseText.substring(0, 100)));
+    }
   };
-  document.head.appendChild(s);
+  xhr.onerror = function() { cb(new Error('네트워크 오류')); };
+  xhr.send();
 }
 
 // ── 타임 탭 초기화 ────────────────────────────────────
