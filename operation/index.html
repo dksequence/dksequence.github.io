@@ -615,25 +615,28 @@ function showToast(msg) {
 }
 
 // ── 앱스 스크립트 API 호출 ────────────────────────────
-// GAS는 리다이렉트를 하므로 XMLHttpRequest로 처리
+// script.google.com 내부: google.script.run 사용
+// GitHub Pages: fetch 사용 (리다이렉트 follow)
 function callApi(payload, cb) {
+  // google.script.run 환경인지 확인
+  if (typeof google !== 'undefined' && google.script && google.script.run) {
+    google.script.run
+      .withSuccessHandler(function(res){ cb(null, res); })
+      .withFailureHandler(function(err){ cb(err); })
+      .processRequest(JSON.stringify(payload));
+    return;
+  }
+  // GitHub Pages 환경 — fetch with redirect follow
   var url = GAS_URL
     + '?action='  + encodeURIComponent(payload.action)
     + '&payload=' + encodeURIComponent(JSON.stringify(payload));
-
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', url, true);
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState !== 4) return;
-    try {
-      var res = JSON.parse(xhr.responseText);
-      cb(null, res);
-    } catch(e) {
-      cb(new Error('응답 파싱 오류: ' + xhr.responseText.substring(0, 100)));
-    }
-  };
-  xhr.onerror = function() { cb(new Error('네트워크 오류')); };
-  xhr.send();
+  fetch(url, { redirect: 'follow' })
+    .then(function(r){ return r.text(); })
+    .then(function(text){
+      try { cb(null, JSON.parse(text)); }
+      catch(e) { cb(new Error('파싱오류: ' + text.substring(0,80))); }
+    })
+    .catch(function(err){ cb(err); });
 }
 
 // ── 타임 탭 초기화 ────────────────────────────────────
@@ -768,7 +771,15 @@ function startCamera() {
   // mediaDevices 지원 여부 먼저 확인
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     document.getElementById('cam-status').textContent = '카메라 미지원';
-    showToast('이 브라우저는 카메라를 지원하지 않습니다. Safari를 사용해주세요.');
+    // script.google.com 환경에서 카메라 차단 시 GitHub Pages로 이동
+    if (window.location.hostname.indexOf('google.com') !== -1) {
+      showToast('카메라 권한 오류. GitHub 페이지로 이동합니다...');
+      setTimeout(function(){
+        window.location.href = 'https://dksequence.github.io/operation';
+      }, 1500);
+    } else {
+      showToast('이 브라우저는 카메라를 지원하지 않습니다. Safari를 사용해주세요.');
+    }
     return;
   }
 
