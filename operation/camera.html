@@ -2,11 +2,11 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;overflow:hidden;background:#000;font-family:'Inter',sans-serif;color:#fff;}
-body{display:flex;flex-direction:column;height:100vh;}
+body{display:flex;flex-direction:column;height:100vh;height:100dvh;}
 
 #nameboard{
   background:#0a0a18;
@@ -46,24 +46,20 @@ video{
   background:rgba(0,0,0,.45);padding:6px 12px;border-radius:1rem;
 }
 
-#btn-start{
+/* iPad Safe Area 대응 촬영 버튼 */
+#btn-start, #btn-shutter{
   flex-shrink:0;
-  width:100%;padding:26px;
+  width:100%;
+  padding:26px;
+  padding-bottom:calc(26px + env(safe-area-inset-bottom));
   background:linear-gradient(135deg,#abc7ff,#0071e3);
-  color:#fff;border:none;cursor:pointer;display:block;
-}
-#btn-start span.ko{font-size:26px;font-weight:800;display:block;}
-#btn-start span.en{font-size:17px;font-weight:500;opacity:.85;display:block;margin-top:2px;}
-
-#btn-shutter{
-  flex-shrink:0;
-  width:100%;padding:26px;
-  background:linear-gradient(135deg,#abc7ff,#0071e3);
-  color:#fff;border:none;cursor:pointer;display:none;
+  color:#fff;border:none;cursor:pointer;
   box-shadow:0 -4px 24px rgba(0,113,227,.4);
 }
-#btn-shutter span.ko{font-size:26px;font-weight:800;display:block;}
-#btn-shutter span.en{font-size:17px;font-weight:500;opacity:.85;display:block;margin-top:2px;}
+#btn-start{display:block;}
+#btn-shutter{display:none;}
+#btn-start span.ko, #btn-shutter span.ko{font-size:26px;font-weight:800;display:block;}
+#btn-start span.en, #btn-shutter span.en{font-size:17px;font-weight:500;opacity:.85;display:block;margin-top:2px;}
 </style>
 </head>
 <body>
@@ -149,7 +145,9 @@ function shoot() {
   canvas.width  = video.videoWidth  || 1280;
   canvas.height = video.videoHeight || 960;
   canvas.getContext('2d').drawImage(video, 0, 0);
-  var base64 = canvas.toDataURL('image/jpeg', 0.92).split(',')[1];
+  
+  // 품질 0.5로 변경
+  var base64 = canvas.toDataURL('image/jpeg', 0.5).split(',')[1];
 
   if (window.opener) {
     window.opener.postMessage({
