@@ -223,7 +223,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
     <button class="date-nav-btn" onclick="changeDate(1)">→</button>
     <button class="date-nav-btn" onclick="goToday()">오늘</button>
     <input type="date" id="date-picker" style="position:absolute;opacity:0;pointer-events:none;">
-    <button class="date-nav-btn" onclick="document.getElementById('date-picker').showPicker()">📅</button>
+    <button class="date-nav-btn" id="btn-calendar">📅</button>
   </div>
 
   <div class="time-tabs" id="time-tabs"></div>
@@ -650,6 +650,12 @@ function goToday() {
 function updateDateDisplay() {
   document.getElementById('date-display').textContent = formatDate(CURRENT_DATE);
   document.getElementById('today-label').textContent = formatDate(CURRENT_DATE);
+  
+  // 날짜 선택기 값도 업데이트
+  var y = CURRENT_DATE.substring(0,4);
+  var m = CURRENT_DATE.substring(4,6);
+  var d = CURRENT_DATE.substring(6,8);
+  document.getElementById('date-picker').value = y + '-' + m + '-' + d;
 }
 
 // ── 데이터 로드 (캐시 활용) ────────────────────────────
@@ -673,7 +679,7 @@ function loadCachedData() {
 }
 
 function renderTabs(allReservations) {
-  // 시간탭 클릭 시 메모리에서 필터링
+  // 시간탭 생성
   var container = document.getElementById('time-tabs');
   container.innerHTML = '';
   TIMES.forEach(function(t) {
@@ -684,30 +690,42 @@ function renderTabs(allReservations) {
       document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
       SELECTED_TIME = t;
-      renderList(allReservations.filter(function(r){ return r.time === t; }));
+      renderList(allReservations, t);
     };
     container.appendChild(btn);
   });
-  renderList(allReservations.filter(function(r){ return r.time === SELECTED_TIME; }));
+  
+  // 상단 통계 = 전체 날짜 기준
+  updateDayStats(allReservations);
+  
+  // 리스트 렌더링 = 선택된 시간대만
+  renderList(allReservations, SELECTED_TIME);
 }
 
-function renderList(reservations) {
-  var list = document.getElementById('reservation-list');
-  document.getElementById('list-label').textContent = SELECTED_TIME + ' 타임';
-  var total = reservations.length;
-  var done  = reservations.filter(function(r){ return r.checkedIn; }).length;
+// ── 그 날 전체 통계 (모든 시간대 합산) ───────────────
+function updateDayStats(allReservations) {
+  var total = allReservations.length;
+  var done  = allReservations.filter(function(r){ return r.checkedIn; }).length;
   var wait  = total - done;
   document.getElementById('stat-total').textContent = total;
   document.getElementById('stat-done').textContent  = done;
   document.getElementById('stat-wait').textContent  = wait;
+}
 
-  if (total === 0) {
+// ── 선택한 시간대 리스트만 표시 ────────────────────────
+function renderList(allReservations, time) {
+  var list = document.getElementById('reservation-list');
+  document.getElementById('list-label').textContent = time + ' 타임';
+  
+  var filtered = allReservations.filter(function(r){ return r.time === time; });
+
+  if (filtered.length === 0) {
     list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--on-surface-dim);font-size:13px;">이 타임 예약 없음</div>';
     return;
   }
 
   list.innerHTML = '';
-  reservations.forEach(function(r) {
+  filtered.forEach(function(r) {
     var initial = r.name ? r.name.charAt(0) : '?';
     var card = document.createElement('div');
     card.className = 'customer-card' + (r.checkedIn ? ' done' : '');
@@ -897,7 +915,7 @@ function takePhoto() {
   canvas.height = video.videoHeight || 960;
   canvas.getContext('2d').drawImage(video, 0, 0);
 
-  var base64 = canvas.toDataURL('image/jpeg', 0.5).split(',')[1]; // ← 품질 0.5로 변경
+  var base64 = canvas.toDataURL('image/jpeg', 0.5).split(',')[1];
   CUR.filename = CURRENT_DATE + '_' + CUR.resno + '_' + CUR.realname + '.jpg';
   CUR.base64   = base64;
 
@@ -1083,17 +1101,22 @@ function postPhoto(base64, filename, cb) {
   cb(null, { ok: true, folderId: '', fileUrl: '' });
 }
 
-// ── 날짜 선택기 ────────────────────────────────────────
-document.getElementById('date-picker').addEventListener('change', function(e) {
-  var val = e.target.value; // YYYY-MM-DD
-  if (!val) return;
-  CURRENT_DATE = val.replace(/-/g, '');
-  updateDateDisplay();
-  loadCachedData();
-});
-
 // ── 초기화 ────────────────────────────────────────────
 window.onload = function() {
+  // 달력 버튼 이벤트
+  document.getElementById('btn-calendar').onclick = function() {
+    document.getElementById('date-picker').showPicker();
+  };
+  
+  // 날짜 선택 이벤트
+  document.getElementById('date-picker').addEventListener('change', function(e) {
+    var val = e.target.value; // YYYY-MM-DD
+    if (!val) return;
+    CURRENT_DATE = val.replace(/-/g, '');
+    updateDateDisplay();
+    loadCachedData();
+  });
+  
   updateDateDisplay();
   loadCachedData();
 };
