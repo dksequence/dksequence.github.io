@@ -1,8 +1,10 @@
 {
-  "name": "DKsequence",
-  "short_name": "DKsequence",
+  "name": "Operation",
+  "short_name": "Operation",
   "start_url": "./index.html",
   "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#111111",
   "icons": [
     {
       "src": "./icons/icon-192.png",
