@@ -1,7 +1,7 @@
 {
   "name": "DKsequence",
   "short_name": "DKsequence",
-  "start_url": "./index.html",
+  "start_url": "./dummy2index.html",
   "display": "standalone",
   "icons": [
     {
