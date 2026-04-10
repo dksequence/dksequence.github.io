@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DKsequence Sheets</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon3-180.png">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root{
+      --bg:#000000;
+      --card:#111111;
+      --card-hover:#1a1a1a;
+      --line:rgba(255,255,255,0.08);
+      --line-strong:rgba(255,255,255,0.14);
+      --text:#ffffff;
+      --sub:rgba(255,255,255,0.58);
+      --accent:#8fbaff;
+      --danger:#ff6b6b;
+      --btn:#1b1b1b;
+      --btn-hover:#242424;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      padding: 20px 16px 40px;
+    }
+
+    .wrap {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .logo {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: #111;
+    }
+
+    .logo-fallback {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      background: #111;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .title-box h1 {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .title-box p {
+      margin-top: 4px;
+      font-size: 14px;
+      color: var(--sub);
+      line-height: 1.4;
+    }
+
+    .settings-btn {
+      border: 1px solid var(--line-strong);
+      background: var(--btn);
+      color: #fff;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .settings-btn:active,
+    .settings-btn:hover {
+      background: var(--btn-hover);
+    }
+
+    .section-title {
+      font-size: 13px;
+      color: var(--sub);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin: 22px 0 12px;
+    }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .item {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px 18px;
+      transition: background 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+      cursor: pointer;
+    }
+
+    .item:active,
+    .item:hover {
+      background: var(--card-hover);
+      border-color: var(--line-strong);
+      transform: translateY(-1px);
+    }
+
+    .item-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .cat-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.04);
+    }
+
+    .item-title {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.3;
+      color: #fff;
+      word-break: break-word;
+    }
+
+    .item-jump {
+      font-size: 18px;
+      color: var(--accent);
+      flex-shrink: 0;
+      font-weight: 800;
+    }
+
+    .footer-note {
+      margin-top: 24px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.42);
+      line-height: 1.6;
+    }
+
+    .panel-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      z-index: 999;
+    }
+
+    .panel-backdrop.show {
+      display: block;
+    }
+
+    .panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(92vw, 430px);
+      height: 100%;
+      background: #0b0b0b;
+      border-left: 1px solid var(--line-strong);
+      transform: translateX(100%);
+      transition: transform 0.22s ease;
+      z-index: 1000;
+      overflow-y: auto;
+      padding: 18px 16px 32px;
+    }
+
+    .panel.show {
+      transform: translateX(0);
+    }
+
+    .panel-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .panel-title {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .close-btn {
+      border: 1px solid var(--line-strong);
+      background: var(--btn);
+      color: #fff;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .add-btn {
+      width: 100%;
+      border: 1px dashed rgba(255,255,255,0.25);
+      background: transparent;
+      color: #fff;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 16px;
+    }
+
+    .editor-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .editor-card {
+      background: #141414;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .editor-row {
+      margin-bottom: 10px;
+    }
+
+    .editor-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .editor-label {
+      display: block;
+      font-size: 12px;
+      color: var(--sub);
+      margin-bottom: 6px;
+    }
+
+    .editor-input {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      background: #0d0d0d;
+      color: #fff;
+      border-radius: 12px;
+      padding: 12px 12px;
+      font-size: 14px;
+    }
+
+    .color-picker {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .color-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
+    }
+
+    .color-btn:hover,
+    .color-btn:active {
+      transform: scale(1.08);
+    }
+
+    .color-btn.active {
+      border-color: #ffffff;
+      transform: scale(1.12);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.08);
+    }
+
+    .editor-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .small-btn {
+      border: 1px solid var(--line-strong);
+      background: var(--btn);
+      color: #fff;
+      border-radius: 12px;
+      padding: 10px 10px;
+      font-size: 13px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .small-btn:hover,
+    .small-btn:active {
+      background: var(--btn-hover);
+    }
+
+    .small-btn.danger {
+      border-color: rgba(255,107,107,0.3);
+      color: #fff;
+      background: rgba(255,107,107,0.1);
+    }
+
+    .small-btn.danger:hover,
+    .small-btn.danger:active {
+      background: rgba(255,107,107,0.18);
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 18px 14px 36px; }
+      .title-box h1 { font-size: 22px; }
+      .item-title { font-size: 17px; }
+      .top { align-items: flex-start; }
+      .top-left { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="top-left">
+        <img class="logo" id="topLogo" src="./icons/apple-touch-icon3-180.png" alt="DKsequence icon" onerror="handleLogoError()">
+        <div class="logo-fallback" id="logoFallback">D</div>
+        <div class="title-box">
+          <h1>DKsequence Sheets</h1>
+          <p>Spreadsheet shortcut list</p>
+        </div>
+      </div>
+      <button class="settings-btn" onclick="openSettings()">Settings</button>
+    </div>
+
+    <div class="section-title">Spreadsheet Links</div>
+    <div class="list" id="sheetList"></div>
+
+    <div class="footer-note">
+      If a link is restricted, you must sign in with an authorized Google account to open it.
+    </div>
+  </div>
+
+  <div class="panel-backdrop" id="panelBackdrop" onclick="closeSettings()"></div>
+
+  <aside class="panel" id="settingsPanel">
+    <div class="panel-top">
+      <div class="panel-title">Settings</div>
+      <button class="close-btn" onclick="closeSettings()">Close</button>
+    </div>
+
+    <button class="add-btn" onclick="addItem()">+ Add Box</button>
+
+    <div class="editor-list" id="editorList"></div>
+  </aside>
+
+  <script>
+    const STORAGE_KEY = 'dksequence_sheet_links_v4';
+
+    const CATEGORY_COLORS = {
+      general: '#9aa0a6',
+      management: '#4da3ff',
+      briefing: '#ffb020',
+      finance: '#35c46b',
+      important: '#ff5c5c'
+    };
+
+    const COLOR_KEYS = ['general', 'management', 'briefing', 'finance', 'important'];
+
+    const defaultItems = [
+      {
+        title: 'Management Spreadsheet 1',
+        url: 'https://docs.google.com/spreadsheets/d/1cfG_rgirmM14cL_HIY52APT31WoGfw__T1ohm4Hm2WE/edit?gid=0#gid=0',
+        category: 'management'
+      },
+      {
+        title: 'General Spreadsheet 2',
+        url: '',
+        category: 'general'
+      },
+      {
+        title: 'Briefing Spreadsheet 3',
+        url: '',
+        category: 'briefing'
+      }
+    ];
+
+    let items = loadItems();
+
+    function handleLogoError() {
+      document.getElementById('topLogo').style.display = 'none';
+      document.getElementById('logoFallback').style.display = 'flex';
+    }
+
+    function loadItems() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) return [...defaultItems];
+        const parsed = JSON.parse(saved);
+        if (!Array.isArray(parsed)) return [...defaultItems];
+        return parsed.map(item => ({
+          title: item.title || 'Untitled',
+          url: item.url || '',
+          category: item.category || 'general'
+        }));
+      } catch (e) {
+        return [...defaultItems];
+      }
+    }
+
+    function saveItems() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    }
+
+    function renderList() {
+      const list = document.getElementById('sheetList');
+      list.innerHTML = '';
+
+      items.forEach((item) => {
+        const color = CATEGORY_COLORS[item.category] || CATEGORY_COLORS.general;
+
+        const box = document.createElement('div');
+        box.className = 'item';
+        box.onclick = function () {
+          if (!item.url || !item.url.trim()) {
+            alert('The link is empty. Please enter a link in Settings.');
+            return;
+          }
+          window.open(item.url, '_blank', 'noopener');
+        };
+
+        box.innerHTML = `
+          <div class="item-top">
+            <div class="item-left">
+              <span class="cat-dot" style="background:${color};"></span>
+              <div class="item-title">${escapeHtml(item.title || 'Untitled')}</div>
+            </div>
+            <div class="item-jump">↗</div>
+          </div>
+        `;
+        list.appendChild(box);
+      });
+    }
+
+    function renderEditors() {
+      const editorList = document.getElementById('editorList');
+      editorList.innerHTML = '';
+
+      items.forEach((item, index) => {
+        const colorButtons = COLOR_KEYS.map(key => {
+          const color = CATEGORY_COLORS[key];
+          const active = item.category === key ? 'active' : '';
+          return `
+            <button
+              type="button"
+              class="color-btn ${active}"
+              style="background:${color};"
+              onclick="updateCategory(${index}, '${key}')"
+              aria-label="${key}"
+              title="${key}">
+            </button>
+          `;
+        }).join('');
+
+        const card = document.createElement('div');
+        card.className = 'editor-card';
+
+        card.innerHTML = `
+          <div class="editor-row">
+            <label class="editor-label">Title</label>
+            <input class="editor-input" type="text" value="${escapeAttr(item.title || '')}" oninput="updateTitle(${index}, this.value)">
+          </div>
+
+          <div class="editor-row">
+            <label class="editor-label">Link</label>
+            <input class="editor-input" type="text" value="${escapeAttr(item.url || '')}" oninput="updateUrl(${index}, this.value)">
+          </div>
+
+          <div class="editor-row">
+            <label class="editor-label">Color</label>
+            <div class="color-picker">
+              ${colorButtons}
+            </div>
+          </div>
+
+          <div class="editor-actions">
+            <button class="small-btn" onclick="moveUp(${index})">Up</button>
+            <button class="small-btn" onclick="moveDown(${index})">Down</button>
+            <button class="small-btn danger" onclick="deleteItem(${index})">Delete</button>
+          </div>
+        `;
+
+        editorList.appendChild(card);
+      });
+    }
+
+    function updateTitle(index, value) {
+      items[index].title = value;
+      saveItems();
+      renderList();
+    }
+
+    function updateUrl(index, value) {
+      items[index].url = value;
+      saveItems();
+    }
+
+    function updateCategory(index, value) {
+      items[index].category = value;
+      saveItems();
+      renderList();
+      renderEditors();
+    }
+
+    function addItem() {
+      items.push({
+        title: 'New Spreadsheet',
+        url: '',
+        category: 'general'
+      });
+      saveItems();
+      renderList();
+      renderEditors();
+    }
+
+    function deleteItem(index) {
+      if (!confirm('Do you want to delete this box?')) return;
+      items.splice(index, 1);
+      saveItems();
+      renderList();
+      renderEditors();
+    }
+
+    function moveUp(index) {
+      if (index === 0) return;
+      [items[index - 1], items[index]] = [items[index], items[index - 1]];
+      saveItems();
+      renderList();
+      renderEditors();
+    }
+
+    function moveDown(index) {
+      if (index === items.length - 1) return;
+      [items[index + 1], items[index]] = [items[index], items[index + 1]];
+      saveItems();
+      renderList();
+      renderEditors();
+    }
+
+    function openSettings() {
+      document.getElementById('settingsPanel').classList.add('show');
+      document.getElementById('panelBackdrop').classList.add('show');
+      renderEditors();
+    }
+
+    function closeSettings() {
+      document.getElementById('settingsPanel').classList.remove('show');
+      document.getElementById('panelBackdrop').classList.remove('show');
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function escapeAttr(str) {
+      return escapeHtml(str);
+    }
+
+    renderList();
+  </script>
+</body>
+</html>
