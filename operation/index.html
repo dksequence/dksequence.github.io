@@ -580,6 +580,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 <div class="toast" id="toast"></div>
 
 <script>
+  var isSubmitting = false; // 중복 클릭 방지 락 변수
 // ── 상태 ──────────────────────────────────────────────
 // 앱스 스크립트 백엔드 URL
 var GAS_URL = 'https://script.google.com/macros/s/AKfycbwoqVAZVZclcog_8hGo6W5xKCGWdK9HHRCw-CtidsA3sygtPJatZ88b82iouE0brF0G/exec';
@@ -614,6 +615,7 @@ function getTodayLabel() {
 
 // ── 화면 전환 ─────────────────────────────────────────
 function show(id) {
+  isSubmitting = false; // 페이지 전환 시 잠금 해제
   document.querySelectorAll('.screen').forEach(function(s){
     s.classList.remove('active');
     s.style.display = 'none';
@@ -855,6 +857,9 @@ function flipCamera() {
 
 // ── 셔터 → 저장 파이프라인 ──────────────────────────
 function takePhoto() {
+  if (isSubmitting) return; // 연타 방어
+  isSubmitting = true;
+
   var video  = document.getElementById('videoEl');
   var canvas = document.getElementById('canvasEl');
   var vw = video.videoWidth  || 1280;
