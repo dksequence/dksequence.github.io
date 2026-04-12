@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DKsequence 현장 운영 시스템 — 유지보수 문서</title>
+<style>
+:root {
+  --black: #0a0a0a;
+  --dark: #141414;
+  --card: #1c1c1c;
+  --border: rgba(255,255,255,0.1);
+  --white: #f0f0f0;
+  --dim: #888;
+  --blue: #4fa3f7;
+  --green: #4ecba1;
+  --amber: #f0a500;
+  --purple: #a78bfa;
+  --red: #ff6b6b;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--black); color: var(--white); font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; font-size: 16px; line-height: 1.8; }
+.wrap { max-width: 900px; margin: 0 auto; padding: 48px 24px 80px; }
+
+/* 헤더 */
+.doc-header { text-align: center; padding: 48px 0 56px; border-bottom: 1px solid var(--border); margin-bottom: 56px; }
+.doc-badge { display: inline-block; background: rgba(79,163,247,0.15); color: var(--blue); font-size: 13px; padding: 5px 16px; border-radius: 2rem; margin-bottom: 20px; letter-spacing: 0.06em; }
+.doc-title { font-size: 36px; font-weight: 700; line-height: 1.3; margin-bottom: 12px; }
+.doc-sub { font-size: 16px; color: var(--dim); }
+.doc-meta { margin-top: 24px; display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+.meta-item { font-size: 13px; color: var(--dim); }
+.meta-item span { color: var(--white); }
+
+/* 섹션 */
+.section { margin-bottom: 64px; }
+.section-num { font-size: 12px; color: var(--blue); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+.section-title { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+.section-desc { font-size: 15px; color: var(--dim); margin-bottom: 32px; }
+.divider { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
+
+/* 카드 */
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 24px 28px; margin-bottom: 16px; }
+.card-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+.card-sub { font-size: 14px; color: var(--dim); margin-bottom: 16px; }
+
+/* 플로우 다이어그램 */
+.flow { display: flex; flex-direction: column; gap: 0; }
+.flow-item { display: flex; gap: 16px; }
+.flow-left { display: flex; flex-direction: column; align-items: center; width: 48px; flex-shrink: 0; }
+.flow-dot { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
+.flow-line { width: 2px; background: var(--border); flex: 1; min-height: 24px; }
+.flow-content { padding: 8px 0 32px; flex: 1; }
+.flow-label { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+.flow-name { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+.flow-detail { font-size: 14px; color: var(--dim); line-height: 1.7; }
+.flow-tag { display: inline-block; font-size: 12px; padding: 3px 10px; border-radius: 2rem; margin-top: 8px; margin-right: 6px; }
+
+/* 파일 테이블 */
+.file-table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.file-table th { text-align: left; font-size: 12px; color: var(--dim); letter-spacing: 0.06em; text-transform: uppercase; padding: 8px 16px; border-bottom: 1px solid var(--border); }
+.file-table td { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: top; }
+.file-table tr:last-child td { border-bottom: none; }
+.file-name { font-family: monospace; font-size: 14px; color: var(--blue); font-weight: 600; }
+.file-loc { font-size: 13px; color: var(--dim); margin-top: 4px; }
+.badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 2rem; font-weight: 600; }
+.badge-blue { background: rgba(79,163,247,0.15); color: var(--blue); }
+.badge-green { background: rgba(78,203,161,0.15); color: var(--green); }
+.badge-amber { background: rgba(240,165,0,0.15); color: var(--amber); }
+.badge-purple { background: rgba(167,139,250,0.15); color: var(--purple); }
+.badge-red { background: rgba(255,107,107,0.15); color: var(--red); }
+
+/* URL 박스 */
+.url-box { background: #0d0d0d; border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; font-family: monospace; font-size: 13px; color: var(--green); word-break: break-all; margin: 12px 0; }
+.url-label { font-size: 12px; color: var(--dim); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+
+/* 단계 박스 */
+.step-list { display: flex; flex-direction: column; gap: 12px; }
+.step-item { display: flex; gap: 16px; align-items: flex-start; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+.step-num { width: 36px; height: 36px; border-radius: 50%; background: rgba(79,163,247,0.15); color: var(--blue); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; flex-shrink: 0; }
+.step-body { flex: 1; }
+.step-title { font-size: 17px; font-weight: 600; margin-bottom: 4px; }
+.step-desc { font-size: 14px; color: var(--dim); line-height: 1.7; }
+
+/* 경고/팁 박스 */
+.tip { background: rgba(78,203,161,0.08); border: 1px solid rgba(78,203,161,0.2); border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+.tip-label { font-size: 12px; color: var(--green); font-weight: 700; letter-spacing: 0.06em; margin-bottom: 6px; }
+.tip-text { font-size: 14px; color: var(--dim); line-height: 1.7; }
+.warn { background: rgba(240,165,0,0.08); border: 1px solid rgba(240,165,0,0.2); border-radius: 10px; padding: 16px 20px; margin: 16px 0; }
+.warn-label { font-size: 12px; color: var(--amber); font-weight: 700; letter-spacing: 0.06em; margin-bottom: 6px; }
+.warn-text { font-size: 14px; color: var(--dim); line-height: 1.7; }
+
+/* 컬럼 테이블 */
+.col-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.col-table th { text-align: left; font-size: 12px; color: var(--dim); padding: 8px 12px; border-bottom: 1px solid var(--border); }
+.col-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.col-table tr:last-child td { border-bottom: none; }
+.col-name { font-family: monospace; color: var(--blue); }
+
+/* 트러블슈팅 */
+.trouble-item { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 12px; }
+.trouble-q { background: var(--card); padding: 16px 20px; font-size: 16px; font-weight: 600; }
+.trouble-q::before { content: "Q. "; color: var(--red); }
+.trouble-a { padding: 16px 20px; font-size: 14px; color: var(--dim); line-height: 1.8; border-top: 1px solid var(--border); }
+.trouble-a::before { content: "A. "; color: var(--green); font-weight: 700; }
+
+/* 목차 */
+.toc { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 24px 28px; margin-bottom: 48px; }
+.toc-title { font-size: 14px; color: var(--dim); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 16px; }
+.toc-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.toc-list a { color: var(--white); text-decoration: none; font-size: 15px; display: flex; align-items: center; gap: 10px; }
+.toc-list a:hover { color: var(--blue); }
+.toc-num { font-size: 12px; color: var(--dim); width: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 헤더 -->
+  <div class="doc-header">
+    <div class="doc-badge">유지보수 문서 v1.0</div>
+    <div class="doc-title">DKsequence × 중문별장<br>현장 운영 자동화 시스템</div>
+    <div class="doc-sub">네이버 예약부터 고객 촬영·저장까지 전체 흐름 정리</div>
+    <div class="doc-meta">
+      <div class="meta-item">작성일 <span>2026.04.08</span></div>
+      <div class="meta-item">브랜드 <span>DKsequence</span></div>
+      <div class="meta-item">장소 <span>중문별장</span></div>
+    </div>
+  </div>
+
+  <!-- 목차 -->
+  <div class="toc">
+    <div class="toc-title">목차 Contents</div>
+    <ul class="toc-list">
+      <li><a href="#s0"><span class="toc-num">00</span> 시스템 흐름 다이어그램</a></li>
+      <li><a href="#s1"><span class="toc-num">01</span> 이 시스템이 뭔가요?</a></li>
+      <li><a href="#s2"><span class="toc-num">02</span> 전체 흐름 (처음부터 끝까지)</a></li>
+      <li><a href="#s3"><span class="toc-num">03</span> 파일 지도 — 어디에 뭐가 있나</a></li>
+      <li><a href="#s4"><span class="toc-num">04</span> 실제 URL & ID 모음</a></li>
+      <li><a href="#s5"><span class="toc-num">05</span> 스프레드시트 컬럼 설명</a></li>
+      <li><a href="#s6"><span class="toc-num">06</span> 현장 운영 사용법</a></li>
+      <li><a href="#s7"><span class="toc-num">07</span> 드라이브 폴더 구조</a></li>
+      <li><a href="#s8"><span class="toc-num">08</span> 문제 해결 가이드</a></li>
+      <li><a href="#s9"><span class="toc-num">09</span> 코드 수정 후 재배포 방법</a></li>
+    </ul>
+  </div>
+
+
+  <!-- 다이어그램 섹션 -->
+  <div class="section" id="s0">
+    <div class="section-num">00</div>
+    <div class="section-title">시스템 전체 흐름 한눈에 보기</div>
+    <div class="section-desc">데이터가 어디서 어디로 흐르는지 한 장으로</div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:40px 24px;overflow-x:auto;">
+
+      <!-- 1차 자동화 라인 -->
+      <div style="margin-bottom:12px;font-size:11px;color:var(--amber);letter-spacing:.1em;text-transform:uppercase;font-weight:700;">1차 자동화 — 예약 수신 및 기록</div>
+      <div style="display:flex;align-items:center;gap:0;margin-bottom:48px;flex-wrap:nowrap;min-width:600px;">
+
+        <!-- 네이버 -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;min-width:90px;">
+          <div style="width:64px;height:64px;border-radius:14px;background:#03C75A;display:flex;align-items:center;justify-content:center;">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
+              <text x="4" y="18" font-size="14" font-weight="800" fill="white" font-family="Arial">N</text>
+              <rect x="2" y="4" width="8" height="16" rx="1" fill="white" opacity="0.9"/>
+              <rect x="14" y="4" width="8" height="16" rx="1" fill="white" opacity="0.9"/>
+              <polygon points="10,4 14,11 10,11" fill="white" opacity="0.9"/>
+            </svg>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:13px;font-weight:700;color:var(--white);">네이버 예약</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:2px;">고객이 예약·결제</div>
+          </div>
+        </div>
+
+        <!-- 화살표 + 메일 -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;">
+          <div style="font-size:11px;color:var(--dim);">예약 확인 메일</div>
+          <div style="display:flex;align-items:center;width:100%;">
+            <div style="flex:1;height:2px;background:linear-gradient(90deg,#03C75A,var(--border));"></div>
+            <div style="color:var(--dim);font-size:16px;">✉️</div>
+            <div style="flex:1;height:2px;background:linear-gradient(90deg,var(--border),#ff6b00);"></div>
+          </div>
+          <div style="font-size:11px;color:var(--dim);">자동 수신</div>
+        </div>
+
+        <!-- Make -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;min-width:90px;">
+          <div style="width:64px;height:64px;border-radius:14px;background:#6D00CC;display:flex;align-items:center;justify-content:center;">
+            <svg width="40" height="40" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="40" fill="none" stroke="white" stroke-width="8"/>
+              <circle cx="50" cy="20" r="10" fill="white"/>
+              <circle cx="50" cy="80" r="10" fill="white"/>
+              <circle cx="20" cy="50" r="10" fill="white"/>
+              <circle cx="80" cy="50" r="10" fill="white"/>
+            </svg>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:13px;font-weight:700;color:var(--white);">Make.com</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:2px;">메일 파싱·자동화</div>
+          </div>
+        </div>
+
+        <!-- 화살표 -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;">
+          <div style="font-size:11px;color:var(--dim);">데이터 추출</div>
+          <div style="display:flex;align-items:center;width:100%;">
+            <div style="flex:1;height:2px;background:linear-gradient(90deg,#6D00CC,#0F9D58);"></div>
+            <div style="font-size:14px;">▶</div>
+          </div>
+          <div style="font-size:11px;color:var(--dim);">자동 기록</div>
+        </div>
+
+        <!-- 구글 시트 -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;min-width:90px;">
+          <div style="width:64px;height:64px;border-radius:14px;background:#0F9D58;display:flex;align-items:center;justify-content:center;">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="white">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+              <path d="M14 2v6h6" fill="none" stroke="#0F9D58" stroke-width="1.5"/>
+              <line x1="8" y1="13" x2="16" y2="13" stroke="#0F9D58" stroke-width="1.5"/>
+              <line x1="8" y1="17" x2="16" y2="17" stroke="#0F9D58" stroke-width="1.5"/>
+              <line x1="12" y1="13" x2="12" y2="17" stroke="#0F9D58" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:13px;font-weight:700;color:var(--white);">1차 시트</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:2px;">DK_Reservation_Master</div>
+          </div>
+        </div>
+
+        <!-- 화살표 -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;">
+          <div style="font-size:11px;color:var(--dim);">캘린더 등록</div>
+          <div style="display:flex;align-items:center;width:100%;">
+            <div style="flex:1;height:2px;background:linear-gradient(90deg,#0F9D58,#4285F4);"></div>
+            <div style="font-size:14px;">▶</div>
+          </div>
+          <div style="font-size:11px;color:var(--dim);">알림 설정</div>
+        </div>
+
+        <!-- 구글 캘린더 -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;min-width:90px;">
+          <div style="width:64px;height:64px;border-radius:14px;background:#4285F4;display:flex;align-items:center;justify-content:center;">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="white">
+              <rect x="3" y="4" width="18" height="18" rx="2" fill="white"/>
+              <rect x="3" y="4" width="18" height="5" rx="2" fill="#4285F4"/>
+              <rect x="7" y="2" width="2" height="4" rx="1" fill="#4285F4"/>
+              <rect x="15" y="2" width="2" height="4" rx="1" fill="#4285F4"/>
+              <text x="8" y="18" font-size="7" font-weight="800" fill="#4285F4" font-family="Arial">28</text>
+            </svg>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:13px;font-weight:700;color:var(--white);">구글 캘린더</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:2px;">일정 + 알림</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 연결 화살표 (1차→2차) -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-left:36px;">
+        <div style="width:2px;height:40px;background:linear-gradient(180deg,#0F9D58,#4fa3f7);margin-left:8px;"></div>
+        <div style="font-size:12px;color:var(--dim);">체크인 당일, 1차 시트 데이터를 불러와서 현장 운영 시작</div>
+      </div>
+
+      <!-- 2차 운영 라인 -->
+      <div style="margin-bottom:12px;font-size:11px;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;font-weight:700;">2차 운영 — 현장 체크인 및 촬영 저장</div>
+      <div style="display:flex;align-items:center;gap:0;flex-wrap:nowrap;min-width:600px;">
+
+        <!-- 앱스 스크립트 (메인앱) -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;min-width:90px;">
+          <div style="width:64px;height:64px;border-radius:14px;background:#4285F4;display:flex;align-items:center;justify-content:center;">
+            <svg width="36" height="36" viewBox="0 0 24 24">
+              <rect width="24" height="24" rx="4" fill="#4285F4"/>
+              <path d="M7 8l-4 4 4 4M17 8l4 4-4 4M13 6l-2 12" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>
+            </svg>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:13px;font-weight:700;color:var(--white);">앱스 스크립트</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:2px;">대시보드 + 백엔드</div>
+          </div>
+        </div>
+
+        <!-- 화살표 -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;">
+          <div style="font-size:11px;color:var(--dim);">Safari로 접속</div>
+          <div style="display:flex;align-items:center;width:100%;">
+            <div style="flex:1;height:2px;background:linear-gradient(90deg,#4285F4,#888);"></div>
+            <div style="font-size:14px;">▶</div>
+          </div>
+          <div style="font-size:11px;color:var(--dim);">체크인 화면</div>
+        </div>
+
+        <!-- 아이패드 -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;min-width:90px;">
+          <div style="width:64px;height:64px;border-radius:14px;background:#1c1c1e;border:2px solid #444;display:flex;align-items:center;justify-content:center;">
+            <svg width="32" height="40" viewBox="0 0 32 40" fill="none">
+              <rect x="2" y="1" width="28" height="38" rx="4" fill="#2c2c2e" stroke="#555" stroke-width="1.5"/>
+              <rect x="5" y="4" width="22" height="32" rx="2" fill="#1a1a2e"/>
+              <circle cx="16" cy="37" r="1.5" fill="#555"/>
+              <!-- 화면에 체크인 표시 -->
+              <rect x="7" y="10" width="18" height="3" rx="1" fill="#4fa3f7" opacity="0.8"/>
+              <rect x="7" y="15" width="12" height="2" rx="1" fill="#666"/>
+              <rect x="7" y="19" width="15" height="2" rx="1" fill="#666"/>
+              <rect x="7" y="24" width="18" height="5" rx="2" fill="#0071e3"/>
+            </svg>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:13px;font-weight:700;color:var(--white);">아이패드</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:2px;">체크인 + 촬영</div>
+          </div>
+        </div>
+
+        <!-- 화살표 -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;">
+          <div style="font-size:11px;color:var(--dim);">팝업 열기</div>
+          <div style="display:flex;align-items:center;width:100%;">
+            <div style="flex:1;height:2px;background:linear-gradient(90deg,#888,#24292e);"></div>
+            <div style="font-size:14px;">▶</div>
+          </div>
+          <div style="font-size:11px;color:var(--dim);">카메라 촬영</div>
+        </div>
+
+        <!-- GitHub -->
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;min-width:90px;">
+          <div style="width:64px;height:64px;border-radius:14px;background:#24292e;display:flex;align-items:center;justify-content:center;">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="white">
+              <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/>
+            </svg>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:13px;font-weight:700;color:var(--white);">GitHub Pages</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:2px;">camera.html</div>
+          </div>
+        </div>
+
+        <!-- 화살표 분기 -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;">
+          <div style="font-size:11px;color:var(--dim);">촬영 완료</div>
+          <div style="display:flex;align-items:center;width:100%;">
+            <div style="flex:1;height:2px;background:linear-gradient(90deg,#24292e,#4ecba1);"></div>
+            <div style="font-size:14px;">▶</div>
+          </div>
+          <div style="font-size:11px;color:var(--dim);">자동 저장</div>
+        </div>
+
+        <!-- 저장 결과 (2개) -->
+        <div style="display:flex;flex-direction:column;gap:10px;min-width:90px;">
+
+          <!-- 구글 드라이브 -->
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:48px;height:48px;border-radius:12px;background:#0F9D58;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+                <path d="M12 2L2 19.5h20L12 2z" opacity="0.3"/>
+                <path d="M7.5 14L2 19.5h10L7.5 14zM16.5 14L22 19.5H12L16.5 14z" opacity="0.6"/>
+                <path d="M12 2l4.5 8h-9L12 2z"/>
+              </svg>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--white);">구글 드라이브</div>
+              <div style="font-size:11px;color:var(--dim);">사진 자동 저장</div>
+            </div>
+          </div>
+
+          <!-- 2차 시트 -->
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:48px;height:48px;border-radius:12px;background:#0F9D58;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/>
+                <path d="M14 2v6h6" fill="none" stroke="#0F9D58" stroke-width="1.5"/>
+                <line x1="8" y1="13" x2="16" y2="13" stroke="#0F9D58" stroke-width="1.5"/>
+                <line x1="8" y1="17" x2="16" y2="17" stroke="#0F9D58" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--white);">2차 시트</div>
+              <div style="font-size:11px;color:var(--dim);">체크인 기록</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- 범례 -->
+      <div style="margin-top:36px;padding-top:24px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:16px;">
+        <div style="font-size:11px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase;width:100%;margin-bottom:4px;">범례</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim);">
+          <div style="width:12px;height:12px;border-radius:3px;background:#6D00CC;"></div>Make.com 자동화
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim);">
+          <div style="width:12px;height:12px;border-radius:3px;background:#4285F4;"></div>구글 서비스
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim);">
+          <div style="width:12px;height:12px;border-radius:3px;background:#0F9D58;"></div>구글 스토리지
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim);">
+          <div style="width:12px;height:12px;border-radius:3px;background:#24292e;border:1px solid #555;"></div>GitHub Pages
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--dim);">
+          <div style="width:12px;height:12px;border-radius:3px;background:#03C75A;"></div>네이버
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="divider">
+  <!-- 01 -->
+  <div class="section" id="s1">
+    <div class="section-num">01</div>
+    <div class="section-title">이 시스템이 뭔가요?</div>
+    <div class="section-desc">중학생도 이해할 수 있게 설명합니다</div>
+
+    <div class="card">
+      <div class="card-title">쉽게 말하면</div>
+      <div class="card-sub">고객이 네이버에서 예약하면 — 자동으로 태블릿에 목록이 뜨고, 현장에서 체크인하고 사진 찍으면 구글 드라이브에 자동 저장되는 시스템입니다.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;">
+        <div style="background:#0d0d0d;border-radius:10px;padding:16px;">
+          <div style="font-size:12px;color:var(--amber);margin-bottom:8px;font-weight:700;">1차 자동화 (완성)</div>
+          <div style="font-size:14px;color:var(--dim);line-height:1.8;">네이버 예약 메일 → Make → 구글 시트 + 캘린더 자동 기록</div>
+        </div>
+        <div style="background:#0d0d0d;border-radius:10px;padding:16px;">
+          <div style="font-size:12px;color:var(--blue);margin-bottom:8px;font-weight:700;">2차 자동화 (완성)</div>
+          <div style="font-size:14px;color:var(--dim);line-height:1.8;">아이패드 체크인 + 촬영 → 드라이브 + 시트 자동 저장</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 02 -->
+  <div class="section" id="s2">
+    <div class="section-num">02</div>
+    <div class="section-title">전체 흐름</div>
+    <div class="section-desc">처음부터 끝까지 무슨 일이 일어나는지</div>
+
+    <div class="flow">
+
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot" style="background:rgba(240,165,0,0.15);color:var(--amber);">1</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-label" style="color:var(--amber);">고객 행동</div>
+          <div class="flow-name">네이버에서 예약</div>
+          <div class="flow-detail">고객이 네이버 예약 서비스에서 날짜·시간·상품을 선택하고 결제까지 완료합니다. 이 순간 네이버가 자동으로 예약 확인 메일을 보냅니다.</div>
+          <span class="flow-tag" style="background:rgba(240,165,0,0.1);color:var(--amber);">네이버 예약</span>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot" style="background:rgba(167,139,250,0.15);color:var(--purple);">2</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-label" style="color:var(--purple);">자동화 — Make</div>
+          <div class="flow-name">메일 수신 → 데이터 파싱</div>
+          <div class="flow-detail">Make.com 이 네이버 메일함을 감시하고 있다가 새 예약 메일이 오면 자동으로 잡아챕니다. 메일 내용에서 예약번호, 날짜, 시간, 상품명, 인원수 등을 꺼내냅니다.<br><br><b style="color:var(--white);">시나리오 이름:</b> Integration Email, Google Sheets</div>
+          <span class="flow-tag" style="background:rgba(167,139,250,0.1);color:var(--purple);">Make.com</span>
+          <span class="flow-tag" style="background:rgba(167,139,250,0.1);color:var(--purple);">자동 실행</span>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot" style="background:rgba(78,203,161,0.15);color:var(--green);">3</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-label" style="color:var(--green);">1차 저장</div>
+          <div class="flow-name">구글 시트 + 캘린더 기록</div>
+          <div class="flow-detail">Make가 꺼낸 예약 정보를 구글 스프레드시트에 한 줄씩 추가합니다. 동시에 구글 캘린더에도 일정이 등록되어 촬영일 알림을 받을 수 있습니다.<br><br><b style="color:var(--white);">저장되는 시트:</b> DK_Reservation_Master → reservations 탭</div>
+          <span class="flow-tag" style="background:rgba(78,203,161,0.1);color:var(--green);">구글 시트</span>
+          <span class="flow-tag" style="background:rgba(78,203,161,0.1);color:var(--green);">구글 캘린더</span>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot" style="background:rgba(79,163,247,0.15);color:var(--blue);">4</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-label" style="color:var(--blue);">현장 운영 — 아이패드</div>
+          <div class="flow-name">대시보드에서 예약 목록 확인</div>
+          <div class="flow-detail">촬영 당일, 운영 요원이 아이패드 Safari에서 운영 웹앱을 엽니다. 시간 탭(13:00~17:00)을 누르면 해당 타임의 예약 고객 목록이 자동으로 불러와집니다.<br><br><b style="color:var(--white);">앱 주소:</b> script.google.com 앱스 스크립트 웹앱 URL</div>
+          <span class="flow-tag" style="background:rgba(79,163,247,0.1);color:var(--blue);">아이패드</span>
+          <span class="flow-tag" style="background:rgba(79,163,247,0.1);color:var(--blue);">Safari</span>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot" style="background:rgba(79,163,247,0.15);color:var(--blue);">5</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-label" style="color:var(--blue);">체크인</div>
+          <div class="flow-name">고객 카드 탭 → 정보 입력</div>
+          <div class="flow-detail">고객이 도착하면 목록에서 해당 고객 카드를 탭합니다. 1차 예약 정보(예약번호, 상품, 시간)가 자동으로 표시됩니다. 운영 요원이 실명, 이메일, 전화번호를 입력하고 개인정보 동의를 받습니다.</div>
+          <span class="flow-tag" style="background:rgba(79,163,247,0.1);color:var(--blue);">실명 확인</span>
+          <span class="flow-tag" style="background:rgba(79,163,247,0.1);color:var(--blue);">동의 수집</span>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot" style="background:rgba(79,163,247,0.15);color:var(--blue);">6</div>
+          <div class="flow-line"></div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-label" style="color:var(--blue);">촬영</div>
+          <div class="flow-name">촬영 창 열기 → 네임보드 + 카메라</div>
+          <div class="flow-detail">'촬영 창 열기' 버튼을 누르면 팝업 창이 열립니다. 상단에 고객 이름이 크게 표시된 네임보드가 뜨고, 아래에 카메라 화면이 나옵니다. '카메라 시작' → '촬영하기' 버튼으로 머그샷을 찍습니다.<br><br><b style="color:var(--white);">팝업 주소:</b> dksequence.github.io/operation/camera.html</div>
+          <span class="flow-tag" style="background:rgba(79,163,247,0.1);color:var(--blue);">GitHub Pages 팝업</span>
+          <span class="flow-tag" style="background:rgba(79,163,247,0.1);color:var(--blue);">아이패드 카메라</span>
+        </div>
+      </div>
+
+      <div class="flow-item">
+        <div class="flow-left">
+          <div class="flow-dot" style="background:rgba(78,203,161,0.15);color:var(--green);">7</div>
+        </div>
+        <div class="flow-content">
+          <div class="flow-label" style="color:var(--green);">자동 저장</div>
+          <div class="flow-name">드라이브 + 2차 시트 자동 기록</div>
+          <div class="flow-detail">촬영 완료 즉시 3단계가 자동으로 진행됩니다.<br>① 사진 파일이 구글 드라이브에 저장 (파일명: 날짜_예약번호_실명.jpg)<br>② 체크인 정보가 2차 스프레드시트에 한 줄 추가<br>③ 대시보드에서 해당 고객이 '완료' 상태로 변경</div>
+          <span class="flow-tag" style="background:rgba(78,203,161,0.1);color:var(--green);">구글 드라이브</span>
+          <span class="flow-tag" style="background:rgba(78,203,161,0.1);color:var(--green);">2차 시트 기록</span>
+          <span class="flow-tag" style="background:rgba(78,203,161,0.1);color:var(--green);">완료 처리</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 03 -->
+  <div class="section" id="s3">
+    <div class="section-num">03</div>
+    <div class="section-title">파일 지도</div>
+    <div class="section-desc">어디에 뭐가 있는지 한눈에</div>
+
+    <table class="file-table">
+      <tr>
+        <th>파일명</th>
+        <th>위치</th>
+        <th>역할</th>
+        <th>종류</th>
+      </tr>
+      <tr>
+        <td>
+          <div class="file-name">Code.gs</div>
+          <div class="file-loc">앱스 스크립트 프로젝트 안</div>
+        </td>
+        <td style="font-size:14px;color:var(--dim);">Google Apps Script<br>20260408_dk_management_v101</td>
+        <td style="font-size:14px;">시스템의 두뇌. 예약 조회, 체크인 저장, 드라이브 폴더 생성, 사진 저장을 모두 담당</td>
+        <td><span class="badge badge-purple">백엔드</span></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="file-name">index.html</div>
+          <div class="file-loc">앱스 스크립트 프로젝트 안</div>
+        </td>
+        <td style="font-size:14px;color:var(--dim);">Google Apps Script<br>20260408_dk_management_v101</td>
+        <td style="font-size:14px;">아이패드에서 보이는 메인 화면. 대시보드, 체크인 폼, 동의 화면, 저장 중 화면, 완료 화면</td>
+        <td><span class="badge badge-blue">프론트엔드</span></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="file-name">camera.html</div>
+          <div class="file-loc">GitHub Pages<br>/operation/ 폴더</div>
+        </td>
+        <td style="font-size:14px;color:var(--dim);">github.com/dksequence/<br>dksequence.github.io</td>
+        <td style="font-size:14px;">카메라 전용 팝업 페이지. 네임보드 표시 + 카메라 촬영. iOS Safari 카메라 권한 문제 해결용으로 분리</td>
+        <td><span class="badge badge-green">카메라 팝업</span></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="file-name">DK_Reservation_Master</div>
+          <div class="file-loc">구글 스프레드시트</div>
+        </td>
+        <td style="font-size:14px;color:var(--dim);">Google Sheets<br>탭: reservations</td>
+        <td style="font-size:14px;">1차 데이터. Make가 네이버 예약 메일을 받아서 여기에 자동으로 기록함. 예약번호, 날짜, 시간, 상품명, 인원 등 포함</td>
+        <td><span class="badge badge-amber">1차 데이터</span></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="file-name">PhotoManagement_DOC_DKsequence</div>
+          <div class="file-loc">구글 스프레드시트</div>
+        </td>
+        <td style="font-size:14px;color:var(--dim);">Google Sheets<br>탭: 2차_체크인</td>
+        <td style="font-size:14px;">2차 데이터. 현장 체크인 시 자동 기록됨. 실명, 이메일, 전화, 동의 여부, 사진 URL, 드라이브 폴더 URL 포함</td>
+        <td><span class="badge badge-blue">2차 데이터</span></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="file-name">DKsequence_중문별장</div>
+          <div class="file-loc">구글 드라이브</div>
+        </td>
+        <td style="font-size:14px;color:var(--dim);">내 드라이브 → 0001_DKsequence_file → DKsequence_중문별장</td>
+        <td style="font-size:14px;">사진 저장 루트 폴더. 날짜/시간/고객명 순으로 자동 하위 폴더 생성됨</td>
+        <td><span class="badge badge-green">사진 저장소</span></td>
+      </tr>
+      <tr>
+        <td>
+          <div class="file-name">Integration Email, Google Sheets</div>
+          <div class="file-loc">Make.com</div>
+        </td>
+        <td style="font-size:14px;color:var(--dim);">make.com → My Organization → Scenarios</td>
+        <td style="font-size:14px;">1차 자동화 시나리오. 네이버 메일 감시 → 파싱 → 구글 시트 + 캘린더 기록</td>
+        <td><span class="badge badge-red">자동화</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 04 -->
+  <div class="section" id="s4">
+    <div class="section-num">04</div>
+    <div class="section-title">실제 URL & ID 모음</div>
+    <div class="section-desc">중요한 주소들 — 잃어버리면 찾기 어려우니 보관 필수</div>
+
+    <div class="warn">
+      <div class="warn-label">주의</div>
+      <div class="warn-text">아래 ID와 URL은 외부에 공개하지 마세요. 구글 드라이브와 스프레드시트에 무단 접근이 가능해집니다.</div>
+    </div>
+
+    <div class="card">
+      <div class="url-label">현장 운영 앱 (아이패드에서 여는 주소)</div>
+      <div class="url-box">https://script.google.com/macros/s/AKfycbwoqVAZVZclcog_8hGo6W5xKCGWdK9HHRCw-CtidsA3sygtPJatZ88b82iouE0brF0G/exec</div>
+
+      <div class="url-label" style="margin-top:20px;">카메라 팝업 페이지 (자동으로 열림, 직접 열 필요 없음)</div>
+      <div class="url-box">https://dksequence.github.io/operation/camera.html</div>
+
+      <div class="url-label" style="margin-top:20px;">앱스 스크립트 편집 주소 (코드 수정 시)</div>
+      <div class="url-box">https://script.google.com/home/projects/1k1tW6IH3zDcvxUTmeYkHlv7dBUVVjwA7v3tv5c68p87ea1lPk62Fb8v3/edit</div>
+
+      <div class="url-label" style="margin-top:20px;">1차 스프레드시트 ID</div>
+      <div class="url-box">1llMx1e7JYdGG5l1OOJiGvFoi4TvdlL9LEaZo9GiBUN4</div>
+
+      <div class="url-label" style="margin-top:20px;">2차 스프레드시트 ID</div>
+      <div class="url-box">1TVzwgFW5oaqL2e0LjCZl0ZPc_gxcr7cFESZ-sqOIjeU</div>
+
+      <div class="url-label" style="margin-top:20px;">구글 드라이브 루트 폴더 ID</div>
+      <div class="url-box">1MJlGEFWKN4ipSQp5e-cEmPSFJ7gyGvMN</div>
+
+      <div class="url-label" style="margin-top:20px;">GitHub 저장소</div>
+      <div class="url-box">github.com/dksequence/dksequence.github.io → /operation/ 폴더</div>
+
+      <div class="url-label" style="margin-top:20px;">Make.com 시나리오</div>
+      <div class="url-box">make.com → My Organization → Scenarios → Integration Email, Google Sheets</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 05 -->
+  <div class="section" id="s5">
+    <div class="section-num">05</div>
+    <div class="section-title">스프레드시트 컬럼 설명</div>
+    <div class="section-desc">각 시트에 어떤 데이터가 들어있는지</div>
+
+    <div class="card" style="margin-bottom:24px;">
+      <div class="card-title">1차 시트 — DK_Reservation_Master → reservations 탭</div>
+      <div class="card-sub">Make가 네이버 메일을 받아서 자동 기록 (수동 수정 금지)</div>
+      <table class="col-table">
+        <tr><th>컬럼명</th><th>내용</th><th>예시</th></tr>
+        <tr><td class="col-name">received_at</td><td>메일 수신 시각</td><td>2026-04-07T...</td></tr>
+        <tr><td class="col-name">mail_subject</td><td>메일 제목</td><td>[네이버 예약] 홍*동님</td></tr>
+        <tr><td class="col-name">reservation_name</td><td>예약자명 (마스킹)</td><td>홍*동님</td></tr>
+        <tr><td class="col-name">reservation_applied_at</td><td>예약 신청 시각</td><td>2026.04.07. 19:30:55</td></tr>
+        <tr><td class="col-name">reservation_no</td><td>예약번호 (10자리)</td><td>1202237764</td></tr>
+        <tr><td class="col-name">product_name</td><td>상품명</td><td>두컷화보</td></tr>
+        <tr><td class="col-name">use_date</td><td>촬영일</td><td>2026.04.08</td></tr>
+        <tr><td class="col-name">use_time</td><td>촬영 시간</td><td>14:00</td></tr>
+        <tr><td class="col-name">people_count</td><td>인원수</td><td>2</td></tr>
+        <tr><td class="col-name">booking_status</td><td>예약 상태</td><td>확정</td></tr>
+        <tr><td class="col-name">calendar_registered</td><td>캘린더 등록 여부</td><td>Y</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">2차 시트 — PhotoManagement_DOC_DKsequence → 2차_체크인 탭</div>
+      <div class="card-sub">현장 체크인 시 앱스 스크립트가 자동 기록</div>
+      <table class="col-table">
+        <tr><th>컬럼명</th><th>내용</th><th>비고</th></tr>
+        <tr><td class="col-name">checkin_at</td><td>체크인 시각</td><td>자동</td></tr>
+        <tr><td class="col-name">date</td><td>촬영일 (20260408)</td><td>자동</td></tr>
+        <tr><td class="col-name">time</td><td>타임 (14:00)</td><td>자동</td></tr>
+        <tr><td class="col-name">reservation_no</td><td>예약번호 or 현장코드</td><td>자동</td></tr>
+        <tr><td class="col-name">masked_name</td><td>마스킹 이름 (홍*동님)</td><td>자동</td></tr>
+        <tr><td class="col-name">real_name</td><td>실명 (현장 확인)</td><td>운영요원 입력</td></tr>
+        <tr><td class="col-name">product</td><td>상품명</td><td>자동</td></tr>
+        <tr><td class="col-name">people</td><td>인원</td><td>자동</td></tr>
+        <tr><td class="col-name">email</td><td>이메일</td><td>고객 입력</td></tr>
+        <tr><td class="col-name">phone</td><td>전화번호</td><td>고객 입력</td></tr>
+        <tr><td class="col-name">privacy_consent</td><td>개인정보 동의 Y/N</td><td>필수</td></tr>
+        <tr><td class="col-name">sns_consent</td><td>SNS 활용 동의 Y/N</td><td>선택</td></tr>
+        <tr><td class="col-name">memo</td><td>특이사항</td><td>선택</td></tr>
+        <tr><td class="col-name">type</td><td>예약 / 현장접수</td><td>자동</td></tr>
+        <tr><td class="col-name">photo_path</td><td>머그샷 드라이브 URL</td><td>자동</td></tr>
+        <tr><td class="col-name">folder_url</td><td>고객 폴더 URL</td><td>자동</td></tr>
+        <tr><td class="col-name">delivery_status</td><td>납품 상태</td><td>수동 업데이트</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 06 -->
+  <div class="section" id="s6">
+    <div class="section-num">06</div>
+    <div class="section-title">현장 운영 사용법</div>
+    <div class="section-desc">촬영 당일 운영 요원이 따라하는 순서</div>
+
+    <div class="step-list">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">아이패드 Safari에서 앱 열기</div>
+          <div class="step-desc">홈화면에 저장된 'DKsequence 현장운영' 아이콘을 탭합니다. 또는 Safari에서 script.google.com 앱 URL을 직접 입력합니다.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">시간 탭 선택</div>
+          <div class="step-desc">상단 탭에서 현재 타임(예: 14:00)을 탭합니다. 해당 타임 예약 고객 목록이 자동으로 불러와집니다. 완료된 고객은 흐리게 표시됩니다.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">고객 카드 탭 → 체크인 화면</div>
+          <div class="step-desc">도착한 고객의 카드를 탭합니다. 체크인 화면에서 실명을 확인하고 입력합니다. 이메일, 전화번호를 받아서 입력하고 개인정보 동의를 받습니다. (▼ 눌러서 내용 확인 가능)</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">촬영 창 열기 → 카메라 시작 → 촬영</div>
+          <div class="step-desc">'촬영 창 열기' 버튼 탭 → 팝업 창에서 '카메라 시작' 탭 → 권한 허용 → '촬영하기' 버튼으로 머그샷 촬영. 촬영 완료 후 팝업이 자동으로 닫힙니다.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-title">자동 저장 확인 후 다음 고객</div>
+          <div class="step-desc">저장 중 화면에서 3단계(드라이브 저장 → 시트 기록 → 완료처리)가 순서대로 완료됩니다. '다음 고객' 버튼을 탭하면 대시보드로 돌아갑니다.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip" style="margin-top:24px;">
+      <div class="tip-label">현장 결제 고객 (예약 없는 손님)</div>
+      <div class="tip-text">대시보드 하단 '+ 신규 고객 추가' 버튼을 탭합니다. 접수 코드가 자동 생성(20260408-W1 형식)되고 이름, 시간, 상품, 결제 방법을 입력 후 촬영하면 됩니다.</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 07 -->
+  <div class="section" id="s7">
+    <div class="section-num">07</div>
+    <div class="section-title">드라이브 폴더 구조</div>
+    <div class="section-desc">사진이 어디에 어떻게 저장되는지</div>
+
+    <div class="card">
+      <pre style="font-family:monospace;font-size:14px;line-height:2;color:var(--dim);">
+<span style="color:var(--white);">내 드라이브</span>
+└── <span style="color:var(--white);">0001_DKsequence_file</span>
+    └── <span style="color:var(--amber);">DKsequence_중문별장</span>  ← 루트 폴더 (ID: 1MJlGEFWKN...)
+        └── <span style="color:var(--white);">2026</span>               ← 연도 (자동 생성)
+            └── <span style="color:var(--white);">20260408</span>        ← 촬영일 (자동 생성)
+                ├── <span style="color:var(--blue);">13:00</span>        ← 시간대 (자동 생성)
+                │   ├── <span style="color:var(--green);">1202237764_홍길동</span>  ← 고객 폴더 (자동 생성)
+                │   │   └── <span style="color:var(--green);">20260408_1202237764_홍길동.jpg</span>  ← 머그샷
+                │   └── <span style="color:var(--green);">20260408-W1_김철수</span>  ← 현장접수 고객
+                ├── <span style="color:var(--blue);">14:00</span>
+                └── <span style="color:var(--blue);">15:00</span>
+      </pre>
+      <div class="tip" style="margin-top:16px;">
+        <div class="tip-label">3차 개발 예정</div>
+        <div class="tip-text">미러리스 본촬영 사진도 같은 고객 폴더에 추가됩니다. 머그샷으로 누가 누구인지 확인 후 폴더링 작업을 진행합니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 08 -->
+  <div class="section" id="s8">
+    <div class="section-num">08</div>
+    <div class="section-title">문제 해결 가이드</div>
+    <div class="section-desc">뭔가 안 될 때 여기를 보세요</div>
+
+    <div class="trouble-item">
+      <div class="trouble-q">예약 목록이 불러오기 실패로 나와요</div>
+      <div class="trouble-a">1차 스프레드시트(DK_Reservation_Master)에 해당 날짜 데이터가 있는지 확인하세요. 앱스 스크립트에서 배포가 최신 버전인지 확인하세요. (배포 → 배포 관리 → 버전 확인)</div>
+    </div>
+    <div class="trouble-item">
+      <div class="trouble-q">카메라가 안 열려요</div>
+      <div class="trouble-a">아이패드 설정 → Safari → 카메라가 '묻기' 또는 '허용'으로 되어 있는지 확인하세요. 팝업 창이 차단됐다면 Safari 설정에서 팝업 허용으로 바꿔주세요.</div>
+    </div>
+    <div class="trouble-item">
+      <div class="trouble-q">사진 저장은 됐는데 시트 기록이 안 돼요</div>
+      <div class="trouble-a">앱스 스크립트 실행 로그에서 오류를 확인하세요. (code 편집기 → 실행 로그 탭) 2차 스프레드시트 ID가 Code.gs CONFIG에 올바르게 입력되어 있는지 확인하세요.</div>
+    </div>
+    <div class="trouble-item">
+      <div class="trouble-q">Make 자동화가 멈춘 것 같아요</div>
+      <div class="trouble-a">make.com에 접속해서 'Integration Email, Google Sheets' 시나리오가 켜져 있는지 확인하세요. (오른쪽 토글이 파란색이면 ON) 실행 기록에서 오류가 있는지 확인하세요.</div>
+    </div>
+    <div class="trouble-item">
+      <div class="trouble-q">코드 수정 후 아이패드에 반영이 안 돼요</div>
+      <div class="trouble-a">앱스 스크립트 코드 수정 후에는 반드시 재배포가 필요합니다. 배포 → 배포 관리 → 연필 아이콘 → 새 버전 → 배포. Safari에서 새로고침하면 반영됩니다.</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 09 -->
+  <div class="section" id="s9">
+    <div class="section-num">09</div>
+    <div class="section-title">코드 수정 후 재배포 방법</div>
+    <div class="section-desc">Code.gs 또는 index.html을 수정했을 때</div>
+
+    <div class="step-list">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">script.google.com 접속</div>
+          <div class="step-desc">20260408_dk_management_v101 프로젝트를 엽니다.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">코드 수정 후 저장</div>
+          <div class="step-desc">Code.gs 또는 index.html을 수정하고 Ctrl+S로 저장합니다.</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">배포 → 배포 관리</div>
+          <div class="step-desc">오른쪽 상단 '배포' 버튼 클릭 → '배포 관리' 클릭 (새 배포 아님!)</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">연필 아이콘 → 새 버전 → 배포</div>
+          <div class="step-desc">기존 배포 오른쪽 연필(✏️) 클릭 → 버전 드롭다운에서 '새 버전' 선택 → '배포' 버튼 클릭</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-title">camera.html 수정 시 — GitHub만</div>
+          <div class="step-desc">camera.html은 GitHub에만 있습니다. github.com/dksequence/dksequence.github.io → operation/camera.html → ✏️ 편집 → 수정 → Commit changes</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="warn" style="margin-top:24px;">
+      <div class="warn-label">중요</div>
+      <div class="warn-text">Code.gs의 CONFIG 블록에 있는 ROOT_FOLDER_ID, SHEET_1ST_ID, SHEET_2ND_ID 세 값은 절대 바꾸지 마세요. 이 값이 바뀌면 데이터가 엉뚱한 곳에 저장됩니다.</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

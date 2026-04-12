@@ -742,3 +742,8 @@ function findRowInMasterByResno(sheet, resno) {
   }
   return -1;
 }
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> b3db8e8 (Fix stats, circles, and sound effects)
