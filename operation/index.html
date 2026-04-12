@@ -802,14 +802,9 @@ function loadReservations(time) {
 function renderList(reservations) {
   var list = document.getElementById('reservation-list');
   var total = reservations.length;
-  var done  = reservations.filter(function(r){ return r.checkedIn; }).length;
-  var wait  = total - done;
-  document.getElementById('stat-total').textContent = total;
-  document.getElementById('stat-done').textContent  = done;
-  document.getElementById('stat-wait').textContent  = wait;
 
   if (total === 0) {
-    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--on-surface-dim);font-size:13px;">이 타임 예약 없음</div>';
+    list.innerHTML = '<div class="empty-text">이 타임에<br>예약이 없습니다.</div>';
     return;
   }
 
