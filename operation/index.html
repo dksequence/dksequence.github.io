@@ -21,10 +21,12 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 /* ── 공통 컴포넌트 ── */
 .topbar { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 20px; border-bottom: 1px solid var(--outline); background: rgba(22,22,23,0.8); backdrop-filter: blur(20px); text-align: center; position: sticky; top: 0; z-index: 10; }
 .topbar-brand { font-size: 14px; color: var(--on-surface-dim); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
-.topbar-date-row { display: flex; align-items: center; justify-content: center; gap: 20px; }
-.topbar-date { font-size: 32px; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
-.date-nav-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--outline); color: var(--primary); width: 48px; height: 48px; border-radius: 50%; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.topbar-date-row { display: flex; align-items: center; justify-content: center; gap: 14px; }
+.topbar-date { font-size: 28px; font-weight: 700; color: #fff; letter-spacing: -0.02em; padding: 10px 24px; border-radius: 0.5rem; transition: background 0.3s; }
+.date-nav-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--outline); color: var(--primary); width: 48px; height: 48px; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
 .date-nav-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.1); }
+.today-btn { background: var(--surface-highest); border: 1px solid var(--outline); color: #fff; padding: 10px 18px; border-radius: 0.5rem; font-size: 16px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+.today-btn:active { transform: scale(0.95); opacity: 0.8; }
 
 /* ── 소스 배지 (N/A/V) ── */
 .avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: #fff; flex-shrink: 0; }
@@ -206,7 +208,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 .mode-tabs{display:flex;gap:0;padding:0 20px;margin-top:10px;}
 .mode-tab{flex:1;padding:16px;text-align:center;font-size:22px;font-weight:600;color:rgba(255,255,255,0.4);
   border-bottom:2px solid transparent;cursor:pointer;background:transparent;border-top:none;border-left:none;border-right:none;font-family:'Inter',sans-serif;}
-.mode-tab.active{color:#fff;border-bottom-color:var(--primary);}
+.mode-tab.active{color:#fff; background: var(--primary-container); border-radius: 0.75rem;}
 .delivery-card{background:var(--surface-high);border-radius:1rem;padding:20px 22px;margin-bottom:10px;}
 .delivery-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
 .delivery-card-name{font-size:24px;font-weight:700;color:#fff;}
@@ -235,6 +237,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
   <div class="topbar">
     <div class="topbar-brand">DKsequence × 중문별장</div>
     <div class="topbar-date-row">
+      <button class="today-btn" onclick="goToToday()">TODAY</button>
       <button class="date-nav-btn" onclick="changeDate(-1)">◀</button>
       <div class="topbar-date" id="today-label"></div>
       <button class="date-nav-btn" onclick="changeDate(1)">▶</button>
@@ -645,31 +648,61 @@ var FACING = 'environment'; // 후면 카메라 기본
 var TIMES = ['13:00','14:00','15:00','16:00','17:00'];
 var SELECTED_TIME = '14:00';
 
+// ── 사운드 재생 ──────────────────────────────────────────
+var SFX = {};
+function initSFX() {
+  ['EFFECT001','EFFECT002','EFFECT003','EFFECT004','EFFECT005','EFFECT006','EFFECT007','EFFECT008'].forEach(function(id) {
+    SFX[id] = new Audio('sound/' + id + '.mp3');
+    SFX[id].load();
+  });
+}
+function playSound(id) {
+  if (SFX[id]) {
+    SFX[id].currentTime = 0;
+    SFX[id].play().catch(function(e){ console.warn('Sound play failed:', e); });
+  }
+}
+
 // ── 날짜 유틸 추가 및 검색 연동 ───────────────────────
 var CURRENT_DATE_OFFSET = 0;
 function changeDate(offset) {
+  playSound('EFFECT001');
   CURRENT_DATE_OFFSET += offset;
-  document.getElementById('today-label').textContent = getTodayLabel();
-  loadReservations(SELECTED_TIME); // 변경된 날짜에 맞게 리스트 조회 트리거
+  updateDateUI();
+  loadReservations(SELECTED_TIME);
+}
+
+function goToToday() {
+  if (CURRENT_DATE_OFFSET !== 0) {
+    playSound('EFFECT001');
+    CURRENT_DATE_OFFSET = 0;
+    updateDateUI();
+    loadReservations(SELECTED_TIME);
+  }
+}
+
+function updateDateUI() {
+  var d = new Date();
+  d.setDate(d.getDate() + CURRENT_DATE_OFFSET);
+  var dayIdx = d.getDay(); 
+  var days = ['일','월','화','수','목','금','토'];
+  var colors = ['#FF6B6B','#FF8C00','#FFD700','#4ECBA1','#0071E3','#4B0082','#800080'];
+  
+  var labelEl = document.getElementById('today-label');
+  labelEl.textContent = d.getFullYear() + '년 ' + (d.getMonth()+1) + '월 ' + d.getDate() + '일 (' + days[dayIdx] + ')';
+  labelEl.style.background = colors[dayIdx];
+  labelEl.style.color = (dayIdx === 1 || dayIdx === 2 || dayIdx === 3) ? '#000' : '#fff';
 }
 
 function getToday() {
   var d = new Date();
   d.setDate(d.getDate() + CURRENT_DATE_OFFSET);
-  return d.getFullYear() + '' +
-    String(d.getMonth()+1).padStart(2,'0') +
-    String(d.getDate()).padStart(2,'0');
-}
-
-function getTodayLabel() {
-  var d = new Date();
-  d.setDate(d.getDate() + CURRENT_DATE_OFFSET);
-  var days = ['일','월','화','수','목','금','토'];
-  return d.getFullYear() + '년 ' + (d.getMonth()+1) + '월 ' + d.getDate() + '일 (' + days[d.getDay()] + ')';
+  return d.getFullYear() + '' + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
 }
 
 // ── 화면 전환 ─────────────────────────────────────────
 function show(id) {
+  if (id === 's-dashboard') playSound('EFFECT008'); // 복귀 시 사운드
   document.querySelectorAll('.screen').forEach(function(s){
     s.classList.remove('active');
     s.style.display = 'none';
@@ -716,7 +749,8 @@ function callApi(payload, cb) {
 
 // ── 타임 탭 초기화 ────────────────────────────────────
 function initTabs() {
-  document.getElementById('today-label').textContent = getTodayLabel();
+  initSFX();
+  updateDateUI();
   var container = document.getElementById('time-tabs');
   container.innerHTML = '';
   TIMES.forEach(function(t) {
@@ -724,6 +758,7 @@ function initTabs() {
     btn.className = 'tab' + (t === SELECTED_TIME ? ' active' : '');
     btn.textContent = t;
     btn.onclick = function() {
+      playSound('EFFECT003');
       document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
       SELECTED_TIME = t;
@@ -738,13 +773,25 @@ function initTabs() {
 function loadReservations(time) {
   document.getElementById('list-label').textContent = time + ' 타임';
   var list = document.getElementById('reservation-list');
-  list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--on-surface-dim);font-size:13px;">불러오는 중...</div>';
+  list.innerHTML = 
+    '<div class="loading-box">' +
+      '<div class="loading-spinner"></div>' +
+      '<div class="loading-text">데이터를 읽고 있습니다...</div>' +
+    '</div>';
 
   callApi({ action: 'getReservations', date: getToday(), time: time }, function(err, res) {
     if (err || !res.ok) {
-      list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--danger);font-size:13px;">불러오기 실패. 새로고침 해주세요.</div>';
+      list.innerHTML = '<div class="empty-text" style="color:var(--danger);">오류가 발생했습니다.<br>새로고침 해주세요.</div>';
       return;
     }
+    
+    // 일일 전체 통계 업데이트 (사장님 요청: 시간대 클릭 시에도 오늘 전체 숫자 유지)
+    if (res.dailyStats) {
+      document.getElementById('stat-total').textContent = res.dailyStats.total;
+      document.getElementById('stat-done').textContent  = res.dailyStats.done;
+      document.getElementById('stat-wait').textContent  = res.dailyStats.wait;
+    }
+    
     renderList(res.reservations);
   });
 }
@@ -768,12 +815,8 @@ function renderList(reservations) {
     var initial = r.name ? r.name.charAt(0) : '?';
     var card = document.createElement('div');
     card.className = 'customer-card' + (r.checkedIn ? ' done' : '');
-    
-    var sourceClass = 'source-' + (r.source || 'A').toLowerCase();
-    var sourceChar = (r.source || 'A').toUpperCase();
-
     card.innerHTML =
-      '<div class="avatar ' + sourceClass + '">' + sourceChar + '</div>' +
+      '<div class="avatar ' + (r.checkedIn ? 'av-done' : 'av-wait') + '">' + initial + '</div>' +
       '<div class="card-info">' +
         '<div class="card-name">' + r.name + '</div>' +
         '<div class="card-meta">' + r.product + ' · ' + r.people + '인</div>' +
@@ -816,6 +859,7 @@ function toggleDetail(detailId, iconId) {
 
 // ── 촬영 화면 진입 ────────────────────────────────────
 function goCamera() {
+  playSound('EFFECT005'); // 촬영 준비 사운드
   var realname = document.getElementById('ci-realname').value.trim();
   if (!realname) { showToast('실명을 입력해주세요'); return; }
 
@@ -849,6 +893,7 @@ function goCamera() {
 
 // ── 카메라 제어 ───────────────────────────────────────
 function userStartCamera() {
+  playSound('EFFECT005'); // 카메라 활성화 사운드
   // GitHub Pages 카메라 팝업으로 열기
   var popupUrl = 'https://dksequence.github.io/operation/camera.html';
   var popup = window.open(popupUrl, 'camera',
@@ -915,6 +960,7 @@ function flipCamera() {
 
 // ── 셔터 → 저장 파이프라인 ──────────────────────────
 function takePhoto() {
+  playSound('EFFECT006'); // 찰칵! 셔터음
   var video  = document.getElementById('videoEl');
   var canvas = document.getElementById('canvasEl');
   var vw = video.videoWidth  || 1280;
@@ -986,6 +1032,7 @@ function startSaving() {
       // Step 3: 완료
       setStep(3, 'loading', '완료 처리 중...');
       setTimeout(function() {
+        playSound('EFFECT007'); // 성공 차임벨
         setStep(3, 'ok', '완료');
         setTimeout(showDone, 400);
       }, 500);
@@ -1134,6 +1181,7 @@ window.onload = function() { initTabs(); };
 var CURRENT_MODE = 'checkin';
 
 function switchMode(mode) {
+  playSound('EFFECT002');
   CURRENT_MODE = mode;
   document.querySelectorAll('.mode-tab').forEach(function(t, i) {
     t.classList.toggle('active', (i === 0 && mode === 'checkin') || (i === 1 && mode === 'delivery'));
@@ -1223,40 +1271,9 @@ function renderDeliveryList(items) {
   });
 }
 
-function markDone(resno) {
-  if (!confirm(resno + ' 보정완료 처리할까요?\nresult 폴더 링크가 자동 공유됩니다.')) return;
-  
-  showToast('보정완료 처리 중...');
-  callApi({ action: 'markEditDone', resno: resno }, function(err, res) {
-    if (err || !res.ok) {
-      showToast('실패: ' + (err ? err.message : res.error));
-      return;
-    }
-    showToast('✅ 보정완료! 링크 공유 설정됨');
-    loadDeliveryList();
-  });
-}
-
-function sendDelivery(resno, btnEl) {
-  if (!confirm(resno + ' 고객에게 납품 이메일을 발송할까요?')) return;
-  
-  btnEl.disabled = true;
-  btnEl.textContent = '발송 중...';
-  
-  callApi({ action: 'sendDeliveryEmail', resno: resno }, function(err, res) {
-    if (err || !res.ok) {
-      showToast('발송 실패: ' + (err ? err.message : res.error));
-      btnEl.disabled = false;
-      btnEl.textContent = '재시도';
-      return;
-    }
-    showToast('✅ 이메일 발송 완료!');
-    loadDeliveryList();
-  });
-}
-
 var CURRENT_ADD_TYPE = 'A';
 function showNewScreen(type) {
+  playSound('EFFECT004'); // 신규/체험 고객 추가 버튼음
   CURRENT_ADD_TYPE = type;
   show('s-new');
   var title = document.querySelector('#s-new .section-label');
