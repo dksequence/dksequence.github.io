@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>DKsequence 현장 운영 v2.1 통합본</title>
+<title>DKsequence 현장 운영 v2.2 긴급복구</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -105,20 +105,21 @@ html,body{background:#000!important;color:#fff!important;height:100%;font-family
 </head>
 <body>
 
+<!-- 화면: 목록 -->
 <div id="s-list" class="screen active">
   <div class="topbar">
     <div class="topbar-brand">DKsequence × 중문별장</div>
     <div class="topbar-date-row">
       <button class="today-btn" onclick="goToToday()">TODAY</button>
       <button class="date-nav-btn" onclick="changeDate(-1)">◀</button>
-      <div class="topbar-date" id="today-label">2026-04-13</div>
+      <div class="topbar-date" id="today-label">-</div>
       <button class="date-nav-btn" onclick="changeDate(1)">▶</button>
     </div>
   </div>
 
   <div class="mode-tabs">
-    <div class="mode-tab active" onclick="switchMode('checkin')">체크인 관리</div>
-    <div class="mode-tab" onclick="switchMode('delivery')">납품 관리</div>
+    <div class="mode-tab active" id="tab-checkout" onclick="switchMode('checkin')">체크인 관리</div>
+    <div class="mode-tab" id="tab-delivery" onclick="switchMode('delivery')">납품 관리</div>
   </div>
 
   <div id="mode-checkin">
@@ -128,7 +129,7 @@ html,body{background:#000!important;color:#fff!important;height:100%;font-family
       <div class="stat-card"><div class="stat-label">완료</div><div id="stat-done" class="stat-val done">0</div></div>
       <div class="stat-card"><div class="stat-label">대기</div><div id="stat-wait" class="stat-val wait">0</div></div>
     </div>
-    <div id="list-time-label" class="section-label">목록</div>
+    <div class="section-label" id="list-time-label">목록</div>
     <div id="reservation-list" class="list"></div>
     <div style="padding:0 20px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
       <button class="add-btn" onclick="showNewScreen('A')">+ 신규 고객<br><small>WALK-IN</small></button>
@@ -143,14 +144,57 @@ html,body{background:#000!important;color:#fff!important;height:100%;font-family
       <div class="stat-card"><div class="stat-label">보정완료</div><div id="del-stat-edited" class="stat-val done">0</div></div>
       <div class="stat-card"><div class="stat-label">발송완료</div><div id="del-stat-sent" class="stat-val wait">0</div></div>
     </div>
+    <div class="section-label">오늘 촬영 목록</div>
     <div id="delivery-list" class="list"></div>
     <div style="height:140px;"></div>
   </div>
 </div>
 
-<!-- 촬영 화면 (내장 카메라 인터페이스) -->
+<!-- 화면: 체크인 폼 -->
+<div id="s-checkin" class="screen">
+  <div class="topbar"><button class="back-btn" onclick="show('s-list')">취소</button><div style="font-size:24px; font-weight:700;">체크인</div><div style="width:50px;"></div></div>
+  <div style="padding:20px 24px 120px;">
+    <div style="background:var(--surface-low); padding:20px; border-radius:1rem; margin-bottom:20px;">
+      <div style="font-size:18px; color:rgba(255,255,255,0.4); margin-bottom:8px;">예약 정보</div>
+      <div style="font-size:28px; font-weight:700; color:#fff;" id="ci-name">-</div>
+      <div style="font-size:20px; color:var(--primary); margin-top:5px;" id="ci-resno">-</div>
+      <div style="font-size:20px; color:rgba(255,255,255,0.6); margin-top:5px;" id="ci-product">-</div>
+    </div>
+    <div style="margin-bottom:20px;"><div style="font-size:20px; opacity:0.7;">고객 실명 *</div><input type="text" id="ci-realname" class="field-input"></div>
+    <div style="margin-bottom:20px;"><div style="font-size:20px; opacity:0.7;">이메일 *</div><input type="email" id="ci-email" class="field-input" placeholder="example@gmail.com"></div>
+    <div style="background:var(--surface-low); padding:20px; border-radius:1rem;">
+       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;" onclick="toggle('tg-p1')">
+          <span style="font-size:22px;">개인정보 동의 (필수)</span><div id="tg-p1" class="toggle on"></div>
+       </div>
+       <div style="display:flex; justify-content:space-between; align-items:center;" onclick="toggle('tg-s1')">
+          <span style="font-size:22px;">마케팅 활용 동의 (선택)</span><div id="tg-s1" class="toggle"></div>
+       </div>
+    </div>
+  </div>
+  <div class="btn-group"><button class="btn-primary" onclick="proceedToCheckin()">머그샷 촬영하기</button></div>
+</div>
+
+<!-- 화면: 신규 고객 추가 -->
+<div id="s-new" class="screen">
+  <div class="topbar"><button class="back-btn" onclick="show('s-list')">취소</button><div style="font-size:24px; font-weight:700;" id="new-title">고객 추가</div><div style="width:50px;"></div></div>
+  <div style="padding:20px 24px 120px;">
+    <div style="background:var(--surface-low); padding:20px; border-radius:1rem; margin-bottom:20px;">
+      <div style="font-size:18px; color:rgba(255,255,255,0.4); margin-bottom:8px;">생성 코드</div>
+      <div style="font-size:32px; font-weight:800; color:var(--primary);" id="new-code">-</div>
+    </div>
+    <div style="margin-bottom:20px;"><div style="font-size:20px; opacity:0.7;">성함 *</div><input type="text" id="new-name" class="field-input"></div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
+      <div><div style="font-size:20px; opacity:0.7;">타임</div><select id="new-time" class="field-input"><option>13:00</option><option>14:00</option><option>15:00</option><option>16:00</option><option>17:00</option></select></div>
+      <div><div style="font-size:20px; opacity:0.7;">인원</div><select id="new-people" class="field-input"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+    </div>
+    <div style="margin-bottom:20px;"><div style="font-size:20px; opacity:0.7;">상품 선택</div><select id="new-prod" class="field-input"><option>오마카세+두컷화보</option><option>심플 코스</option><option>기타</option></select></div>
+    <div style="margin-bottom:20px;"><div style="font-size:20px; opacity:0.7;">이메일 *</div><input type="email" id="new-email" class="field-input" placeholder="example@gmail.com"></div>
+  </div>
+  <div class="btn-group"><button class="btn-primary" onclick="goNewCamera()">등록 및 촬영하기</button></div>
+</div>
+
+<!-- 화면: 카메라 (내장 브라우저 방식) -->
 <div id="s-camera" class="screen">
-  <!-- 촬영 네임보드 데이터 (촬영 전 오버레이) -->
   <div class="nameboard-area">
     <div class="nb-glow"></div>
     <div id="nb-time" class="nb-time">13:00</div>
@@ -162,55 +206,19 @@ html,body{background:#000!important;color:#fff!important;height:100%;font-family
     <video id="videoEl" autoplay playsinline></video>
     <div style="position:absolute; bottom:60px; left:0; right:0; display:flex; justify-content:center; align-items:center; gap:60px;">
       <button class="back-btn" style="background:rgba(255,255,255,0.2); color:#fff; padding:15px 30px;" onclick="show('s-list'); stopCamera();">종료</button>
-      <div class="shutter-btn" onclick="takePhoto()"><div class="shutter-inner"></div></div>
+      <div id="shutter-wrap" class="shutter-btn" onclick="takePhoto()"><div class="shutter-inner"></div></div>
       <button class="back-btn" style="background:rgba(255,255,255,0.2); color:#fff; padding:15px 30px;" onclick="flipCamera()">전환</button>
     </div>
+  </div>
+  <div id="cam-start-overlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:600; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+    <div style="font-size:32px; font-weight:800; margin-bottom:40px; text-align:center;">촬영 준비</div>
+    <button class="btn-primary" style="width:300px;" onclick="startCamera()">카메라 열기</button>
+    <button class="back-btn" style="margin-top:24px;" onclick="show('s-list')">뒤로 가기</button>
   </div>
   <canvas id="canvasEl" style="display:none;"></canvas>
 </div>
 
-<!-- 체크인 양식 -->
-<div id="s-checkin" class="screen">
-  <div class="topbar"><button class="back-btn" onclick="show('s-list')">취소</button><div style="font-size:24px; font-weight:700;">체크인</div><div style="width:50px;"></div></div>
-  <div style="padding:20px 24px 120px;">
-    <div style="background:var(--surface-low); padding:20px; border-radius:1rem; margin-bottom:20px;">
-      <div style="font-size:28px; font-weight:700;" id="ci-name">-</div>
-      <div style="font-size:20px; color:var(--primary);" id="ci-resno">-</div>
-      <div style="font-size:20px; color:rgba(255,255,255,0.5);" id="ci-product">-</div>
-    </div>
-    <div style="margin-bottom:20px;"><div style="font-size:18px; opacity:0.7;">실명 확인 *</div><input type="text" id="ci-realname" class="field-input"></div>
-    <div style="margin-bottom:20px;"><div style="font-size:18px; opacity:0.7;">이메일 *</div><input type="email" id="ci-email" class="field-input"></div>
-    <div style="background:var(--surface-low); padding:20px; border-radius:1rem;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;" onclick="toggle('tg-p1')">
-        <span style="font-size:22px;">개인정보 동의 (필수)</span><div id="tg-p1" class="toggle on"></div>
-      </div>
-      <div style="display:flex; justify-content:space-between; align-items:center;" onclick="toggle('tg-s1')">
-        <span style="font-size:22px;">마케팅 활용 동의 (선택)</span><div id="tg-s1" class="toggle"></div>
-      </div>
-    </div>
-  </div>
-  <div class="btn-group"><button class="btn-primary" onclick="proceedToCheckin()">촬영 시작</button></div>
-</div>
-
-<!-- 신규 고객 추가 -->
-<div id="s-new" class="screen">
-  <div class="topbar"><button class="back-btn" onclick="show('s-list')">취소</button><div id="new-title" style="font-size:24px; font-weight:700;">고객 추가</div><div style="width:50px;"></div></div>
-  <div style="padding:20px 24px 120px;">
-    <div style="background:var(--surface-low); padding:20px; border-radius:1rem; margin-bottom:20px;">
-      <div style="font-size:18px; opacity:0.5;">생성 코드</div><div id="new-code" style="font-size:32px; font-weight:800; color:var(--primary);">-</div>
-    </div>
-    <div style="margin-bottom:20px;"><div style="font-size:18px; opacity:0.7;">고객 성함 *</div><input type="text" id="new-name" class="field-input"></div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px;">
-      <div><div style="font-size:18px; opacity:0.7;">시간</div><select id="new-time" class="field-input"><option>13:00</option><option>14:00</option><option>15:00</option><option>16:00</option><option>17:00</option></select></div>
-      <div><div style="font-size:18px; opacity:0.7;">인원</div><select id="new-people" class="field-input"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
-    </div>
-    <div style="margin-bottom:20px;"><div style="font-size:18px; opacity:0.7;">상품</div><select id="new-prod" class="field-input"><option>오마카세+두컷화보</option><option>심플 코스</option><option>기타</option></select></div>
-    <div style="margin-bottom:20px;"><div style="font-size:18px; opacity:0.7;">이메일 *</div><input type="email" id="new-email" class="field-input"></div>
-  </div>
-  <div class="btn-group"><button class="btn-primary" onclick="goNewCamera()">등록 및 촬영</button></div>
-</div>
-
-<!-- 저장 단계 화면 -->
+<!-- 화면: 저장 로딩 -->
 <div id="s-saving" class="screen">
   <div style="padding:100px 24px; text-align:center;">
     <div id="sav-name" style="font-size:36px; font-weight:800; margin-bottom:15px;">이름 · 코드</div>
@@ -226,9 +234,9 @@ html,body{background:#000!important;color:#fff!important;height:100%;font-family
     <div style="width:120px; height:120px; background:rgba(78,203,161,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 40px;">
        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#4ecba1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
-    <div style="font-size:48px; font-weight:800; margin-bottom:15px;">저장 완료!</div>
+    <div style="font-size:48px; font-weight:800; margin-bottom:15px;">저장 성공!</div>
     <div id="done-msg" style="font-size:24px; opacity:0.7; margin-bottom:60px;">-</div>
-    <button class="btn-primary" onclick="location.reload()">처음으로 가기</button>
+    <button class="btn-primary" onclick="location.reload()">처음으로 돌아가기</button>
   </div>
 </div>
 
@@ -246,7 +254,7 @@ var SFX = {};
 var STREAM = null;
 var FACING = 'environment';
 
-// ── 날짜 관리 ───────────────────────────────────
+// ── 날짜 관리 ──────────────────────────────────
 function changeDate(n) { playSound('EFFECT001'); DATE_OFFSET += n; updateDateUI(); loadList(); }
 function goToToday() { if(DATE_OFFSET === 0) return; playSound('EFFECT001'); DATE_OFFSET = 0; updateDateUI(); loadList(); }
 function getToday() {
@@ -267,7 +275,6 @@ function initSFX() {
   [1,2,3,4,5,6,7,8].forEach(n => {
     var id = 'EFFECT00' + n;
     SFX[id] = new Audio(SOUND_BASE + id + '.mp3');
-    SFX[id].load();
   });
 }
 function unlockAudio() {
@@ -277,23 +284,16 @@ function unlockAudio() {
 }
 window.addEventListener('mousedown', unlockAudio, {once:true});
 window.addEventListener('touchstart', unlockAudio, {once:true});
-function playSound(id) {
-  if (SFX[id]) { SFX[id].currentTime = 0; SFX[id].play().catch(() => {}); }
-}
+function playSound(id) { if (SFX[id]) { SFX[id].currentTime = 0; SFX[id].play().catch(() => {}); } }
 
-// ── API (JSONP) ─────────────────────────────────
+// ── API ──────────────────────────────────────
 function callApi(params, cb) {
   var url = GAS_URL + '?callback=jsonp_cb&' + Object.keys(params).map(k => k + '=' + encodeURIComponent(params[k])).join('&');
-  window.jsonp_cb = res => {
-    delete window.jsonp_cb;
-    var s = document.getElementById('api-script'); if(s) s.parentNode.removeChild(s);
-    cb(null, res);
-  };
-  var script = document.createElement('script'); script.id = 'api-script'; script.src = url;
-  document.body.appendChild(script);
+  window.jsonp_cb = res => { delete window.jsonp_cb; var s = document.getElementById('api-script'); if(s) s.parentNode.removeChild(s); cb(null, res); };
+  var script = document.createElement('script'); script.id = 'api-script'; script.src = url; document.body.appendChild(script);
 }
 
-// ── 메인 로직 ──────────────────────────────────
+// ── 메인 화면 ──────────────────────────────────
 function initTabs() {
   var tabs = document.getElementById('time-tabs'); tabs.innerHTML = '';
   TIMES.forEach(t => {
@@ -308,7 +308,7 @@ function loadList() {
   var list = document.getElementById('reservation-list');
   list.innerHTML = '<div style="text-align:center; padding:40px;"><div class="spinner" style="margin:0 auto;"></div></div>';
   callApi({ action: 'getReservations', date: getToday(), time: SELECTED_TIME }, (err, res) => {
-    if(err || !res.ok) { list.innerHTML = '<div style="text-align:center; padding:40px; color:var(--danger);">데이터 오류</div>'; return; }
+    if(err || !res.ok) { list.innerHTML = '<div style="text-align:center; padding:40px; color:var(--danger);">로드 오류</div>'; return; }
     document.getElementById('stat-total').textContent = res.dailyStats.total;
     document.getElementById('stat-done').textContent = res.dailyStats.done;
     document.getElementById('stat-wait').textContent = res.dailyStats.wait;
@@ -318,18 +318,14 @@ function loadList() {
 
 function renderCards(res) {
   var list = document.getElementById('reservation-list');
-  if (res.length === 0) { list.innerHTML = '<div style="text-align:center; padding:40px; opacity:0.3;">예약 없음</div>'; return; }
+  if (res.length === 0) { list.innerHTML = '<div style="text-align:center; padding:40px; opacity:0.3;">예약 데이터 없음</div>'; return; }
   list.innerHTML = '';
   res.forEach(r => {
     var c = document.createElement('div'); c.className = 'customer-card' + (r.checkedIn ? ' done' : '');
     var sClass = 'source-' + (r.source||'A').toLowerCase();
     c.innerHTML = `
       <div class="avatar ${sClass}">${(r.source||'A').toUpperCase()}</div>
-      <div class="card-info">
-        <div class="card-name">${r.name}</div>
-        <div class="card-meta">${r.product} · ${r.people}인</div>
-        <div class="card-resno">${r.resno}</div>
-      </div>
+      <div class="card-info"><div class="card-name">${r.name}</div><div class="card-meta">${r.product} · ${r.people}인</div><div class="card-resno">${r.resno}</div></div>
       <div class="badge ${r.checkedIn?'badge-done':'badge-wait'}">${r.checkedIn?'체크인':'대기'}</div>
     `;
     if(!r.checkedIn) c.onclick = () => { playSound('EFFECT002'); goForm(r); };
@@ -337,20 +333,17 @@ function renderCards(res) {
   });
 }
 
-// ── 상세 동작 ──────────────────────────────────
-function show(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0,0);
-}
+function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
 function toggle(id) { document.getElementById(id).classList.toggle('on'); }
 function showToast(msg) { var t = document.getElementById('toast'); t.textContent = msg; t.style.display='block'; setTimeout(()=>t.style.display='none', 2000); }
 
+// ── 상세 동작 ──────────────────────────────────
 function goForm(r) {
-  CUR = { resno: r.resno, masked: r.name, product: r.product, people: r.people, time: r.time, source: r.source };
+  CUR = { resno: r.resno, masked: r.name, product: r.product, people: r.people, time: r.time, source: r.source, isNew: false };
   document.getElementById('ci-name').textContent = r.name;
   document.getElementById('ci-resno').textContent = r.resno;
   document.getElementById('ci-product').textContent = r.product + ' · ' + r.people + '인';
+  document.getElementById('ci-realname').value = '';
   show('s-checkin');
 }
 
@@ -358,11 +351,10 @@ function proceedToCheckin() {
   playSound('EFFECT001');
   var real = document.getElementById('ci-realname').value.trim();
   if(!real) { showToast('실명을 입력하세요.'); return; }
-  if(!document.getElementById('tg-p1').classList.contains('on')) { showToast('개인정보 동의 필수'); return; }
   CUR.realName = real;
   CUR.email = document.getElementById('ci-email').value.trim();
-  CUR.isNew = false;
-  openCamera();
+  CUR.memo = '';
+  startCameraFlow();
 }
 
 function showNewScreen(type) {
@@ -378,29 +370,29 @@ function showNewScreen(type) {
 
 function goNewCamera() {
   var name = document.getElementById('new-name').value.trim();
-  if(!name) { showToast('이름 입력'); return; }
-  if(!document.getElementById('new-email').value.trim()) { showToast('이메일 입력'); return; }
+  if(!name) { showToast('성함 입력 필수'); return; }
   CUR.realName = name;
   CUR.time = document.getElementById('new-time').value;
   CUR.people = document.getElementById('new-people').value;
   CUR.product = document.getElementById('new-prod').value;
   CUR.email = document.getElementById('new-email').value.trim();
-  openCamera();
+  startCameraFlow();
 }
 
-function openCamera() {
-  var hhmm = (CUR.time||'00:00').replace(':','');
-  CUR.filename = getToday() + '_' + hhmm + '_' + CUR.realName + '.jpg';
+function startCameraFlow() {
+  var cleanT = (CUR.time||'00:00').replace(':','');
+  CUR.filename = getToday() + '_' + cleanT + '_' + CUR.realName + '.jpg';
+  document.getElementById('cam-start-overlay').style.display = 'flex';
   document.getElementById('nb-name').textContent = CUR.realName;
   document.getElementById('nb-resno').textContent = CUR.resno;
   document.getElementById('nb-time').textContent = CUR.time;
   document.getElementById('nb-product').textContent = CUR.product;
   show('s-camera');
-  startCamera();
 }
 
 function startCamera() {
   playSound('EFFECT008');
+  document.getElementById('cam-start-overlay').style.display = 'none';
   var constraints = { video: { facingMode: FACING, width: { ideal: 1280 }, height: { ideal: 960 } } };
   navigator.mediaDevices.getUserMedia(constraints).then(s => { STREAM = s; var v = document.getElementById('videoEl'); v.srcObject = s; v.play(); });
 }
@@ -442,7 +434,7 @@ function step3() {
   setSt(3, '#abc7ff');
   callApi({
     action: 'checkin', date: getToday(), time: CUR.time, resno: CUR.resno, realName: CUR.realName,
-    product: CUR.product, people: CUR.people, email: CUR.email, isNew: CUR.isNew, folderId: CUR.folderId
+    product: CUR.product, people: CUR.people, email: (CUR.email||''), isNew: CUR.isNew, source: CUR.source, folderId: (CUR.folderId||''), privacyConsent: 'Y'
   }, (err, res) => {
     if(!err && res.ok) { setSt(3, '#4ecba1'); setTimeout(() => { playSound('EFFECT005'); document.getElementById('done-msg').textContent = CUR.realName + ' 완료'; show('s-done'); }, 500); }
     else setSt(3, '#ff6b6b');
@@ -450,11 +442,10 @@ function step3() {
 }
 function setSt(n, c) { var el = document.getElementById('st-'+n); el.style.borderColor = c; el.querySelector('.stat-indicator').style.background = c; }
 
-// ── 납품 관리 ──
 function switchMode(m) {
   playSound('EFFECT002');
   document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.mode-tab')[m==='checkin'?0:1].classList.add('active');
+  document.getElementById(m==='checkin'?'tab-checkout':'tab-delivery').classList.add('active');
   document.getElementById('mode-checkin').style.display = m==='checkin'?'block':'none';
   document.getElementById('mode-delivery').style.display = m==='delivery'?'block':'none';
   if(m==='delivery') loadDel();
