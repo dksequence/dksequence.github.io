@@ -647,6 +647,9 @@ var STREAM = null;
 var FACING = 'environment'; // 후면 카메라 기본
 var TIMES = ['13:00','14:00','15:00','16:00','17:00'];
 var SELECTED_TIME = '14:00';
+var isSubmitting = false;
+
+function refresh() { loadReservations(SELECTED_TIME); }
 
 // ── 사운드 재생 ──────────────────────────────────────────
 var SFX = {};
@@ -815,8 +818,13 @@ function renderList(reservations) {
     var initial = r.name ? r.name.charAt(0) : '?';
     var card = document.createElement('div');
     card.className = 'customer-card' + (r.checkedIn ? ' done' : '');
+    
+    // 출처별 아바타 색상 로직 복구
+    var sourceClass = 'source-' + (r.source || 'A').toLowerCase();
+    var sourceChar = (r.source || 'A').toUpperCase();
+
     card.innerHTML =
-      '<div class="avatar ' + (r.checkedIn ? 'av-done' : 'av-wait') + '">' + initial + '</div>' +
+      '<div class="avatar ' + sourceClass + '">' + sourceChar + '</div>' +
       '<div class="card-info">' +
         '<div class="card-name">' + r.name + '</div>' +
         '<div class="card-meta">' + r.product + ' · ' + r.people + '인</div>' +
@@ -1268,6 +1276,38 @@ function renderDeliveryList(items) {
       btnHtml;
     
     list.appendChild(card);
+  });
+}
+
+function markDone(resno) {
+  if (!confirm(resno + ' 보정완료 처리할까요?\nresult 폴더 링크가 자동 공유됩니다.')) return;
+  
+  showToast('보정완료 처리 중...');
+  callApi({ action: 'markEditDone', resno: resno }, function(err, res) {
+    if (err || !res.ok) {
+      showToast('실패: ' + (err ? err.message : res.error));
+      return;
+    }
+    showToast('✅ 보정완료! 링크 공유 설정됨');
+    loadDeliveryList();
+  });
+}
+
+function sendDelivery(resno, btnEl) {
+  if (!confirm(resno + ' 고객에게 납품 이메일을 발송할까요?')) return;
+  
+  btnEl.disabled = true;
+  btnEl.textContent = '발송 중...';
+  
+  callApi({ action: 'sendDeliveryEmail', resno: resno }, function(err, res) {
+    if (err || !res.ok) {
+      showToast('발송 실패: ' + (err ? err.message : res.error));
+      btnEl.disabled = false;
+      btnEl.textContent = '재시도';
+      return;
+    }
+    showToast('✅ 이메일 발송 완료!');
+    loadDeliveryList();
   });
 }
 
