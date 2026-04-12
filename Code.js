@@ -97,59 +97,94 @@ function processRequest(jsonString) {
 // ── 예약 목록 조회 ────────────────────────────────────────────
 function getReservations(dateStr, timeReq) {
   try {
+    var ss = SpreadsheetApp.openById(SHEET_ID);
+    var sheet1 = ss.getSheetByName(SHEET_NAME_1ST);
+    var data1 = sheet1 ? sheet1.getDataRange().getValues() : [];
+    
     var masterSS = SpreadsheetApp.openById(MASTER_SS_ID);
     var masterSheet = masterSS.getSheetByName(MASTER_SHEET_NAME);
-    if (!masterSheet) return { ok: false, error: 'Master sheet not found' };
+    var dataM = masterSheet ? masterSheet.getDataRange().getValues() : [];
     
-    var data = masterSheet.getDataRange().getValues();
+    // 날짜 포맷 표준화 (dateStr: "20260413" -> "2026-04-13")
+    var targetDate = dateStr.substring(0,4) + '-' + dateStr.substring(4,6) + '-' + dateStr.substring(6,8);
+    var targetDateDot = dateStr.substring(0,4) + '.' + dateStr.substring(4,6) + '.' + dateStr.substring(6,8);
     
-    var reservations = [];
+    var combined = {}; // Key: resno
     var dailyTotal = 0;
     var dailyDone = 0;
-    
-    // 날짜 포맷 표준화 (dateStr: "20260413" -> targetDate: "2026-04-13")
-    var targetDate = dateStr.substring(0,4) + '-' + dateStr.substring(4,6) + '-' + dateStr.substring(6,8);
-    
-    // 마스터 시트 데이터 분석 (헤더 제외)
-    for (var i = 1; i < data.length; i++) {
-      var row = data[i];
-      var rowDateVal = row[0];
-      var rowDateStr = '';
+
+    // 1. 네이버 예약 시트(sheet1) 데이터 선행 분석
+    for (var i = 1; i < data1.length; i++) {
+      var row = data1[i];
+      var rawDateTime = String(row[6] || '').trim(); // "2026.04.13(월) 오후 2:00"
+      if (rawDateTime.indexOf(targetDateDot) === -1) continue;
       
-      if (rowDateVal instanceof Date) {
-        rowDateStr = Utilities.formatDate(rowDateVal, 'Asia/Seoul', 'yyyy-MM-dd');
-      } else {
-        rowDateStr = String(rowDateVal || '').trim();
+      var resno = String(row[4] || '').trim();
+      if (!resno) continue;
+      
+      var timeMatch = rawDateTime.match(/(오전|오후)\s*(\d{1,2}):(\d{2})/);
+      var time = '';
+      if (timeMatch) {
+        var ampm = timeMatch[1], hour = parseInt(timeMatch[2]), min = timeMatch[3];
+        if (ampm === '오후' && hour < 12) hour += 12;
+        if (ampm === '오전' && hour === 12) hour = 0;
+        time = String(hour).padStart(2,'0') + ':' + min;
       }
+
+      combined[resno] = {
+        resno: resno,
+        name: String(row[2] || '이름없음').trim(),
+        product: String(row[5] || '').trim(),
+        people: (rawDateTime.match(/(\d+)명/) || [null,'1'])[1],
+        time: time,
+        source: 'N',
+        checkedIn: false
+      };
+    }
+
+    // 2. 마스터 시트 데이터 분석 및 병합 (체크인 상태 및 현장 고객 추가)
+    for (var i = 1; i < dataM.length; i++) {
+      var row = dataM[i];
+      var rowDateVal = row[0];
+      var rowDateStr = (rowDateVal instanceof Date) 
+        ? Utilities.formatDate(rowDateVal, 'Asia/Seoul', 'yyyy-MM-dd') 
+        : String(rowDateVal || '').trim();
       
-      // 1. 날짜 필터링
       if (rowDateStr !== targetDate) continue;
       
-      var time = String(row[1] || '').trim();
+      var resno = String(row[2] || '').trim();
       var checkinAt = String(row[11] || '').trim();
-      var source = String(row[10] || 'A').toUpperCase(); // N/A/V
       
-      // 2. 일일 통계 합산 (해당 날짜 전체 데이터)
-      dailyTotal++;
-      if (checkinAt) {
-        dailyDone++;
-      }
-      
-      // 3. 현재 요청된 시간대(timeReq)와 일치할 때만 목록에 추가
-      if (time === timeReq) {
-        reservations.push({
-          resno: String(row[2] || '').trim(),
+      if (combined[resno]) {
+        // 이미 네이버 시트에 있는 경우 업데이트
+        if (checkinAt) combined[resno].checkedIn = true;
+      } else {
+        // 마스터에만 있는 경우 (현장/체험 등)
+        combined[resno] = {
+          resno: resno,
           name: String(row[3] || '이름없음').trim(),
           product: String(row[5] || '').trim(),
           people: String(row[6] || '1'),
-          time: time,
-          source: source,
+          time: String(row[1] || '').trim(),
+          source: String(row[10] || 'A').toUpperCase(),
           checkedIn: !!checkinAt
-        });
+        };
       }
     }
-    
-    // 시간순 정렬 (필요시)
+
+    // 3. 일일 통계 집계 및 리스트 필터링
+    var reservations = [];
+    Object.keys(combined).forEach(function(key) {
+      var item = combined[key];
+      dailyTotal++;
+      if (item.checkedIn) dailyDone++;
+      
+      if (item.time === timeReq) {
+        reservations.push(item);
+      }
+    });
+
+    // 시간/번호순 정렬
     reservations.sort(function(a,b){ return a.resno.localeCompare(b.resno); });
     
     return { 
@@ -165,6 +200,7 @@ function getReservations(dateStr, timeReq) {
     return { ok: false, error: err.toString() };
   }
 }
+
 
 
 // ── 워크인 코드 생성 ────────────────────────────────────────
@@ -742,8 +778,5 @@ function findRowInMasterByResno(sheet, resno) {
   }
   return -1;
 }
-<<<<<<< HEAD
-=======
 
 
->>>>>>> b3db8e8 (Fix stats, circles, and sound effects)

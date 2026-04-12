@@ -663,23 +663,25 @@ function initSFX() {
   });
 }
 
-// 브라우저 정책 대응: 첫 클릭 시 사운드 활성화
-window.addEventListener('mousedown', function initAudio() {
+// 브라우저 Policy 대응: 유저 상호작용 시 오디오 객체 활성화
+function unlockAudio() {
   initSFX();
-  // 무음 재생으로 활성화
   Object.keys(SFX).forEach(function(k){
     var a = SFX[k];
     a.play().then(function(){ a.pause(); a.currentTime = 0; }).catch(function(){});
   });
-  window.removeEventListener('mousedown', initAudio);
-}, {once:true});
+  window.removeEventListener('mousedown', unlockAudio);
+  window.removeEventListener('touchstart', unlockAudio);
+}
+window.addEventListener('mousedown', unlockAudio, {once:true});
+window.addEventListener('touchstart', unlockAudio, {once:true});
 
 function playSound(id) {
   if (SFX[id]) {
     SFX[id].currentTime = 0;
     SFX[id].play().catch(function(e){ console.warn('Sound play failed:', e); });
   } else {
-    // 아직 초기화 전이라면 즉시 로드 시도
+    // 실시간 로드 시도
     var a = new Audio('sound/' + id + '.mp3');
     a.play().catch(function(){});
     SFX[id] = a;
