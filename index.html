@@ -1,1455 +1,1057 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>DKsequence</title>
-  
-  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon-180.png">
-<link rel="manifest" href="./manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-  
-  <!-- KakaoTalk / SNS Preview -->
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://dksequence.github.io/" />
-  <meta property="og:title" content="DKsequence | Visual Archive" />
-  <meta property="og:description" content="Welcome to moments unfolding in sequence!" />
-  <meta property="og:image" content="https://dksequence.github.io/images/og-cover.jpg" />
-  <meta property="og:site_name" content="DKsequence" />
-  <meta name="description" content="Photography, motion graphics, and visual storytelling by DKsequence." />
-
-  <!-- First hero image preload -->
-  <link rel="preload" as="image" href="images/main-01.jpg" />
-
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      background: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      line-height: 1.4;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    img {
-      display: block;
-      width: 100%;
-    }
-
-    .topbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      z-index: 1000;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 24px 32px;
-      background: rgba(0, 0, 0, 0.25);
-      backdrop-filter: blur(6px);
-    }
-
-    .logo {
-      font-size: 26px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-
-    .menu-btn {
-      display: block;
-      font-size: 30px;
-      line-height: 1;
-      cursor: pointer;
-      user-select: none;
-      z-index: 1002;
-    }
-
-    .mobile-menu {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.96);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 46px;
-      transform: translateY(-100%);
-      transition: transform 0.3s ease;
-      z-index: 1001;
-      pointer-events: none;
-    }
-
-    .mobile-menu.active {
-      transform: translateY(0);
-      pointer-events: auto;
-    }
-
-    .mobile-menu a {
-      font-size: 28px;
-      text-transform: uppercase;
-      text-align: center;
-    }
-
-    .hero {
-      position: relative;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      padding: 120px 24px 60px;
-    }
-
-    .hero-slider {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-      z-index: 1;
-      touch-action: pan-y;
-    }
-
-    .hero-track {
-      display: flex;
-      height: 100%;
-      transition: transform 0.5s ease;
-      will-change: transform;
-    }
-
-    .hero-slide {
-      min-width: 100%;
-      height: 100vh;
-      position: relative;
-      cursor: pointer;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-
-    .hero-slide img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0.8;
-      pointer-events: none;
-    }
-
-    .hero-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0.15),
-        rgba(0, 0, 0, 0.15)
-      );
-      pointer-events: none;
-    }
-
-    .hero-slide-content {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 0 20px;
-      pointer-events: none;
-    }
-
-    .hero-text-wrap {
-      max-width: 1100px;
-      pointer-events: none;
-    }
-
-    .hero-sub {
-      font-size: clamp(34px, 4vw, 64px);
-      font-style: italic;
-      font-weight: 300;
-      margin-bottom: 10px;
-      color: #fff;
-      text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
-    }
-
-    .hero-title {
-      font-size: clamp(56px, 8vw, 120px);
-      font-weight: 400;
-      line-height: 0.85;
-      text-transform: none;
-      color: #fff;
-      text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
-    }
-
-    .hero-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 3;
-      width: 54px;
-      height: 54px;
-      border: 1px solid rgba(255, 255, 255, 0.45);
-      background: rgba(0, 0, 0, 0.28);
-      color: #fff;
-      font-size: 28px;
-      cursor: pointer;
-    }
-
-    .hero-arrow.left {
-      left: 24px;
-    }
-
-    .hero-arrow.right {
-      right: 24px;
-    }
-
-    .hero-dots {
-      position: absolute;
-      bottom: 34px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 10px;
-      z-index: 3;
-    }
-
-    .hero-dots button {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      border: 0;
-      background: rgba(255, 255, 255, 0.35);
-      cursor: pointer;
-    }
-
-    .hero-dots button.active {
-      background: #fff;
-    }
-
-    .content {
-      width: min(1400px, 92%);
-      margin: 0 auto 140px;
-      padding-top: 40px;
-    }
-
-    .work-block {
-      display: grid;
-      grid-template-columns: 380px minmax(0, 1fr);
-      gap: 50px;
-      align-items: center;
-      margin-bottom: 120px;
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .work-block:hover {
-      opacity: 0.95;
-    }
-
-    .work-block.disabled {
-      pointer-events: none;
-      cursor: default;
-      opacity: 1;
-    }
-
-    .work-text {
-      min-width: 0;
-    }
-
-    .work-text .num {
-      font-size: 42px;
-      font-style: italic;
-      margin-bottom: 22px;
-    }
-
-    .work-text h2 {
-      font-size: clamp(34px, 3.2vw, 58px);
-      line-height: 1.02;
-      margin-bottom: 18px;
-      font-weight: 800;
-      word-break: keep-all;
-      overflow-wrap: break-word;
-    }
-
-    .work-text p {
-      font-size: 18px;
-      color: #d0d0d0;
-      max-width: 300px;
-    }
-
-    .thanks-text {
-      display: inline-block;
-      margin-top: 6px;
-      font-size: 10px;
-      color: #bdbdbd;
-    }
-
-    .work-image {
-      width: 100%;
-      min-width: 0;
-    }
-
-    .work-image img {
-      width: 100%;
-      aspect-ratio: 2 / 1;
-      object-fit: cover;
-      background: #111;
-    }
-
-    .work-image-grid {
-      width: 100%;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 6px;
-      min-width: 0;
-    }
-
-    .work-image-grid img {
-      width: 100%;
-      aspect-ratio: 3 / 4;
-      object-fit: cover;
-      background: #111;
-      display: block;
-    }
-
-    .about,
-    .contact {
-      width: min(1400px, 92%);
-      margin: 0 auto 120px;
-      padding-top: 40px;
-      border-top: 1px solid rgba(255, 255, 255, 0.15);
-      scroll-margin-top: 120px;
-    }
-
-    #portfolio {
-      scroll-margin-top: 120px;
-    }
-
-    .about h2,
-    .contact h2 {
-      font-size: 38px;
-      margin-bottom: 18px;
-    }
-
-    .about p,
-    .contact p {
-      max-width: 760px;
-      color: #d0d0d0;
-      font-size: 18px;
-    }
-
-    .network-title {
-      font-size: 38px;
-      margin-top: 56px;
-      margin-bottom: 18px;
-      font-weight: 700;
-    }
-
-    .network-desc {
-      max-width: 760px;
-      color: #d0d0d0;
-      font-size: 18px;
-      margin-bottom: 0;
-    }
-
-    .about-team {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 40px;
-      margin-top: 42px;
-      align-items: start;
-    }
-
-    .team-member {
-      text-align: center;
-    }
-
-    .team-photo {
-      width: min(180px, 100%);
-      aspect-ratio: 1 / 1;
-      margin: 0 auto 18px;
-      border-radius: 50%;
-      overflow: hidden;
-      background: #111;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .team-photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .team-name {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 14px;
-    }
-
-    .team-links {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
-
-    .team-link {
-      width: 40px;
-      height: 40px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: #5a5a5a;
-      color: #d8d8d8;
-      border: none;
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
-      transition: transform 0.2s ease, opacity 0.2s ease, background 0.2s ease;
-      opacity: 0.9;
-      pointer-events: none;
-      cursor: default;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .team-link svg {
-      width: 18px;
-      height: 18px;
-      fill: currentColor;
-      display: block;
-      flex-shrink: 0;
-    }
-
-    .team-link-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-      line-height: 1;
-    }
-
-    .team-link.active {
-      pointer-events: auto;
-      cursor: pointer;
-      opacity: 1;
-      box-shadow: none;
-    }
-
-    .team-link.active:hover {
-      transform: translateY(-2px);
-    }
-
-    .team-link.web.active {
-      background: #3b82f6;
-      color: #fff;
-    }
-
-    .team-link.yt.active {
-      background: #ff0000;
-      color: #fff;
-    }
-
-    .team-link.ig.active {
-      background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af, #515bd4);
-      color: #fff;
-    }
-
-    .team-link.fb.active {
-      background: #1877f2;
-      color: #fff;
-    }
-
-    .team-role {
-      font-size: 15px;
-      color: #d0d0d0;
-      margin-bottom: 12px;
-      line-height: 1.45;
-      letter-spacing: -0.2px;
-    }
-
-    .team-desc {
-      max-width: 320px;
-      margin: 0 auto;
-      font-size: 16px;
-      line-height: 1.6;
-      color: #d0d0d0;
-    }
-
-    .site-footer {
-      width: min(1400px, 92%);
-      margin: 0 auto 60px;
-      padding-top: 28px;
-      border-top: 1px solid rgba(255, 255, 255, 0.15);
-      text-align: center;
-    }
-
-    .site-footer p {
-      color: #9f9f9f;
-      font-size: 14px;
-      line-height: 1.7;
-      margin-bottom: 6px;
-    }
-
-    @media (max-width: 1200px) {
-      .content,
-      .about,
-      .contact,
-      .site-footer {
-        width: min(1200px, 94%);
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .work-block {
-        grid-template-columns: 340px 1fr;
-        gap: 50px;
-      }
-
-      .work-text h2 {
-        font-size: clamp(32px, 3.8vw, 52px);
-      }
-    }
-
-    @media (max-width: 900px) {
-      .topbar {
-        padding: 18px 20px;
-      }
-
-      .logo {
-        font-size: 22px;
-      }
-
-      .hero-arrow {
-        width: 44px;
-        height: 44px;
-        font-size: 22px;
-        top: 38%;
-      }
-
-      .hero-arrow.left {
-        left: 12px;
-      }
-
-      .hero-arrow.right {
-        right: 12px;
-      }
-
-      .hero-sub {
-        font-size: clamp(24px, 8vw, 42px);
-      }
-
-      .hero-title {
-        font-size: clamp(44px, 12vw, 72px);
-        line-height: 0.9;
-      }
-
-      .content {
-        width: min(100%, 94%);
-        margin-bottom: 100px;
-      }
-
-      .work-block {
-        grid-template-columns: 1fr;
-        gap: 18px;
-        margin-bottom: 80px;
-      }
-
-      .work-text {
-        max-width: 100%;
-      }
-
-      .work-text .num {
-        font-size: 34px;
-        margin-bottom: 16px;
-      }
-
-      .work-text h2 {
-        font-size: clamp(30px, 10vw, 48px);
-        margin-bottom: 14px;
-      }
-
-      .work-text p {
-        max-width: 100%;
-        font-size: 17px;
-      }
-
-      .thanks-text {
-        font-size: 14px;
-      }
-
-      .work-image {
-        width: 100%;
-        margin: 0;
-      }
-
-      .work-image img {
-        width: 100%;
-      }
-
-      .work-image-grid {
-        gap: 5px;
-      }
-
-      .about-team {
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 34px;
-      }
-
-      .about,
-      .contact,
-      #portfolio {
-        scroll-margin-top: 110px;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .hero {
-        padding: 100px 16px 50px;
-      }
-
-      .hero-arrow {
-        top: 34%;
-      }
-
-      .hero-dots {
-        bottom: 24px;
-      }
-
-      .content {
-        width: 100%;
-        padding: 24px 14px 0;
-      }
-
-      .work-block {
-        gap: 14px;
-        margin-bottom: 64px;
-      }
-
-      .work-text .num {
-        font-size: 30px;
-      }
-
-      .work-text h2 {
-        font-size: clamp(28px, 12vw, 42px);
-      }
-
-      .work-text p {
-        font-size: 16px;
-        line-height: 1.5;
-      }
-
-      .thanks-text {
-        font-size: 12px;
-      }
-
-      .work-image {
-        width: 100%;
-        margin: 0;
-      }
-
-      .work-image img {
-        width: 100%;
-      }
-
-      .work-image-grid {
-        gap: 4px;
-      }
-
-      .about,
-      .contact,
-      .site-footer {
-        width: 100%;
-        padding: 34px 14px 0;
-        margin-bottom: 80px;
-      }
-
-      .about h2,
-      .contact h2,
-      .network-title {
-        font-size: 30px;
-      }
-
-      .about p,
-      .contact p,
-      .network-desc {
-        font-size: 16px;
-      }
-
-      .network-title {
-        margin-top: 44px;
-      }
-
-      .about-team {
-        grid-template-columns: 1fr;
-        gap: 38px;
-      }
-
-      .team-photo {
-        width: 160px;
-      }
-
-      .team-name {
-        font-size: 20px;
-      }
-
-      .team-link {
-        width: 38px;
-        height: 38px;
-      }
-
-      .team-link svg {
-        width: 17px;
-        height: 17px;
-      }
-
-      .team-role {
-        font-size: 15px;
-      }
-
-      .team-desc {
-        max-width: 100%;
-        font-size: 15px;
-      }
-
-      .site-footer {
-        margin-bottom: 40px;
-      }
-
-      .site-footer p {
-        font-size: 12px;
-        line-height: 1.6;
-      }
-
-      .about,
-      .contact,
-      #portfolio {
-        scroll-margin-top: 96px;
-      }
-    }
-  
-/* image protection */
-img {
-  -webkit-user-drag: none;
-  user-select: none;
-  -webkit-user-select: none;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>DKsequence 현장 운영</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --surface:#000000;--surface-low:#0d0d0d;--surface-high:#1a1a1a;--surface-highest:#252525;
+  --outline:rgba(255,255,255,0.15);--on-surface:#ffffff;--on-surface-variant:#e0e0e0;
+  --on-surface-dim:#aaaaaa;--primary:#abc7ff;--primary-container:#0071e3;
+  --danger:#ff6b6b;--success:#4ecba1;--warn:#f0a500;
 }
+html,body{background:#000!important;color:#fff!important;}
+html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;overflow-x:hidden;font-size:24px;}
+.screen{display:none;min-height:100vh;}
+.screen.active{display:block;}
 
+/* ── 공통 컴포넌트 ── */
+.topbar{background:rgba(27,27,27,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  padding:20px 24px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--outline);position:sticky;top:0;z-index:10;}
+.topbar-title{font-size:32px;font-weight:700;color:#fff;}
+.topbar-sub{font-size:20px;color:rgba(255,255,255,0.6);margin-top:4px;}
+.topbar-brand{font-size:22px;letter-spacing:.04em;color:#fff;font-weight:600;}
+.topbar-date{font-size:16px;color:rgba(255,255,255,0.7);margin-top:2px;}
+.back-btn{font-size:12px;color:var(--primary);cursor:pointer;padding:6px 14px;border-radius:2rem;
+  background:rgba(171,199,255,.08);border:none;font-family:'Inter',sans-serif;}
+
+.time-tabs{display:flex;gap:6px;padding:20px 20px 0;overflow-x:auto;gap:10px;-webkit-overflow-scrolling:touch;}
+.tab{font-size:26px;padding:16px 28px;border-radius:2rem;cursor:pointer;color:rgba(255,255,255,0.5);
+  background:transparent;border:none;white-space:nowrap;font-family:'Inter',sans-serif;letter-spacing:.04em;}
+.tab.active{background:var(--surface-highest);color:#fff;font-weight:700;}
+
+.stat-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:16px 20px;}
+.stat-card{background:var(--surface-low);border-radius:1rem;padding:20px 18px;}
+.stat-label{font-size:22px;color:rgba(255,255,255,0.6);letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px;}
+.stat-val{font-size:56px;font-weight:700;letter-spacing:-0.02em;}
+.stat-val.all{color:var(--on-surface);}.stat-val.done{color:var(--success);}.stat-val.wait{color:var(--warn);}
+
+.section-label{padding:10px 20px 14px;font-size:22px;color:rgba(255,255,255,0.6);letter-spacing:.06em;text-transform:uppercase;}
+.list{padding:0 20px 16px;display:flex;flex-direction:column;gap:8px;}
+.customer-card{background:var(--surface-high);border-radius:1rem;padding:20px 22px;cursor:pointer;
+  display:flex;align-items:center;gap:14px;transition:background .15s;}
+.customer-card:active{background:var(--surface-highest);}
+.customer-card.done{opacity:.35;pointer-events:none;}
+.avatar{width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:26px;font-weight:700;flex-shrink:0;}
+.av-wait{background:rgba(171,199,255,.1);color:var(--primary);}
+.av-done{background:rgba(78,203,161,.1);color:var(--success);}
+.card-info{flex:1;min-width:0;}
+.card-name{font-size:26px;font-weight:700;color:#fff;}
+.card-realname{font-size:12px;color:var(--on-surface-dim);}
+.card-meta{font-size:21px;color:rgba(255,255,255,0.7);margin-top:6px;}
+.card-resno{font-size:18px;color:rgba(255,255,255,0.45);margin-top:6px;font-family:monospace;letter-spacing:.06em;}
+.badge{font-size:20px;padding:10px 22px;border-radius:2rem;font-weight:700;flex-shrink:0;}
+.badge-wait{background:rgba(240,165,0,.12);color:var(--warn);}
+.badge-done{background:rgba(78,203,161,.1);color:var(--success);}
+.add-btn{margin:0 20px 24px;width:calc(100% - 40px);padding:24px;border-radius:1rem;
+  border:1px dashed rgba(255,255,255,.3);background:transparent;color:rgba(255,255,255,0.6);
+  font-size:26px;cursor:pointer;font-family:'Inter',sans-serif;}
+
+/* ── 체크인 폼 ── */
+.checkin-body{padding:20px 20px 100px;}
+.info-block{background:var(--surface-low);border-radius:1rem;padding:16px 18px;margin-bottom:18px;}
+.info-block-label{font-size:20px;color:rgba(255,255,255,0.45);letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px;}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;font-size:22px;}
+.info-row+.info-row{border-top:1px solid var(--outline);}
+.info-key{color:rgba(255,255,255,0.55);font-size:22px;}
+.info-val{color:#fff;font-weight:700;font-size:24px;}
+.info-val.mono{font-family:monospace;font-size:12px;color:var(--primary);}
+.realname-notice{font-size:22px;color:var(--warn);background:rgba(240,165,0,.1);border-radius:.75rem;padding:12px 16px;margin-bottom:16px;font-weight:500;}
+.field-group{margin-bottom:16px;}
+.field-label{font-size:22px;color:rgba(255,255,255,0.75);letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px;}
+.req{color:var(--danger);margin-left:3px;}
+.opt{color:var(--on-surface-dim);font-size:10px;}
+.field-input{width:100%;padding:20px 22px;border-radius:.75rem;border:1px solid rgba(255,255,255,0.2);
+  background:#111;font-size:26px;color:#fff;font-family:'Inter',sans-serif;}
+.field-input::placeholder{color:rgba(255,255,255,0.3);}
+.field-input:focus{outline:none;border-color:rgba(171,199,255,.5);background:#1a1a1a;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+
+/* ── 동의 블록 ── */
+.consent-block{background:var(--surface-low);border-radius:1rem;overflow:hidden;margin-bottom:18px;}
+.consent-row{padding:20px 22px;border-bottom:1px solid var(--outline);}
+.consent-row:last-child{border-bottom:none;}
+.consent-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.consent-left{display:flex;align-items:center;gap:10px;flex:1;}
+.consent-title{font-size:24px;color:#fff;font-weight:600;}
+.consent-tag{font-size:16px;padding:5px 14px;border-radius:2rem;}
+.tag-req{background:rgba(255,107,107,.12);color:var(--danger);}
+.tag-opt{background:rgba(65,71,83,.3);color:var(--on-surface-dim);}
+.consent-right{display:flex;align-items:center;gap:10px;}
+.expand-icon{font-size:18px;color:var(--on-surface-dim);transition:transform .25s;cursor:pointer;
+  padding:8px 14px;border-radius:.5rem;background:var(--surface-high);}
+.expand-icon.open{transform:rotate(180deg);}
+.toggle{width:44px;height:26px;border-radius:13px;background:var(--surface-highest);position:relative;
+  cursor:pointer;transition:background .2s;flex-shrink:0;}
+.toggle.on{background:var(--primary-container);}
+.toggle-knob{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;
+  background:white;transition:transform .2s;}
+.toggle.on .toggle-knob{transform:translateX(18px);}
+.consent-detail{overflow:hidden;max-height:0;transition:max-height .3s ease;}
+.consent-detail.open{max-height:500px;}
+.consent-detail-inner{padding:14px 18px;background:rgba(0,0,0,.2);}
+.consent-detail-title{font-size:18px;color:var(--on-surface-dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px;}
+.consent-table{width:100%;border-collapse:collapse;font-size:18px;}
+.consent-table th{text-align:left;color:var(--on-surface-dim);font-weight:400;padding:5px 8px 5px 0;
+  border-bottom:1px solid var(--outline);font-size:11px;letter-spacing:.04em;}
+.consent-table td{padding:7px 8px 7px 0;color:var(--on-surface-variant);vertical-align:top;
+  line-height:1.5;border-bottom:1px solid var(--outline);}
+.consent-table tr:last-child td{border-bottom:none;}
+.consent-table td:first-child{color:var(--on-surface-dim);white-space:nowrap;padding-right:16px;font-size:11px;}
+.consent-law{font-size:17px;color:var(--on-surface-dim);margin-top:12px;padding-top:12px;
+  border-top:1px solid var(--outline);line-height:1.7;}
+.consent-law span{color:var(--primary);}
+
+/* ── 촬영 화면 ── */
+.nameboard-area{background:#0a0a12;padding:40px 20px 28px;text-align:center;position:relative;}
+.nb-glow{position:absolute;top:0;left:50%;transform:translateX(-50%);width:200px;height:2px;
+  background:linear-gradient(90deg,transparent,var(--primary),transparent);}
+.nb-time{font-size:22px;color:rgba(171,199,255,.6);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;font-family:monospace;}
+.nb-resno{font-size:20px;color:rgba(171,199,255,.4);letter-spacing:.08em;margin-bottom:14px;font-family:monospace;}
+.nb-name{font-size:80px;font-weight:700;color:#fff;line-height:1.0;letter-spacing:-0.02em;}
+.nb-product{font-size:26px;color:rgba(171,199,255,.6);margin-top:10px;font-weight:500;}
+.nb-brand{font-size:11px;color:rgba(255,255,255,.15);margin-top:8px;letter-spacing:.1em;text-transform:uppercase;}
+
+/* ── 카메라 영역 ── */
+.camera-wrap{position:relative;background:#000;overflow:hidden;}
+#videoEl{width:100%;display:block;object-fit:cover;}
+.camera-ui{position:absolute;bottom:0;left:0;right:0;padding:20px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:linear-gradient(transparent,rgba(0,0,0,.7));}
+.shutter-btn{width:68px;height:68px;border-radius:50%;
+  background:linear-gradient(135deg,var(--primary) 0%,var(--primary-container) 100%);
+  border:none;cursor:pointer;box-shadow:0 0 24px rgba(0,113,227,.4);flex-shrink:0;}
+.shutter-btn:active{transform:scale(.93);}
+.cam-flip-btn{font-size:12px;color:rgba(255,255,255,.7);cursor:pointer;padding:10px 16px;
+  border-radius:2rem;border:1px solid rgba(255,255,255,.2);background:rgba(0,0,0,.4);font-family:'Inter',sans-serif;}
+.cam-status{font-size:11px;color:rgba(255,255,255,.5);text-align:center;min-width:60px;}
+#canvasEl{display:none;}
+
+/* ── 저장 중 ── */
+.saving-body{padding:40px 20px;}
+.saving-steps{display:flex;flex-direction:column;gap:12px;margin:24px 0 32px;}
+.step-row{display:flex;align-items:center;gap:16px;background:var(--surface-low);border-radius:1rem;padding:22px 22px;}
+.step-icon{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-icon.pending{background:var(--surface-high);}
+.step-icon.loading{background:rgba(171,199,255,.1);}
+.step-icon.ok{background:rgba(78,203,161,.1);}
+.step-info{flex:1;text-align:left;}
+.step-title{font-size:26px;font-weight:700;color:#fff;}
+.step-sub{font-size:20px;color:rgba(255,255,255,0.5);margin-top:6px;}
+.step-status{font-size:22px;font-weight:700;}
+.step-status.ok{color:var(--success);}.step-status.loading{color:var(--primary);}.step-status.pending{color:var(--on-surface-dim);}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(171,199,255,.3);
+  border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── 완료 ── */
+.done-body{padding:56px 20px;text-align:center;}
+.done-icon{width:64px;height:64px;border-radius:50%;background:rgba(78,203,161,.1);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 22px;
+  box-shadow:0 0 32px rgba(78,203,161,.15);}
+.done-name{font-size:44px;font-weight:800;letter-spacing:-0.01em;margin-bottom:8px;color:#fff;}
+.done-sub{font-size:26px;color:rgba(255,255,255,0.6);margin-bottom:20px;}
+.done-tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;}
+.done-tag{font-size:18px;padding:10px 20px;border-radius:2rem;}
+.done-tag.file{background:rgba(171,199,255,.1);color:var(--primary);font-family:monospace;}
+.done-tag.sheet{background:rgba(78,203,161,.1);color:var(--success);}
+.done-tag.drive{background:rgba(65,71,83,.3);color:var(--on-surface-dim);}
+.saved-summary{background:var(--surface-low);border-radius:1rem;padding:16px 18px;text-align:left;
+  font-size:12px;color:var(--on-surface-variant);line-height:2;}
+
+/* ── CTA 버튼 ── */
+.cta-btn{width:100%;padding:26px;border-radius:1rem;
+  background:linear-gradient(135deg,var(--primary) 0%,var(--primary-container) 100%);
+  color:#fff;font-size:28px;font-weight:700;border:none;cursor:pointer;
+  font-family:'Inter',sans-serif;letter-spacing:.02em;
+  box-shadow:0 20px 40px rgba(0,113,227,.25);margin-top:16px;}
+.cta-btn:active{opacity:.9;}
+.cta-btn:disabled{opacity:.35;cursor:not-allowed;}
+
+/* ── 에러 토스트 ── */
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);
+  background:#2a1a1a;color:var(--danger);padding:12px 20px;border-radius:1rem;
+  font-size:13px;z-index:99;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;}
+
+.pay-tab { flex:1; padding:9px; border-radius:.75rem; border:1px solid var(--outline); font-size:12px; color:var(--on-surface-dim); background:transparent; cursor:pointer; text-align:center; font-family:'Inter',sans-serif; }
+.pay-tab.active { background:rgba(171,199,255,.1); color:var(--primary); border-color:rgba(171,199,255,.2); font-weight:500; }
 </style>
 </head>
-<body id="top">
+<body>
 
-  <header class="topbar">
-    <a href="#top" class="logo">DKsequence</a>
-    <div class="menu-btn" id="menuBtn">☰</div>
-  </header>
+<!-- ════════════════ 대시보드 ════════════════ -->
+<div id="s-dashboard" class="screen active">
+  <div class="topbar">
+    <div>
+      <div class="topbar-brand">DKsequence × 중문별장</div>
+      <div class="topbar-date" id="today-label"></div>
+    </div>
+    <div style="font-size:11px;color:var(--on-surface-dim);letter-spacing:.06em;">운영 모드</div>
+  </div>
+  <div class="time-tabs" id="time-tabs"></div>
+  <div class="stat-row">
+    <div class="stat-card"><div class="stat-label">전체</div><div class="stat-val all" id="stat-total">—</div></div>
+    <div class="stat-card"><div class="stat-label">완료</div><div class="stat-val done" id="stat-done">—</div></div>
+    <div class="stat-card"><div class="stat-label">대기</div><div class="stat-val wait" id="stat-wait">—</div></div>
+  </div>
+  <div class="section-label" id="list-label">예약 목록</div>
+  <div class="list" id="reservation-list">
+    <div style="padding:20px;text-align:center;color:var(--on-surface-dim);font-size:13px;">
+      시간대를 선택하세요
+    </div>
+  </div>
+  <button class="add-btn" onclick="show('s-new')">+ 신규 고객 추가<br><span style="font-size:15px;opacity:0.6;">ADD NEW CUSTOMER (WALK-IN)</span></button>
+</div>
 
-  <nav class="mobile-menu" id="mobileMenu">
-    <a href="#top">Home</a>
-    <a href="./html/list.html">Work List</a>
-    <a href="#contact">Contact</a>
-  </nav>
-
-  <section class="hero">
-    <div class="hero-slider" id="heroSlider">
-      <div class="hero-track" id="heroTrack"></div>
+<!-- ════════════════ 체크인 ════════════════ -->
+<div id="s-checkin" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="show('s-dashboard')">← 목록</button>
+    <div style="text-align:center;">
+      <div class="topbar-title" id="ci-topname"></div>
+      <div class="topbar-sub">체크인</div>
+    </div>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="checkin-body">
+    <div class="info-block">
+      <div class="info-block-label">예약 정보</div>
+      <div class="info-row"><span class="info-key">예약번호</span><span class="info-val mono" id="ci-resno"></span></div>
+      <div class="info-row"><span class="info-key">상품</span><span class="info-val" id="ci-product"></span></div>
+      <div class="info-row"><span class="info-key">인원</span><span class="info-val" id="ci-people"></span></div>
+      <div class="info-row"><span class="info-key">시간</span><span class="info-val" id="ci-time"></span></div>
+    </div>
+    <div class="realname-notice">실명을 현장에서 직접 확인 후 입력해주세요</div>
+    <div class="field-group">
+      <div class="field-label">실명 <span class="req">*</span></div>
+      <input class="field-input" type="text" id="ci-realname" placeholder="현장 확인 후 입력" autocomplete="off"/>
+    </div>
+    <div class="field-row">
+      <div>
+        <div class="field-label">이메일 <span class="opt">선택</span></div>
+        <input class="field-input" type="email" id="ci-email" placeholder="example@email.com"/>
+      </div>
+      <div>
+        <div class="field-label">전화번호 <span class="opt">선택</span></div>
+        <input class="field-input" type="tel" id="ci-phone" placeholder="010-0000-0000"/>
+      </div>
     </div>
 
-    <button class="hero-arrow left" id="prevBtn" aria-label="Previous slide">&#10094;</button>
-    <button class="hero-arrow right" id="nextBtn" aria-label="Next slide">&#10095;</button>
-
-    <div class="hero-dots" id="heroDots"></div>
-  </section>
-
-  <main class="content">
-    <section id="portfolio">
-      <a href="html/macro_index.html" class="work-block seq-link" id="sequence01">
-        <div class="work-text">
-          <div class="num">Sequence #01</div>
-          <h2>The Poetry<br>of Detail</h2>
-          <p>Macro photography and detail-based images reveal quiet worlds hidden within daily life. It is an art of stepping away from the familiar and into small worlds you can quietly explore.</p>
-        </div>
-        <div class="work-image-grid" id="sequence01-grid"></div>
-      </a>
-
-      <a href="html/portrait_index.html" class="work-block seq-link" id="sequence02">
-        <div class="work-text">
-          <div class="num">Sequence #02</div>
-          <h2>Portrait<br>in Sequence</h2>
-          <p>Portrait photography captures more than appearance. It records mood, presence, and the quiet tension between a person and a place.<br><span class="thanks-text">* Special thanks to Jonna Jin Her &amp; hyungwoo Kim</span></p>
-        </div>
-        <div class="work-image-grid" id="sequence02-grid"></div>
-      </a>
-
-      <a href="html/motion_index.html" class="work-block seq-link" id="sequence03">
-        <div class="work-text">
-          <div class="num">Sequence #03</div>
-          <h2>Beyond<br>the Frame</h2>
-          <p>Digital composition expands the image beyond what is seen. It turns ideas, motion, and graphic elements into a new visual world</p>
-        </div>
-        <div class="work-image">
-          <img src="images/image-03.jpg" alt="Sequence 03 cover" />
-        </div>
-      </a>
-
-      <a href="#" class="work-block disabled">
-        <div class="work-text">
-          <div class="num">Sequence #04</div>
-          <h2>A Living Record<br>of Heritage. 승무(僧舞)</h2>
-          <p>Seungmu(승무&lt;僧舞&gt;)'s Heirs to Korean Intangible Cultural Property. we organized a 1:1 scale of traditional performances The Cultural Heritage Restoration Project preserves the cultural value of the work It delivers a legacy to future generations.<br><span class="thanks-text">* Special thanks to professor jinho Park</span></p>
-        </div>
-        <div class="work-image">
-          <img src="images/image-04.jpg" alt="Sequence 04 cover" />
-        </div>
-      </a>
-
-      <a href="#" class="work-block disabled">
-        <div class="work-text">
-          <div class="num">Sequence #05</div>
-          <h2>Immersive Archive<br>of World Heritage</h2>
-          <p>Introduces the UNESCO World Heritage Site to the present Through digital restoration, spatial images, Provides an immersive cultural storytelling experience.<br><span class="thanks-text">* Special thanks to Creative Director Minwoo Park</span></p>
-        </div>
-        <div class="work-image">
-          <img src="images/image-05.jpg" alt="Sequence 05 cover" />
-        </div>
-      </a>
-
-      <a href="html/maxwell_index.html" class="work-block seq-link" id="sequence06">
-        <div class="work-text">
-          <div class="num">Sequence #06</div>
-          <h2>Brand Experience<br>Maxwell House</h2>
-          <p>Designed as a promotional event for Maxwell House, this digital vending machine created face-to-face experiences with singer and entertainer. More than 140,000 people engaged with this event promotion, leaving with familiar yet fresh brand impressions and memorable experiences of Maxwell House.<br><span class="thanks-text">* Special thanks to You`ve got idea</span></p>
-        </div>
-        <div class="work-image">
-          <img src="images/image-06.jpg" alt="Sequence 06 cover" />
-        </div>
-      </a>
-
-      <a href="html/uv_index.html" class="work-block seq-link" id="sequence07">
-        <div class="work-text">
-          <div class="num">Sequence #07</div>
-          <h2>UV Experience in Real Time<br>see what happened</h2>
-          <p>Do sunscreens really protect our skin from UV rays? This project answered that question through live public experience. It visually reveals the difference between sunscreen and bare skin.<br><span class="thanks-text">* Thanks to Green Pinger</span></p>
-        </div>
-        <div class="work-image">
-          <img src="images/image-07.jpg" alt="Sequence 07 cover" />
-        </div>
-      </a>
-
-      <a href="html/red_index.html" class="work-block seq-link" id="sequence08">
-        <div class="work-text">
-          <div class="num">Sequence #08</div>
-          <h2>The Value <br>of Luxury brand</h2>
-          <p>Expressing the elegance of a luxury brand is a demanding task. True branding reflects both the client’s vision and the customer’s experience, creating encounters that allow the brand to extend beyond a product and into new cultural and emotional spaces.<br><span class="thanks-text">* Special thanks to watch designer Christian BÉDAT</span></p>
-        </div>
-        <div class="work-image">
-          <img src="images/image-08.jpg" alt="Sequence 08 cover" />
-        </div>
-      </a>
-
-      <a href="html/drone_index.html" class="work-block seq-link" id="sequence09">
-        <div class="work-text">
-          <div class="num">Sequence #09</div>
-          <h2>Seeing the World <br>from Elsewhere</h2>
-          <p>Drone photographs and videos reveal the hidden order of the world. From the sky, nature is reconstructed. The world you used to know becomes a new place.<br><span class="thanks-text">* Special thanks to Director Moses Jung</span></p>
-        </div>
-        <div class="work-image">
-          <img src="images/image-09.jpg" alt="Sequence 09 cover" />
-        </div>
-      </a>
-
-      <a href="#" class="work-block disabled">
-        <div class="work-text">
-          <div class="num">Sequence #10</div>
-          <h2>Value of meeting<br>and learning</h2>
-          <p>To lecture is to share experience, but also to receive new perspectives. Each encounter becomes a rewarding moment of growth.<br><span class="thanks-text">* Special thanks to DAXIB</span></p>
-        </div>
-        <div class="work-image">
-          <img src="images/image-10.jpg" alt="Sequence 10 cover" />
-        </div>
-      </a>
-
-      <a href="html/digitaltwin_index.html" class="work-block seq-link" id="sequence11">
-        <div class="work-text">
-          <div class="num">Sequence #11</div>
-          <h2>Translating <br>the World into Data</h2>
-          <p>Building digital twin spatial information is the work of translating the world we live in into digital form. By acquiring point cloud data that contains real location information, this project opened endless possibilities for analysis, simulation, and future use. Over three years, we successfully constructed the topography of the entire Jeju Island through digital twin data.<br><span class="thanks-text">* Special thanks to Dohee Hwang &amp; Sejong baek</span></p>
-        </div>
-        <div class="work-image">
-          <img src="images/image-11.jpg" alt="Sequence 11 cover" />
-        </div>
-      </a>
-
-      <a href="html/ai_index.html" class="work-block seq-link" id="sequence12">
-        <div class="work-text">
-          <div class="num">Sequence #12</div>
-          <h2>Artificial intelligence<br>Playground sequence</h2>
-          <p>Artificial Playground sequence is a playful exploration of new creative methods beyond conventional production for fun. Using tools such as Stable Diffusion and AI service, this sequence experiments with image-making shaped by the changing flow of our time. More than a technical process, it is a space for imagination, play, and new visual possibilities.</p>
-        </div>
-        <div class="work-image">
-          <img src="images/image-12.jpg" alt="Sequence 12 cover" />
-        </div>
-      </a>
-    </section>
-  </main>
-
-  <section class="about" id="about">
-    <h2>About</h2>
-    <p>
-      DKSequence is a creative collective dedicated to visual works and direction.
-      We create valuable experiences through photography, motion graphics, creative projects, and storytelling, turning ideas and emotions into meaningful visual sequences.
-    </p>
-    <p style="margin-top:16px;">
-      We believe that images, moving visuals, and technology are not simply meant to be seen, but to be experienced.
-      What matters most is the emotional connection they create, allowing each moment to be felt, remembered, and carried forward as part of life’s ongoing sequence.
-    </p>
-
-    <h2 class="network-title">Creative Network</h2>
-    <p class="network-desc">
-      DKsequence across selected projects, collaborations, and visual experiences
-    </p>
-
-   <div class="about-team">
-      <div class="team-member">
-        <div class="team-photo">
-          <img src="images/staff-01.jpg" alt="Danny" />
-        </div>
-        <div class="team-name">Danny Ki</div>
-
-        <div class="team-links">
-          <a class="team-link web" href="#" aria-label="Homepage">
-            <span class="team-link-label">WEB</span>
-          </a>
-          <a class="team-link yt" href="#" aria-label="YouTube">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M23 12s0-3.5-.4-5.2a2.9 2.9 0 0 0-2-2C18.8 4.3 12 4.3 12 4.3s-6.8 0-8.6.5a2.9 2.9 0 0 0-2 2C1 8.5 1 12 1 12s0 3.5.4 5.2a2.9 2.9 0 0 0 2 2c1.8.5 8.6.5 8.6.5s6.8 0 8.6-.5a2.9 2.9 0 0 0 2-2c.4-1.7.4-5.2.4-5.2zM10 15.5v-7l6 3.5-6 3.5z"/>
-            </svg>
-          </a>
-          <a class="team-link ig" href="#" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2.2A2.8 2.8 0 0 0 4.2 7v10A2.8 2.8 0 0 0 7 19.8h10a2.8 2.8 0 0 0 2.8-2.8V7A2.8 2.8 0 0 0 17 4.2H7zm10.5 1.6a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2.2A2.8 2.8 0 1 0 12 14.8 2.8 2.8 0 0 0 12 9.2z"/>
-            </svg>
-          </a>
-          <a class="team-link fb" href="#" aria-label="Facebook">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M13.5 22v-8h2.7l.4-3h-3.1V9.1c0-.9.3-1.5 1.6-1.5h1.7V4.9c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.3V11H8v3h2.2v8h3.3z"/>
-            </svg>
-          </a>
-        </div>
-
-        <div class="team-role">
-          Creative director<br>
-          Photographer<br>
-          Motiongraphic designer<br>
-          FPV Drone operator
-        </div>
-      </div>
-
-      <div class="team-member">
-        <div class="team-photo">
-          <img src="images/staff-02.jpg" alt="Jinho Park" />
-        </div>
-        <div class="team-name">Jinho Park</div>
-
-        <div class="team-links">
-          <a class="team-link web" href="#" aria-label="Homepage">
-            <span class="team-link-label">WEB</span>
-          </a>
-          <a class="team-link yt active" href="https://www.youtube.com/watch?v=8wYcS7geNnk" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M23 12s0-3.5-.4-5.2a2.9 2.9 0 0 0-2-2C18.8 4.3 12 4.3 12 4.3s-6.8 0-8.6.5a2.9 2.9 0 0 0-2 2C1 8.5 1 12 1 12s0 3.5.4 5.2a2.9 2.9 0 0 0 2 2c1.8.5 8.6.5 8.6.5s6.8 0 8.6-.5a2.9 2.9 0 0 0 2-2c.4-1.7.4-5.2.4-5.2zM10 15.5v-7l6 3.5-6 3.5z"/>
-            </svg>
-          </a>
-          <a class="team-link ig" href="#" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2.2A2.8 2.8 0 0 0 4.2 7v10A2.8 2.8 0 0 0 7 19.8h10a2.8 2.8 0 0 0 2.8-2.8V7A2.8 2.8 0 0 0 17 4.2H7zm10.5 1.6a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2.2A2.8 2.8 0 1 0 12 14.8 2.8 2.8 0 0 0 12 9.2z"/>
-            </svg>
-          </a>
-          <a class="team-link fb active" href="https://www.facebook.com/arkology" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M13.5 22v-8h2.7l.4-3h-3.1V9.1c0-.9.3-1.5 1.6-1.5h1.7V4.9c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.3V11H8v3h2.2v8h3.3z"/>
-            </svg>
-          </a>
-        </div>
-
-        <div class="team-role">
-          Professor / Korea University<br>
-          Digital Heritage Restoration Specialist<br>
-          XR Realistic Content Expert<br>
-          AI Cinema Director
-        </div>
-      </div>
-
-      <div class="team-member">
-        <div class="team-photo">
-          <img src="images/staff-03.jpg" alt="Sophia" />
-        </div>
-        <div class="team-name">Dohee . H</div>
-
-        <div class="team-links">
-          <a class="team-link web" href="#" aria-label="Homepage">
-            <span class="team-link-label">WEB</span>
-          </a>
-          <a class="team-link yt" href="#" aria-label="YouTube">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M23 12s0-3.5-.4-5.2a2.9 2.9 0 0 0-2-2C18.8 4.3 12 4.3 12 4.3s-6.8 0-8.6.5a2.9 2.9 0 0 0-2 2C1 8.5 1 12 1 12s0 3.5.4 5.2a2.9 2.9 0 0 0 2 2c1.8.5 8.6.5 8.6.5s6.8 0 8.6-.5a2.9 2.9 0 0 0 2-2c.4-1.7.4-5.2.4-5.2zM10 15.5v-7l6 3.5-6 3.5z"/>
-            </svg>
-          </a>
-          <a class="team-link ig" href="#" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2.2A2.8 2.8 0 0 0 4.2 7v10A2.8 2.8 0 0 0 7 19.8h10a2.8 2.8 0 0 0 2.8-2.8V7A2.8 2.8 0 0 0 17 4.2H7zm10.5 1.6a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2.2A2.8 2.8 0 1 0 12 14.8 2.8 2.8 0 0 0 12 9.2z"/>
-            </svg>
-          </a>
-          <a class="team-link fb" href="#" aria-label="Facebook">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M13.5 22v-8h2.7l.4-3h-3.1V9.1c0-.9.3-1.5 1.6-1.5h1.7V4.9c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.3V11H8v3h2.2v8h3.3z"/>
-            </svg>
-          </a>
-        </div>
-
-        <div class="team-role">Photographer<br>Drone operator<br>Digital twin specialist</div>
-        <div class="team-desc"></div>
-      </div>
-
-      <div class="team-member">
-        <div class="team-photo">
-          <img src="images/staff-04.jpg" alt="Noah" />
-        </div>
-        <div class="team-name">M.J Kim</div>
-
-        <div class="team-links">
-          <a class="team-link web" href="#" aria-label="Homepage">
-            <span class="team-link-label">WEB</span>
-          </a>
-          <a class="team-link yt" href="#" aria-label="YouTube">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M23 12s0-3.5-.4-5.2a2.9 2.9 0 0 0-2-2C18.8 4.3 12 4.3 12 4.3s-6.8 0-8.6.5a2.9 2.9 0 0 0-2 2C1 8.5 1 12 1 12s0 3.5.4 5.2a2.9 2.9 0 0 0 2 2c1.8.5 8.6.5 8.6.5s6.8 0 8.6-.5a2.9 2.9 0 0 0 2-2c.4-1.7.4-5.2.4-5.2zM10 15.5v-7l6 3.5-6 3.5z"/>
-            </svg>
-          </a>
-          <a class="team-link ig" href="#" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2.2A2.8 2.8 0 0 0 4.2 7v10A2.8 2.8 0 0 0 7 19.8h10a2.8 2.8 0 0 0 2.8-2.8V7A2.8 2.8 0 0 0 17 4.2H7zm10.5 1.6a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2.2A2.8 2.8 0 1 0 12 14.8 2.8 2.8 0 0 0 12 9.2z"/>
-            </svg>
-          </a>
-          <a class="team-link fb" href="#" aria-label="Facebook">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M13.5 22v-8h2.7l.4-3h-3.1V9.1c0-.9.3-1.5 1.6-1.5h1.7V4.9c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.3V11H8v3h2.2v8h3.3z"/>
-            </svg>
-          </a>
-        </div>
-
-       <div class="team-role">Business planner<br>Visual Graphic Designer<br>Product Designer</div>
-        <div class="team-desc"></div>
-      </div>
-
-      <div class="team-member">
-        <div class="team-photo">
-          <img src="images/staff-05.jpg" alt="Olivia" />
-        </div>
-        <div class="team-name">Olivia</div>
-
-        <div class="team-links">
-          <a class="team-link web" href="#" aria-label="Homepage">
-            <span class="team-link-label">WEB</span>
-          </a>
-          <a class="team-link yt" href="#" aria-label="YouTube">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M23 12s0-3.5-.4-5.2a2.9 2.9 0 0 0-2-2C18.8 4.3 12 4.3 12 4.3s-6.8 0-8.6.5a2.9 2.9 0 0 0-2 2C1 8.5 1 12 1 12s0 3.5.4 5.2a2.9 2.9 0 0 0 2 2c1.8.5 8.6.5 8.6.5s6.8 0 8.6-.5a2.9 2.9 0 0 0 2-2c.4-1.7.4-5.2.4-5.2zM10 15.5v-7l6 3.5-6 3.5z"/>
-            </svg>
-          </a>
-          <a class="team-link ig" href="#" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2.2A2.8 2.8 0 0 0 4.2 7v10A2.8 2.8 0 0 0 7 19.8h10a2.8 2.8 0 0 0 2.8-2.8V7A2.8 2.8 0 0 0 17 4.2H7zm10.5 1.6a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2.2A2.8 2.8 0 1 0 12 14.8 2.8 2.8 0 0 0 12 9.2z"/>
-            </svg>
-          </a>
-          <a class="team-link fb" href="#" aria-label="Facebook">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M13.5 22v-8h2.7l.4-3h-3.1V9.1c0-.9.3-1.5 1.6-1.5h1.7V4.9c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.3V11H8v3h2.2v8h3.3z"/>
-            </svg>
-          </a>
-        </div>
-
-        <div class="team-role">Undefined</div>
-        <div class="team-desc"></div>
-      </div>
-
-      <div class="team-member">
-        <div class="team-photo">
-          <img src="images/staff-06.jpg" alt="Ethan" />
-        </div>
-        <div class="team-name">Ethan</div>
-
-        <div class="team-links">
-          <a class="team-link web" href="#" aria-label="Homepage">
-            <span class="team-link-label">WEB</span>
-          </a>
-          <a class="team-link yt" href="#" aria-label="YouTube">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M23 12s0-3.5-.4-5.2a2.9 2.9 0 0 0-2-2C18.8 4.3 12 4.3 12 4.3s-6.8 0-8.6.5a2.9 2.9 0 0 0-2 2C1 8.5 1 12 1 12s0 3.5.4 5.2a2.9 2.9 0 0 0 2 2c1.8.5 8.6.5 8.6.5s6.8 0 8.6-.5a2.9 2.9 0 0 0 2-2c.4-1.7.4-5.2.4-5.2zM10 15.5v-7l6 3.5-6 3.5z"/>
-            </svg>
-          </a>
-          <a class="team-link ig" href="#" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2.2A2.8 2.8 0 0 0 4.2 7v10A2.8 2.8 0 0 0 7 19.8h10a2.8 2.8 0 0 0 2.8-2.8V7A2.8 2.8 0 0 0 17 4.2H7zm10.5 1.6a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 2.2A2.8 2.8 0 1 0 12 14.8 2.8 2.8 0 0 0 12 9.2z"/>
-            </svg>
-          </a>
-          <a class="team-link fb" href="#" aria-label="Facebook">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M13.5 22v-8h2.7l.4-3h-3.1V9.1c0-.9.3-1.5 1.6-1.5h1.7V4.9c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.3V11H8v3h2.2v8h3.3z"/>
-            </svg>
-          </a>
-        </div>
-
-        <div class="team-role">Undefined</div>
-        <div class="team-desc"></div>
-      </div>
-    </div>
-  </section>
-
-
-  <footer class="site-footer">
-    <p>© DKsequence. All rights reserved.</p>
-    <p>All content on this site is created by DKsequence. Some works were developed in collaboration with clients.</p>
-    <p>Unauthorized commercial use, reproduction, or distribution is prohibited without prior written permission.</p>
-  </footer>
-
-  <script>
-    const menuBtn = document.getElementById('menuBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-    const heroSlider = document.getElementById('heroSlider');
-    const heroTrack = document.getElementById('heroTrack');
-    const heroDots = document.getElementById('heroDots');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-
-    const HERO_SLIDES = [
-      {
-        image: 'images/main-01.jpg',
-        sub: 'small things become',
-        title: 'wave of Sequence',
-        link: '#'
-      },
-      {
-        image: 'images/main-02.jpg',
-        sub: 'The Poetry',
-        title: 'of Detail',
-        link: 'html/macro_index.html'
-      },
-      {
-        image: 'images/main-03.jpg',
-        sub: 'Portrait',
-        title: 'in Sequence',
-        link: 'html/portrait_index.html'
-      },
-      {
-        image: 'images/main-04.jpg',
-        sub: 'Beyond',
-        title: 'the Frame',
-        link: 'html/motion_index.html'
-      },
-      {
-        image: 'images/main-05.jpg',
-        sub: 'Brand Experience',
-        title: 'Maxwell House',
-        link: 'html/maxwell_index.html'
-      },
-      {
-        image: 'images/main-06.jpg',
-        sub: 'UV Experience',
-        title: 'in Real Time',
-        link: 'html/uv_index.html'
-      },
-      {
-        image: 'images/main-07.jpg',
-        sub: 'Seeing the World',
-        title: 'from Elsewhere',
-        link: 'html/drone_index.html'
-      },
-      {
-        image: 'images/main-08.jpg',
-        sub: 'The value of',
-        title: 'Luxury brand',
-        link: 'html/red_index.html'
-      },
-      {
-        image: 'images/main-09.jpg',
-        sub: 'Artificial intelligence',
-        title: 'Playground sequence',
-        link: 'html/ai_index.html'
-      }
-    ];
-
-    let currentIndex = 0;
-    let startX = 0;
-    let startY = 0;
-    let endX = 0;
-    let endY = 0;
-    let isPointerDown = false;
-    let dots = [];
-
-    const SWIPE_THRESHOLD = 50;
-    const CLICK_THRESHOLD = 10;
-
-    function buildHeroSlides() {
-      heroTrack.innerHTML = '';
-      heroDots.innerHTML = '';
-
-      HERO_SLIDES.forEach((item, index) => {
-        const slide = document.createElement('div');
-        slide.className = 'hero-slide';
-        slide.setAttribute('data-index', index);
-        slide.setAttribute('data-link', item.link);
-
-        slide.innerHTML = `
-          <img src="${item.image}" alt="${item.title}" ${index === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} />
-          <div class="hero-overlay"></div>
-          <div class="hero-slide-content">
-            <div class="hero-text-wrap">
-              <div class="hero-sub">${item.sub}</div>
-              <div class="hero-title">${item.title}</div>
+    <!-- 동의 블록 -->
+    <div class="consent-block">
+      <div class="consent-row">
+        <div class="consent-header" onclick="toggleDetail('detail-privacy','icon-privacy')">
+          <div class="consent-left">
+            <div class="consent-title">개인정보 수집 및 이용 동의</div>
+            <span class="consent-tag tag-req">필수</span>
+          </div>
+          <div class="consent-right">
+            <span class="expand-icon" id="icon-privacy">▼</span>
+            <div class="toggle on" id="toggle-privacy" onclick="event.stopPropagation();this.classList.toggle('on')">
+              <div class="toggle-knob"></div>
             </div>
           </div>
-        `;
+        </div>
+        <div class="consent-detail" id="detail-privacy">
+          <div class="consent-detail-inner">
+            <div class="consent-detail-title">수집 항목 및 목적</div>
+            <table class="consent-table">
+              <tr><th>항목</th><th>목적</th><th>보유기간</th></tr>
+              <tr><td>이름</td><td>촬영 결과물 식별 및 납품</td><td>서비스 완료 후 1년</td></tr>
+              <tr><td>이메일</td><td>결과물 파일 전송</td><td>서비스 완료 후 1년</td></tr>
+              <tr><td>전화번호</td><td>촬영 일정 안내 및 문의</td><td>서비스 완료 후 1년</td></tr>
+              <tr><td>현장 사진</td><td>고객 식별 및 사진 매칭</td><td>납품 완료 후 즉시 삭제</td></tr>
+            </table>
+            <div class="consent-law">
+              본 동의는 <span>개인정보보호법 제15조</span>에 의거하며, 동의 거부 시 서비스 이용이 제한될 수 있습니다. 수집된 정보는 제3자에게 제공되지 않습니다.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="consent-row">
+        <div class="consent-header" onclick="toggleDetail('detail-sns','icon-sns')">
+          <div class="consent-left">
+            <div class="consent-title">SNS 및 마케팅 활용 동의</div>
+            <span class="consent-tag tag-opt">선택</span>
+          </div>
+          <div class="consent-right">
+            <span class="expand-icon" id="icon-sns">▼</span>
+            <div class="toggle" id="toggle-sns" onclick="event.stopPropagation();this.classList.toggle('on')">
+              <div class="toggle-knob"></div>
+            </div>
+          </div>
+        </div>
+        <div class="consent-detail" id="detail-sns">
+          <div class="consent-detail-inner">
+            <div class="consent-detail-title">활용 범위</div>
+            <table class="consent-table">
+              <tr><th>채널</th><th>활용 내용</th><th>기간</th></tr>
+              <tr><td>Instagram</td><td>촬영 결과물 피드·스토리 게시 (얼굴 노출 포함 가능)</td><td>동의일로부터 2년</td></tr>
+              <tr><td>온라인 광고</td><td>서비스 홍보용 이미지 활용</td><td>동의일로부터 2년</td></tr>
+              <tr><td>포트폴리오</td><td>스튜디오 공식 포트폴리오 사용</td><td>동의일로부터 2년</td></tr>
+            </table>
+            <div class="consent-law">
+              선택 동의이며 거부하셔도 서비스 이용에 불이익이 없습니다.<br>
+              동의 후에도 언제든지 <span>hello@dksequence.com</span>으로 철회 요청 가능합니다.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        heroTrack.appendChild(slide);
+    <div class="field-group" style="margin-bottom:20px;">
+      <div class="field-label">메모 <span class="opt">선택</span></div>
+      <input class="field-input" type="text" id="ci-memo" placeholder="특이사항"/>
+    </div>
+    <button class="cta-btn" onclick="goCamera()">촬영하기<br><span style="font-size:16px;font-weight:500;opacity:0.8;">TAKE PHOTO</span></button>
+  </div>
+</div>
 
-        const dot = document.createElement('button');
-        dot.type = 'button';
-        dot.setAttribute('aria-label', `Go to slide ${index + 1}`);
+<!-- ════════════════ 촬영 ════════════════ -->
+<div id="s-camera" class="screen" style="display:none;flex-direction:column;min-height:100vh;">
+  <div class="topbar">
+    <button class="back-btn" onclick="stopCamera();show('s-checkin')">← 체크인</button>
+    <div style="text-align:center;">
+      <div class="topbar-title" id="cam-name-label"></div>
+      <div class="topbar-sub" style="font-family:monospace;font-size:11px;" id="cam-resno-label"></div>
+    </div>
+    <div style="width:60px;"></div>
+  </div>
+  <!-- 네임보드 -->
+  <div style="background:#0a0a18;padding:20px 24px 16px;position:relative;">
+    <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:180px;height:2px;background:linear-gradient(90deg,transparent,#abc7ff,transparent);"></div>
+    <div class="nb-time" id="nb-time"></div>
+    <div class="nb-resno" id="nb-resno"></div>
+    <div class="nb-name" id="nb-name"></div>
+    <div class="nb-product" id="nb-product"></div>
+    <div style="font-size:12px;color:rgba(255,255,255,.15);letter-spacing:.1em;text-transform:uppercase;margin-top:6px;">DKsequence × 중문별장</div>
+  </div>
+  <!-- 카메라 영역 -->
+  <div style="position:relative;background:#000;width:100%;">
+    <video id="videoEl" autoplay playsinline muted style="width:100%;display:block;max-height:55vh;object-fit:cover;"></video>
+    <canvas id="canvasEl" style="display:none;"></canvas>
+    <!-- 전/후면 버튼 -->
+    <button id="btn-flip" onclick="flipCamera()" style="display:none;position:absolute;top:14px;left:14px;padding:10px 18px;border-radius:2rem;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:16px;cursor:pointer;">전/후면 FLIP</button>
+    <!-- 상태 -->
+    <div id="cam-status" style="position:absolute;top:14px;right:14px;font-size:14px;color:rgba(255,255,255,.5);background:rgba(0,0,0,.4);padding:6px 12px;border-radius:1rem;">준비 중</div>
+  </div>
+  <!-- 카메라 시작 버튼 -->
+  <div id="cam-start-overlay" style="width:100%;padding:20px;">
+    <button onclick="userStartCamera()" style="width:100%;padding:28px;border-radius:1rem;background:linear-gradient(135deg,#abc7ff,#0071e3);color:#fff;font-size:28px;font-weight:700;border:none;cursor:pointer;display:block;">
+      촬영 창 열기<br>
+      <span style="font-size:18px;font-weight:500;opacity:0.85;">OPEN CAMERA</span>
+    </button>
+  </div>
+  <!-- 셔터 버튼 -->
+  <div id="shutter-wrap" style="display:none;width:100%;padding:20px;">
+    <button onclick="takePhoto()" style="width:100%;padding:32px;border-radius:1rem;background:linear-gradient(135deg,#abc7ff,#0071e3);color:#fff;font-size:32px;font-weight:800;border:none;cursor:pointer;display:block;box-shadow:0 8px 32px rgba(0,113,227,.5);">
+      촬영하기<br>
+      <span style="font-size:20px;font-weight:500;opacity:0.85;">TAKE PHOTO</span>
+    </button>
+  </div>
+</div>
 
-        if (index === 0) {
-          dot.classList.add('active');
-        }
+<!-- ════════════════ 저장 중 ════════════════ -->
+<div id="s-saving" class="screen">
+  <div class="topbar">
+    <div></div>
+    <div style="text-align:center;">
+      <div class="topbar-title">저장 중</div>
+      <div class="topbar-sub" id="saving-name-label"></div>
+    </div>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="saving-body">
+    <div class="saving-steps">
+      <div class="step-row">
+        <div class="step-icon loading" id="icon-s1"><div class="spinner"></div></div>
+        <div class="step-info">
+          <div class="step-title">사진 파일 저장</div>
+          <div class="step-sub" id="sub-s1">구글 드라이브 업로드 중...</div>
+        </div>
+        <div class="step-status loading" id="status-s1">저장 중</div>
+      </div>
+      <div class="step-row">
+        <div class="step-icon pending" id="icon-s2"><div style="width:10px;height:10px;border-radius:50%;background:var(--on-surface-dim);opacity:.3;"></div></div>
+        <div class="step-info">
+          <div class="step-title">2차 스프레드시트 기록</div>
+          <div class="step-sub" id="sub-s2">대기 중...</div>
+        </div>
+        <div class="step-status pending" id="status-s2">대기</div>
+      </div>
+      <div class="step-row">
+        <div class="step-icon pending" id="icon-s3"><div style="width:10px;height:10px;border-radius:50%;background:var(--on-surface-dim);opacity:.3;"></div></div>
+        <div class="step-info">
+          <div class="step-title">완료 처리</div>
+          <div class="step-sub" id="sub-s3">대기 중...</div>
+        </div>
+        <div class="step-status pending" id="status-s3">대기</div>
+      </div>
+    </div>
+  </div>
+</div>
 
-        dot.addEventListener('click', () => {
-          currentIndex = index;
-          updateHero();
-        });
+<!-- ════════════════ 완료 ════════════════ -->
+<div id="s-done" class="screen">
+  <div class="done-body">
+    <div class="done-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4ecba1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="done-name" id="done-name"></div>
+    <div class="done-sub">체크인 및 데이터 저장 완료</div>
+    <div class="done-tags">
+      <span class="done-tag file" id="done-filename"></span>
+      <span class="done-tag sheet">시트 기록 완료</span>
+      <span class="done-tag drive">드라이브 저장 완료</span>
+    </div>
+    <div class="saved-summary" id="saved-summary"></div>
+    <button class="cta-btn" onclick="show('s-dashboard')">다음 고객<br><span style="font-size:16px;font-weight:500;opacity:0.8;">NEXT CUSTOMER</span></button>
+  </div>
+</div>
 
-        heroDots.appendChild(dot);
-      });
+<!-- ════════════════ 신규 고객 (현장 결제) ════════════════ -->
+<div id="s-new" class="screen">
+  <div class="topbar">
+    <button class="back-btn" onclick="show('s-dashboard')">← 목록</button>
+    <div style="text-align:center;">
+      <div class="topbar-title">신규 고객 추가</div>
+      <div class="topbar-sub">현장 결제</div>
+    </div>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="checkin-body">
+    <div style="background:rgba(240,165,0,0.08);border-radius:.75rem;padding:10px 14px;font-size:12px;color:var(--warn);margin-bottom:20px;display:flex;align-items:center;gap:8px;">
+      <div style="width:6px;height:6px;border-radius:50%;background:var(--warn);flex-shrink:0;"></div>
+      예약 없이 현장에서 직접 접수하는 고객입니다
+    </div>
 
-      dots = Array.from(heroDots.querySelectorAll('button'));
-    }
+    <!-- 접수 코드 -->
+    <div style="font-size:11px;color:var(--on-surface-dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;">접수 코드 (자동 생성)</div>
+    <div style="background:var(--surface-low);border-radius:1rem;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-size:16px;font-weight:500;color:var(--primary);font-family:monospace;letter-spacing:.04em;" id="new-code">로딩 중...</div>
+        <div style="font-size:11px;color:var(--on-surface-dim);margin-top:3px;">날짜-W순번 형식</div>
+      </div>
+      <button onclick="regenWalkInCode()" style="font-size:12px;color:var(--on-surface-dim);cursor:pointer;padding:7px 14px;border-radius:2rem;border:1px solid var(--outline);background:transparent;font-family:'Inter',sans-serif;">다음 번호</button>
+    </div>
 
-    function updateHero() {
-      heroTrack.style.transform = `translateX(-${currentIndex * 100}%)`;
-      dots.forEach((dot, index) => {
-        dot.classList.toggle('active', index === currentIndex);
-      });
-    }
+    <!-- 고객 정보 -->
+    <div class="field-group">
+      <div class="field-label">이름 <span class="req">*</span></div>
+      <input class="field-input" type="text" id="new-name" placeholder="실명 입력" autocomplete="off"/>
+    </div>
+    <div class="field-row">
+      <div>
+        <div class="field-label">전화번호 <span class="opt">선택</span></div>
+        <input class="field-input" type="tel" id="new-phone" placeholder="010-0000-0000"/>
+      </div>
+      <div>
+        <div class="field-label">이메일 <span class="opt">선택</span></div>
+        <input class="field-input" type="email" id="new-email" placeholder="example@email.com"/>
+      </div>
+    </div>
 
-    function goPrev() {
-      currentIndex = (currentIndex - 1 + HERO_SLIDES.length) % HERO_SLIDES.length;
-      updateHero();
-    }
+    <!-- 서비스 정보 -->
+    <div class="field-row">
+      <div>
+        <div class="field-label">시간 <span class="req">*</span></div>
+        <select class="field-input" id="new-time" style="cursor:pointer;">
+          <option>13:00</option>
+          <option>14:00</option>
+          <option>15:00</option>
+          <option>16:00</option>
+          <option>17:00</option>
+        </select>
+      </div>
+      <div>
+        <div class="field-label">인원 <span class="req">*</span></div>
+        <select class="field-input" id="new-people" style="cursor:pointer;">
+          <option>1</option>
+          <option selected>2</option>
+          <option>3</option>
+          <option>4</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-group">
+      <div class="field-label">상품 <span class="req">*</span></div>
+      <select class="field-input" id="new-product" style="cursor:pointer;">
+        <option>두컷화보</option>
+      </select>
+    </div>
 
-    function goNext() {
-      currentIndex = (currentIndex + 1) % HERO_SLIDES.length;
-      updateHero();
-    }
+    <!-- 결제 방법 -->
+    <div style="font-size:11px;color:var(--on-surface-dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;">결제 방법</div>
+    <div style="display:flex;gap:8px;margin-bottom:20px;">
+      <div class="pay-tab active" onclick="setPayTab(this)">카드</div>
+      <div class="pay-tab" onclick="setPayTab(this)">현금</div>
+      <div class="pay-tab" onclick="setPayTab(this)">계좌이체</div>
+    </div>
 
-    function getPointX(event) {
-      if (event.touches && event.touches.length) return event.touches[0].clientX;
-      if (event.changedTouches && event.changedTouches.length) return event.changedTouches[0].clientX;
-      return event.clientX;
-    }
+    <!-- 동의 -->
+    <div class="consent-block">
+      <div class="consent-row">
+        <div class="consent-header" onclick="toggleDetail('detail-privacy2','icon-privacy2')">
+          <div class="consent-left">
+            <div class="consent-title">개인정보 수집 및 이용 동의</div>
+            <span class="consent-tag tag-req">필수</span>
+          </div>
+          <div class="consent-right">
+            <span class="expand-icon" id="icon-privacy2">▼</span>
+            <div class="toggle on" id="toggle-privacy2" onclick="event.stopPropagation();this.classList.toggle('on')">
+              <div class="toggle-knob"></div>
+            </div>
+          </div>
+        </div>
+        <div class="consent-detail" id="detail-privacy2">
+          <div class="consent-detail-inner">
+            <div class="consent-detail-title">수집 항목 및 목적</div>
+            <table class="consent-table">
+              <tr><th>항목</th><th>목적</th><th>보유기간</th></tr>
+              <tr><td>이름</td><td>촬영 결과물 식별 및 납품</td><td>서비스 완료 후 1년</td></tr>
+              <tr><td>이메일</td><td>결과물 파일 전송</td><td>서비스 완료 후 1년</td></tr>
+              <tr><td>전화번호</td><td>촬영 일정 안내 및 문의</td><td>서비스 완료 후 1년</td></tr>
+              <tr><td>현장 사진</td><td>고객 식별 및 사진 매칭</td><td>납품 완료 후 즉시 삭제</td></tr>
+            </table>
+            <div class="consent-law">본 동의는 <span>개인정보보호법 제15조</span>에 의거하며, 동의 거부 시 서비스 이용이 제한될 수 있습니다.</div>
+          </div>
+        </div>
+      </div>
+      <div class="consent-row">
+        <div class="consent-header" onclick="toggleDetail('detail-sns2','icon-sns2')">
+          <div class="consent-left">
+            <div class="consent-title">SNS 및 마케팅 활용 동의</div>
+            <span class="consent-tag tag-opt">선택</span>
+          </div>
+          <div class="consent-right">
+            <span class="expand-icon" id="icon-sns2">▼</span>
+            <div class="toggle" id="toggle-sns2" onclick="event.stopPropagation();this.classList.toggle('on')">
+              <div class="toggle-knob"></div>
+            </div>
+          </div>
+        </div>
+        <div class="consent-detail" id="detail-sns2">
+          <div class="consent-detail-inner">
+            <div class="consent-detail-title">활용 범위</div>
+            <table class="consent-table">
+              <tr><th>채널</th><th>활용 내용</th><th>기간</th></tr>
+              <tr><td>Instagram</td><td>촬영 결과물 피드·스토리 게시</td><td>동의일로부터 2년</td></tr>
+              <tr><td>온라인 광고</td><td>서비스 홍보용 이미지 활용</td><td>동의일로부터 2년</td></tr>
+              <tr><td>포트폴리오</td><td>스튜디오 공식 포트폴리오 사용</td><td>동의일로부터 2년</td></tr>
+            </table>
+            <div class="consent-law">선택 동의이며 거부하셔도 불이익 없습니다. <span>hello@dksequence.com</span>으로 철회 요청 가능합니다.</div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-    function getPointY(event) {
-      if (event.touches && event.touches.length) return event.touches[0].clientY;
-      if (event.changedTouches && event.changedTouches.length) return event.changedTouches[0].clientY;
-      return event.clientY;
-    }
+    <div class="field-group" style="margin-bottom:20px;">
+      <div class="field-label">메모 <span class="opt">선택</span></div>
+      <input class="field-input" type="text" id="new-memo" placeholder="특이사항"/>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="show('s-dashboard')" style="flex:1;padding:14px;border-radius:1rem;border:1px solid var(--outline);background:transparent;font-size:14px;color:var(--on-surface-dim);cursor:pointer;font-family:'Inter',sans-serif;">취소</button>
+      <button onclick="goNewCamera()" style="flex:2;padding:14px;border-radius:1rem;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-container) 100%);color:#fff;font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:'Inter',sans-serif;">접수 후 촬영하기</button>
+    </div>
+  </div>
+</div>
 
-    function onPointerStart(event) {
-      isPointerDown = true;
-      startX = getPointX(event);
-      startY = getPointY(event);
-      endX = startX;
-      endY = startY;
-    }
-
-    function onPointerMove(event) {
-      if (!isPointerDown) return;
-      endX = getPointX(event);
-      endY = getPointY(event);
-    }
-
-    function onPointerEnd(event) {
-      if (!isPointerDown) return;
-
-      isPointerDown = false;
-      endX = getPointX(event);
-      endY = getPointY(event);
-
-      const diffX = endX - startX;
-      const diffY = endY - startY;
-      const absDiffX = Math.abs(diffX);
-      const absDiffY = Math.abs(diffY);
-
-      if (absDiffX > SWIPE_THRESHOLD && absDiffX > absDiffY) {
-        if (diffX < 0) {
-          goNext();
-        } else {
-          goPrev();
-        }
-        return;
-      }
-
-      if (absDiffX < CLICK_THRESHOLD && absDiffY < CLICK_THRESHOLD) {
-        const clickedSlide = event.target.closest('.hero-slide');
-        if (clickedSlide) {
-          const targetLink = clickedSlide.getAttribute('data-link');
-          if (targetLink && targetLink !== '#') {
-            window.location.href = targetLink;
-          }
-        }
-      }
-    }
-
-    const sequence01Images = Array.from({ length: 47 }, (_, i) => i + 1)
-      .filter(num => ![44, 34, 30, 22, 12, 3, 5, 9].includes(num))
-      .map(num => `gallery/small/${String(num).padStart(4, '0')}_small.jpg`);
-
-    const sequence02Images = Array.from({ length: 46 }, (_, i) => i + 1)
-      .filter(num => ![43, 34, 30, 23, 20, 12, 6].includes(num))
-      .map(num => `portrait/photo/small/${String(num).padStart(4, '0')}_small.jpg`);
-
-    function shuffleArray(array) {
-      const copied = [...array];
-      for (let i = copied.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [copied[i], copied[j]] = [copied[j], copied[i]];
-      }
-      return copied;
-    }
-
-    function renderRandomTriptych(containerId, images, altPrefix) {
-      const container = document.getElementById(containerId);
-      if (!container) return;
-
-      container.innerHTML = '';
-      const selectedImages = shuffleArray(images).slice(0, 3);
-
-      selectedImages.forEach((src, index) => {
-        const img = document.createElement('img');
-        img.src = src;
-        img.alt = `${altPrefix} ${index + 1}`;
-        img.loading = 'lazy';
-        container.appendChild(img);
-      });
-    }
-
-    if (menuBtn && mobileMenu) {
-      menuBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        mobileMenu.classList.toggle('active');
-      });
-
-      mobileMenu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-          mobileMenu.classList.remove('active');
-        });
-      });
-
-      document.addEventListener('click', function (e) {
-        if (!mobileMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-          mobileMenu.classList.remove('active');
-        }
-      });
-    }
-
-    prevBtn.addEventListener('click', goPrev);
-    nextBtn.addEventListener('click', goNext);
-
-    heroSlider.addEventListener('touchstart', onPointerStart, { passive: true });
-    heroSlider.addEventListener('touchmove', onPointerMove, { passive: true });
-    heroSlider.addEventListener('touchend', onPointerEnd, { passive: true });
-
-    heroSlider.addEventListener('mousedown', onPointerStart);
-    heroSlider.addEventListener('mousemove', onPointerMove);
-    heroSlider.addEventListener('mouseup', onPointerEnd);
-    heroSlider.addEventListener('mouseleave', function (event) {
-      if (isPointerDown) {
-        onPointerEnd(event);
-      }
-    });
-
-    document.addEventListener('keydown', function (event) {
-      if (event.key === 'ArrowLeft') goPrev();
-      if (event.key === 'ArrowRight') goNext();
-    });
-
-    document.querySelectorAll('.seq-link').forEach(link => {
-      link.addEventListener('click', function () {
-        if (this.id) {
-          sessionStorage.setItem('lastSequenceId', this.id);
-        }
-      });
-    });
-
-    window.addEventListener('pageshow', function () {
-      const lastId = sessionStorage.getItem('lastSequenceId');
-      if (!lastId) return;
-
-      const target = document.getElementById(lastId);
-      if (!target) return;
-
-      setTimeout(() => {
-        const header = document.querySelector('.topbar');
-        const headerHeight = header ? header.offsetHeight : 0;
-        const extraOffset = window.innerWidth <= 640 ? 20 : 24;
-        const targetTop = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - extraOffset;
-
-        window.scrollTo({
-          top: targetTop,
-          behavior: 'auto'
-        });
-      }, 120);
-    });
-
-    buildHeroSlides();
-    updateHero();
-    renderRandomTriptych('sequence01-grid', sequence01Images, 'Sequence 01 thumbnail');
-    renderRandomTriptych('sequence02-grid', sequence02Images, 'Sequence 02 thumbnail');
-  </script>
+<!-- ── 에러 토스트 ── -->
+<div class="toast" id="toast"></div>
 
 <script>
-(function () {
-  function isProtectedImageTarget(target) {
-    return !!(target && (target.tagName === 'IMG' || target.closest('img')));
+// ── 상태 ──────────────────────────────────────────────
+// 앱스 스크립트 백엔드 URL
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbwoqVAZVZclcog_8hGo6W5xKCGWdK9HHRCw-CtidsA3sygtPJatZ88b82iouE0brF0G/exec';
+var CUR = {};
+var STREAM = null;
+var FACING = 'environment'; // 후면 카메라 기본
+var TIMES = ['13:00','14:00','15:00','16:00','17:00'];
+var SELECTED_TIME = '14:00';
+
+// ── 날짜 유틸 ─────────────────────────────────────────
+function getToday() {
+  var d = new Date();
+  return d.getFullYear() + '' +
+    String(d.getMonth()+1).padStart(2,'0') +
+    String(d.getDate()).padStart(2,'0');
+}
+function getTodayLabel() {
+  var d = new Date();
+  var days = ['일','월','화','수','목','금','토'];
+  return d.getFullYear() + '년 ' + (d.getMonth()+1) + '월 ' + d.getDate() + '일 (' + days[d.getDay()] + ')';
+}
+
+// ── 화면 전환 ─────────────────────────────────────────
+function show(id) {
+  document.querySelectorAll('.screen').forEach(function(s){
+    s.classList.remove('active');
+    s.style.display = 'none';
+  });
+  var el = document.getElementById(id);
+  el.classList.add('active');
+  el.style.display = (id === 's-camera') ? 'flex' : 'block';
+  window.scrollTo(0, 0);
+  if (id === 's-new') initNewScreen();
+}
+
+// ── 토스트 ────────────────────────────────────────────
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3000);
+}
+
+// ── 앱스 스크립트 API 호출 ────────────────────────────
+// script.google.com 내부: google.script.run 사용
+// GitHub Pages: fetch 사용 (리다이렉트 follow)
+function callApi(payload, cb) {
+  // google.script.run 환경인지 확인
+  if (typeof google !== 'undefined' && google.script && google.script.run) {
+    google.script.run
+      .withSuccessHandler(function(res){ cb(null, res); })
+      .withFailureHandler(function(err){ cb(err); })
+      .processRequest(JSON.stringify(payload));
+    return;
+  }
+  // GitHub Pages 환경 — fetch with redirect follow
+  var url = GAS_URL
+    + '?action='  + encodeURIComponent(payload.action)
+    + '&payload=' + encodeURIComponent(JSON.stringify(payload));
+  fetch(url, { redirect: 'follow' })
+    .then(function(r){ return r.text(); })
+    .then(function(text){
+      try { cb(null, JSON.parse(text)); }
+      catch(e) { cb(new Error('파싱오류: ' + text.substring(0,80))); }
+    })
+    .catch(function(err){ cb(err); });
+}
+
+// ── 타임 탭 초기화 ────────────────────────────────────
+function initTabs() {
+  document.getElementById('today-label').textContent = getTodayLabel();
+  var container = document.getElementById('time-tabs');
+  container.innerHTML = '';
+  TIMES.forEach(function(t) {
+    var btn = document.createElement('button');
+    btn.className = 'tab' + (t === SELECTED_TIME ? ' active' : '');
+    btn.textContent = t;
+    btn.onclick = function() {
+      document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      SELECTED_TIME = t;
+      loadReservations(t);
+    };
+    container.appendChild(btn);
+  });
+  loadReservations(SELECTED_TIME);
+}
+
+// ── 예약 목록 로드 ────────────────────────────────────
+function loadReservations(time) {
+  document.getElementById('list-label').textContent = time + ' 타임';
+  var list = document.getElementById('reservation-list');
+  list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--on-surface-dim);font-size:13px;">불러오는 중...</div>';
+
+  callApi({ action: 'getReservations', date: getToday(), time: time }, function(err, res) {
+    if (err || !res.ok) {
+      list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--danger);font-size:13px;">불러오기 실패. 새로고침 해주세요.</div>';
+      return;
+    }
+    renderList(res.reservations);
+  });
+}
+
+function renderList(reservations) {
+  var list = document.getElementById('reservation-list');
+  var total = reservations.length;
+  var done  = reservations.filter(function(r){ return r.checkedIn; }).length;
+  var wait  = total - done;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-done').textContent  = done;
+  document.getElementById('stat-wait').textContent  = wait;
+
+  if (total === 0) {
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--on-surface-dim);font-size:13px;">이 타임 예약 없음</div>';
+    return;
   }
 
-  document.addEventListener('contextmenu', function (e) {
-    if (isProtectedImageTarget(e.target)) {
-      e.preventDefault();
+  list.innerHTML = '';
+  reservations.forEach(function(r) {
+    var initial = r.name ? r.name.charAt(0) : '?';
+    var card = document.createElement('div');
+    card.className = 'customer-card' + (r.checkedIn ? ' done' : '');
+    card.innerHTML =
+      '<div class="avatar ' + (r.checkedIn ? 'av-done' : 'av-wait') + '">' + initial + '</div>' +
+      '<div class="card-info">' +
+        '<div class="card-name">' + r.name + '</div>' +
+        '<div class="card-meta">' + r.product + ' · ' + r.people + '인</div>' +
+        '<div class="card-resno">' + r.resno + '</div>' +
+      '</div>' +
+      '<div class="badge ' + (r.checkedIn ? 'badge-done' : 'badge-wait') + '">' +
+        (r.checkedIn ? '완료' : '대기') + '</div>';
+    if (!r.checkedIn) {
+      card.onclick = function() { goCheckin(r); };
     }
+    list.appendChild(card);
   });
+}
 
-  document.addEventListener('dragstart', function (e) {
-    if (isProtectedImageTarget(e.target)) {
-      e.preventDefault();
-    }
-  });
+// ── 체크인 화면 ───────────────────────────────────────
+function goCheckin(r) {
+  CUR = { resno: r.resno, maskedName: r.name, product: r.product, people: r.people, time: SELECTED_TIME, isNew: false };
+  document.getElementById('ci-topname').textContent  = r.name;
+  document.getElementById('ci-resno').textContent    = r.resno;
+  document.getElementById('ci-product').textContent  = r.product;
+  document.getElementById('ci-people').textContent   = r.people + '인';
+  document.getElementById('ci-time').textContent     = SELECTED_TIME;
+  document.getElementById('ci-realname').value = '';
+  document.getElementById('ci-email').value    = '';
+  document.getElementById('ci-phone').value    = '';
+  document.getElementById('ci-memo').value     = '';
+  document.getElementById('toggle-privacy').classList.add('on');
+  document.getElementById('toggle-sns').classList.remove('on');
+  show('s-checkin');
+}
 
-  document.addEventListener('selectstart', function (e) {
-    if (isProtectedImageTarget(e.target)) {
-      e.preventDefault();
+// ── 동의 펼치기 ───────────────────────────────────────
+function toggleDetail(detailId, iconId) {
+  var detail = document.getElementById(detailId);
+  var icon   = document.getElementById(iconId);
+  var isOpen = detail.classList.contains('open');
+  detail.classList.toggle('open', !isOpen);
+  icon.classList.toggle('open', !isOpen);
+}
+
+// ── 촬영 화면 진입 ────────────────────────────────────
+function goCamera() {
+  var realname = document.getElementById('ci-realname').value.trim();
+  if (!realname) { showToast('실명을 입력해주세요'); return; }
+
+  CUR.realname      = realname;
+  CUR.email         = document.getElementById('ci-email').value.trim();
+  CUR.phone         = document.getElementById('ci-phone').value.trim();
+  CUR.memo          = document.getElementById('ci-memo').value.trim();
+  CUR.privacyConsent = document.getElementById('toggle-privacy').classList.contains('on');
+  CUR.snsConsent    = document.getElementById('toggle-sns').classList.contains('on');
+
+  if (!CUR.privacyConsent) { showToast('개인정보 수집 동의는 필수입니다'); return; }
+
+  CUR.filename = getToday() + '_' + CUR.resno + '_' + realname + '.jpg';
+  document.getElementById('cam-name-label').textContent  = realname;
+  document.getElementById('cam-resno-label').textContent = CUR.resno;
+  document.getElementById('nb-time').textContent    = CUR.time;
+  document.getElementById('nb-resno').textContent   = CUR.resno;
+  document.getElementById('nb-name').textContent    = realname;
+  document.getElementById('nb-product').textContent = CUR.product + ' · ' + CUR.people + '인';
+
+  // 카메라 화면 초기화
+  var startWrap = document.getElementById('cam-start-overlay');
+  if (startWrap) startWrap.style.display = 'block';
+  var shutterWrap = document.getElementById('shutter-wrap');
+  if (shutterWrap) shutterWrap.style.display = 'none';
+  var btnFlip = document.getElementById('btn-flip');
+  if (btnFlip) btnFlip.style.display = 'none';
+
+  show('s-camera');
+}
+
+// ── 카메라 제어 ───────────────────────────────────────
+function userStartCamera() {
+  // GitHub Pages 카메라 팝업으로 열기
+  var popupUrl = 'https://dksequence.github.io/operation/camera.html';
+  var popup = window.open(popupUrl, 'camera',
+    'width=600,height=900,toolbar=no,menubar=no,scrollbars=no');
+
+  if (!popup) {
+    showToast('팝업이 차단됐습니다. 팝업 허용 후 다시 시도해주세요.');
+    return;
+  }
+
+  // 팝업에 데이터 전달 (로드 후)
+  var timer = setInterval(function() {
+    try {
+      popup.postMessage({
+        type     : 'INIT_CAMERA',
+        time     : CUR.time,
+        resno    : CUR.resno,
+        realname : CUR.realname,
+        product  : CUR.product,
+        people   : CUR.people,
+        filename : CUR.filename,
+      }, '*');
+    } catch(e) {}
+  }, 500);
+
+  // 팝업에서 사진 수신
+  window.addEventListener('message', function onPhoto(e) {
+    if (e.data && e.data.type === 'PHOTO_TAKEN') {
+      clearInterval(timer);
+      window.removeEventListener('message', onPhoto);
+      CUR.base64 = e.data.base64;
+      CUR.filename = e.data.filename;
+      startSaving();
     }
   });
-})();
+}
+
+function startCamera() {
+  userStartCamera();
+}
+
+function stopCamera() {
+  if (STREAM) {
+    STREAM.getTracks().forEach(function(t){ t.stop(); });
+    STREAM = null;
+  }
+}
+
+function flipCamera() {
+  FACING = FACING === 'environment' ? 'user' : 'environment';
+  if (STREAM) {
+    STREAM.getTracks().forEach(function(t){ t.stop(); });
+    STREAM = null;
+  }
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: FACING }, audio: false })
+  .then(function(stream) {
+    STREAM = stream;
+    var v = document.getElementById('videoEl');
+    v.srcObject = stream;
+    v.play();
+  })
+  .catch(function(err) { showToast(err.name + ': ' + err.message); });
+}
+
+// ── 셔터 → 저장 파이프라인 ──────────────────────────
+function takePhoto() {
+  var video  = document.getElementById('videoEl');
+  var canvas = document.getElementById('canvasEl');
+  var vw = video.videoWidth  || 1280;
+  var vh = video.videoHeight || 960;
+  var MAX_WIDTH = 1280;
+  var MAX_HEIGHT = 960;
+  
+  if (vw > MAX_WIDTH) { vh = Math.floor(vh * (MAX_WIDTH / vw)); vw = MAX_WIDTH; }
+  if (vh > MAX_HEIGHT) { vw = Math.floor(vw * (MAX_HEIGHT / vh)); vh = MAX_HEIGHT; }
+
+  canvas.width  = vw;
+  canvas.height = vh;
+  canvas.getContext('2d').drawImage(video, 0, 0, vw, vh);
+
+  var base64 = canvas.toDataURL('image/jpeg', 0.6).split(',')[1];
+  CUR.filename = getToday() + '_' + CUR.resno + '_' + CUR.realname + '.jpg';
+  CUR.base64   = base64;
+
+  stopCamera();
+  startSaving();
+}
+
+// ── 저장 단계 실행 ────────────────────────────────────
+function startSaving() {
+  document.getElementById('saving-name-label').textContent = CUR.realname + ' · ' + CUR.resno;
+  resetSteps();
+  show('s-saving');
+
+  // Step 1: 사진 → 드라이브 (form POST — base64 전송)
+  setStep(1, 'loading', '구글 드라이브 업로드 중...');
+  postPhoto(CUR.base64, CUR.filename, function(err, photoRes) {
+    if (err || !photoRes.ok) {
+      setStep(1, 'error', '사진 업로드 실패');
+      showToast('사진 저장 실패: ' + (err ? err.message : photoRes.error));
+      return;
+    }
+    CUR.folderId = photoRes.folderId;
+    CUR.fileUrl  = photoRes.fileUrl;
+    CUR.rowNum   = null;
+    setStep(1, 'ok', CUR.filename);
+
+    // Step 2: 체크인 데이터 → 시트 (JSONP — 텍스트만)
+    setStep(2, 'loading', '스프레드시트 기록 중...');
+    callApi({
+      action:         'checkin',
+      date:           getToday(),
+      time:           CUR.time,
+      resno:          CUR.resno,
+      maskedName:     CUR.maskedName || '',
+      realName:       CUR.realname,
+      product:        CUR.product,
+      people:         CUR.people,
+      email:          CUR.email,
+      phone:          CUR.phone,
+      privacyConsent: CUR.privacyConsent,
+      snsConsent:     CUR.snsConsent,
+      memo:           CUR.memo,
+      isNew:          CUR.isNew || false,
+      folderId:       CUR.folderId,
+      fileUrl:        CUR.fileUrl,
+    }, function(err2, res2) {
+      if (err2 || !res2.ok) {
+        setStep(2, 'error', '시트 기록 실패: ' + (err2 ? err2.message : res2.error));
+        showToast('시트 저장 실패');
+        return;
+      }
+      setStep(2, 'ok', '기록 완료');
+
+      // Step 3: 완료
+      setStep(3, 'loading', '완료 처리 중...');
+      setTimeout(function() {
+        setStep(3, 'ok', '완료');
+        setTimeout(showDone, 400);
+      }, 500);
+    });
+  });
+}
+
+function resetSteps() {
+  [1,2,3].forEach(function(n) { setStep(n, 'pending', '대기 중...'); });
+}
+
+function setStep(n, state, sub) {
+  var icon   = document.getElementById('icon-s' + n);
+  var status = document.getElementById('status-s' + n);
+  var subEl  = document.getElementById('sub-s' + n);
+  subEl.textContent    = sub;
+  status.className     = 'step-status ' + state;
+  status.textContent   = state === 'ok' ? '완료' : state === 'loading' ? '진행 중' : state === 'error' ? '실패' : '대기';
+  if (state === 'loading') {
+    icon.className = 'step-icon loading';
+    icon.innerHTML = '<div class="spinner"></div>';
+  } else if (state === 'ok') {
+    icon.className = 'step-icon ok';
+    icon.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ecba1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+  } else if (state === 'error') {
+    icon.className = 'step-icon';
+    icon.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff6b6b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  } else {
+    icon.className = 'step-icon pending';
+    icon.innerHTML = '<div style="width:10px;height:10px;border-radius:50%;background:var(--on-surface-dim);opacity:.3;"></div>';
+  }
+}
+
+// ── 완료 화면 ────────────────────────────────────────
+function showDone() {
+  document.getElementById('done-name').textContent     = CUR.realname + ' 님';
+  document.getElementById('done-filename').textContent = CUR.filename;
+  var lines = [
+    '예약번호    ' + CUR.resno,
+    '실명        ' + CUR.realname,
+    '이메일      ' + (CUR.email || '미입력'),
+    '전화        ' + (CUR.phone || '미입력'),
+    '개인정보 동의  ' + (CUR.privacyConsent ? 'Y' : 'N'),
+    'SNS 동의    ' + (CUR.snsConsent ? 'Y' : 'N'),
+    '메모        ' + (CUR.memo || '없음'),
+  ];
+  var el = document.getElementById('saved-summary');
+  el.style.whiteSpace = 'pre';
+  el.style.fontFamily = 'monospace';
+  el.style.fontSize   = '20px';
+  el.textContent = lines.join('\n');
+  show('s-done');
+}
+
+
+// ── 신규 고객 관련 ─────────────────────────────────
+function initNewScreen() {
+  regenWalkInCode();
+  // 현재 선택된 타임 기본값으로
+  var sel = document.getElementById('new-time');
+  if (sel) sel.value = SELECTED_TIME;
+}
+
+function regenWalkInCode() {
+  callApi({ action: 'getWalkInCode', date: getToday() }, function(err, res) {
+    var el = document.getElementById('new-code');
+    if (el) el.textContent = (err || !res.ok) ? getToday() + '-W1' : res.code;
+  });
+}
+
+function setPayTab(el) {
+  document.querySelectorAll('.pay-tab').forEach(function(t){ t.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+function goNewCamera() {
+  var name = document.getElementById('new-name').value.trim();
+  if (!name) { showToast('이름을 입력해주세요'); return; }
+
+  var privacyOn = document.getElementById('toggle-privacy2').classList.contains('on');
+  if (!privacyOn) { showToast('개인정보 수집 동의는 필수입니다'); return; }
+
+  CUR = {
+    resno          : document.getElementById('new-code').textContent,
+    maskedName     : '',
+    realname       : name,
+    product        : document.getElementById('new-product').value,
+    people         : document.getElementById('new-people').value,
+    time           : document.getElementById('new-time').value,
+    email          : document.getElementById('new-email').value.trim(),
+    phone          : document.getElementById('new-phone').value.trim(),
+    memo           : document.getElementById('new-memo').value.trim(),
+    privacyConsent : privacyOn,
+    snsConsent     : document.getElementById('toggle-sns2').classList.contains('on'),
+    isNew          : true,
+  };
+
+  document.getElementById('cam-name-label').textContent  = name;
+  document.getElementById('cam-resno-label').textContent = CUR.resno;
+  document.getElementById('nb-time').textContent    = CUR.time;
+  document.getElementById('nb-resno').textContent   = CUR.resno;
+  document.getElementById('nb-name').textContent    = name;
+  document.getElementById('nb-product').textContent = CUR.product + ' · ' + CUR.people + '인';
+
+  // 카메라 화면 초기화
+  var startWrap = document.getElementById('cam-start-overlay');
+  if (startWrap) startWrap.style.display = 'block';
+  var shutterWrap = document.getElementById('shutter-wrap');
+  if (shutterWrap) shutterWrap.style.display = 'none';
+  var btnFlip = document.getElementById('btn-flip');
+  if (btnFlip) btnFlip.style.display = 'none';
+
+  show('s-camera');
+}
+
+// ── 사진 저장 — google.script.run 방식 ───────────────
+function postPhoto(base64, filename, cb) {
+  // script.google.com 환경: google.script.run 사용
+  if (typeof google !== 'undefined' && google.script && google.script.run) {
+    google.script.run
+      .withSuccessHandler(function(res){ cb(null, res); })
+      .withFailureHandler(function(err){ cb(err); })
+      .processRequest(JSON.stringify({
+        action  : 'savePhotoPost',
+        filename: filename,
+        mimeType: 'image/jpeg',
+        date    : getToday(),
+        time    : CUR.time,
+        resno   : CUR.resno,
+        realName: CUR.realname,
+        base64  : base64,
+      }));
+    return;
+  }
+  // 외부 환경 fallback
+  cb(null, { ok: true, folderId: '', fileUrl: '' });
+}
+
+// ── 초기화 ───────────────────────────────────────────
+window.onload = function() { initTabs(); };
 </script>
-
 </body>
 </html>

@@ -654,15 +654,35 @@ function refresh() { loadReservations(SELECTED_TIME); }
 // ── 사운드 재생 ──────────────────────────────────────────
 var SFX = {};
 function initSFX() {
-  ['EFFECT001','EFFECT002','EFFECT003','EFFECT004','EFFECT005','EFFECT006','EFFECT007','EFFECT008'].forEach(function(id) {
-    SFX[id] = new Audio('sound/' + id + '.mp3');
-    SFX[id].load();
+  var ids = ['EFFECT001','EFFECT002','EFFECT003','EFFECT004','EFFECT005','EFFECT006','EFFECT007','EFFECT008'];
+  ids.forEach(function(id) {
+    if (!SFX[id]) {
+      SFX[id] = new Audio('sound/' + id + '.mp3');
+      SFX[id].load();
+    }
   });
 }
+
+// 브라우저 정책 대응: 첫 클릭 시 사운드 활성화
+window.addEventListener('mousedown', function initAudio() {
+  initSFX();
+  // 무음 재생으로 활성화
+  Object.keys(SFX).forEach(function(k){
+    var a = SFX[k];
+    a.play().then(function(){ a.pause(); a.currentTime = 0; }).catch(function(){});
+  });
+  window.removeEventListener('mousedown', initAudio);
+}, {once:true});
+
 function playSound(id) {
   if (SFX[id]) {
     SFX[id].currentTime = 0;
     SFX[id].play().catch(function(e){ console.warn('Sound play failed:', e); });
+  } else {
+    // 아직 초기화 전이라면 즉시 로드 시도
+    var a = new Audio('sound/' + id + '.mp3');
+    a.play().catch(function(){});
+    SFX[id] = a;
   }
 }
 
@@ -810,13 +830,13 @@ function renderList(reservations) {
 
   list.innerHTML = '';
   reservations.forEach(function(r) {
-    var initial = r.name ? r.name.charAt(0) : '?';
     var card = document.createElement('div');
     card.className = 'customer-card' + (r.checkedIn ? ' done' : '');
     
-    // 출처별 아바타 색상 로직 복구
-    var sourceClass = 'source-' + (r.source || 'A').toLowerCase();
-    var sourceChar = (r.source || 'A').toUpperCase();
+    // 출처별 아바타 색상 (N:네이버, A:현장, V:체험)
+    var src = (r.source || 'A').toUpperCase();
+    var sourceClass = 'source-' + src.toLowerCase();
+    var sourceChar = src;
 
     card.innerHTML =
       '<div class="avatar ' + sourceClass + '">' + sourceChar + '</div>' +
@@ -827,6 +847,7 @@ function renderList(reservations) {
       '</div>' +
       '<div class="badge ' + (r.checkedIn ? 'badge-done' : 'badge-wait') + '">' +
         (r.checkedIn ? '완료' : '대기') + '</div>';
+    
     if (!r.checkedIn) {
       card.onclick = function() { goCheckin(r); };
     }

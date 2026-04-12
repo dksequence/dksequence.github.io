@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;background:#000;font-family:'Inter',sans-serif;color:#fff;}
+body{display:flex;flex-direction:column;height:100vh;}
+
+#nameboard{
+  background:#0a0a18;
+  padding:14px 20px 10px;
+  text-align:center;
+  border-bottom:1px solid rgba(171,199,255,.3);
+  flex-shrink:0;
+}
+#nb-time{font-size:16px;color:rgba(171,199,255,.6);letter-spacing:.1em;font-family:monospace;}
+#nb-resno{font-size:14px;color:rgba(171,199,255,.35);letter-spacing:.08em;font-family:monospace;margin-bottom:4px;}
+#nb-name{font-size:52px;font-weight:700;color:#fff;line-height:1.0;letter-spacing:-0.02em;}
+#nb-product{font-size:18px;color:rgba(171,199,255,.6);margin-top:4px;}
+#nb-brand{font-size:11px;color:rgba(255,255,255,.12);margin-top:4px;letter-spacing:.1em;}
+
+#video-wrap{
+  flex:1;
+  position:relative;
+  background:#000;
+  overflow:hidden;
+  min-height:0;
+}
+video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+#btn-flip{
+  position:absolute;top:12px;left:12px;
+  padding:10px 18px;border-radius:2rem;
+  background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.3);
+  color:#fff;font-size:16px;cursor:pointer;display:none;
+}
+#cam-status{
+  position:absolute;top:12px;right:12px;
+  font-size:14px;color:rgba(255,255,255,.6);
+  background:rgba(0,0,0,.45);padding:6px 12px;border-radius:1rem;
+}
+
+#btn-start{
+  flex-shrink:0;
+  width:100%;padding:26px;
+  background:linear-gradient(135deg,#abc7ff,#0071e3);
+  color:#fff;border:none;cursor:pointer;display:block;
+}
+#btn-start span.ko{font-size:26px;font-weight:800;display:block;}
+#btn-start span.en{font-size:17px;font-weight:500;opacity:.85;display:block;margin-top:2px;}
+
+#btn-shutter{
+  flex-shrink:0;
+  width:100%;padding:26px;
+  background:linear-gradient(135deg,#abc7ff,#0071e3);
+  color:#fff;border:none;cursor:pointer;display:none;
+  box-shadow:0 -4px 24px rgba(0,113,227,.4);
+}
+#btn-shutter span.ko{font-size:26px;font-weight:800;display:block;}
+#btn-shutter span.en{font-size:17px;font-weight:500;opacity:.85;display:block;margin-top:2px;}
+</style>
+</head>
+<body>
+
+<div id="nameboard">
+  <div id="nb-time"></div>
+  <div id="nb-resno"></div>
+  <div id="nb-name">이름</div>
+  <div id="nb-product"></div>
+  <div id="nb-brand">DKsequence × 중문별장</div>
+</div>
+
+<div id="video-wrap">
+  <video id="videoEl" autoplay playsinline muted></video>
+  <button id="btn-flip" onclick="flip()">전/후면 FLIP</button>
+  <div id="cam-status">대기 중 WAITING</div>
+</div>
+
+<canvas id="canvasEl" style="display:none;"></canvas>
+
+<button id="btn-start" onclick="startCam()">
+  <span class="ko">카메라 시작</span>
+  <span class="en">START CAMERA</span>
+</button>
+
+<button id="btn-shutter" onclick="shoot()">
+  <span class="ko">촬영하기</span>
+  <span class="en">TAKE PHOTO</span>
+</button>
+
+<script>
+var STREAM = null;
+var FACING = 'environment';
+var DATA = {};
+
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.type === 'INIT_CAMERA') {
+    DATA = e.data;
+    document.getElementById('nb-time').textContent    = DATA.time || '';
+    document.getElementById('nb-resno').textContent   = DATA.resno || '';
+    document.getElementById('nb-name').textContent    = DATA.realname || '이름';
+    document.getElementById('nb-product').textContent = (DATA.product||'') + ' · ' + (DATA.people||'') + '인';
+  }
+});
+
+function startCam() {
+  document.getElementById('btn-start').style.display   = 'none';
+  document.getElementById('btn-shutter').style.display = 'block';
+  document.getElementById('btn-flip').style.display    = 'block';
+  document.getElementById('cam-status').textContent    = '연결 중... CONNECTING';
+
+  navigator.mediaDevices.getUserMedia({ video:{ facingMode: FACING }, audio: false })
+  .then(function(stream) {
+    STREAM = stream;
+    var v = document.getElementById('videoEl');
+    v.srcObject = stream;
+    v.play();
+    document.getElementById('cam-status').textContent = '준비 완료 READY';
+  })
+  .catch(function(err) {
+    document.getElementById('cam-status').textContent = err.name;
+    document.getElementById('btn-start').style.display   = 'block';
+    document.getElementById('btn-shutter').style.display = 'none';
+    document.getElementById('btn-flip').style.display    = 'none';
+  });
+}
+
+function flip() {
+  FACING = FACING === 'environment' ? 'user' : 'environment';
+  if (STREAM) { STREAM.getTracks().forEach(function(t){ t.stop(); }); STREAM = null; }
+  navigator.mediaDevices.getUserMedia({ video:{ facingMode: FACING }, audio: false })
+  .then(function(stream) {
+    STREAM = stream;
+    var v = document.getElementById('videoEl');
+    v.srcObject = stream;
+    v.play();
+  });
+}
+
+function shoot() {
+  var video  = document.getElementById('videoEl');
+  var canvas = document.getElementById('canvasEl');
+  var vw = video.videoWidth  || 1280;
+  var vh = video.videoHeight || 960;
+  var MAX_WIDTH = 1280;
+  var MAX_HEIGHT = 960;
+  
+  if (vw > MAX_WIDTH) { vh = Math.floor(vh * (MAX_WIDTH / vw)); vw = MAX_WIDTH; }
+  if (vh > MAX_HEIGHT) { vw = Math.floor(vw * (MAX_HEIGHT / vh)); vh = MAX_HEIGHT; }
+
+  canvas.width  = vw;
+  canvas.height = vh;
+  canvas.getContext('2d').drawImage(video, 0, 0, vw, vh);
+  var base64 = canvas.toDataURL('image/jpeg', 0.6).split(',')[1];
+
+  if (window.opener) {
+    window.opener.postMessage({
+      type    : 'PHOTO_TAKEN',
+      base64  : base64,
+      filename: DATA.filename || 'photo.jpg'
+    }, '*');
+    window.close();
+  }
+}
+</script>
+</body>
+</html>
