@@ -28,7 +28,13 @@ function doGet(e) {
     try {
       var payload = e.parameter.payload ? JSON.parse(e.parameter.payload) : e.parameter;
       var result = processRequest(JSON.stringify(payload));
-      return ContentService.createTextOutput(JSON.stringify(result))
+      var out = JSON.stringify(result);
+      if (e.parameter.callback) {
+        out = e.parameter.callback + "(" + out + ")";
+        return ContentService.createTextOutput(out)
+          .setMimeType(ContentService.MimeType.JAVASCRIPT);
+      }
+      return ContentService.createTextOutput(out)
         .setMimeType(ContentService.MimeType.JSON);
     } catch (err) {
       return ContentService.createTextOutput(JSON.stringify({
@@ -38,11 +44,10 @@ function doGet(e) {
     }
   }
   
-  // 일반 웹 접속 시 HTML 페이지 반환
-  return HtmlService.createHtmlOutputFromFile('index')
-  .setTitle('DK-RUNS')
+  // 일반 웹 접속 시 HTML 페이지 반환 (캐시 방지를 위해 v2 파일명 사용)
+  return HtmlService.createHtmlOutputFromFile('index_v2')
+    .setTitle('DKsequence 현장 운영 v2.0')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1.0, user-scalable=no')
-    .addMetaTag('apple-mobile-web-app-capable', 'yes')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 
 }
