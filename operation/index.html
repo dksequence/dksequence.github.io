@@ -3,90 +3,107 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>DKsequence 현장 운영 v3.0 (정밀검수본)</title>
+<title>DKsequence 현장 운영 v3.1 Master</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-*{box-sizing:border-box;margin:0;padding:0;}
+*{box-sizing:border-box;margin:0;padding:0;outline:none;-webkit-tap-highlight-color:transparent;}
 :root{
   --surface:#000000;--surface-low:#0d0d0d;--surface-high:#1a1a1a;--surface-highest:#252525;
-  --outline:rgba(255,255,255,0.15);--on-surface:#ffffff;--on-surface-variant:#e0e0e0;
+  --outline:rgba(255,255,255,0.12);--on-surface:#ffffff;--on-surface-variant:#e0e0e0;
   --on-surface-dim:#aaaaaa;--primary:#abc7ff;--primary-container:#0071e3;
   --danger:#ff6b6b;--success:#4ecba1;--warn:#f0a500;
+  --glow: rgba(0, 113, 227, 0.4);
 }
-html,body{background:#000;color:#fff;height:100%;font-family:'Inter',sans-serif;overflow-x:hidden;font-size:24px;}
+html,body{background:#000;color:#fff;height:100%;font-family:'Inter',sans-serif;overflow-x:hidden;font-size:24px;-webkit-font-smoothing:antialiased;}
 .screen{display:none;min-height:100vh;}
 .screen.active{display:flex;flex-direction:column;}
 
-/* ── 메인 대시보드 UI ── */
-.topbar { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 20px; border-bottom: 1px solid var(--outline); background: rgba(22,22,23,0.8); backdrop-filter: blur(20px); text-align: center; position: sticky; top: 0; z-index: 100; }
-.topbar-brand { font-size: 14px; color: var(--on-surface-dim); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+/* ── 프리미엄 버튼 시스템 ── */
+.btn-premium { width:100%; padding:26px; border-radius:1.25rem; border:none; cursor:pointer; font-family:'Inter',sans-serif; color:#fff; transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1); position:relative; overflow:hidden; }
+.btn-premium.primary { background: linear-gradient(135deg, #4d94ff 0%, #0071e3 100%); box-shadow: 0 12px 32px var(--glow); }
+.btn-premium.primary:active { transform: scale(0.97); box-shadow: 0 4px 16px var(--glow); }
+.btn-premium .ko { font-size:28px; font-weight:800; display:block; letter-spacing:-0.01em; }
+.btn-premium .en { font-size:16px; font-weight:500; opacity:0.75; display:block; margin-top:2px; text-transform:uppercase; letter-spacing:0.05em; }
+
+.btn-secondary { background: var(--surface-highest); border: 1px solid var(--outline); color: #fff; padding: 12px 20px; border-radius: 0.75rem; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+.btn-secondary:active { transform: scale(0.95); background: rgba(255,255,255,0.1); }
+
+/* ── UI Components ── */
+.topbar { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 20px; border-bottom: 1px solid var(--outline); background: rgba(10,10,12,0.8); backdrop-filter: blur(20px); text-align: center; position: sticky; top: 0; z-index: 100; }
+.topbar-brand { font-size: 14px; color: var(--on-surface-dim); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 10px; font-weight: 500; }
+.v-badge { background: var(--primary-container); color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 10px; vertical-align: middle; margin-left: 6px; font-weight: 800; }
 .topbar-date-row { display: flex; align-items: center; justify-content: center; gap: 14px; }
-.topbar-date { font-size: 28px; font-weight: 700; color: #fff; padding: 10px 24px; border-radius: 0.5rem; transition: background 0.3s; line-height:1; }
-.date-nav-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--outline); color: var(--primary); width: 48px; height: 48px; border-radius: 50%; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; outline:none; }
-.today-btn { background: var(--surface-highest); border: 1px solid var(--outline); color: #fff; padding: 10px 18px; border-radius: 0.5rem; font-size: 16px; font-weight: 700; cursor: pointer; outline:none; }
+.topbar-date { font-size: 28px; font-weight: 700; color: #fff; padding: 10px 24px; border-radius: 0.6rem; transition: background 0.3s; line-height:1; }
+.date-nav-btn { background: rgba(255,255,255,0.08); border: 1px solid var(--outline); color: var(--primary); width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
 
-.mode-tabs{display:flex;padding:10px 20px;gap:8px;flex-shrink:0;}
-.mode-tab{flex:1;padding:16px;text-align:center;font-size:22px;font-weight:600;color:rgba(255,255,255,0.4);border-radius:0.75rem;cursor:pointer;background:var(--surface-low);border:1px solid var(--outline);font-family:'Inter',sans-serif;}
-.mode-tab.active{color:#fff; background: var(--primary-container); border-color:transparent;}
+.mode-tabs{display:flex;padding:12px 20px;gap:10px;flex-shrink:0;}
+.mode-tab{flex:1;padding:18px;text-align:center;font-size:22px;font-weight:700;color:rgba(255,255,255,0.3);border-radius:1rem;cursor:pointer;background:var(--surface-low);border:1px solid var(--outline);transition:0.2s;}
+.mode-tab.active{color:#fff; background: var(--primary-container); border-color:transparent; box-shadow: 0 8px 24px var(--glow);}
 
-.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:10px 20px;flex-shrink:0;}
-.stat-card{background:var(--surface-low);border-radius:1rem;padding:20px 18px;}
-.stat-label{font-size:20px;color:rgba(255,255,255,0.6);text-transform:uppercase;margin-bottom:6px;}
-.stat-val{font-size:52px;font-weight:700;letter-spacing:-0.01em;}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:12px 20px;flex-shrink:0;}
+.stat-card{background:var(--surface-low);border-radius:1.25rem;padding:24px 20px; border: 1px solid var(--outline);}
+.stat-label{font-size:20px;color:rgba(255,255,255,0.5);text-transform:uppercase;margin-bottom:8px;font-weight:600;}
+.stat-val{font-size:56px;font-weight:800;letter-spacing:-0.02em;}
 .stat-val.all{color:#fff;}.stat-val.done{color:var(--success);}.stat-val.wait{color:var(--warn);}
 
-/* ── 리스트 아이템 ── */
-.list{padding:0 20px 120px;display:flex;flex-direction:column;gap:10px;}
-.customer-card{background:var(--surface-high);border-radius:1rem;padding:20px 22px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:background .15s;}
-.customer-card.done{opacity:.3;pointer-events:none;}
-.avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;flex-shrink:0;color:#fff;}
+/* ── 리스트 & 카드 ── */
+.list{padding:0 20px 140px;display:flex;flex-direction:column;gap:10px;}
+.customer-card{background:#161618;border-radius:1.25rem;padding:24px 24px;cursor:pointer;display:flex;align-items:center;gap:18px;border:1px solid transparent;transition:all 0.2s;}
+.customer-card:active{transform:scale(0.98); background:var(--surface-highest);}
+.customer-card.done{opacity:.3;filter:grayscale(1);pointer-events:none;}
+.avatar{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;flex-shrink:0;color:#fff;}
 .avatar.source-n{background:#00c73c;} 
 .avatar.source-a{background:#0071e3;} 
 .avatar.source-v{background:#f0a500;} 
 .card-info{flex:1;min-width:0;}
-.card-name{font-size:26px;font-weight:700;color:#fff;}
-.card-meta{font-size:20px;color:rgba(255,255,255,0.6);margin-top:4px;}
-.card-resno{font-size:17px;color:rgba(255,255,255,0.3);margin-top:3px;font-family:monospace;}
-.badge{font-size:18px;padding:8px 18px;border-radius:2rem;font-weight:800;flex-shrink:0;}
-.badge-wait{background:rgba(240,165,0,.1);color:var(--warn);}
-.badge-done{background:rgba(78,203,161,.1);color:var(--success);}
+.card-name{font-size:28px;font-weight:700;color:#fff;letter-spacing:-0.01em;}
+.card-meta{font-size:21px;color:rgba(255,255,255,0.6);margin-top:6px;font-weight:500;}
+.card-resno{font-size:17px;color:rgba(255,255,255,0.3);margin-top:6px;font-family:monospace;letter-spacing:0.05em;}
+.badge{font-size:20px;padding:10px 22px;border-radius:2rem;font-weight:800;flex-shrink:0;}
+.badge-wait{background:rgba(240,165,0,.15);color:var(--warn);}
+.badge-done{background:rgba(78,203,161,.15);color:var(--success);}
 
-/* ── 신규/체험 버튼 ── */
-.add-btn-group{padding:0 20px 20px; display:grid; grid-template-columns:1fr 1fr; gap:10px;}
-.add-btn{padding:24px;border-radius:1rem;border:1px dashed rgba(255,255,255,.3);background:transparent;color:rgba(255,255,255,0.6);font-size:24px;cursor:pointer;font-family:'Inter',sans-serif;width:100%;}
+.add-btn-area{padding:0 20px 30px; display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+.btn-ghost{padding:28px;border-radius:1.25rem;border:2px dashed rgba(255,255,255,0.2);background:transparent;color:rgba(255,255,255,0.6);font-size:24px;font-weight:600;cursor:pointer;}
 
-/* ── [camera.html 디자인 이식] ── */
-#nameboard{ background:#0a0a18; padding:20px 20px 16px; text-align:center; border-bottom:1px solid rgba(171,199,255,.3); flex-shrink:0; }
-#nb-time{font-size:18px;color:rgba(171,199,255,.6);letter-spacing:.1em;font-family:monospace;margin-bottom:4px;}
-#nb-resno{font-size:16px;color:rgba(171,199,255,.3);letter-spacing:.08em;font-family:monospace;margin-bottom:8px;}
-#nb-name{font-size:60px;font-weight:700;color:#fff;line-height:1.0;letter-spacing:-0.02em;}
-#nb-product{font-size:22px;color:rgba(171,199,255,.6);margin-top:8px;}
-#nb-brand{font-size:12px;color:rgba(255,255,255,.12);margin-top:8px;letter-spacing:0.1em;}
+/* ── 체크인 폼 & 동의 ── */
+.form-body { padding:24px; flex:1; overflow-y:auto; }
+.info-block { background:var(--surface-low); border-radius:1.25rem; padding:28px; margin-bottom:24px; border:1px solid var(--outline); }
+.field-input { width:100%; padding:22px; border-radius:1rem; border:1.5px solid rgba(255,255,255,0.15); background:#111; font-size:28px; color:#fff; margin-top:10px; transition:0.2s; }
+.field-input:focus { border-color:var(--primary); background:#161616; }
 
-#video-wrap{ flex:1; position:relative; background:#000; overflow:hidden; display:flex; align-items:center; justify-content:center;}
-#videoEl{ width:100%; height:100%; object-fit:cover; display:block; }
-#btn-flip{ position:absolute; top:20px; left:20px; padding:12px 24px; border-radius:2.5rem; background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.3); color:#fff; font-size:18px; cursor:pointer;}
-#cam-status{ position:absolute; top:20px; right:20px; font-size:16px; color:rgba(255,255,255,0.7); background:rgba(0,0,0,0.4); padding:8px 16px; border-radius:1rem;}
+.consent-block { background:var(--surface-low); border-radius:1.25rem; border:1px solid var(--outline); margin-bottom:24px; overflow:hidden; }
+.consent-row { padding:24px; border-bottom:1px solid var(--outline); }
+.consent-header { display:flex; align-items:center; justify-content:space-between; }
+.consent-title { font-size:24px; font-weight:700; }
+.toggle { width:52px; height:30px; border-radius:15px; background:var(--surface-highest); position:relative; cursor:pointer; }
+.toggle.on { background:var(--primary-container); }
+.toggle::after { content:''; position:absolute; top:4px; left:4px; width:22px; height:22px; border-radius:50%; background:#fff; transition:0.2s; }
+.toggle.on::after { transform:translateX(22px); }
 
-.cam-btn-area { flex-shrink:0; width:100%; }
-.full-btn { width:100%; padding:30px; border:none; cursor:pointer; font-family:'Inter',sans-serif; color:#fff; text-align:center; transition:opacity .2s;}
-.full-btn.blue { background:linear-gradient(135deg,#abc7ff,#0071e3); }
-.full-btn.gray { background:#252525; }
-.full-btn .ko { font-size:28px; font-weight:800; display:block; }
-.full-btn .en { font-size:18px; font-weight:500; opacity:.85; display:block; margin-top:2px; }
+/* ── [V3.1 PREMIUM CAMERA UI] ── */
+#nameboard { background:#0a0a18; padding:30px 20px 24px; text-align:center; border-bottom:1px solid rgba(171,199,255,.2); flex-shrink:0; }
+#nb-time { font-size:20px; color:rgba(171,199,255,0.7); letter-spacing:0.12em; font-family:monospace; margin-bottom:6px; }
+#nb-resno { font-size:18px; color:rgba(171,199,255,0.4); letter-spacing:0.08em; font-family:monospace; margin-bottom:12px; }
+#nb-name { font-size:72px; font-weight:800; color:#fff; line-height:1.0; letter-spacing:-0.03em; }
+#nb-product { font-size:24px; color:rgba(171,199,255,0.6); margin-top:10px; font-weight:600; }
 
-/* ── 폼 스타일 ── */
-.field-input{width:100%;padding:22px;border-radius:.75rem;border:1px solid rgba(255,255,255,0.15);background:#111;font-size:28px;color:#fff;font-family:'Inter',sans-serif;margin-top:10px;outline:none;}
-.field-input:focus{border-color:var(--primary);}
-.btn-footer{padding:24px;background:#000;flex-shrink:0;}
+#video-wrap { flex:1; position:relative; background:#000; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+#videoEl { width:100%; height:100%; object-fit:cover; display:block; }
+#cam-top-ui { position:absolute; top:24px; left:24px; right:24px; display:flex; justify-content:space-between; align-items:center; pointer-events:none; }
+#cam-status { font-size:16px; color:#fff; background:rgba(0,0,0,0.5); padding:10px 20px; border-radius:3rem; pointer-events:auto; font-weight:700; letter-spacing:0.05em; }
+#btn-flip { background:rgba(255,255,255,0.15); color:#fff; border:1px solid rgba(255,255,255,0.3); padding:12px 24px; border-radius:3rem; font-size:18px; pointer-events:auto; backdrop-filter:blur(10px); }
 
-/* ── 로딩/저장 단계 ── */
-.step-row{background:var(--surface-low); border-radius:1rem; padding:24px; border:2px solid transparent; display:flex; align-items:center; gap:20px; margin-bottom:12px; transition:all .3s;}
-.stat-dot{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.1);}
-.spinner{width:30px;height:30px;border:4px solid rgba(171,199,255,0.3);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
+.cam-footer { padding:30px 24px 40px; background:#000; flex-shrink:0; }
 
-#toast{position:fixed;bottom:140px;left:50%;transform:translateX(-50%);background:#fff;color:#000;padding:16px 32px;border-radius:2.5rem;font-weight:800;font-size:24px;z-index:10000;display:none;}
+/* ── SAVING STEPS ── */
+.saving-flow { padding:60px 24px; flex:1; text-align:center; }
+.step-item { background:var(--surface-low); border-radius:1.25rem; padding:28px; border:2px solid transparent; display:flex; align-items:center; gap:24px; margin-bottom:16px; transition:0.4s; }
+.step-indicator { width:24px; height:24px; border-radius:50%; background:rgba(255,255,255,0.1); border:4px solid rgba(255,255,255,0.05); }
+.spinner { width:32px; height:32px; border:4px solid rgba(171,199,255,0.2); border-top-color:var(--primary); border-radius:50%; animation:spin 1s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+#toast { position:fixed; bottom:160px; left:50%; transform:translateX(-50%); background:#fff; color:#000; padding:18px 36px; border-radius:3rem; font-weight:800; font-size:26px; z-index:10000; display:none; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5)); }
 </style>
 </head>
 <body>
@@ -94,33 +111,34 @@ html,body{background:#000;color:#fff;height:100%;font-family:'Inter',sans-serif;
 <!-- [SCREEN: LIST] -->
 <div id="s-list" class="screen active">
   <div class="topbar">
-    <div class="topbar-brand">DKsequence × 중문별장 <span style="font-size:10px; background:var(--primary-container); padding:2px 6px; border-radius:4px; vertical-align:middle; margin-left:6px;">v3.0 STABLE</span></div>
+    <div class="topbar-brand">DKsequence × 중문별장 <span class="v-badge">v3.1 MASTER</span></div>
     <div class="topbar-date-row">
-      <button class="today-btn" onclick="goToToday()">TODAY</button>
+      <button class="btn-secondary" onclick="goToToday()">TODAY</button>
       <button class="date-nav-btn" onclick="changeDate(-1)">◀</button>
       <div id="date-label" class="topbar-date">-</div>
       <button class="date-nav-btn" onclick="changeDate(1)">▶</button>
     </div>
   </div>
+  
   <div class="mode-tabs">
     <div id="tab-ci" class="mode-tab active" onclick="switchMode('checkin')">체크인 관리</div>
     <div id="tab-del" class="mode-tab" onclick="switchMode('delivery')">납품 관리</div>
   </div>
-  <!-- LIST: CHECKIN -->
-  <div id="mode-checkin" style="display:contents;">
-    <div id="time-tabs" class="time-tabs" style="display:flex;gap:10px;padding:16px 20px;overflow-x:auto;-webkit-overflow-scrolling:touch;"></div>
+
+  <div id="mode-checkin">
+    <div id="time-tabs" style="display:flex; gap:12px; padding:20px; overflow-x:auto; -webkit-overflow-scrolling:touch;"></div>
     <div class="stat-row">
-      <div class="stat-card"><div class="stat-label">전체</div><div id="stat-total" class="stat-val all">0</div></div>
-      <div class="stat-card"><div class="stat-label">완료</div><div id="stat-done" class="stat-val done">0</div></div>
-      <div class="stat-card"><div class="stat-label">대기</div><div id="stat-wait" class="stat-val wait">0</div></div>
+      <div class="stat-card"><div class="stat-label">TOTAL</div><div id="stat-total" class="stat-val all">0</div></div>
+      <div class="stat-card"><div class="stat-label">DONE</div><div id="stat-done" class="stat-val done">0</div></div>
+      <div class="stat-card"><div class="stat-label">WAIT</div><div id="stat-wait" class="stat-val wait">0</div></div>
     </div>
     <div id="res-list" class="list"></div>
-    <div class="add-btn-group">
-      <button class="add-btn" onclick="showNew('A')">+ 신규 고객<br><small>WALK-IN</small></button>
-      <button class="add-btn" onclick="showNew('V')" style="color:var(--warn);border-color:var(--warn);">+ 체험 고객<br><small>TRIAL</small></button>
+    <div class="add-btn-area">
+      <button class="btn-ghost" onclick="showNew('A')">+ 신규 고객<br><small>WALK-IN</small></button>
+      <button class="btn-ghost" onclick="showNew('V')" style="color:var(--warn); border-color:var(--warn);">+ 체험 고객<br><small>TRIAL</small></button>
     </div>
   </div>
-  <!-- LIST: DELIVERY -->
+
   <div id="mode-delivery" style="display:none;">
     <div class="stat-row">
       <div class="stat-card"><div class="stat-label">전체 촬영</div><div id="del-total" class="stat-val all">0</div></div>
@@ -131,91 +149,118 @@ html,body{background:#000;color:#fff;height:100%;font-family:'Inter',sans-serif;
   </div>
 </div>
 
-<!-- [SCREEN: CHECKIN FORM] -->
+<!-- [SCREEN: FORM] -->
 <div id="s-form" class="screen">
-  <div class="topbar"><button class="today-btn" onclick="show('s-list')">취소</button><div style="font-size:24px; font-weight:800;">데이터 입력</div><div style="width:60px;"></div></div>
-  <div style="padding:24px; flex:1; overflow-y:auto;">
-    <div style="background:var(--surface-low); padding:24px; border-radius:1rem; margin-bottom:24px;">
-      <div id="form-name" style="font-size:36px; font-weight:800;">-</div>
-      <div id="form-resno" style="font-size:22px; color:var(--primary); margin-top:8px;">-</div>
-      <div id="form-product" style="font-size:20px; color:rgba(255,255,255,0.5); margin-top:4px;">-</div>
+  <div class="topbar">
+    <button class="btn-secondary" onclick="show('s-list')">취소</button>
+    <div style="font-size:24px; font-weight:800;">데이터 입력</div>
+    <div style="width:60px;"></div>
+  </div>
+  <div class="form-body">
+    <div class="info-block">
+      <div style="font-size:18px; opacity:0.4; margin-bottom:8px;">입실 예약 정보</div>
+      <div id="form-name" style="font-size:38px; font-weight:800; color:#fff;">-</div>
+      <div id="form-resno" style="font-size:22px; color:var(--primary); margin-top:10px; font-family:monospace;">-</div>
+      <div id="form-product" style="font-size:22px; color:rgba(255,255,255,0.6); margin-top:6px;">-</div>
     </div>
-    <div style="margin-bottom:20px;"><div style="font-size:20px; opacity:0.7;">고객 실명 *</div><input type="text" id="ci-realname" class="field-input"></div>
-    <div style="margin-bottom:20px;"><div style="font-size:20px; opacity:0.7;">이메일 주소 *</div><input type="email" id="ci-email" class="field-input" placeholder="example@gmail.com"></div>
-    <div style="background:var(--surface-low); padding:24px; border-radius:1rem;">
-       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;" onclick="document.getElementById('tg1').classList.toggle('on')">
-          <span style="font-size:22px;">개인정보 수집 동의 (필수)</span><div id="tg1" class="toggle on"></div>
-       </div>
+    <div style="margin-bottom:24px;"><div style="font-size:22px; opacity:0.7;">현장 확인 실명 *</div><input type="text" id="ci-realname" class="field-input" placeholder="성함을 입력하세요"></div>
+    <div style="margin-bottom:24px;"><div style="font-size:22px; opacity:0.7;">납품 이메일 *</div><input type="email" id="ci-email" class="field-input" placeholder="example@gmail.com"></div>
+    
+    <div class="consent-block">
+      <div class="consent-row">
+        <div class="consent-header">
+           <div><span class="consent-title">개인정보 수집 동의</span> <small style="color:var(--danger); margin-left:6px;">[필수]</small></div>
+           <div id="tg1" class="toggle on" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+      <div class="consent-row">
+        <div class="consent-header">
+           <div><span class="consent-title">마케팅 활용 동의</span> <small style="color:var(--on-surface-dim); margin-left:6px;">[선택]</small></div>
+           <div id="tg2" class="toggle" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="btn-footer"><button class="btn-primary" style="width:100%;" onclick="proceedToCheckin()">머그샷 촬영하기</button></div>
+  <div style="padding:24px; background:#000;">
+    <button class="btn-premium primary" onclick="proceedToCheckin()">
+      <span class="ko">머그샷 촬영하기</span><span class="en">TAKE PHOTO</span>
+    </button>
+  </div>
 </div>
 
 <!-- [SCREEN: NEW CUSTOMER] -->
 <div id="s-new" class="screen">
-  <div class="topbar"><button class="today-btn" onclick="show('s-list')">취소</button><div id="new-title" style="font-size:24px; font-weight:800;">신규 고객</div><div style="width:60px;"></div></div>
-  <div style="padding:24px; flex:1; overflow-y:auto;">
-    <div style="background:var(--surface-low); padding:24px; border-radius:1rem; margin-bottom:24px;">
-      <div style="font-size:18px; opacity:0.5;">접수 코드</div><div id="new-code" style="font-size:40px; font-weight:800; color:var(--primary);">-</div>
-    </div>
-    <div style="margin-bottom:20px;"><div style="font-size:20px; opacity:0.7;">성함 *</div><input type="text" id="new-name" class="field-input"></div>
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px;">
-      <div><div style="font-size:20px; opacity:0.7;">시간</div><select id="new-time" class="field-input"><option>13:00</option><option>14:00</option><option>15:00</option><option>16:00</option><option>17:00</option></select></div>
-      <div><div style="font-size:20px; opacity:0.7;">인원</div><select id="new-people" class="field-input"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
-    </div>
-    <div style="margin-bottom:20px;"><div style="font-size:20px; opacity:0.7;">상품</div><select id="new-prod" class="field-input"><option>오마카세+두컷화보</option><option>심플 코스</option></select></div>
-    <div style="margin-bottom:20px;"><div style="font-size:20px; opacity:0.7;">이메일 *</div><input type="email" id="new-email" class="field-input" placeholder="example@gmail.com"></div>
+  <div class="topbar">
+    <button class="btn-secondary" onclick="show('s-list')">취소</button>
+    <div id="new-title" style="font-size:24px; font-weight:800;">신규 고객</div>
+    <div style="width:60px;"></div>
   </div>
-  <div class="btn-footer"><button class="btn-primary" style="width:100%;" onclick="goNewCam()">등록 및 촬영 시작</button></div>
+  <div class="form-body">
+    <div class="info-block">
+      <div style="font-size:18px; opacity:0.5;">접수 자동 코드</div>
+      <div id="new-code" style="font-size:42px; font-weight:800; color:var(--primary); font-family:monospace;">-</div>
+    </div>
+    <div style="margin-bottom:24px;"><div style="font-size:22px; opacity:0.7;">고객 성함 *</div><input type="text" id="new-name" class="field-input"></div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:24px;">
+      <div><div style="font-size:20px; opacity:0.7;">타임</div><select id="new-time" class="field-input"><option>13:00</option><option>14:00</option><option>15:00</option><option>16:00</option><option>17:00</option></select></div>
+      <div><div style="font-size:20px; opacity:0.7;">인원</div><select id="new-people" class="field-input"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></div>
+    </div>
+    <div style="margin-bottom:24px;"><div style="font-size:20px; opacity:0.7;">이메일 *</div><input type="email" id="new-email" class="field-input"></div>
+    <div style="margin-bottom:24px;"><div style="font-size:20px; opacity:0.7;">상품</div><select id="new-prod" class="field-input"><option>오마카세+두컷화보</option><option>기본 코스</option></select></div>
+  </div>
+  <div style="padding:24px;">
+    <button class="btn-premium primary" onclick="goNewCam()">
+      <span class="ko">등록 및 촬영 시작</span><span class="en">REGISTER & SHOOT</span>
+    </button>
+  </div>
 </div>
 
-<!-- [SCREEN: CAMERA - camera.html 디자인 이식] -->
+<!-- [SCREEN: CAMERA - MASTER STABLE] -->
 <div id="s-camera" class="screen">
   <div id="nameboard">
     <div id="nb-time">13:00</div>
     <div id="nb-resno">20260413-W1</div>
-    <div id="nb-name">이름</div>
-    <div id="nb-product">오마카세 · 2인</div>
-    <div id="nb-brand">DKsequence × 중문별장</div>
+    <div id="nb-name">-</div>
+    <div id="nb-product">-</div>
   </div>
   <div id="video-wrap">
     <video id="videoEl" autoplay playsinline muted></video>
-    <button id="btn-flip" onclick="flipCam()">전/후면 FLIP</button>
-    <div id="cam-status">대기 중 WAITING</div>
+    <div id="cam-top-ui">
+      <button id="btn-flip" onclick="flipCam()">전/후면 FLIP</button>
+      <div id="cam-status">대기 중 WAITING</div>
+    </div>
   </div>
-  <div class="cam-btn-area">
-    <button id="cam-start-btn" class="full-btn blue" onclick="startStream()">
-      <span class="ko">카메라 시작</span><span class="en">START CAMERA</span>
+  <div class="cam-footer">
+    <button id="cam-start-btn" class="btn-premium primary" onclick="startStream()">
+      <span class="ko">카메라 연결</span><span class="en">CONNECT CAMERA</span>
     </button>
-    <button id="shutter-btn" class="full-btn blue" style="display:none;" onclick="takePhoto()">
+    <button id="shutter-btn" class="btn-premium primary" style="display:none;" onclick="takePhoto()">
       <span class="ko">촬영하기</span><span class="en">TAKE PHOTO</span>
     </button>
-    <button class="full-btn gray" onclick="show('s-list'); stopStream();">
-      <span class="ko">취소 및 종료</span><span class="en">CANCEL</span>
-    </button>
+    <button class="btn-secondary" style="width:100%; margin-top:20px; padding:20px;" onclick="show('s-list'); stopStream();">취소</button>
   </div>
   <canvas id="canvasEl" style="display:none;"></canvas>
 </div>
 
 <!-- [SCREEN: SAVING] -->
 <div id="s-saving" class="screen">
-  <div style="padding:100px 32px; text-align:center; flex:1;">
-    <div id="sav-name" style="font-size:48px; font-weight:800; margin-bottom:10px;">-</div>
-    <div id="sav-info" style="font-size:26px; color:var(--primary); margin-bottom:60px;">서버 데이터 전송 중...</div>
-    <div id="step1" class="step-row"><div class="stat-dot"></div><div style="flex:1; text-align:left;">아이패드 로컬 백업 (다운로드 폴더)</div></div>
-    <div id="step2" class="step-row"><div class="stat-dot"></div><div style="flex:1; text-align:left;">구글 드라이브 머그샷 업로드</div></div>
-    <div id="step3" class="step-row"><div class="stat-dot"></div><div style="flex:1; text-align:left;">마스터 로그 시트 기록 및 완료</div></div>
+  <div class="saving-flow">
+    <div id="sav-name" style="font-size:52px; font-weight:800; letter-spacing:-0.02em; margin-bottom:12px;">-</div>
+    <div style="font-size:24px; color:var(--primary); margin-bottom:60px;">데이터를 안전하게 전송하고 있습니다.</div>
+    <div id="step1" class="step-item"><div class="step-indicator"></div><div style="flex:1; text-align:left; font-size:26px; font-weight:700;">아이패드 사진 백업 (필수)</div></div>
+    <div id="step2" class="step-item"><div class="step-indicator"></div><div style="flex:1; text-align:left; font-size:26px; font-weight:700;">구글 드라이브 업로드</div></div>
+    <div id="step3" class="step-item"><div class="step-indicator"></div><div style="flex:1; text-align:left; font-size:26px; font-weight:700;">마스터 시트 기록 완료</div></div>
   </div>
 </div>
 
 <div id="s-done" class="screen">
   <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; padding:40px; text-align:center;">
-    <div style="width:140px; height:140px; background:rgba(78,203,161,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:40px;">
-       <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#4ecba1" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    <div style="width:160px; height:160px; background:rgba(78,203,161,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:50px; box-shadow: 0 0 50px rgba(78,203,161,0.2);">
+       <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#4ecba1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
-    <div style="font-size:56px; font-weight:800; margin-bottom:12px;">저장 성공!</div>
-    <div id="done-msg" style="font-size:28px; opacity:0.7; margin-bottom:80px;">-</div>
-    <button class="btn-primary" style="width:100%;" onclick="location.reload()">처음으로 돌아가기</button>
+    <div style="font-size:60px; font-weight:800; margin-bottom:15px; color:#fff;">저장 완료!</div>
+    <div id="done-msg" style="font-size:32px; opacity:0.7; margin-bottom:80px;">-</div>
+    <button class="btn-premium primary" style="max-width:400px;" onclick="location.reload()">처음으로 가기</button>
   </div>
 </div>
 
@@ -263,48 +308,50 @@ window.addEventListener('mousedown', unlockAudio, {once:true});
 window.addEventListener('touchstart', unlockAudio, {once:true});
 function playSound(id) { if (SFX[id]) { SFX[id].currentTime = 0; SFX[id].play().catch(() => {}); } }
 
-// ── API Bridge ──────────────────────────────
+// ── API ──────────────────────────────────────
 function callApi(params, cb) {
   var url = GAS_URL + '?callback=jsonp_cb&' + Object.keys(params).map(k => k + '=' + encodeURIComponent(params[k])).join('&');
   window.jsonp_cb = res => { delete window.jsonp_cb; var s = document.getElementById('api-s'); if(s) s.parentNode.removeChild(s); cb(null, res); };
   var script = document.createElement('script'); script.id = 'api-s'; script.src = url; document.body.appendChild(script);
 }
 
-// ── Dashboard Core ────────────────────────────
+// ── App Flows ────────────────────────────────
 function initTabs() {
-  var tabs = document.getElementById('time-tabs'); tabs.innerHTML = '';
+  var container = document.getElementById('time-tabs'); container.innerHTML = '';
   TIMES.forEach(t => {
-    var b = document.createElement('button'); b.className = 'tab' + (t === SELECTED_TIME ? ' active' : '');
-    b.textContent = t; b.onclick = () => { playSound('EFFECT001'); SELECTED_TIME = t; initTabs(); loadList(); };
-    tabs.appendChild(b);
+    var b = document.createElement('button'); b.className = 'mode-tab' + (t === SELECTED_TIME ? ' active' : '');
+    b.textContent = t; b.style.flex = 'none'; b.style.padding = '12px 24px';
+    b.onclick = () => { playSound('EFFECT001'); SELECTED_TIME = t; initTabs(); loadList(); };
+    container.appendChild(b);
   });
   updateDateUI(); loadList();
 }
+
 function loadList() {
   var list = document.getElementById('res-list');
   list.innerHTML = '<div style="text-align:center; padding:60px;"><div class="spinner" style="margin:0 auto;"></div></div>';
   callApi({ action: 'getReservations', date: getToday(), time: SELECTED_TIME }, (err, res) => {
-    if(err || !res.ok) { list.innerHTML = '<div style="text-align:center; padding:60px; color:var(--danger);">데이터 로드 실패</div>'; return; }
+    if(err || !res.ok) { list.innerHTML = '<div style="text-align:center; padding:60px; color:var(--danger);">데이터 오류</div>'; return; }
     document.getElementById('stat-total').textContent = res.dailyStats.total;
     document.getElementById('stat-done').textContent = res.dailyStats.done;
     document.getElementById('stat-wait').textContent = res.dailyStats.wait;
     renderCards(res.reservations);
   });
 }
+
 function renderCards(res) {
   var list = document.getElementById('res-list');
-  if (res.length === 0) { list.innerHTML = '<div style="text-align:center; padding:60px; opacity:0.3;">예약이 없습니다</div>'; return; }
+  if (res.length === 0) { list.innerHTML = '<div style="text-align:center; padding:60px; opacity:0.3;">예약 데이터 없음</div>'; return; }
   list.innerHTML = '';
   res.forEach(r => {
     var c = document.createElement('div'); c.className = 'customer-card' + (r.checkedIn ? ' done' : '');
     var sClass = 'source-' + (r.source||'A').toLowerCase();
-    c.innerHTML = `<div class="avatar ${sClass}">${(r.source||'A').toUpperCase()}</div><div class="card-info"><div class="card-name">${r.name}</div><div class="card-meta">${r.product} · ${r.people}인</div><div class="card-resno">${r.resno}</div></div><div class="badge ${r.checkedIn?'badge-done':'badge-wait'}">${r.checkedIn?'체크인':'대기'}</div>`;
+    c.innerHTML = `<div class="avatar ${sClass}">${(r.source||'A').toUpperCase()}</div><div class="card-info"><div class="card-name">${r.name}</div><div class="card-meta">${r.product} · ${r.people}인</div><div class="card-resno">${r.resno}</div></div><div class="badge ${r.checkedIn?'badge-done':'badge-wait'}">${r.checkedIn?'완료':'대기'}</div>`;
     if(!r.checkedIn) c.onclick = () => { playSound('EFFECT002'); goForm(r); };
     list.appendChild(c);
   });
 }
 
-// ── Operational Flows ─────────────────────────
 function show(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
 function showToast(msg) { var t = document.getElementById('toast'); t.textContent = msg; t.style.display='block'; setTimeout(()=>t.style.display='none', 2000); }
 
@@ -313,60 +360,54 @@ function goForm(r) {
   document.getElementById('form-name').textContent = r.name;
   document.getElementById('form-resno').textContent = r.resno;
   document.getElementById('form-product').textContent = r.product + ' · ' + r.people + '인';
-  document.getElementById('ci-realname').value = '';
-  document.getElementById('ci-email').value = '';
-  show('s-form');
+  document.getElementById('ci-realname').value = ''; show('s-form');
 }
+
 function proceedToCheckin() {
   var real = document.getElementById('ci-realname').value.trim();
-  if(!real) { showToast('실명을 입력하세요'); return; }
-  if(!document.getElementById('ci-email').value.trim()) { showToast('이메일을 입력하세요'); return; }
-  CUR.realName = real; CUR.email = document.getElementById('ci-email').value.trim();
-  prepCam();
+  if(!real) { showToast('이름을 입력하세요'); return; }
+  CUR.realName = real; CUR.email = document.getElementById('ci-email').value.trim(); preCam();
 }
+
 function showNew(t) {
   playSound('EFFECT004'); CUR = { isNew: true, source: t, time: SELECTED_TIME };
-  document.getElementById('new-title').textContent = (t==='V'?'체험':'신규') + ' 고객';
   callApi({ action: 'getWalkInCode', date: getToday() }, (err, res) => { CUR.resno = (err || !res.ok) ? getToday()+'-W1' : res.code; document.getElementById('new-code').textContent = CUR.resno; });
   show('s-new');
 }
 function goNewCam() {
-  var n = document.getElementById('new-name').value.trim(); if(!n) { showToast('이름 입력 필수'); return; }
-  if(!document.getElementById('new-email').value.trim()) { showToast('이메일 입력 필수'); return; }
+  var n = document.getElementById('new-name').value.trim(); if(!n) { showToast('이름 필수'); return; }
   CUR.realName = n; CUR.time = document.getElementById('new-time').value; CUR.people = document.getElementById('new-people').value; CUR.product = document.getElementById('new-prod').value; CUR.email = document.getElementById('new-email').value.trim();
-  prepCam();
+  preCam();
 }
 
-// ── Camera Pipeline (Internal) ────────────────
-function prepCam() {
-  var cleanT = (CUR.time||'00:00').replace(':','');
-  CUR.filename = getToday() + '_' + cleanT + '_' + CUR.realName + '.jpg';
+// ── Camera Pipeline ───────────────────────────
+function preCam() {
+  var hhmm = (CUR.time||'00:00').replace(':','');
+  CUR.filename = getToday() + '_' + hhmm + '_' + CUR.realName + '.jpg';
   document.getElementById('nb-name').textContent = CUR.realName;
   document.getElementById('nb-resno').textContent = CUR.resno;
   document.getElementById('nb-time').textContent = CUR.time;
   document.getElementById('nb-product').textContent = CUR.product + ' · ' + CUR.people + '인';
   document.getElementById('cam-start-btn').style.display = 'block';
   document.getElementById('shutter-btn').style.display = 'none';
-  document.getElementById('cam-status').textContent = '대기 중 WAITING';
   show('s-camera');
 }
 function startStream() {
-  playSound('EFFECT008');
-  document.getElementById('cam-status').textContent = '연결 중...';
+  playSound('EFFECT008'); document.getElementById('cam-status').textContent = '연결 중...';
   var constraints = { video: { facingMode: FACING, width: { ideal: 1280 }, height: { ideal: 960 } } };
   navigator.mediaDevices.getUserMedia(constraints).then(s => {
     STREAM = s; var v = document.getElementById('videoEl'); v.srcObject = s; v.play();
     document.getElementById('cam-start-btn').style.display = 'none';
     document.getElementById('shutter-btn').style.display = 'block';
     document.getElementById('cam-status').textContent = '준비 완료 READY';
-  }).catch(e => { showToast('카메라 에러: ' + e.name); });
+  }).catch(e => { showToast('연결 오류: ' + e.name); });
 }
 function stopStream() { if(STREAM) { STREAM.getTracks().forEach(t => t.stop()); STREAM = null; } }
 function flipCam() { FACING = (FACING==='environment'?'user':'environment'); stopStream(); startStream(); }
 
 function takePhoto() {
   var v = document.getElementById('videoEl');
-  if (v.readyState !== v.HAVE_ENOUGH_DATA) { showToast('카메라 로딩 중...'); return; }
+  if (v.readyState !== v.HAVE_ENOUGH_DATA) { showToast('로딩 중...'); return; }
   playSound('EFFECT003');
   var c = document.getElementById('canvasEl');
   c.width = v.videoWidth; c.height = v.videoHeight;
@@ -376,11 +417,11 @@ function takePhoto() {
   startSaving();
 }
 
-// ── Saving Pipeline (Final) ──────────────────
+// ── Saving Pipeline ───────────────────────────
 function startSaving() {
-  document.getElementById('sav-name').textContent = CUR.realName + ' · ' + CUR.resno;
+  document.getElementById('sav-name').textContent = CUR.realName;
   show('s-saving');
-  // 1. Local Backup
+  // 1. Local
   setProg(1, '#abc7ff');
   try {
     var l = document.createElement('a'); l.href = 'data:image/jpeg;base64,' + CUR.base64; l.download = CUR.filename;
@@ -388,7 +429,7 @@ function startSaving() {
     setProg(1, '#4ecba1');
   } catch(e) { setProg(1, '#ff6b6b'); }
 
-  // 2. Drive Upload (If in GAS context)
+  // 2. Drive
   setProg(2, '#abc7ff');
   if (typeof google === 'undefined') { setTimeout(saveSheet, 1000); return; }
   google.script.run.withSuccessHandler(res => {
@@ -398,20 +439,20 @@ function startSaving() {
 function saveSheet() {
   setProg(3, '#abc7ff');
   callApi({
-    action:'checkin', date:getToday(), time:CUR.time, resno:CUR.resno, realName:CUR.realName, product:CUR.product, people:CUR.people, email:CUR.email, source:CUR.source, isNew:CUR.isNew, folderId:(CUR.folderId||''), privacyConsent:'Y'
+    action:'checkin', date:getToday(), time:CUR.time, resno:CUR.resno, realName:CUR.realName, product:CUR.product, people:CUR.people, email:CUR.email, source:CUR.source, isNew:CUR.isNew, folderId:(CUR.folderId||'')
   }, (err, res) => {
-    if(!err && res.ok) { setProg(3, '#4ecba1'); setTimeout(() => { playSound('EFFECT005'); document.getElementById('done-msg').textContent = CUR.realName + ' 저장 완료'; show('s-done'); }, 500); }
+    if(!err && res.ok) { setProg(3, '#4ecba1'); setTimeout(() => { playSound('EFFECT005'); document.getElementById('done-msg').textContent = CUR.realName + ' 님 완료'; show('s-done'); }, 500); }
     else setProg(3, '#ff6b6b');
   });
 }
-function setProg(n, c) { var el = document.getElementById('step'+n); el.style.borderColor = c; el.querySelector('.stat-dot').style.background = c; }
+function setProg(n, c) { var el = document.getElementById('step'+n); el.style.borderColor = c; el.querySelector('.step-indicator').style.background = c; if(c==='#abc7ff') el.querySelector('.step-indicator').innerHTML = '<div class="spinner" style="width:16px; height:16px; border-width:2px; margin:0 auto;"></div>'; else el.querySelector('.step-indicator').innerHTML = ''; }
 
-// ── Other ─────────────────────────────────────
+// ── Delivery ──────────────────────────────────
 function switchMode(m) {
   playSound('EFFECT002');
   document.getElementById('tab-ci').classList.toggle('active', m==='checkin');
   document.getElementById('tab-del').classList.toggle('active', m==='delivery');
-  document.getElementById('mode-checkin').style.display = m==='checkin'?'contents':'none';
+  document.getElementById('mode-checkin').style.display = m==='checkin'?'block':'none';
   document.getElementById('mode-delivery').style.display = m==='delivery'?'block':'none';
   if (m === 'delivery') loadDel();
 }
@@ -425,8 +466,14 @@ function loadDel() {
     document.getElementById('del-sent').textContent = res.items.filter(x => x.deliveryStatus.indexOf('발송완료')===0).length;
     list.innerHTML = '';
     res.items.forEach(i => {
-      var d = document.createElement('div'); d.className = 'delivery-card';
-      d.innerHTML = `<div><b>${i.realName||i.maskedName}</b></div><div style="font-size:18px;margin-top:4px;">${i.product} · ${i.time}</div><div class="delivery-badge">${i.editStatus} | ${i.deliveryStatus}</div>`;
+      var d = document.createElement('div'); d.className = 'customer-card';
+      var sClass = 'source-' + (i.source||'A').toLowerCase();
+      var sChar = (i.source||'A').toUpperCase();
+      d.innerHTML = `
+        <div class="avatar ${sClass}">${sChar}</div>
+        <div class="card-info"><div class="card-name">${i.realName||i.maskedName}</div><div class="card-meta">${i.product} · ${i.time}</div><div class="card-resno">${i.resno}</div></div>
+        <div class="badge ${i.editStatus==='보정완료'?'badge-done':'badge-wait'}">${i.editStatus}</div>
+      `;
       list.appendChild(d);
     });
   });
