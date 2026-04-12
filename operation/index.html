@@ -19,13 +19,19 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 .screen.active{display:block;}
 
 /* ── 공통 컴포넌트 ── */
-.topbar{background:rgba(27,27,27,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  padding:20px 24px;display:flex;align-items:center;justify-content:space-between;
-  border-bottom:1px solid var(--outline);position:sticky;top:0;z-index:10;}
-.topbar-title{font-size:32px;font-weight:700;color:#fff;}
-.topbar-sub{font-size:20px;color:rgba(255,255,255,0.6);margin-top:4px;}
-.topbar-brand{font-size:22px;letter-spacing:.04em;color:#fff;font-weight:600;}
-.topbar-date{font-size:16px;color:rgba(255,255,255,0.7);margin-top:2px;}
+.topbar { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px 20px; border-bottom: 1px solid var(--outline); background: rgba(22,22,23,0.8); backdrop-filter: blur(20px); text-align: center; position: sticky; top: 0; z-index: 10; }
+.topbar-brand { font-size: 14px; color: var(--on-surface-dim); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+.topbar-date-row { display: flex; align-items: center; justify-content: center; gap: 20px; }
+.topbar-date { font-size: 32px; font-weight: 700; color: #fff; letter-spacing: -0.02em; }
+.date-nav-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--outline); color: var(--primary); width: 48px; height: 48px; border-radius: 50%; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.date-nav-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.1); }
+
+/* ── 소스 배지 (N/A/V) ── */
+.avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: #fff; flex-shrink: 0; }
+.avatar.source-n { background: #00c73c; } /* 네이버 초록 */
+.avatar.source-a { background: #0071e3; } /* 현장 파랑 */
+.avatar.source-v { background: #f0a500; } /* 체험 노랑 */
+
 .back-btn{font-size:12px;color:var(--primary);cursor:pointer;padding:6px 14px;border-radius:2rem;
   background:rgba(171,199,255,.08);border:none;font-family:'Inter',sans-serif;}
 
@@ -46,10 +52,6 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
   display:flex;align-items:center;gap:14px;transition:background .15s;}
 .customer-card:active{background:var(--surface-highest);}
 .customer-card.done{opacity:.35;pointer-events:none;}
-.avatar{width:68px;height:68px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-size:26px;font-weight:700;flex-shrink:0;}
-.av-wait{background:rgba(171,199,255,.1);color:var(--primary);}
-.av-done{background:rgba(78,203,161,.1);color:var(--success);}
 .card-info{flex:1;min-width:0;}
 .card-name{font-size:26px;font-weight:700;color:#fff;}
 .card-realname{font-size:12px;color:var(--on-surface-dim);}
@@ -223,15 +225,12 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 <!-- ════════════════ 대시보드 ════════════════ -->
 <div id="s-dashboard" class="screen active">
   <div class="topbar">
-    <div>
-      <div class="topbar-brand">DKsequence × 중문별장</div>
-      <div style="display:flex; align-items:center; gap:10px; margin-top:2px;">
-        <button onclick="changeDate(-1)" style="background:transparent;border:none;color:var(--primary);font-size:20px;cursor:pointer;">◀</button>
-        <div class="topbar-date" id="today-label" style="margin-top:0;"></div>
-        <button onclick="changeDate(1)" style="background:transparent;border:none;color:var(--primary);font-size:20px;cursor:pointer;">▶</button>
-      </div>
+    <div class="topbar-brand">DKsequence × 중문별장</div>
+    <div class="topbar-date-row">
+      <button class="date-nav-btn" onclick="changeDate(-1)">◀</button>
+      <div class="topbar-date" id="today-label"></div>
+      <button class="date-nav-btn" onclick="changeDate(1)">▶</button>
     </div>
-    <div style="font-size:11px;color:var(--on-surface-dim);letter-spacing:.06em;">운영 모드</div>
   </div>
   <!-- 모드 전환 탭 -->
   <div class="mode-tabs">
@@ -252,7 +251,10 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
         시간대를 선택하세요
       </div>
     </div>
-    <button class="add-btn" onclick="show('s-new')">+ 신규 고객 추가<br><span style="font-size:15px;opacity:0.6;">ADD NEW CUSTOMER (WALK-IN)</span></button>
+    <div style="padding: 0 20px 20px;">
+      <button class="add-btn" onclick="showNewScreen('A')" style="margin-bottom:12px;">+ 신규 고객 추가<br><span style="font-size:15px;opacity:0.6;">ADD NEW CUSTOMER (WALK-IN)</span></button>
+      <button class="add-btn" onclick="showNewScreen('V')" style="background:rgba(240,165,0,0.1); border-color:rgba(240,165,0,0.2); color:#f0a500;">+ 체험 고객 추가<br><span style="font-size:15px;opacity:0.6;">ADD TRIAL / TEST CUSTOMER</span></button>
+    </div>
   </div>
   <!-- 납품 관리 모드 -->
   <div id="mode-delivery" style="display:none;">
@@ -757,8 +759,12 @@ function renderList(reservations) {
     var initial = r.name ? r.name.charAt(0) : '?';
     var card = document.createElement('div');
     card.className = 'customer-card' + (r.checkedIn ? ' done' : '');
+    
+    var sourceClass = 'source-' + (r.source || 'A').toLowerCase();
+    var sourceChar = (r.source || 'A').toUpperCase();
+
     card.innerHTML =
-      '<div class="avatar ' + (r.checkedIn ? 'av-done' : 'av-wait') + '">' + initial + '</div>' +
+      '<div class="avatar ' + sourceClass + '">' + sourceChar + '</div>' +
       '<div class="card-info">' +
         '<div class="card-name">' + r.name + '</div>' +
         '<div class="card-meta">' + r.product + ' · ' + r.people + '인</div>' +
@@ -1147,14 +1153,14 @@ function renderDeliveryList(items) {
   var list = document.getElementById('delivery-list');
   var total = items.length;
   var edited = items.filter(function(x){ return x.editStatus === '보정완료'; }).length;
-  var sent = items.filter(function(x){ return x.deliveryStatus !== '미발송' && x.deliveryStatus !== ''; }).length;
+  var sent = items.filter(function(x){ return x.deliveryStatus.indexOf('발송완료') === 0; }).length;
   
   document.getElementById('del-stat-total').textContent = total;
   document.getElementById('del-stat-edited').textContent = edited;
   document.getElementById('del-stat-sent').textContent = sent;
   
   if (total === 0) {
-    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--on-surface-dim);font-size:13px;">오늘 체크인 데이터 없음</div>';
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--on-surface-dim);font-size:13px;">오늘 데이터 없음</div>';
     return;
   }
   
@@ -1164,8 +1170,10 @@ function renderDeliveryList(items) {
     card.className = 'delivery-card';
     
     var isEditDone = item.editStatus === '보정완료';
-    var isSent = item.deliveryStatus !== '미발송' && item.deliveryStatus !== '';
+    var isSent = item.deliveryStatus.indexOf('발송완료') === 0;
     var hasEmail = !!item.email;
+    var sourceClass = 'source-' + (item.source || 'A').toLowerCase();
+    var sourceChar = (item.source || 'A').toUpperCase();
     
     // 편집 상태 배지
     var editBadge = isEditDone
@@ -1191,10 +1199,11 @@ function renderDeliveryList(items) {
     
     card.innerHTML =
       '<div class="delivery-card-top">' +
-        '<div>' +
-          '<div class="delivery-card-name">' + item.realName + '</div>' +
+        '<div class="avatar ' + sourceClass + '" style="margin-right:15px; margin-top:5px;">' + sourceChar + '</div>' +
+        '<div style="flex:1;">' +
+          '<div class="delivery-card-name">' + (item.realName || item.maskedName) + '</div>' +
           '<div class="delivery-card-meta">' + item.product + ' · ' + item.people + '인 · ' + item.time + '</div>' +
-          '<div class="delivery-card-resno">' + item.resno + '</div>' +
+          '<div class="delivery-card-resno">' + item.resno + (item.checkinAt ? ' (체크인: ' + item.checkinAt + ')' : ' [미입실]') + '</div>' +
           (hasEmail ? '<div style="font-size:14px;color:rgba(255,255,255,0.4);margin-top:2px;">' + item.email + '</div>' : '') +
         '</div>' +
       '</div>' +
@@ -1236,6 +1245,51 @@ function sendDelivery(resno, btnEl) {
     loadDeliveryList();
   });
 }
+
+var CURRENT_ADD_TYPE = 'A';
+function showNewScreen(type) {
+  CURRENT_ADD_TYPE = type;
+  show('s-new');
+  var title = document.querySelector('#s-new .section-label');
+  if (type === 'V') title.textContent = '체험 고객 추가 (TRIAL/TEST)';
+  else title.textContent = '신규 고객 추가 (WALK-IN)';
+}
+
+// ── 체크인 API 래퍼 ───────────────────────────────────────────
+function submitCheckin() {
+  if (isSubmitting) return;
+  
+  var req = {
+    action: CURRENT_ADD_TYPE === 'V' ? 'checkinExperience' : 'checkin',
+    date: getToday(),
+    time: document.getElementById('new-time').value,
+    realName: document.getElementById('new-name').value,
+    maskedName: document.getElementById('new-name').value.charAt(0) + '*' + document.getElementById('new-name').value.slice(-1),
+    product: document.getElementById('new-product').value,
+    people: document.getElementById('new-people').value,
+    email: document.getElementById('new-email').value,
+    phone: document.getElementById('new-phone').value,
+    memo: document.getElementById('new-memo').value,
+    isNew: true
+  };
+  
+  if (!req.realName) { alert('이름을 입력하세요'); return; }
+  
+  isSubmitting = true;
+  var btn = document.querySelector('#s-new .btn-primary');
+  var oldText = btn.textContent;
+  btn.textContent = '저장 중...';
+  
+  callApi(req, function(err, res) {
+    isSubmitting = false;
+    btn.textContent = oldText;
+    if (err || !res.ok) { alert('실패: ' + (err || res.error)); return; }
+    alert('저장되었습니다! 예약번호: ' + res.resno);
+    show('s-dashboard');
+    refresh();
+  });
+}
+
 </script>
 </body>
 </html>
