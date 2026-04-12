@@ -194,6 +194,14 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 .pay-tab { flex:1; padding:9px; border-radius:.75rem; border:1px solid var(--outline); font-size:12px; color:var(--on-surface-dim); background:transparent; cursor:pointer; text-align:center; font-family:'Inter',sans-serif; }
 .pay-tab.active { background:rgba(171,199,255,.1); color:var(--primary); border-color:rgba(171,199,255,.2); font-weight:500; }
 
+/* ── 로딩 UI ── */
+.loading-box { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center; }
+.loading-spinner { width: 56px; height: 56px; border: 5px solid rgba(240, 165, 0, 0.2); border-top: 5px solid #f0a500; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 24px; }
+.loading-text { font-size: 32px; font-weight: 700; color: #f0a500; letter-spacing: -0.01em; }
+.empty-text { font-size: 32px; font-weight: 600; color: var(--on-surface-dim); padding: 80px 20px; text-align: center; line-height: 1.5; }
+
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
 /* ── 3차: 납품 관리 ── */
 .mode-tabs{display:flex;gap:0;padding:0 20px;margin-top:10px;}
 .mode-tab{flex:1;padding:16px;text-align:center;font-size:22px;font-weight:600;color:rgba(255,255,255,0.4);
@@ -247,8 +255,9 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
     </div>
     <div class="section-label" id="list-label">예약 목록</div>
     <div class="list" id="reservation-list">
-      <div style="padding:20px;text-align:center;color:var(--on-surface-dim);font-size:13px;">
-        시간대를 선택하세요
+      <div class="loading-box">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">데이터를 읽고 있습니다...</div>
       </div>
     </div>
     <div style="padding: 0 20px 20px;">
