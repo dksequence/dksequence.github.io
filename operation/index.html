@@ -4,30 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>DKsequence 현장 운영</title>
-  <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Operation</title>
-
-  <!-- favicon -->
-  <link rel="icon" href="./favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="./icons/favicon-16.png">
-
-  <!-- iPhone / iPad 홈 화면 아이콘 -->
-  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon-180.png">
-
-  <!-- Android / PWA -->
-  <link rel="manifest" href="./manifest.json">
-
-  <!-- iOS 홈 화면 앱 모드 -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Operation">
-
-  <!-- 브라우저 색상 -->
-  <meta name="theme-color" content="#111111">
-</head>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -53,25 +29,15 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 .back-btn{font-size:12px;color:var(--primary);cursor:pointer;padding:6px 14px;border-radius:2rem;
   background:rgba(171,199,255,.08);border:none;font-family:'Inter',sans-serif;}
 
-/* ── 날짜 네비게이션 ── */
-.date-nav{display:flex;align-items:center;gap:12px;padding:16px 20px;background:var(--surface-low);border-bottom:1px solid var(--outline);}
-.date-nav-btn{width:44px;height:44px;border-radius:50%;background:var(--surface-high);border:1px solid var(--outline);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.date-nav-btn:active{background:var(--surface-highest);}
-.date-display{flex:1;text-align:center;font-size:20px;font-weight:600;color:#fff;}
-.refresh-btn{padding:10px 18px;border-radius:2rem;background:rgba(171,199,255,.08);border:1px solid rgba(171,199,255,.2);color:var(--primary);font-size:14px;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:6px;}
-.refresh-btn:active{background:rgba(171,199,255,.15);}
+.time-tabs{display:flex;gap:6px;padding:20px 20px 0;overflow-x:auto;gap:10px;-webkit-overflow-scrolling:touch;}
+.tab{font-size:26px;padding:16px 28px;border-radius:2rem;cursor:pointer;color:rgba(255,255,255,0.5);
+  background:transparent;border:none;white-space:nowrap;font-family:'Inter',sans-serif;letter-spacing:.04em;}
+.tab.active{background:var(--surface-highest);color:#fff;font-weight:700;}
 
-/* ── 시간 탭 (크기 확대) ── */
-.time-tabs{display:flex;gap:10px;padding:20px 20px 0;overflow-x:auto;-webkit-overflow-scrolling:touch;}
-.tab{font-size:32px;padding:20px 36px;border-radius:2rem;cursor:pointer;color:rgba(255,255,255,0.5);
-  background:transparent;border:none;white-space:nowrap;font-family:'Inter',sans-serif;letter-spacing:.04em;font-weight:600;}
-.tab.active{background:var(--surface-highest);color:#fff;font-weight:800;}
-
-/* ── 통계 (크기 축소) ── */
-.stat-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px 20px;}
-.stat-card{background:var(--surface-low);border-radius:.75rem;padding:12px 14px;}
-.stat-label{font-size:14px;color:rgba(255,255,255,0.6);letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px;}
-.stat-val{font-size:36px;font-weight:700;letter-spacing:-0.02em;}
+.stat-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:16px 20px;}
+.stat-card{background:var(--surface-low);border-radius:1rem;padding:20px 18px;}
+.stat-label{font-size:22px;color:rgba(255,255,255,0.6);letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px;}
+.stat-val{font-size:56px;font-weight:700;letter-spacing:-0.02em;}
 .stat-val.all{color:var(--on-surface);}.stat-val.done{color:var(--success);}.stat-val.wait{color:var(--warn);}
 
 .section-label{padding:10px 20px 14px;font-size:22px;color:rgba(255,255,255,0.6);letter-spacing:.06em;text-transform:uppercase;}
@@ -234,24 +200,14 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
   <div class="topbar">
     <div>
       <div class="topbar-brand">DKsequence × 중문별장</div>
-      <div class="topbar-date" id="today-label"></div>
+      <div style="display:flex; align-items:center; gap:10px; margin-top:2px;">
+        <button onclick="changeDate(-1)" style="background:transparent;border:none;color:var(--primary);font-size:20px;cursor:pointer;">◀</button>
+        <div class="topbar-date" id="today-label" style="margin-top:0;"></div>
+        <button onclick="changeDate(1)" style="background:transparent;border:none;color:var(--primary);font-size:20px;cursor:pointer;">▶</button>
+      </div>
     </div>
-    <button class="refresh-btn" onclick="refreshData()">
-      <span>⟳</span>
-      <span>새로고침</span>
-    </button>
+    <div style="font-size:11px;color:var(--on-surface-dim);letter-spacing:.06em;">운영 모드</div>
   </div>
-  
-  <!-- 날짜 네비게이션 -->
-  <div class="date-nav">
-    <button class="date-nav-btn" onclick="changeDate(-1)">←</button>
-    <div class="date-display" id="date-display"></div>
-    <button class="date-nav-btn" onclick="changeDate(1)">→</button>
-    <button class="date-nav-btn" onclick="goToday()">오늘</button>
-    <input type="date" id="date-picker" style="position:absolute;opacity:0;pointer-events:none;">
-    <button class="date-nav-btn" id="btn-calendar">📅</button>
-  </div>
-
   <div class="time-tabs" id="time-tabs"></div>
   <div class="stat-row">
     <div class="stat-card"><div class="stat-label">전체</div><div class="stat-val all" id="stat-total">—</div></div>
@@ -625,84 +581,86 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 
 <script>
 // ── 상태 ──────────────────────────────────────────────
+// 앱스 스크립트 백엔드 URL
 var GAS_URL = 'https://script.google.com/macros/s/AKfycbwoqVAZVZclcog_8hGo6W5xKCGWdK9HHRCw-CtidsA3sygtPJatZ88b82iouE0brF0G/exec';
 var CUR = {};
 var STREAM = null;
-var FACING = 'environment';
+var FACING = 'environment'; // 후면 카메라 기본
 var TIMES = ['13:00','14:00','15:00','16:00','17:00'];
 var SELECTED_TIME = '14:00';
-var CURRENT_DATE = getToday();
-var CACHE = {};
 
-// ── 날짜 유틸 ─────────────────────────────────────────
+// ── 날짜 유틸 추가 및 검색 연동 ───────────────────────
+var CURRENT_DATE_OFFSET = 0;
+function changeDate(offset) {
+  CURRENT_DATE_OFFSET += offset;
+  document.getElementById('today-label').textContent = getTodayLabel();
+  loadReservations(SELECTED_TIME); // 변경된 날짜에 맞게 리스트 조회 트리거
+}
+
 function getToday() {
   var d = new Date();
+  d.setDate(d.getDate() + CURRENT_DATE_OFFSET);
   return d.getFullYear() + '' +
     String(d.getMonth()+1).padStart(2,'0') +
     String(d.getDate()).padStart(2,'0');
 }
+
 function getTodayLabel() {
   var d = new Date();
+  d.setDate(d.getDate() + CURRENT_DATE_OFFSET);
   var days = ['일','월','화','수','목','금','토'];
   return d.getFullYear() + '년 ' + (d.getMonth()+1) + '월 ' + d.getDate() + '일 (' + days[d.getDay()] + ')';
 }
-function formatDate(dateStr) {
-  var y = dateStr.substring(0,4);
-  var m = dateStr.substring(4,6);
-  var d = dateStr.substring(6,8);
-  var date = new Date(y, parseInt(m)-1, d);
-  var days = ['일','월','화','수','목','금','토'];
-  return y + '년 ' + parseInt(m) + '월 ' + parseInt(d) + '일 (' + days[date.getDay()] + ')';
+
+// ── 화면 전환 ─────────────────────────────────────────
+function show(id) {
+  document.querySelectorAll('.screen').forEach(function(s){
+    s.classList.remove('active');
+    s.style.display = 'none';
+  });
+  var el = document.getElementById(id);
+  el.classList.add('active');
+  el.style.display = (id === 's-camera') ? 'flex' : 'block';
+  window.scrollTo(0, 0);
+  if (id === 's-new') initNewScreen();
 }
 
-// ── 날짜 네비게이션 ────────────────────────────────────
-function changeDate(delta) {
-  var y = parseInt(CURRENT_DATE.substring(0,4));
-  var m = parseInt(CURRENT_DATE.substring(4,6));
-  var d = parseInt(CURRENT_DATE.substring(6,8));
-  var date = new Date(y, m-1, d);
-  date.setDate(date.getDate() + delta);
-  CURRENT_DATE = date.getFullYear() +
-    String(date.getMonth()+1).padStart(2,'0') +
-    String(date.getDate()).padStart(2,'0');
-  updateDateDisplay();
-  loadCachedData();
-}
-function goToday() {
-  CURRENT_DATE = getToday();
-  updateDateDisplay();
-  loadCachedData();
-}
-function updateDateDisplay() {
-  document.getElementById('date-display').textContent = formatDate(CURRENT_DATE);
-  document.getElementById('today-label').textContent = formatDate(CURRENT_DATE);
-  
-  var y = CURRENT_DATE.substring(0,4);
-  var m = CURRENT_DATE.substring(4,6);
-  var d = CURRENT_DATE.substring(6,8);
-  document.getElementById('date-picker').value = y + '-' + m + '-' + d;
+// ── 토스트 ────────────────────────────────────────────
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 3000);
 }
 
-// ── 데이터 로드 (캐시 활용) ────────────────────────────
-function loadCachedData() {
-  if (CACHE[CURRENT_DATE]) {
-    renderTabs(CACHE[CURRENT_DATE]);
+// ── 앱스 스크립트 API 호출 ────────────────────────────
+// script.google.com 내부: google.script.run 사용
+// GitHub Pages: fetch 사용 (리다이렉트 follow)
+function callApi(payload, cb) {
+  // google.script.run 환경인지 확인
+  if (typeof google !== 'undefined' && google.script && google.script.run) {
+    google.script.run
+      .withSuccessHandler(function(res){ cb(null, res); })
+      .withFailureHandler(function(err){ cb(err); })
+      .processRequest(JSON.stringify(payload));
     return;
   }
-  var list = document.getElementById('reservation-list');
-  list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--on-surface-dim);font-size:13px;">불러오는 중...</div>';
-  
-  callApi({ action: 'getReservations', date: CURRENT_DATE }, function(err, res) {
-    if (err || !res.ok) {
-      list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--danger);font-size:13px;">불러오기 실패</div>';
-      return;
-    }
-    CACHE[CURRENT_DATE] = res.reservations;
-    renderTabs(res.reservations);
-  });
+  // GitHub Pages 환경 — fetch with redirect follow
+  var url = GAS_URL
+    + '?action='  + encodeURIComponent(payload.action)
+    + '&payload=' + encodeURIComponent(JSON.stringify(payload));
+  fetch(url, { redirect: 'follow' })
+    .then(function(r){ return r.text(); })
+    .then(function(text){
+      try { cb(null, JSON.parse(text)); }
+      catch(e) { cb(new Error('파싱오류: ' + text.substring(0,80))); }
+    })
+    .catch(function(err){ cb(err); });
 }
 
-function renderTabs(allReservations) {
+// ── 타임 탭 초기화 ────────────────────────────────────
+function initTabs() {
+  document.getElementById('today-label').textContent = getTodayLabel();
   var container = document.getElementById('time-tabs');
   container.innerHTML = '';
   TIMES.forEach(function(t) {
@@ -713,37 +671,44 @@ function renderTabs(allReservations) {
       document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
       SELECTED_TIME = t;
-      renderList(allReservations, t);
+      loadReservations(t);
     };
     container.appendChild(btn);
   });
-  
-  updateDayStats(allReservations);
-  renderList(allReservations, SELECTED_TIME);
+  loadReservations(SELECTED_TIME);
 }
 
-function updateDayStats(allReservations) {
-  var total = allReservations.length;
-  var done  = allReservations.filter(function(r){ return r.checkedIn; }).length;
+// ── 예약 목록 로드 ────────────────────────────────────
+function loadReservations(time) {
+  document.getElementById('list-label').textContent = time + ' 타임';
+  var list = document.getElementById('reservation-list');
+  list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--on-surface-dim);font-size:13px;">불러오는 중...</div>';
+
+  callApi({ action: 'getReservations', date: getToday(), time: time }, function(err, res) {
+    if (err || !res.ok) {
+      list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--danger);font-size:13px;">불러오기 실패. 새로고침 해주세요.</div>';
+      return;
+    }
+    renderList(res.reservations);
+  });
+}
+
+function renderList(reservations) {
+  var list = document.getElementById('reservation-list');
+  var total = reservations.length;
+  var done  = reservations.filter(function(r){ return r.checkedIn; }).length;
   var wait  = total - done;
   document.getElementById('stat-total').textContent = total;
   document.getElementById('stat-done').textContent  = done;
   document.getElementById('stat-wait').textContent  = wait;
-}
 
-function renderList(allReservations, time) {
-  var list = document.getElementById('reservation-list');
-  document.getElementById('list-label').textContent = time + ' 타임';
-  
-  var filtered = allReservations.filter(function(r){ return r.time === time; });
-
-  if (filtered.length === 0) {
+  if (total === 0) {
     list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--on-surface-dim);font-size:13px;">이 타임 예약 없음</div>';
     return;
   }
 
   list.innerHTML = '';
-  filtered.forEach(function(r) {
+  reservations.forEach(function(r) {
     var initial = r.name ? r.name.charAt(0) : '?';
     var card = document.createElement('div');
     card.className = 'customer-card' + (r.checkedIn ? ' done' : '');
@@ -763,57 +728,14 @@ function renderList(allReservations, time) {
   });
 }
 
-function refreshData() {
-  delete CACHE[CURRENT_DATE];
-  loadCachedData();
-}
-
-function show(id) {
-  document.querySelectorAll('.screen').forEach(function(s){
-    s.classList.remove('active');
-    s.style.display = 'none';
-  });
-  var el = document.getElementById(id);
-  el.classList.add('active');
-  el.style.display = (id === 's-camera') ? 'flex' : 'block';
-  window.scrollTo(0, 0);
-  if (id === 's-new') initNewScreen();
-}
-
-function showToast(msg) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(function(){ t.classList.remove('show'); }, 3000);
-}
-
-function callApi(payload, cb) {
-  if (typeof google !== 'undefined' && google.script && google.script.run) {
-    google.script.run
-      .withSuccessHandler(function(res){ cb(null, res); })
-      .withFailureHandler(function(err){ cb(err); })
-      .processRequest(JSON.stringify(payload));
-    return;
-  }
-  var url = GAS_URL
-    + '?action='  + encodeURIComponent(payload.action)
-    + '&payload=' + encodeURIComponent(JSON.stringify(payload));
-  fetch(url, { redirect: 'follow' })
-    .then(function(r){ return r.text(); })
-    .then(function(text){
-      try { cb(null, JSON.parse(text)); }
-      catch(e) { cb(new Error('파싱오류: ' + text.substring(0,80))); }
-    })
-    .catch(function(err){ cb(err); });
-}
-
+// ── 체크인 화면 ───────────────────────────────────────
 function goCheckin(r) {
-  CUR = { resno: r.resno, maskedName: r.name, product: r.product, people: r.people, time: r.time, isNew: false };
+  CUR = { resno: r.resno, maskedName: r.name, product: r.product, people: r.people, time: SELECTED_TIME, isNew: false };
   document.getElementById('ci-topname').textContent  = r.name;
   document.getElementById('ci-resno').textContent    = r.resno;
   document.getElementById('ci-product').textContent  = r.product;
   document.getElementById('ci-people').textContent   = r.people + '인';
-  document.getElementById('ci-time').textContent     = r.time;
+  document.getElementById('ci-time').textContent     = SELECTED_TIME;
   document.getElementById('ci-realname').value = '';
   document.getElementById('ci-email').value    = '';
   document.getElementById('ci-phone').value    = '';
@@ -823,6 +745,7 @@ function goCheckin(r) {
   show('s-checkin');
 }
 
+// ── 동의 펼치기 ───────────────────────────────────────
 function toggleDetail(detailId, iconId) {
   var detail = document.getElementById(detailId);
   var icon   = document.getElementById(iconId);
@@ -831,6 +754,7 @@ function toggleDetail(detailId, iconId) {
   icon.classList.toggle('open', !isOpen);
 }
 
+// ── 촬영 화면 진입 ────────────────────────────────────
 function goCamera() {
   var realname = document.getElementById('ci-realname').value.trim();
   if (!realname) { showToast('실명을 입력해주세요'); return; }
@@ -844,7 +768,7 @@ function goCamera() {
 
   if (!CUR.privacyConsent) { showToast('개인정보 수집 동의는 필수입니다'); return; }
 
-  CUR.filename = CURRENT_DATE + '_' + CUR.resno + '_' + realname + '.jpg';
+  CUR.filename = getToday() + '_' + CUR.resno + '_' + realname + '.jpg';
   document.getElementById('cam-name-label').textContent  = realname;
   document.getElementById('cam-resno-label').textContent = CUR.resno;
   document.getElementById('nb-time').textContent    = CUR.time;
@@ -852,6 +776,7 @@ function goCamera() {
   document.getElementById('nb-name').textContent    = realname;
   document.getElementById('nb-product').textContent = CUR.product + ' · ' + CUR.people + '인';
 
+  // 카메라 화면 초기화
   var startWrap = document.getElementById('cam-start-overlay');
   if (startWrap) startWrap.style.display = 'block';
   var shutterWrap = document.getElementById('shutter-wrap');
@@ -862,7 +787,9 @@ function goCamera() {
   show('s-camera');
 }
 
+// ── 카메라 제어 ───────────────────────────────────────
 function userStartCamera() {
+  // GitHub Pages 카메라 팝업으로 열기
   var popupUrl = 'https://dksequence.github.io/operation/camera.html';
   var popup = window.open(popupUrl, 'camera',
     'width=600,height=900,toolbar=no,menubar=no,scrollbars=no');
@@ -872,6 +799,7 @@ function userStartCamera() {
     return;
   }
 
+  // 팝업에 데이터 전달 (로드 후)
   var timer = setInterval(function() {
     try {
       popup.postMessage({
@@ -886,6 +814,7 @@ function userStartCamera() {
     } catch(e) {}
   }, 500);
 
+  // 팝업에서 사진 수신
   window.addEventListener('message', function onPhoto(e) {
     if (e.data && e.data.type === 'PHOTO_TAKEN') {
       clearInterval(timer);
@@ -895,6 +824,10 @@ function userStartCamera() {
       startSaving();
     }
   });
+}
+
+function startCamera() {
+  userStartCamera();
 }
 
 function stopCamera() {
@@ -920,26 +853,37 @@ function flipCamera() {
   .catch(function(err) { showToast(err.name + ': ' + err.message); });
 }
 
+// ── 셔터 → 저장 파이프라인 ──────────────────────────
 function takePhoto() {
   var video  = document.getElementById('videoEl');
   var canvas = document.getElementById('canvasEl');
-  canvas.width  = video.videoWidth  || 1280;
-  canvas.height = video.videoHeight || 960;
-  canvas.getContext('2d').drawImage(video, 0, 0);
+  var vw = video.videoWidth  || 1280;
+  var vh = video.videoHeight || 960;
+  var MAX_WIDTH = 1280;
+  var MAX_HEIGHT = 960;
+  
+  if (vw > MAX_WIDTH) { vh = Math.floor(vh * (MAX_WIDTH / vw)); vw = MAX_WIDTH; }
+  if (vh > MAX_HEIGHT) { vw = Math.floor(vw * (MAX_HEIGHT / vh)); vh = MAX_HEIGHT; }
 
-  var base64 = canvas.toDataURL('image/jpeg', 0.5).split(',')[1];
-  CUR.filename = CURRENT_DATE + '_' + CUR.resno + '_' + CUR.realname + '.jpg';
+  canvas.width  = vw;
+  canvas.height = vh;
+  canvas.getContext('2d').drawImage(video, 0, 0, vw, vh);
+
+  var base64 = canvas.toDataURL('image/jpeg', 0.6).split(',')[1];
+  CUR.filename = getToday() + '_' + CUR.resno + '_' + CUR.realname + '.jpg';
   CUR.base64   = base64;
 
   stopCamera();
   startSaving();
 }
 
+// ── 저장 단계 실행 ────────────────────────────────────
 function startSaving() {
   document.getElementById('saving-name-label').textContent = CUR.realname + ' · ' + CUR.resno;
   resetSteps();
   show('s-saving');
 
+  // Step 1: 사진 → 드라이브 (form POST — base64 전송)
   setStep(1, 'loading', '구글 드라이브 업로드 중...');
   postPhoto(CUR.base64, CUR.filename, function(err, photoRes) {
     if (err || !photoRes.ok) {
@@ -952,10 +896,11 @@ function startSaving() {
     CUR.rowNum   = null;
     setStep(1, 'ok', CUR.filename);
 
+    // Step 2: 체크인 데이터 → 시트 (JSONP — 텍스트만)
     setStep(2, 'loading', '스프레드시트 기록 중...');
     callApi({
       action:         'checkin',
-      date:           CURRENT_DATE,
+      date:           getToday(),
       time:           CUR.time,
       resno:          CUR.resno,
       maskedName:     CUR.maskedName || '',
@@ -978,10 +923,10 @@ function startSaving() {
       }
       setStep(2, 'ok', '기록 완료');
 
+      // Step 3: 완료
       setStep(3, 'loading', '완료 처리 중...');
       setTimeout(function() {
         setStep(3, 'ok', '완료');
-        delete CACHE[CURRENT_DATE];
         setTimeout(showDone, 400);
       }, 500);
     });
@@ -1014,6 +959,7 @@ function setStep(n, state, sub) {
   }
 }
 
+// ── 완료 화면 ────────────────────────────────────────
 function showDone() {
   document.getElementById('done-name').textContent     = CUR.realname + ' 님';
   document.getElementById('done-filename').textContent = CUR.filename;
@@ -1034,16 +980,19 @@ function showDone() {
   show('s-done');
 }
 
+
+// ── 신규 고객 관련 ─────────────────────────────────
 function initNewScreen() {
   regenWalkInCode();
+  // 현재 선택된 타임 기본값으로
   var sel = document.getElementById('new-time');
   if (sel) sel.value = SELECTED_TIME;
 }
 
 function regenWalkInCode() {
-  callApi({ action: 'getWalkInCode', date: CURRENT_DATE }, function(err, res) {
+  callApi({ action: 'getWalkInCode', date: getToday() }, function(err, res) {
     var el = document.getElementById('new-code');
-    if (el) el.textContent = (err || !res.ok) ? CURRENT_DATE + '-W1' : res.code;
+    if (el) el.textContent = (err || !res.ok) ? getToday() + '-W1' : res.code;
   });
 }
 
@@ -1081,6 +1030,7 @@ function goNewCamera() {
   document.getElementById('nb-name').textContent    = name;
   document.getElementById('nb-product').textContent = CUR.product + ' · ' + CUR.people + '인';
 
+  // 카메라 화면 초기화
   var startWrap = document.getElementById('cam-start-overlay');
   if (startWrap) startWrap.style.display = 'block';
   var shutterWrap = document.getElementById('shutter-wrap');
@@ -1091,7 +1041,9 @@ function goNewCamera() {
   show('s-camera');
 }
 
+// ── 사진 저장 — google.script.run 방식 ───────────────
 function postPhoto(base64, filename, cb) {
+  // script.google.com 환경: google.script.run 사용
   if (typeof google !== 'undefined' && google.script && google.script.run) {
     google.script.run
       .withSuccessHandler(function(res){ cb(null, res); })
@@ -1100,7 +1052,7 @@ function postPhoto(base64, filename, cb) {
         action  : 'savePhotoPost',
         filename: filename,
         mimeType: 'image/jpeg',
-        date    : CURRENT_DATE,
+        date    : getToday(),
         time    : CUR.time,
         resno   : CUR.resno,
         realName: CUR.realname,
@@ -1108,47 +1060,12 @@ function postPhoto(base64, filename, cb) {
       }));
     return;
   }
+  // 외부 환경 fallback
   cb(null, { ok: true, folderId: '', fileUrl: '' });
 }
 
-// ── 초기화 (달력 버튼 이벤트 등록) ──────────────────────
-(function() {
-  // DOM 로드 완료 후 실행
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-  
-  function init() {
-    // 달력 버튼 이벤트
-    var calBtn = document.getElementById('btn-calendar');
-    if (calBtn) {
-      calBtn.onclick = function() {
-        var picker = document.getElementById('date-picker');
-        if (picker && picker.showPicker) {
-          picker.showPicker();
-        }
-      };
-    }
-    
-    // 날짜 선택 이벤트
-    var picker = document.getElementById('date-picker');
-    if (picker) {
-      picker.addEventListener('change', function(e) {
-        var val = e.target.value;
-        if (!val) return;
-        CURRENT_DATE = val.replace(/-/g, '');
-        updateDateDisplay();
-        loadCachedData();
-      });
-    }
-    
-    // 초기 데이터 로드
-    updateDateDisplay();
-    loadCachedData();
-  }
-})();
+// ── 초기화 ───────────────────────────────────────────
+window.onload = function() { initTabs(); };
 </script>
 </body>
 </html>
