@@ -191,6 +191,31 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 
 .pay-tab { flex:1; padding:9px; border-radius:.75rem; border:1px solid var(--outline); font-size:12px; color:var(--on-surface-dim); background:transparent; cursor:pointer; text-align:center; font-family:'Inter',sans-serif; }
 .pay-tab.active { background:rgba(171,199,255,.1); color:var(--primary); border-color:rgba(171,199,255,.2); font-weight:500; }
+
+/* ── 3차: 납품 관리 ── */
+.mode-tabs{display:flex;gap:0;padding:0 20px;margin-top:10px;}
+.mode-tab{flex:1;padding:16px;text-align:center;font-size:22px;font-weight:600;color:rgba(255,255,255,0.4);
+  border-bottom:2px solid transparent;cursor:pointer;background:transparent;border-top:none;border-left:none;border-right:none;font-family:'Inter',sans-serif;}
+.mode-tab.active{color:#fff;border-bottom-color:var(--primary);}
+.delivery-card{background:var(--surface-high);border-radius:1rem;padding:20px 22px;margin-bottom:10px;}
+.delivery-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.delivery-card-name{font-size:24px;font-weight:700;color:#fff;}
+.delivery-card-meta{font-size:18px;color:rgba(255,255,255,0.5);margin-top:4px;}
+.delivery-card-resno{font-size:16px;color:rgba(255,255,255,0.35);font-family:monospace;margin-top:4px;}
+.delivery-status-row{display:flex;gap:8px;align-items:center;margin-bottom:14px;}
+.delivery-badge{font-size:16px;padding:6px 16px;border-radius:2rem;font-weight:600;}
+.badge-edit-done{background:rgba(78,203,161,.12);color:var(--success);}
+.badge-edit-wait{background:rgba(240,165,0,.12);color:var(--warn);}
+.badge-sent{background:rgba(171,199,255,.1);color:var(--primary);}
+.badge-unsent{background:rgba(255,255,255,.06);color:var(--on-surface-dim);}
+.delivery-btn{width:100%;padding:16px;border-radius:.75rem;font-size:20px;font-weight:700;
+  border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .2s;}
+.delivery-btn:disabled{opacity:.3;cursor:not-allowed;}
+.delivery-btn.send{background:linear-gradient(135deg,var(--primary),var(--primary-container));color:#fff;}
+.delivery-btn.resend{background:rgba(255,255,255,.08);color:var(--on-surface-variant);border:1px solid var(--outline);}
+.delivery-btn.edit-done{background:rgba(78,203,161,.15);color:var(--success);border:1px solid rgba(78,203,161,.3);}
+.delivery-btn.no-email{background:rgba(255,107,107,.08);color:var(--danger);}
+.delivery-stat-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:16px 20px;}
 </style>
 </head>
 <body>
@@ -208,19 +233,39 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
     </div>
     <div style="font-size:11px;color:var(--on-surface-dim);letter-spacing:.06em;">운영 모드</div>
   </div>
-  <div class="time-tabs" id="time-tabs"></div>
-  <div class="stat-row">
-    <div class="stat-card"><div class="stat-label">전체</div><div class="stat-val all" id="stat-total">—</div></div>
-    <div class="stat-card"><div class="stat-label">완료</div><div class="stat-val done" id="stat-done">—</div></div>
-    <div class="stat-card"><div class="stat-label">대기</div><div class="stat-val wait" id="stat-wait">—</div></div>
+  <!-- 모드 전환 탭 -->
+  <div class="mode-tabs">
+    <button class="mode-tab active" onclick="switchMode('checkin')">체크인 관리</button>
+    <button class="mode-tab" onclick="switchMode('delivery')">납품 관리</button>
   </div>
-  <div class="section-label" id="list-label">예약 목록</div>
-  <div class="list" id="reservation-list">
-    <div style="padding:20px;text-align:center;color:var(--on-surface-dim);font-size:13px;">
-      시간대를 선택하세요
+  <!-- 체크인 모드 -->
+  <div id="mode-checkin">
+    <div class="time-tabs" id="time-tabs"></div>
+    <div class="stat-row">
+      <div class="stat-card"><div class="stat-label">전체</div><div class="stat-val all" id="stat-total">—</div></div>
+      <div class="stat-card"><div class="stat-label">완료</div><div class="stat-val done" id="stat-done">—</div></div>
+      <div class="stat-card"><div class="stat-label">대기</div><div class="stat-val wait" id="stat-wait">—</div></div>
+    </div>
+    <div class="section-label" id="list-label">예약 목록</div>
+    <div class="list" id="reservation-list">
+      <div style="padding:20px;text-align:center;color:var(--on-surface-dim);font-size:13px;">
+        시간대를 선택하세요
+      </div>
+    </div>
+    <button class="add-btn" onclick="show('s-new')">+ 신규 고객 추가<br><span style="font-size:15px;opacity:0.6;">ADD NEW CUSTOMER (WALK-IN)</span></button>
+  </div>
+  <!-- 납품 관리 모드 -->
+  <div id="mode-delivery" style="display:none;">
+    <div class="delivery-stat-row">
+      <div class="stat-card"><div class="stat-label">전체</div><div class="stat-val all" id="del-stat-total">—</div></div>
+      <div class="stat-card"><div class="stat-label">보정완료</div><div class="stat-val done" id="del-stat-edited">—</div></div>
+      <div class="stat-card"><div class="stat-label">발송완료</div><div class="stat-val" style="color:var(--primary);" id="del-stat-sent">—</div></div>
+    </div>
+    <div class="section-label">납품 목록</div>
+    <div class="list" id="delivery-list">
+      <div style="padding:20px;text-align:center;color:var(--on-surface-dim);font-size:13px;">불러오는 중...</div>
     </div>
   </div>
-  <button class="add-btn" onclick="show('s-new')">+ 신규 고객 추가<br><span style="font-size:15px;opacity:0.6;">ADD NEW CUSTOMER (WALK-IN)</span></button>
 </div>
 
 <!-- ════════════════ 체크인 ════════════════ -->
@@ -580,7 +625,6 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 <div class="toast" id="toast"></div>
 
 <script>
-  var isSubmitting = false; // 중복 클릭 방지 락 변수
 // ── 상태 ──────────────────────────────────────────────
 // 앱스 스크립트 백엔드 URL
 var GAS_URL = 'https://script.google.com/macros/s/AKfycbwoqVAZVZclcog_8hGo6W5xKCGWdK9HHRCw-CtidsA3sygtPJatZ88b82iouE0brF0G/exec';
@@ -615,7 +659,6 @@ function getTodayLabel() {
 
 // ── 화면 전환 ─────────────────────────────────────────
 function show(id) {
-  isSubmitting = false; // 페이지 전환 시 잠금 해제
   document.querySelectorAll('.screen').forEach(function(s){
     s.classList.remove('active');
     s.style.display = 'none';
@@ -857,9 +900,6 @@ function flipCamera() {
 
 // ── 셔터 → 저장 파이프라인 ──────────────────────────
 function takePhoto() {
-  if (isSubmitting) return; // 연타 방어
-  isSubmitting = true;
-
   var video  = document.getElementById('videoEl');
   var canvas = document.getElementById('canvasEl');
   var vw = video.videoWidth  || 1280;
@@ -1071,6 +1111,131 @@ function postPhoto(base64, filename, cb) {
 
 // ── 초기화 ───────────────────────────────────────────
 window.onload = function() { initTabs(); };
+
+// ══════════════════════════════════════════════════════
+// 3차: 납품 관리 시스템
+// ══════════════════════════════════════════════════════
+
+var CURRENT_MODE = 'checkin';
+
+function switchMode(mode) {
+  CURRENT_MODE = mode;
+  document.querySelectorAll('.mode-tab').forEach(function(t, i) {
+    t.classList.toggle('active', (i === 0 && mode === 'checkin') || (i === 1 && mode === 'delivery'));
+  });
+  document.getElementById('mode-checkin').style.display = mode === 'checkin' ? 'block' : 'none';
+  document.getElementById('mode-delivery').style.display = mode === 'delivery' ? 'block' : 'none';
+  if (mode === 'delivery') {
+    loadDeliveryList();
+  }
+}
+
+function loadDeliveryList() {
+  var list = document.getElementById('delivery-list');
+  list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--on-surface-dim);font-size:13px;">불러오는 중...</div>';
+  
+  callApi({ action: 'getDeliveryList', date: getToday() }, function(err, res) {
+    if (err || !res.ok) {
+      list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--danger);font-size:13px;">불러오기 실패</div>';
+      return;
+    }
+    renderDeliveryList(res.items);
+  });
+}
+
+function renderDeliveryList(items) {
+  var list = document.getElementById('delivery-list');
+  var total = items.length;
+  var edited = items.filter(function(x){ return x.editStatus === '보정완료'; }).length;
+  var sent = items.filter(function(x){ return x.deliveryStatus !== '미발송' && x.deliveryStatus !== ''; }).length;
+  
+  document.getElementById('del-stat-total').textContent = total;
+  document.getElementById('del-stat-edited').textContent = edited;
+  document.getElementById('del-stat-sent').textContent = sent;
+  
+  if (total === 0) {
+    list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--on-surface-dim);font-size:13px;">오늘 체크인 데이터 없음</div>';
+    return;
+  }
+  
+  list.innerHTML = '';
+  items.forEach(function(item) {
+    var card = document.createElement('div');
+    card.className = 'delivery-card';
+    
+    var isEditDone = item.editStatus === '보정완료';
+    var isSent = item.deliveryStatus !== '미발송' && item.deliveryStatus !== '';
+    var hasEmail = !!item.email;
+    
+    // 편집 상태 배지
+    var editBadge = isEditDone
+      ? '<span class="delivery-badge badge-edit-done">✅ 보정완료</span>'
+      : '<span class="delivery-badge badge-edit-wait">⏳ 편집 중</span>';
+    
+    // 발송 상태 배지
+    var sentBadge = isSent
+      ? '<span class="delivery-badge badge-sent">📧 ' + item.deliveryStatus + '</span>'
+      : '<span class="delivery-badge badge-unsent">📧 미발송</span>';
+    
+    // 버튼 결정
+    var btnHtml = '';
+    if (!isEditDone) {
+      btnHtml = '<button class="delivery-btn edit-done" onclick="markDone(\'' + item.resno + '\')">편집 완료 처리</button>';
+    } else if (!hasEmail) {
+      btnHtml = '<button class="delivery-btn no-email" disabled>이메일 없음 — 수동 납품 필요</button>';
+    } else if (!isSent) {
+      btnHtml = '<button class="delivery-btn send" onclick="sendDelivery(\'' + item.resno + '\', this)">📬 납품 전송</button>';
+    } else {
+      btnHtml = '<button class="delivery-btn resend" onclick="sendDelivery(\'' + item.resno + '\', this)">재발송</button>';
+    }
+    
+    card.innerHTML =
+      '<div class="delivery-card-top">' +
+        '<div>' +
+          '<div class="delivery-card-name">' + item.realName + '</div>' +
+          '<div class="delivery-card-meta">' + item.product + ' · ' + item.people + '인 · ' + item.time + '</div>' +
+          '<div class="delivery-card-resno">' + item.resno + '</div>' +
+          (hasEmail ? '<div style="font-size:14px;color:rgba(255,255,255,0.4);margin-top:2px;">' + item.email + '</div>' : '') +
+        '</div>' +
+      '</div>' +
+      '<div class="delivery-status-row">' + editBadge + sentBadge + '</div>' +
+      btnHtml;
+    
+    list.appendChild(card);
+  });
+}
+
+function markDone(resno) {
+  if (!confirm(resno + ' 보정완료 처리할까요?\nresult 폴더 링크가 자동 공유됩니다.')) return;
+  
+  showToast('보정완료 처리 중...');
+  callApi({ action: 'markEditDone', resno: resno }, function(err, res) {
+    if (err || !res.ok) {
+      showToast('실패: ' + (err ? err.message : res.error));
+      return;
+    }
+    showToast('✅ 보정완료! 링크 공유 설정됨');
+    loadDeliveryList();
+  });
+}
+
+function sendDelivery(resno, btnEl) {
+  if (!confirm(resno + ' 고객에게 납품 이메일을 발송할까요?')) return;
+  
+  btnEl.disabled = true;
+  btnEl.textContent = '발송 중...';
+  
+  callApi({ action: 'sendDeliveryEmail', resno: resno }, function(err, res) {
+    if (err || !res.ok) {
+      showToast('발송 실패: ' + (err ? err.message : res.error));
+      btnEl.disabled = false;
+      btnEl.textContent = '재시도';
+      return;
+    }
+    showToast('✅ 이메일 발송 완료!');
+    loadDeliveryList();
+  });
+}
 </script>
 </body>
 </html>
