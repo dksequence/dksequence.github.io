@@ -187,6 +187,7 @@ body{
 table.lt{
   border-collapse:collapse;
   table-layout:fixed;
+  width: calc(240px + 110px * var(--teams)); /* 추가: 테이블 고정 폭을 지정하여 가로/세로 이름칸 110px 완벽 고정 */
   background:#fff;
 }
 
@@ -203,17 +204,17 @@ table.lt td{
 
 /* 행 높이 */
 tr.r-num  {height:44px;}
-tr.r-name {height:78px;}
-tr.r-body {height:78px;}
+tr.r-name {height:60px;}
+tr.r-body {height:60px;}
 
 /* 열 너비 */
-col.c-seq   {width:70px;}
-col.c-name  {width:150px;}
-col.c-match {width:64px;}
-col.c-gap1  {width:14px;}
-col.c-score {width:92px;}
-col.c-gap2  {width:14px;}
-col.c-rank  {width:92px;}
+col.c-seq   {width:34px;}
+col.c-name  {width:110px;}
+col.c-match {width:110px;}
+col.c-gap1  {width:4px;}
+col.c-score {width:44px;}
+col.c-gap2  {width:4px;}
+col.c-rank  {width:44px;}
 
 /* 좌상단 사선 셀 */
 .corner{
@@ -320,9 +321,6 @@ input.mi:focus{
 /* 대각 차단 셀 */
 .blocked{
   background:var(--block) !important;
-  box-shadow: inset 0 0 0 9999px var(--block);
-  -webkit-print-color-adjust:exact;
-  print-color-adjust:exact;
 }
 
 .blocked input{
@@ -396,77 +394,31 @@ input.mi:focus{
   }
 
   table.lt{
-    width:100% !important;
-    table-layout:fixed;
-    margin:0 !important;
+    margin-left:4mm !important;
     background:#fff !important;
   }
-
-  tr.r-num  {height:22px;}
-  tr.r-name {height:calc((170mm - 22px) / (var(--teams) + 1));}
-  tr.r-body {height:calc((170mm - 22px) / (var(--teams) + 1));}
-
-  /* 원본 유지 + 내용칸만 아주 조금 축소 */
-  col.c-seq   {width:58px !important;}
-  col.c-name  {width:68px !important;}
-  col.c-match {width:58px !important;}
-  col.c-gap1  {width:3px !important;}
-  col.c-score {width:42px !important;}
-  col.c-gap2  {width:3px !important;}
-  col.c-rank  {width:42px !important;}
 
   table.lt th,
   table.lt td{
     border:1.2px solid #222 !important;
-    font-size:9px !important;
     color:#111 !important;
-    background:#fff !important;
-    -webkit-print-color-adjust:exact !important;
-    print-color-adjust:exact !important;
   }
 
   input.ni{
-    font-size:8px !important;
-    padding:1px !important;
     background:#fff !important;
     color:#111 !important;
   }
 
   input.mi{
-    font-size:10px !important;
     background:#fff !important;
     color:#111 !important;
   }
 
-  .rc{font-size:10px !important;}
-  .num-cell{font-size:10px !important;}
-  th.sq{font-size:10px !important;}
-  .cbl,.ctr{font-size:8px !important;}
-
-  .blocked{
-    background:#9a9a9a !important;
-    box-shadow: inset 0 0 0 9999px #9a9a9a !important;
-    -webkit-print-color-adjust:exact !important;
-    print-color-adjust:exact !important;
-  }
-
-  .rk1{
-    background:#ffd700 !important;
-    box-shadow: inset 0 0 0 9999px #ffd700 !important;
-  }
-  .rk2{
-    background:#d8d8d8 !important;
-    box-shadow: inset 0 0 0 9999px #d8d8d8 !important;
-  }
-  .rk3{
-    background:#e8a96a !important;
-    box-shadow: inset 0 0 0 9999px #e8a96a !important;
-  }
-
-  td.gc, th.gc{
-    border:0 !important;
-    background:#fff !important;
-  }
+  .blocked{background:#888 !important;}
+  .rk1{background:#ffd700 !important;}
+  .rk2{background:#d8d8d8 !important;}
+  .rk3{background:#e8a96a !important;}
+  td.gc, th.gc{border:0 !important;background:#fff !important;}
 }
 </style>
 </head>
