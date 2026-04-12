@@ -158,6 +158,9 @@ function getReservations(dateStr, timeReq) {
       if (combined[resno]) {
         // 이미 네이버 시트에 있는 경우 업데이트
         if (checkinAt) combined[resno].checkedIn = true;
+        // 현장에서 확인된 실명이 마스터 로그에 있다면 해당 이름으로 표시
+        var masterRealName = String(row[3] || '').trim();
+        if (masterRealName) combined[resno].name = masterRealName;
       } else {
         // 마스터에만 있는 경우 (현장/체험 등)
         combined[resno] = {
@@ -170,6 +173,7 @@ function getReservations(dateStr, timeReq) {
           checkedIn: !!checkinAt
         };
       }
+
     }
 
     // 3. 일일 통계 집계 및 리스트 필터링
@@ -300,41 +304,43 @@ function checkin(req) {
     }
     
     var rowIndex = findRowInMasterByResno(masterSheet, finalResno);
-    var dateFormatted = date.substring(0,4) + '-' + date.substring(4,6) + '-' + date.substring(6,8);
     
     if (rowIndex === -1) {
       // 신규 행 추가 (Walk-in 또는 누락된 예약)
       masterSheet.appendRow([
-        dateFormatted,
-        req.time,
-        finalResno,
-        req.realName,
-        req.maskedName || '',
-        req.product,
-        req.people,
-        req.email || '',
-        req.phone || '',
-        req.memo || '',
-        req.source || 'A', // 기본값 'A' (현장예약)
-        checkinAt,
+        date,             // Col 0: use_date ("2026-04-13")
+        req.time,         // Col 1: use_time
+        finalResno,       // Col 2: reservation_no
+        req.realName,     // Col 3: real_name
+        req.maskedName || '', // Col 4: masked_name
+        req.product,      // Col 5: product
+        req.people,       // Col 6: people
+        req.email || '',  // Col 7: email
+        req.phone || '',  // Col 8: phone
+        req.memo || '',   // Col 9: memo
+        req.source || 'A',// Col 10: customer_source
+        checkinAt,        // Col 11: checkin_at
         req.folderId ? 'https://drive.google.com/drive/folders/' + req.folderId : '',
-        '미완료',
-        '',
-        '미발송',
-        '',
+        '미완료',         // edit_status
+        '',               // result_url
+        '미발송',         // delivery_status
+        '',               // delivery_sent_at
         req.privacyConsent ? 'Y' : 'N',
         req.snsConsent ? 'Y' : 'N',
         req.isNew ? '현장결제' : '사전예약'
       ]);
     } else {
-      // 기존 예약 행 업데이트 (Source 'N' -> 'N' 유지)
-      masterSheet.getRange(rowIndex, 12).setValue(checkinAt); // checkin_at
-      masterSheet.getRange(rowIndex, 13).setValue(req.folderId ? 'https://drive.google.com/drive/folders/' + req.folderId : ''); // folder_url
-      masterSheet.getRange(rowIndex, 18).setValue(req.privacyConsent ? 'Y' : 'N'); // privacy_consent
-      masterSheet.getRange(rowIndex, 19).setValue(req.snsConsent ? 'Y' : 'N'); // sns_consent
-      masterSheet.getRange(rowIndex, 20).setValue('사전예약'); // type
+      // 기존 예약 행 업데이트
+      masterSheet.getRange(rowIndex, 4).setValue(req.realName);   // real_name 업데이트
+      masterSheet.getRange(rowIndex, 12).setValue(checkinAt);     // checkin_at
+      masterSheet.getRange(rowIndex, 13).setValue(req.folderId ? 'https://drive.google.com/drive/folders/' + req.folderId : '');
+      masterSheet.getRange(rowIndex, 18).setValue(req.privacyConsent ? 'Y' : 'N');
+      masterSheet.getRange(rowIndex, 19).setValue(req.snsConsent ? 'Y' : 'N');
       if (req.memo) masterSheet.getRange(rowIndex, 10).setValue(req.memo);
+      if (req.email) masterSheet.getRange(rowIndex, 8).setValue(req.email);
+      if (req.phone) masterSheet.getRange(rowIndex, 9).setValue(req.phone);
     }
+
     
     return { ok: true, resno: finalResno };
   } catch (err) {
