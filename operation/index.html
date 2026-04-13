@@ -848,7 +848,14 @@ function loadReservations(time, forceRefresh) {
 }
 
 function filterDataByTime(data, time) {
-  return data.filter(function(r) { return (r.time || '').trim() === (time || '').trim(); });
+  var target = (time || '').trim();
+  return data.filter(function(r) { 
+    var raw = (r.time || '').trim();
+    if (raw.length > 5 && raw.indexOf(':') !== -1) {
+       raw = raw.split(':').slice(0,2).join(':'); // '13:00:00' -> '13:00'
+    }
+    return raw === target; 
+  });
 }
 
 // ── 스마트 폴링 (10분마다 변경 체크) ────────────────────────
