@@ -2,8 +2,13 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>DKsequence 현장 운영</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DK-RUNS">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon-180.png">
+<link rel="manifest" href="manifest.json">
+<title>DKsequence 현장 운영 v3.1 Master</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -27,6 +32,9 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 .date-nav-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.1); }
 .today-btn { background: var(--surface-highest); border: 1px solid var(--outline); color: #fff; padding: 10px 18px; border-radius: 0.5rem; font-size: 16px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: 'Inter', sans-serif; transition: all 0.2s; }
 .today-btn:active { transform: scale(0.95); opacity: 0.8; }
+.sync-btn { background: #333; color: #fff; border: 1px solid var(--outline); padding: 10px 18px; border-radius: 0.5rem; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.3s; white-space: nowrap; margin-left: 5px; }
+.sync-btn.new { background: var(--warn); box-shadow: 0 0 15px var(--warn); }
+.sync-btn:active { transform: scale(0.95); }
 
 /* ── 소스 배지 (N/A/V) ── */
 .avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: #fff; flex-shrink: 0; }
@@ -241,6 +249,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
       <button class="date-nav-btn" onclick="changeDate(-1)">◀</button>
       <div class="topbar-date" id="today-label"></div>
       <button class="date-nav-btn" onclick="changeDate(1)">▶</button>
+      <button id="sync-btn" class="sync-btn" onclick="refreshData()">New Data Check</button>
     </div>
   </div>
   <!-- 모드 전환 탭 -->
@@ -649,7 +658,16 @@ var TIMES = ['13:00','14:00','15:00','16:00','17:00'];
 var SELECTED_TIME = '14:00';
 var isSubmitting = false;
 
-function refresh() { loadReservations(SELECTED_TIME); }
+var FULL_DATA = null;
+var LAST_DATA_HASH = "";
+
+function refresh() { refreshData(); }
+
+function refreshData() {
+  playSound('EFFECT008');
+  document.getElementById('sync-btn').classList.remove('new');
+  loadReservations(SELECTED_TIME, true);
+}
 
 // ── 사운드 재생 ──────────────────────────────────────────
 var SFX = {};
@@ -688,6 +706,7 @@ var CURRENT_DATE_OFFSET = 0;
 function changeDate(offset) {
   playSound('EFFECT001');
   CURRENT_DATE_OFFSET += offset;
+  FULL_DATA = null; // 날짜가 바뀌면 캐시 초기화
   updateDateUI();
   loadReservations(SELECTED_TIME);
 }
@@ -696,6 +715,7 @@ function goToToday() {
   if (CURRENT_DATE_OFFSET !== 0) {
     playSound('EFFECT001');
     CURRENT_DATE_OFFSET = 0;
+    FULL_DATA = null; // 오늘로 돌아오면 캐시 초기화
     updateDateUI();
     loadReservations(SELECTED_TIME);
   }
@@ -788,32 +808,58 @@ function initTabs() {
   loadReservations(SELECTED_TIME);
 }
 
-// ── 예약 목록 로드 ────────────────────────────────────
-function loadReservations(time) {
+// ── 예약 목록 로드 (개선된 Batch Loading) ──────────────────
+function loadReservations(time, forceRefresh) {
+  SELECTED_TIME = time;
   document.getElementById('list-label').textContent = time + ' 타임';
   var list = document.getElementById('reservation-list');
+
+  // 이미 메모리에 데이터가 있고 강제 새로고침이 아니면 즉시 렌더링
+  if (FULL_DATA && !forceRefresh) {
+    renderList(filterDataByTime(FULL_DATA, time));
+    return;
+  }
+
+  // 데이터 로딩 중 표시
   list.innerHTML = 
     '<div class="loading-box">' +
       '<div class="loading-spinner"></div>' +
       '<div class="loading-text">데이터를 읽고 있습니다...</div>' +
     '</div>';
 
-  callApi({ action: 'getReservations', date: getToday(), time: time }, function(err, res) {
+  // 서버에서 해당 날짜의 '전체' 데이터를 한 번에 가져옴
+  callApi({ action: 'getReservations', date: getToday(), time: 'ALL' }, function(err, res) {
     if (err || !res.ok) {
       list.innerHTML = '<div class="empty-text" style="color:var(--danger);">오류가 발생했습니다.<br>새로고침 해주세요.</div>';
       return;
     }
     
-    // 일일 전체 통계 업데이트 (사장님 요청: 시간대 클릭 시에도 오늘 전체 숫자 유지)
+    FULL_DATA = res.reservations; // 전체 데이터 저장
+    LAST_DATA_HASH = res.dataHash || ""; // 데이터 변경 감지용 해시 저장
+    
     if (res.dailyStats) {
       document.getElementById('stat-total').textContent = res.dailyStats.total;
       document.getElementById('stat-done').textContent  = res.dailyStats.done;
       document.getElementById('stat-wait').textContent  = res.dailyStats.wait;
     }
     
-    renderList(res.reservations);
+    renderList(filterDataByTime(FULL_DATA, time));
   });
 }
+
+function filterDataByTime(data, time) {
+  return data.filter(function(r) { return r.time === time; });
+}
+
+// ── 스마트 폴링 (10분마다 변경 체크) ────────────────────────
+setInterval(function() {
+  if (!getToday() || isSubmitting) return;
+  callApi({ action: 'checkUpdate', date: getToday(), lastHash: LAST_DATA_HASH }, function(err, res) {
+    if (!err && res.hasUpdate) {
+      document.getElementById('sync-btn').classList.add('new'); // 주황색으로 변경
+    }
+  });
+}, 10 * 60 * 1000); // 10분 간격
 
 function renderList(reservations) {
   var list = document.getElementById('reservation-list');
