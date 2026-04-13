@@ -659,6 +659,23 @@ function initSFX() {
     SFX[id].load();
   });
 }
+
+// 아이패드 사운드 잠금 해제 (첫 터치 시)
+function unlockAudio() {
+  initSFX();
+  Object.keys(SFX).forEach(function(k) {
+    var p = SFX[k].play();
+    if (p) {
+      p.then(function() { SFX[k].pause(); SFX[k].currentTime = 0; })
+       .catch(function(e) { console.log('Audio unlock waiting...'); });
+    }
+  });
+  window.removeEventListener('mousedown', unlockAudio);
+  window.removeEventListener('touchstart', unlockAudio);
+}
+window.addEventListener('mousedown', unlockAudio, {once:true});
+window.addEventListener('touchstart', unlockAudio, {once:true});
+
 function playSound(id) {
   if (SFX[id]) {
     SFX[id].currentTime = 0;
@@ -752,7 +769,6 @@ function callApi(payload, cb) {
 
 // ── 타임 탭 초기화 ────────────────────────────────────
 function initTabs() {
-  initSFX();
   updateDateUI();
   var container = document.getElementById('time-tabs');
   container.innerHTML = '';
@@ -1022,7 +1038,7 @@ function startSaving() {
       // Step 3: 완료
       setStep(3, 'loading', '완료 처리 중...');
       setTimeout(function() {
-        playSound('EFFECT007'); // 성공 차임벨
+        playSound('EFFECT007'); // 저장 완료 성공음!
         setStep(3, 'ok', '완료');
         setTimeout(showDone, 400);
       }, 500);
