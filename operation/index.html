@@ -127,8 +127,8 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
   background:linear-gradient(90deg,transparent,var(--primary),transparent);}
 .nb-time{font-size:22px;color:rgba(171,199,255,.6);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;font-family:monospace;}
 .nb-resno{font-size:20px;color:rgba(171,199,255,.4);letter-spacing:.08em;margin-bottom:14px;font-family:monospace;}
-.nb-name{font-size:80px;font-weight:700;color:#fff;line-height:1.0;letter-spacing:-0.02em;}
-.nb-product{font-size:26px;color:rgba(171,199,255,.6);margin-top:10px;font-weight:500;}
+.nb-name{font-size:52px;font-weight:800;color:#fff;line-height:1.1;letter-spacing:-0.02em;}
+.nb-product{font-size:18px;color:rgba(171,199,255,.6);margin-top:4px;font-weight:600;}
 .nb-brand{font-size:11px;color:rgba(255,255,255,.15);margin-top:8px;letter-spacing:.1em;text-transform:uppercase;}
 
 /* ── 카메라 영역 ── */
@@ -407,7 +407,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
   </div>
   <!-- 카메라 영역 -->
   <div style="position:relative;background:#000;width:100%;">
-    <video id="videoEl" autoplay playsinline muted style="width:100%;display:block;max-height:55vh;object-fit:cover;"></video>
+    <video id="videoEl" autoplay playsinline muted style="width:100%;display:block;max-height:45vh;object-fit:cover;"></video>
     <canvas id="canvasEl" style="display:none;"></canvas>
     <!-- 전/후면 버튼 -->
     <button id="btn-flip" onclick="flipCamera()" style="display:none;position:absolute;top:14px;left:14px;padding:10px 18px;border-radius:2rem;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:16px;cursor:pointer;">전/후면 FLIP</button>
@@ -897,40 +897,27 @@ function goCamera() {
 // ── 카메라 제어 ───────────────────────────────────────
 function userStartCamera() {
   playSound('EFFECT005'); // 카메라 활성화 사운드
-  // GitHub Pages 카메라 팝업으로 열기
-  var popupUrl = 'https://dksequence.github.io/operation/camera.html';
-  var popup = window.open(popupUrl, 'camera',
-    'width=600,height=900,toolbar=no,menubar=no,scrollbars=no');
+  
+  // 팝업 없이 인라인 직접 실행
+  var overlay = document.getElementById('cam-start-overlay');
+  var shutter = document.getElementById('shutter-wrap');
+  var flipBtn = document.getElementById('btn-flip');
+  
+  if (overlay) overlay.style.display = 'none';
+  if (shutter) shutter.style.display = 'block';
+  if (flipBtn) flipBtn.style.display = 'block';
 
-  if (!popup) {
-    showToast('팝업이 차단됐습니다. 팝업 허용 후 다시 시도해주세요.');
-    return;
-  }
-
-  // 팝업에 데이터 전달 (로드 후)
-  var timer = setInterval(function() {
-    try {
-      popup.postMessage({
-        type     : 'INIT_CAMERA',
-        time     : CUR.time,
-        resno    : CUR.resno,
-        realname : CUR.realname,
-        product  : CUR.product,
-        people   : CUR.people,
-        filename : CUR.filename,
-      }, '*');
-    } catch(e) {}
-  }, 500);
-
-  // 팝업에서 사진 수신
-  window.addEventListener('message', function onPhoto(e) {
-    if (e.data && e.data.type === 'PHOTO_TAKEN') {
-      clearInterval(timer);
-      window.removeEventListener('message', onPhoto);
-      CUR.base64 = e.data.base64;
-      CUR.filename = e.data.filename;
-      startSaving();
-    }
+  // 스트림 시작
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: FACING }, audio: false })
+  .then(function(stream) {
+    STREAM = stream;
+    var v = document.getElementById('videoEl');
+    v.srcObject = stream;
+    v.play();
+    document.getElementById('cam-status').textContent = '준비 완료';
+  })
+  .catch(function(err) { 
+    showToast('카메라 에러: ' + err.name); 
   });
 }
 
@@ -1170,8 +1157,28 @@ function postPhoto(base64, filename, cb) {
       }));
     return;
   }
-  // 외부 환경 fallback
-  cb(null, { ok: true, folderId: '', fileUrl: '' });
+  
+  // 외부 환경 (GitHub Pages) -> fetch POST 우회 전송 (no-cors)
+  fetch(GAS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({
+      action  : 'savePhotoPost',
+      filename: filename,
+      mimeType: 'image/jpeg',
+      date    : getToday(),
+      time    : CUR.time,
+      resno   : CUR.resno,
+      realName: CUR.realname,
+      base64  : base64
+    })
+  })
+  .then(() => {
+    // no-cors는 결과 확인이 안되므로 성공으로 간주하고 진행
+    cb(null, { ok: true, folderId: '', fileUrl: '' });
+  })
+  .catch(function(err) { cb(err); });
 }
 
 // ── 초기화 ───────────────────────────────────────────
