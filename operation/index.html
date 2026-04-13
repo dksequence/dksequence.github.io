@@ -848,7 +848,7 @@ function loadReservations(time, forceRefresh) {
 }
 
 function filterDataByTime(data, time) {
-  return data.filter(function(r) { return r.time === time; });
+  return data.filter(function(r) { return (r.time || '').trim() === (time || '').trim(); });
 }
 
 // ── 스마트 폴링 (10분마다 변경 체크) ────────────────────────
