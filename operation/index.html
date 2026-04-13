@@ -848,12 +848,9 @@ function loadReservations(time, forceRefresh) {
 }
 
 function filterDataByTime(data, time) {
-  var target = (time || '').trim();
+  var target = (time || '').replace(/[^0-9]/g, ''); // '13:00' -> '1300'
   return data.filter(function(r) { 
-    var raw = (r.time || '').trim();
-    if (raw.length > 5 && raw.indexOf(':') !== -1) {
-       raw = raw.split(':').slice(0,2).join(':'); // '13:00:00' -> '13:00'
-    }
+    var raw = (r.time || '').replace(/[^0-9]/g, ''); // '13:00' -> '1300'
     return raw === target; 
   });
 }
@@ -872,8 +869,13 @@ function renderList(reservations) {
   var list = document.getElementById('reservation-list');
   var total = reservations.length;
 
-  if (total === 0) {
-    list.innerHTML = '<div class="empty-text">이 타임에<br>예약이 없습니다.</div>';
+  if (reservations.length === 0) {
+    var debugTimes = "";
+    if (FULL_DATA) {
+      debugTimes = '<div style="font-size:12px; opacity:0.3; margin-top:20px;">시스템 내부 시간값: ' + 
+        FULL_DATA.map(function(x){ return x.time; }).join(', ') + '</div>';
+    }
+    list.innerHTML = '<div class="empty-text">이 타임에 예약이 없습니다.' + debugTimes + '</div>';
     return;
   }
 
