@@ -83,12 +83,16 @@ function processRequest(jsonString) {
       return getWalkInCode(req.date);
     } else if (action === 'parseEmail') {
       return parseReservationEmail(req.emailBody);
+    } else if (action === 'processNaverReservation') {
+      return processNaverReservation(req.emailBody);
     } else if (action === 'getDeliveryList') {
       return getDeliveryList(req.date);
     } else if (action === 'markEditDone') {
       return markEditDone(req.resno);
     } else if (action === 'sendDeliveryEmail') {
       return sendDeliveryEmail(req.resno);
+    } else if (action === 'checkUpdate') {
+      return checkUpdate(req.date, req.lastHash);
     } else if (action === 'runMigration') {
       return { ok: true, result: migrateDataToMaster() };
     } else {
@@ -121,26 +125,33 @@ function getReservations(dateStr, timeReq) {
     // 1. 네이버 예약 시트(sheet1) 데이터 선행 분석
     for (var i = 1; i < data1.length; i++) {
       var row = data1[i];
-      var rawDateTime = String(row[6] || '').trim(); // "2026.04.13(월) 오후 2:00"
-      if (rawDateTime.indexOf(targetDateDot) === -1) continue;
-      
+      var raw = String(row[6] || '').trim(); // G열: 이용일시 ("2026.04.13.(월) 오후 1:00")
+      if (!raw) continue;
+
+      // 날짜 추출
+      var dMatch = raw.match(/(\d{4})\.(\d{2})\.(\d{2})/);
+      if (!dMatch) continue;
+      var rowDate = dMatch[1] + dMatch[2] + dMatch[3];
+      if (rowDate !== dateStr.replace(/[^0-9]/g, '')) continue;
+
       var resno = String(row[4] || '').trim();
       if (!resno) continue;
-      
-      var timeMatch = rawDateTime.match(/(오전|오후)\s*(\d{1,2}):(\d{2})/);
-      var time = '';
-      if (timeMatch) {
-        var ampm = timeMatch[1], hour = parseInt(timeMatch[2]), min = timeMatch[3];
-        if (ampm === '오후' && hour < 12) hour += 12;
-        if (ampm === '오전' && hour === 12) hour = 0;
-        time = String(hour).padStart(2,'0') + ':' + min;
+
+      // 시간 추출
+      var tMatch = raw.match(/(오전|오후)\s*(\d{1,2})\s*[:\.]\s*(\d{2})/);
+      var time = '00:00';
+      if (tMatch) {
+        var h = parseInt(tMatch[2]);
+        if (tMatch[1] === '오후' && h < 12) h += 12;
+        if (tMatch[1] === '오전' && h === 12) h = 0;
+        time = String(h).padStart(2,'0') + ':' + tMatch[3];
       }
 
       combined[resno] = {
         resno: resno,
         name: String(row[2] || '이름없음').trim(),
         product: String(row[5] || '').trim(),
-        people: (rawDateTime.match(/(\d+)명/) || [null,'1'])[1],
+        people: (raw.match(/(\d+)명/) || [null,'1'])[1],
         time: time,
         source: 'N',
         checkedIn: false
@@ -151,11 +162,14 @@ function getReservations(dateStr, timeReq) {
     for (var i = 1; i < dataM.length; i++) {
       var row = dataM[i];
       var rowDateVal = row[0];
-      var rowDateStr = (rowDateVal instanceof Date) 
-        ? Utilities.formatDate(rowDateVal, 'Asia/Seoul', 'yyyy-MM-dd') 
-        : String(rowDateVal || '').trim();
+      var rowDateStr = "";
+      if (rowDateVal instanceof Date) {
+        rowDateStr = Utilities.formatDate(rowDateVal, 'Asia/Seoul', 'yyyyMMdd');
+      } else {
+        rowDateStr = String(rowDateVal || '').replace(/[^0-9]/g, '').substring(0,8);
+      }
       
-      if (rowDateStr !== targetDate) continue;
+      if (rowDateStr !== dateStr.replace(/[^0-9]/g, '')) continue;
       
       var resno = String(row[2] || '').trim();
       var checkinAt = String(row[11] || '').trim();
@@ -166,14 +180,32 @@ function getReservations(dateStr, timeReq) {
         // 현장에서 확인된 실명이 마스터 로그에 있다면 해당 이름으로 표시
         var masterRealName = String(row[3] || '').trim();
         if (masterRealName) combined[resno].name = masterRealName;
+        
+        // 중요: 마스터 시트에 시간이 비어있다면 네이버에서 가져온 원래 시간을 보존함
+        var masterTime = "";
+        var rowTime = row[1];
+        if (rowTime instanceof Date) masterTime = Utilities.formatDate(rowTime, 'Asia/Seoul', 'HH:mm');
+        else masterTime = String(rowTime || '').trim();
+        
+        if (masterTime && masterTime.indexOf(':') !== -1) {
+          combined[resno].time = masterTime;
+        }
       } else {
         // 마스터에만 있는 경우 (현장/체험 등)
+        var rowTime = row[1];
+        var timeStr = "";
+        if (rowTime instanceof Date) {
+          timeStr = Utilities.formatDate(rowTime, 'Asia/Seoul', 'HH:mm');
+        } else {
+          timeStr = String(rowTime || '').trim();
+        }
+        
         combined[resno] = {
           resno: resno,
           name: String(row[3] || '이름없음').trim(),
           product: String(row[5] || '').trim(),
           people: String(row[6] || '1'),
-          time: String(row[1] || '').trim(),
+          time: timeStr,
           source: String(row[10] || 'A').toUpperCase(),
           checkedIn: !!checkinAt
         };
@@ -181,24 +213,44 @@ function getReservations(dateStr, timeReq) {
 
     }
 
-    // 3. 일일 통계 집계 및 리스트 필터링
+    // 3. 일일 통계 집계 및 리스트 필터링 (시간 형식 균일화: 신규 고객 누락 방지)
     var reservations = [];
     Object.keys(combined).forEach(function(key) {
       var item = combined[key];
+      
+      // 시간 형식을 "HH:mm"으로 강제 (예: "13:0" -> "13:00", 1899년형 데이터 대응)
+      if (item.time && item.time.indexOf(':') !== -1) {
+        var parts = item.time.split(':');
+        item.time = parts[0].padStart(2,'0') + ':' + parts[1].padStart(2,'0');
+        // 만약 HH:mm:ss 형태라면 초 단위 제거
+        if (item.time.length > 5) item.time = item.time.substring(0,5);
+      }
+      
       dailyTotal++;
       if (item.checkedIn) dailyDone++;
       
-      if (item.time === timeReq) {
+      if (timeReq === 'ALL' || item.time === timeReq) {
         reservations.push(item);
       }
     });
 
     // 시간/번호순 정렬
-    reservations.sort(function(a,b){ return a.resno.localeCompare(b.resno); });
+    reservations.sort(function(a,b){ 
+      if (a.time !== b.time) return a.time.localeCompare(b.time);
+      return a.resno.localeCompare(b.resno); 
+    });
+
+    // 데이터 변경 감지용 해시 생성 (ALL 요청 시에만)
+    var dataHash = "";
+    if (timeReq === 'ALL') {
+      var hashInput = reservations.map(function(r){ return r.resno + r.checkedIn; }).join('|');
+      dataHash = Utilities.base64Encode(Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, hashInput));
+    }
     
     return { 
       ok: true, 
       reservations: reservations,
+      dataHash: dataHash,
       dailyStats: {
         total: dailyTotal,
         done: dailyDone,
@@ -207,6 +259,21 @@ function getReservations(dateStr, timeReq) {
     };
   } catch (err) {
     return { ok: false, error: err.toString() };
+  }
+}
+
+// ── 데이터 업데이트 체크 (폴링용) ───────────────────────────
+function checkUpdate(dateStr, lastHash) {
+  try {
+    var res = getReservations(dateStr, 'ALL');
+    if (!res.ok) return { ok: false, hasUpdate: false };
+    return {
+      ok: true,
+      hasUpdate: res.dataHash !== lastHash,
+      dataHash: res.dataHash
+    };
+  } catch (e) {
+    return { ok: false, hasUpdate: false, error: e.toString() };
   }
 }
 
@@ -290,15 +357,7 @@ function checkin(req) {
     var checkinAt = Utilities.formatDate(now, 'Asia/Seoul', 'yyyy-MM-dd HH:mm:ss');
     var date = req.date.substring(0,4) + '-' + req.date.substring(4,6) + '-' + req.date.substring(6,8);
     
-    // result 빈 폴더 자동 생성 (편집자용)
-    if (req.folderId) {
-      try {
-        var custFolder = DriveApp.getFolderById(req.folderId);
-        getOrCreateFolder(custFolder, 'result');
-      } catch(e) {
-        Logger.log('result 폴더 생성 실패: ' + e.toString());
-      }
-    }
+    // 메인 폴더 링크 기록 (공유 링크는 보정 완료 시 생성)
     
     // 마스터 시트에 기록 (기존 예약 찾기 또는 신규)
     var masterSS = SpreadsheetApp.openById(MASTER_SS_ID);
@@ -494,7 +553,7 @@ function processNaverReservation(emailBody) {
       '사전예약' // type
     ]);
     
-    createCalendarEvent(data);
+    // createCalendarEvent(data); // 사장님 요청으로 캘린더 생성 기능 중단 (v3.1)
     
     return { ok: true, message: 'Reservation saved to Master Log' };
   } catch (err) {
@@ -560,30 +619,50 @@ function getDeliveryList(dateStr) {
       var rowDateStr = '';
       
       if (rowDateVal instanceof Date) {
+        // 1899년 날짜는 유효하지 않은 데이터로 처리
+        if (rowDateVal.getFullYear() < 1910) continue; 
         rowDateStr = Utilities.formatDate(rowDateVal, 'Asia/Seoul', 'yyyyMMdd');
       } else {
-        rowDateStr = String(rowDateVal || '').replace(/-/g, '');
+        rowDateStr = String(rowDateVal || '').replace(/[^0-9]/g, '').substring(0,8);
       }
       
       if (rowDateStr !== dateStr) continue;
+
+      // 시간 포맷 정리 (1899년 표시 방지)
+      var timeDisplay = '';
+      var timeVal = row[1]; // Column B (index 1) - MASTER_HEADERS 기준
+      if (timeVal instanceof Date) {
+        timeDisplay = Utilities.formatDate(timeVal, 'Asia/Seoul', 'HH:mm');
+      } else {
+        var tStr = String(timeVal || '').trim();
+        var timeMatch = tStr.match(/(\d{1,2}:\d{2})/);
+        timeDisplay = timeMatch ? timeMatch[1] : tStr;
+      }
+
+      // 소스 텍스트를 코드로 변환 (N: 네이버, A: 신규/현장, V: 체험)
+      var rawSource = String(row[10] || ''); // customer_source (Column K)
+      var sourceCode = 'A'; // 기본값
+      if (rawSource.indexOf('네이버') !== -1) sourceCode = 'N';
+      else if (rawSource.indexOf('체험') !== -1) sourceCode = 'V';
+      else if (rawSource.indexOf('신규') !== -1 || rawSource.indexOf('현장') !== -1) sourceCode = 'A';
       
       items.push({
         rowIndex: i + 1,
-        resno: String(row[2] || ''),
-        realName: String(row[3] || ''),
+        resno: String(row[2] || ''),       // reservation_no (Column C)
+        realName: String(row[3] || ''),    // real_name (Column D)
         maskedName: String(row[4] || ''),
         product: String(row[5] || ''),
         people: String(row[6] || ''),
         email: String(row[7] || ''),
         phone: String(row[8] || ''),
-        time: String(row[1] || ''),
-        source: String(row[10] || 'A'),
+        time: timeDisplay,
+        source: sourceCode,
         checkinAt: String(row[11] || ''),
         folderUrl: String(row[12] || ''),
-        editStatus: String(row[13] || '미완료'),
-        resultUrl: String(row[14] || ''),
-        deliveryStatus: String(row[15] || '미발송'),
-        deliverySentAt: String(row[16] || '')
+        editStatus: String(row[13] || '미완료'), // Column N
+        resultUrl: String(row[14] || ''),       // Column O
+        deliveryStatus: String(row[15] || '미발송'), // Column P
+        deliverySentAt: String(row[16] || '')   // Column Q
       });
     }
     
@@ -605,18 +684,37 @@ function markEditDone(resno) {
     var targetRow = findRowInMasterByResno(sheet, resno);
     if (targetRow === -1) return { ok: false, error: 'Row not found in Master' };
     
-    var folderUrl = sheet.getRange(targetRow, 13).getValue(); // folder_url (Column M)
+    var rowData = sheet.getRange(targetRow, 1, 1, 20).getValues()[0];
+    var folderUrl = String(rowData[12] || ''); // folder_url (Column M)
+    var realName = String(rowData[3] || '');   // real_name (Column D)
     var resultUrl = '';
     
+    // 1. 시트에 링크가 있는 경우 해당 폴더 사용
     if (folderUrl) {
       var folderIdMatch = folderUrl.match(/folders\/([^?&\/]+)/);
       if (folderIdMatch) {
-        var custFolder = DriveApp.getFolderById(folderIdMatch[1]);
-        var resultFolder = getOrCreateFolder(custFolder, 'result');
-        resultFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-        resultUrl = 'https://drive.google.com/drive/folders/' + resultFolder.getId();
+        try {
+          var custFolder = DriveApp.getFolderById(folderIdMatch[1]);
+          custFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+          resultUrl = 'https://drive.google.com/drive/folders/' + custFolder.getId();
+        } catch(e) { /* 폴더를 못찾은 경우 자동 복구로 넘어감 */ }
       }
     }
+    
+    // 2. [자동 복구] 시트에 링크가 없거나 유효하지 않으면 드라이브에서 직접 검색
+    if (!resultUrl) {
+      var searchName = resno + '_' + realName;
+      var folders = DriveApp.getFolderById(ROOT_FOLDER_ID).searchFolders("title contains '" + resno + "'");
+      if (folders.hasNext()) {
+        var foundFolder = folders.next();
+        foundFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+        resultUrl = 'https://drive.google.com/drive/folders/' + foundFolder.getId();
+        // 시트의 원본 폴더 링크(M열)도 업데이트
+        sheet.getRange(targetRow, 13).setValue(resultUrl);
+      }
+    }
+    
+    if (!resultUrl) return { ok: false, error: '해당 예약번호의 고객 폴더를 찾을 수 없습니다. (먼저 사진 업로드가 필요합니다)' };
     
     sheet.getRange(targetRow, 14).setValue('보정완료'); // edit_status (Column N)
     sheet.getRange(targetRow, 15).setValue(resultUrl);    // result_url (Column O)
@@ -649,26 +747,37 @@ function sendDeliveryEmail(resno) {
     var customerName = String(rowData[3] || '고객'); // real_name (Column D)
     var product = String(rowData[5] || '');        // product (Column F)
     var people = String(rowData[6] || '');         // people (Column G)
-    var date = String(rowData[0] || '');           // use_date (Column A)
+    var date = String(rowData[0] || '');           // date (Column A)
     var resultUrl = String(rowData[14] || '');     // result_url (Column O)
     
-    if (!resultUrl) return { ok: false, error: '보정완료 처리가 필요합니다.' };
+    if (!resultUrl) return { ok: false, error: '보정완료 처리가 필요합니다. (공유 링크가 생성되지 않았습니다)' };
     
     var htmlBody = buildDeliveryEmailHtml(customerName, product, people, date, resultUrl);
     
+    var options = {
+      htmlBody: htmlBody,
+      name: 'DKsequence × 중문별장',
+      bcc: 'kitan98@hanmail.net'
+    };
+    
+    // 이메일 발송 계정 (dkseq4@gmail.com) 적용
+    // 만약 스크립트 실행 계정이 dkseq4이거나 해당 계정이 가명(alias) 등록되어 있으면 from 속성을 적용
+    var aliases = GmailApp.getAliases();
+    var currentUser = Session.getActiveUser().getEmail();
+    if (aliases.indexOf(DELIVERY_FROM_EMAIL) !== -1 || currentUser === DELIVERY_FROM_EMAIL) {
+      options.from = DELIVERY_FROM_EMAIL;
+    }
+
     GmailApp.sendEmail(email, 
       'DKsequence × 중문별장 — ' + customerName + '님의 촬영 결과물이 준비되었습니다',
       '촬영 결과물 확인: ' + resultUrl,
-      {
-        htmlBody: htmlBody,
-        name: 'DKsequence × 중문별장'
-      }
+      options
     );
     
     var now = new Date();
     var sentAt = Utilities.formatDate(now, 'Asia/Seoul', 'yyyy-MM-dd HH:mm:ss');
     sheet.getRange(targetRow, 16).setValue('발송완료 (' + sentAt.split(' ')[0] + ')'); // delivery_status (Column P)
-    sheet.getRange(targetRow, 17).setValue(sentAt); // sent_at (Column Q)
+    sheet.getRange(targetRow, 17).setValue(sentAt); // delivery_sent_at (Column Q)
     
     return { ok: true, sentAt: sentAt };
   } catch (err) {
@@ -680,41 +789,26 @@ function sendDeliveryEmail(resno) {
 
 // ── 납품 이메일 HTML 템플릿 ───────────────────────────────────
 function buildDeliveryEmailHtml(name, product, people, date, resultUrl) {
-  return '<!DOCTYPE html>' +
-    '<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>' +
-    '<body style="margin:0;padding:0;background:#000;font-family:Arial,sans-serif;">' +
-    '<table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;margin:0 auto;background:#000;">' +
-      '<tr><td style="padding:40px 32px 20px;text-align:center;">' +
-        '<div style="font-size:22px;font-weight:700;color:#fff;letter-spacing:0.04em;">DKsequence × 중문별장</div>' +
-        '<div style="width:60px;height:2px;background:linear-gradient(90deg,#abc7ff,#0071e3);margin:16px auto 0;"></div>' +
-      '</td></tr>' +
-      '<tr><td style="padding:24px 32px;">' +
-        '<div style="font-size:28px;font-weight:700;color:#fff;margin-bottom:8px;">' + name + ' 님,</div>' +
-        '<div style="font-size:16px;color:#b0b0b0;line-height:1.7;">촬영해 주셔서 진심으로 감사드립니다.<br>보정 완료된 사진이 준비되었습니다.</div>' +
-      '</td></tr>' +
-      '<tr><td style="padding:0 32px;">' +
-        '<table width="100%" cellpadding="0" cellspacing="0" style="background:#111;border:1px solid rgba(255,255,255,0.1);border-radius:12px;">' +
-          '<tr><td style="padding:20px 24px;">' +
-            '<div style="font-size:11px;color:#888;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:14px;">촬영 정보</div>' +
-            '<table cellpadding="0" cellspacing="0" style="width:100%;">' +
-              '<tr><td style="padding:6px 0;font-size:14px;color:#888;width:80px;">📅 날짜</td><td style="padding:6px 0;font-size:15px;color:#fff;font-weight:600;">' + date + '</td></tr>' +
-              '<tr><td style="padding:6px 0;font-size:14px;color:#888;">📷 상품</td><td style="padding:6px 0;font-size:15px;color:#fff;font-weight:600;">' + product + '</td></tr>' +
-              '<tr><td style="padding:6px 0;font-size:14px;color:#888;">👥 인원</td><td style="padding:6px 0;font-size:15px;color:#fff;font-weight:600;">' + people + '명</td></tr>' +
-            '</table>' +
-          '</td></tr>' +
-        '</table>' +
-      '</td></tr>' +
-      '<tr><td style="padding:28px 32px;text-align:center;">' +
-        '<a href="' + resultUrl + '" target="_blank" style="display:inline-block;padding:18px 48px;background:linear-gradient(135deg,#abc7ff,#0071e3);color:#fff;font-size:16px;font-weight:700;text-decoration:none;border-radius:12px;letter-spacing:0.03em;">📁 사진 확인하기</a>' +
-        '<div style="font-size:12px;color:#666;margin-top:14px;">버튼이 작동하지 않으면 아래 링크를 복사해 주세요</div>' +
-        '<div style="font-size:11px;color:#555;margin-top:6px;word-break:break-all;">' + resultUrl + '</div>' +
-      '</td></tr>' +
-      '<tr><td style="padding:20px 32px 40px;text-align:center;border-top:1px solid rgba(255,255,255,0.08);">' +
-        '<div style="font-size:12px;color:#555;line-height:1.8;">문의: hello@dksequence.com<br>ⓒ DKsequence. All rights reserved.</div>' +
-      '</td></tr>' +
-    '</table>' +
-    '</body></html>';
+  try {
+    // email_template.html 파일을 템플릿으로 불러옴
+    var template = HtmlService.createTemplateFromFile('email_template');
+    
+    // 템플릿 내의 <?= ?> 변수에 실제 데이터 매핑
+    template.name = name;
+    template.product = product;
+    template.people = people;
+    template.date = date;
+    template.resultUrl = resultUrl;
+    
+    // 최종 HTML 생성
+    return template.evaluate().getContent();
+  } catch (err) {
+    // 템플릿 로드 실패 시 백업용 텍스트 반환
+    Logger.log('HTML 템플릿 로드 실패: ' + err.toString());
+    return '안녕하세요 ' + name + ' 님, 촬영 결과물 링크입니다: ' + resultUrl;
+  }
 }
+
 
 // ════════════════════════════════════════════════════════════
 // 통합 마스터 시스템: 데이터 마이그레이션 및 초기화
@@ -790,4 +884,28 @@ function findRowInMasterByResno(sheet, resno) {
   return -1;
 }
 
-
+/**
+ * 사장님 디자인 확인용 샘플 메일 발송 (kitan98@hanmail.net)
+ */
+function sendSampleEmailForBoss() {
+  var testEmail = 'kitan98@hanmail.net';
+  var name = '박민우(샘플)';
+  var product = '두컷화보(플래티넘)';
+  var people = '2';
+  var date = '2026-04-13';
+  var resultUrl = 'https://drive.google.com/drive/folders/샘플링크';
+  
+  var htmlBody = buildDeliveryEmailHtml(name, product, people, date, resultUrl);
+  
+  GmailApp.sendEmail(testEmail, 
+    '[디자인샘플] DKsequence 결과물이 준비되었습니다',
+    '본 메일은 디자인 확인용 샘플입니다.',
+    {
+      htmlBody: htmlBody,
+      name: 'DKsequence × 중문별장'
+    }
+  );
+  return '샘플 메일이 ' + testEmail + '로 발송되었습니다.';
+}
+// Update: 2026-04-13 17:22
+// Update: 2026-04-13 17:22

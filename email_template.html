@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;700&family=Noto+Sans+KR:wght@300;400;700&display=swap');
+        
+        /* 모바일 대응 미디어 쿼리 */
+        @media only screen and (max-width: 480px) {
+            .container { padding: 20px 5px !important; }
+            .dear-text { font-size: 18px !important; padding: 30px 15px 20px !important; }
+            .main-button { padding: 18px 40px !important; font-size: 16px !important; width: 70% !important; }
+            .sub-links { font-size: 10px !important; }
+            .sub-links a { margin: 0 5px !important; }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #000B18; font-family: 'Noto Sans KR', Arial, sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #000B18;">
+        <tr>
+            <td align="center" style="padding: 40px 10px;" class="container">
+                <!-- 메인 컨테이너 -->
+                <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; background-color: #000B18; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.6);">
+                    
+                    <!-- 1. 상단 개인화 영역 (Dear) -->
+                    <tr>
+                        <td align="center" style="padding: 50px 20px 30px;" class="dear-text">
+                            <div style="font-family: 'Noto Serif KR', serif; font-size: 22px; color: #ffffff; letter-spacing: 0.1em; font-weight: 300;">
+                                Dear <span style="font-weight: 700; color: #e5c07b; border-bottom: 2px solid #e5c07b; padding-bottom: 2px;"><?= name ?></span> 님
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- 2. 사장님 제공 메인 이미지 카드 -->
+                    <tr>
+                        <td style="padding: 0 15px;">
+                            <a href="<?= resultUrl ?>" target="_blank" style="text-decoration: none; display: block;">
+                                <img src="https://dksequence.github.io/operation/images/email_hero.jpg" width="100%" style="display: block; border-radius: 12px; height: auto;" alt="중문별장 화보 완성">
+                            </a>
+                        </td>
+                    </tr>
+
+                    <!-- 3. 액션 바 (다운로드 및 웹사이트) -->
+                    <tr>
+                        <td align="center" style="padding: 50px 30px 50px;">
+                            <!-- 메인 다운로드 버튼 -->
+                            <a href="<?= resultUrl ?>" target="_blank" class="main-button" style="display: inline-block; padding: 22px 60px; background: linear-gradient(135deg, #ffffff 0%, #e0eaff 100%); color: #000B18; font-size: 19px; font-weight: 700; text-decoration: none; border-radius: 8px; box-shadow: 0 15px 40px rgba(171,199,255,0.15); letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap;">
+                                DOWNLOAD
+                            </a>
+
+                            <!-- 보조 링크 -->
+                            <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.05);" class="sub-links">
+                                <a href="https://www.instagram.com/cafe_jmbj" style="color: rgba(255,255,255,0.5); text-decoration: none; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; margin: 0 15px; white-space: nowrap;">Instagram</a>
+                                <a href="https://dksequence.github.io" style="color: rgba(255,255,255,0.5); text-decoration: none; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; margin: 0 15px; white-space: nowrap;">DK Sequence</a>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- 4. 푸더 (문의) -->
+                    <tr>
+                        <td align="center" style="padding: 0 20px 40px;">
+                            <div style="font-size: 11px; color: rgba(255,255,255,0.2); letter-spacing: 0.05em;">
+                                INQUIRY: <a href="mailto:dkseq4@gmail.com" style="color: rgba(255,255,255,0.3); text-decoration: none;">dkseq4@gmail.com</a><br>
+                                © 2026 DKSEQUENCE x JUNG_BYEOL. ALL RIGHTS RESERVED.
+                            </div>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
