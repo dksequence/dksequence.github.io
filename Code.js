@@ -639,12 +639,8 @@ function getDeliveryList(dateStr) {
         timeDisplay = timeMatch ? timeMatch[1] : tStr;
       }
 
-      // 소스 텍스트를 코드로 변환 (N: 네이버, A: 신규/현장, V: 체험)
-      var rawSource = String(row[10] || ''); // customer_source (Column K)
-      var sourceCode = 'A'; // 기본값
-      if (rawSource.indexOf('네이버') !== -1) sourceCode = 'N';
-      else if (rawSource.indexOf('체험') !== -1) sourceCode = 'V';
-      else if (rawSource.indexOf('신규') !== -1 || rawSource.indexOf('현장') !== -1) sourceCode = 'A';
+      // 소스 코드 (N: 네이버, A: 신규/현장, V: 체험) - 체크인 시 저장된 값을 그대로 사용
+      var sourceCode = String(row[10] || 'A').toUpperCase().trim();
       
       items.push({
         rowIndex: i + 1,
