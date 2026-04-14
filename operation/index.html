@@ -881,19 +881,18 @@ function renderList(reservations) {
 
   list.innerHTML = '';
   reservations.forEach(function(r) {
-    var initial = r.name ? r.name.charAt(0) : '?';
     var card = document.createElement('div');
     card.className = 'customer-card' + (r.checkedIn ? ' done' : '');
     
-    // 출처별 아바타 색상 로직 복구
-    var sourceClass = 'source-' + (r.source || 'A').toLowerCase();
-    var sourceChar = (r.source || 'A').toUpperCase();
-
+    // 소스별 아이콘 및 클래스 설정 (N, A, V 전용 색상)
+    var src = (r.source || 'A').toUpperCase();
+    var sourceClass = 'source-' + src.toLowerCase();
+    
     card.innerHTML =
-      '<div class="avatar ' + sourceClass + '">' + sourceChar + '</div>' +
+      '<div class="avatar ' + sourceClass + '">' + src + '</div>' +
       '<div class="card-info">' +
         '<div class="card-name">' + r.name + '</div>' +
-        '<div class="card-meta">' + r.product + ' · ' + r.people + '인</div>' +
+        '<div class="card-meta">' + r.product + ' · ' + r.people + '인 · ' + r.time + '</div>' +
         '<div class="card-resno">' + r.resno + '</div>' +
       '</div>' +
       '<div class="badge ' + (r.checkedIn ? 'badge-done' : 'badge-wait') + '">' +
@@ -1310,8 +1309,10 @@ function renderDeliveryList(items) {
     var isEditDone = item.editStatus === '보정완료';
     var isSent = item.deliveryStatus.indexOf('발송완료') === 0;
     var hasEmail = !!item.email;
-    var sourceClass = 'source-' + (item.source || 'A').toLowerCase();
-    var sourceChar = (item.source || 'A').toUpperCase();
+    
+    // 소스별 아바타 로직 강화
+    var src = (item.source || 'A').toUpperCase();
+    var sourceClass = 'source-' + src.toLowerCase();
     
     // 편집 상태 배지
     var editBadge = isEditDone
@@ -1337,7 +1338,7 @@ function renderDeliveryList(items) {
     
     card.innerHTML =
       '<div class="delivery-card-top">' +
-        '<div class="avatar ' + sourceClass + '" style="margin-right:15px; margin-top:5px;">' + sourceChar + '</div>' +
+        '<div class="avatar ' + sourceClass + '" style="margin-right:15px; margin-top:5px; width:36px; height:36px; font-size:16px;">' + src + '</div>' +
         '<div style="flex:1;">' +
           '<div class="delivery-card-name">' + (item.realName || item.maskedName) + '</div>' +
           '<div class="delivery-card-meta">' + item.product + ' · ' + item.people + '인 · ' + item.time + '</div>' +
