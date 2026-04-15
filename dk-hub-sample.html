@@ -569,6 +569,7 @@ const STORAGE_KEY  = 'dk_hub_v1';
 const PIN_KEY      = 'dk_hub_pin';
 const DATA_VERSION = 'v20260415b';
 const VERSION_KEY  = 'dk_hub_ver';
+const GAS_URL      = 'https://script.google.com/macros/s/AKfycbwoqVAZVZclcog_8hGo6W5xKCGWdK9HHRCw-CtidsA3sygtPJatZ88b82iouE0brF0G/exec';
 
 const GROUP_COLORS = [
   '#4da3ff','#35c46b','#ffb020','#ff6b6b',
@@ -641,7 +642,44 @@ function loadData() {
 
 function saveData() {
   if (!data.starredItems) data.starredItems = [];
+  data.lastModified = Date.now();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  syncToGAS();
+}
+
+// ── GAS 동기화 ──────────────────────────────────────────────────
+function syncToGAS() {
+  try {
+    fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'setHubData', data: data })
+    });
+  } catch(e) {}
+}
+
+function loadFromGAS() {
+  const cb  = '_gh_' + Date.now();
+  const tag = document.createElement('script');
+  tag.src   = GAS_URL + '?action=getHubData&callback=' + cb;
+  tag.onerror = () => { tag.remove(); delete window[cb]; };
+  window[cb] = (res) => {
+    delete window[cb];
+    tag.remove();
+    if (!res || !res.ok || !res.data) return;
+    const remote  = res.data;
+    const localTs = data.lastModified  || 0;
+    const remoteTs = remote.lastModified || 0;
+    if (remoteTs > localTs) {
+      data = remote;
+      localStorage.setItem(VERSION_KEY, DATA_VERSION);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      render();
+      showToast('☁ 다른 기기 변경사항이 동기화됐습니다');
+    }
+  };
+  document.head.appendChild(tag);
 }
 
 function resetToDefault() {
@@ -740,6 +778,7 @@ function unlockApp() {
   document.getElementById('pinScreen').style.display = 'none';
   document.getElementById('app').style.display       = 'block';
   render();
+  loadFromGAS();   // 다른 기기 변경사항 동기화
 }
 
 function lockApp() {
