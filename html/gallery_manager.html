@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DK Gallery Manager</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0d0d0d;--s1:#141414;--s2:#1c1c1c;--s3:#242424;--s4:#2e2e2e;
+  --border:rgba(255,255,255,0.07);--bd2:rgba(255,255,255,0.13);
+  --text:#f0f0f0;--sub:rgba(255,255,255,0.45);--muted:rgba(255,255,255,0.2);
+  --green:#03C75A;--green2:#02b34e;--blue:#4a9eff;--red:#ff5555;--orange:#ff9f43;
+}
+html,body{width:100%;min-height:100%;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','맑은 고딕',sans-serif;
+  font-size:14px;line-height:1.5;}
+
+/* ── 잠금 화면 ── */
+#lock-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;
+  justify-content:center;z-index:9999;flex-direction:column;gap:24px;}
+.lock-logo{font-size:22px;font-weight:800;letter-spacing:0.4px;color:var(--text);}
+.lock-logo span{color:var(--green);}
+.lock-box{background:var(--s2);border:1px solid var(--border);border-radius:16px;
+  padding:36px 40px;display:flex;flex-direction:column;gap:16px;min-width:320px;align-items:center;}
+.lock-box h2{font-size:15px;font-weight:700;color:var(--sub);}
+.lock-box input{width:100%;padding:10px 14px;background:var(--s3);border:1px solid var(--bd2);
+  border-radius:10px;color:var(--text);font-size:15px;text-align:center;letter-spacing:0.15em;}
+.lock-box input:focus{outline:none;border-color:var(--green);}
+.lock-err{font-size:12px;color:var(--red);min-height:16px;}
+
+/* ── 공통 버튼 ── */
+.btn{padding:8px 16px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:all .12s;white-space:nowrap;}
+.btn-primary{background:var(--green);color:#fff;}.btn-primary:hover{background:var(--green2);}
+.btn-ghost{background:transparent;color:var(--sub);border:1px solid var(--bd2);}.btn-ghost:hover{background:var(--s3);color:var(--text);}
+.btn-danger{background:var(--red);color:#fff;opacity:.8;}.btn-danger:hover{opacity:1;}
+.btn-blue{background:var(--blue);color:#fff;}.btn-blue:hover{filter:brightness(1.1);}
+.btn-sm{padding:5px 10px;font-size:11px;}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn-icon{width:30px;height:30px;padding:0;display:inline-flex;align-items:center;justify-content:center;font-size:15px;}
+
+/* ── 헤더 ── */
+#app{display:none;flex-direction:column;min-height:100vh;}
+.header{background:var(--s1);border-bottom:1px solid var(--border);padding:10px 20px;
+  display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;}
+.hdr-logo{font-size:15px;font-weight:800;margin-right:8px;}
+.hdr-logo span{color:var(--green);}
+.tab-btns{display:flex;gap:4px;}
+.tab-btn{padding:6px 18px;background:var(--s3);border:1px solid var(--border);border-radius:8px;
+  color:var(--sub);font-size:13px;font-weight:700;cursor:pointer;transition:all .12s;}
+.tab-btn.active{background:var(--green);color:#fff;border-color:var(--green);}
+.hdr-spacer{flex:1;}
+.hdr-status{font-size:11px;color:var(--muted);}
+.hdr-status.ok{color:var(--green);}
+.hdr-status.err{color:var(--red);}
+
+/* ── 스탯바 ── */
+.stats-bar{background:var(--s2);border-bottom:1px solid var(--border);
+  padding:8px 20px;display:flex;gap:24px;align-items:center;}
+.stat{font-size:12px;color:var(--sub);}
+.stat strong{color:var(--text);font-weight:700;}
+
+/* ── 메인 레이아웃 ── */
+.main-layout{display:grid;grid-template-columns:380px 1fr;gap:0;flex:1;min-height:0;}
+
+/* ── 업로드 패널 ── */
+.upload-panel{background:var(--s1);border-right:1px solid var(--border);
+  padding:20px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;max-height:calc(100vh - 89px);}
+.panel-title{font-size:13px;font-weight:800;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;}
+.drop-zone{border:2px dashed var(--bd2);border-radius:12px;padding:28px 16px;text-align:center;
+  cursor:pointer;transition:all .15s;background:var(--s2);}
+.drop-zone:hover,.drop-zone.drag-over{border-color:var(--green);background:rgba(3,199,90,.05);}
+.drop-zone .dz-icon{font-size:28px;margin-bottom:8px;}
+.drop-zone .dz-text{font-size:13px;color:var(--sub);}
+.drop-zone .dz-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+.drop-preview{border-radius:10px;overflow:hidden;position:relative;background:#000;}
+.drop-preview img{width:100%;display:block;max-height:200px;object-fit:contain;}
+.drop-preview .dp-num{position:absolute;top:8px;left:8px;background:var(--green);
+  color:#fff;font-size:11px;font-weight:800;padding:2px 8px;border-radius:2rem;}
+
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;color:var(--sub);font-weight:600;letter-spacing:.03em;}
+.field input,.field textarea,.field select{
+  padding:8px 10px;background:var(--s3);border:1px solid var(--bd2);border-radius:8px;
+  color:var(--text);font-size:13px;transition:border-color .12s;}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--green);}
+.field textarea{resize:vertical;min-height:56px;font-family:inherit;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+.toggle-row{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;background:var(--s2);border-radius:8px;border:1px solid var(--border);}
+.toggle-row label{font-size:12px;color:var(--sub);font-weight:600;}
+.toggle{position:relative;width:40px;height:22px;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:var(--s4);border-radius:2rem;cursor:pointer;transition:.2s;}
+.toggle-slider:before{content:'';position:absolute;height:16px;width:16px;left:3px;top:3px;
+  background:#fff;border-radius:50%;transition:.2s;}
+.toggle input:checked+.toggle-slider{background:var(--green);}
+.toggle input:checked+.toggle-slider:before{transform:translateX(18px);}
+
+.upload-progress{background:var(--s2);border-radius:8px;padding:12px;display:none;}
+.prog-step{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;color:var(--muted);}
+.prog-step.done{color:var(--green);}
+.prog-step.active{color:var(--text);}
+.prog-step.err{color:var(--red);}
+.prog-dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex-shrink:0;}
+.prog-spin{width:8px;height:8px;border-radius:50%;border:2px solid var(--green);
+  border-top-color:transparent;animation:spin .6s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── 갤러리 목록 ── */
+.gallery-panel{padding:20px;overflow-y:auto;max-height:calc(100vh - 89px);}
+.gallery-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.search-input{flex:1;min-width:160px;padding:7px 12px;background:var(--s2);
+  border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;}
+.search-input:focus{outline:none;border-color:var(--green);}
+
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
+.g-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;overflow:hidden;
+  transition:border-color .12s;}
+.g-card:hover{border-color:var(--bd2);}
+.g-card.wide-card{border-color:var(--orange);border-width:1.5px;}
+.g-thumb{position:relative;aspect-ratio:4/3;background:#000;overflow:hidden;}
+.g-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
+.g-card:hover .g-thumb img{transform:scale(1.04);}
+.g-thumb-err{display:flex;align-items:center;justify-content:center;
+  width:100%;height:100%;font-size:24px;color:var(--muted);}
+.g-badge{position:absolute;top:6px;left:6px;background:rgba(0,0,0,0.75);
+  color:#fff;font-size:10px;font-weight:800;padding:2px 6px;border-radius:2rem;}
+.g-wide-badge{position:absolute;top:6px;right:6px;background:var(--orange);
+  color:#fff;font-size:9px;font-weight:800;padding:2px 5px;border-radius:2rem;}
+.g-info{padding:8px 10px;}
+.g-title{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.g-spec{font-size:10px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.g-actions{display:flex;gap:4px;padding:0 8px 8px;}
+
+.empty-state{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted);}
+.empty-state .es-icon{font-size:36px;margin-bottom:12px;}
+.loading-state{grid-column:1/-1;text-align:center;padding:60px;color:var(--muted);}
+
+/* ── 설정 모달 ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:none;
+  align-items:center;justify-content:center;z-index:500;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--s2);border:1px solid var(--border);border-radius:16px;
+  width:min(520px,100%);max-height:80vh;overflow-y:auto;}
+.modal-head{padding:20px 24px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;}
+.modal-head h2{font-size:15px;font-weight:800;}
+.modal-body{padding:20px 24px;display:flex;flex-direction:column;gap:16px;}
+.modal-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;}
+.setting-section{display:flex;flex-direction:column;gap:10px;}
+.setting-section h3{font-size:12px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.06em;}
+.wm-preview-box{border:1px dashed var(--bd2);border-radius:8px;height:80px;display:flex;
+  align-items:center;justify-content:center;background:var(--s3);overflow:hidden;}
+.wm-preview-box img{max-height:70px;max-width:200px;object-fit:contain;}
+
+/* ── 업로드 미리보기 모달 ── */
+#preview-modal .modal{width:min(860px,100%);max-height:92vh;}
+.preview-container{position:relative;background:#000;border-radius:10px;overflow:hidden;
+  user-select:none;cursor:crosshair;}
+.preview-container img{width:100%;display:block;pointer-events:none;}
+.overlay-item{position:absolute;cursor:move;border:1px dashed rgba(255,255,255,0.5);
+  display:flex;align-items:center;justify-content:center;}
+.overlay-item:hover{border-color:var(--green);}
+.overlay-item img{width:100%;height:100%;object-fit:contain;pointer-events:none;}
+.overlay-item .oi-handle{position:absolute;bottom:-1px;right:-1px;width:14px;height:14px;
+  background:var(--green);cursor:se-resize;border-radius:2px 0 4px 0;}
+.oi-text{color:#fff;font-size:12px;font-weight:600;padding:4px 8px;
+  background:rgba(0,0,0,0.6);border-radius:4px;pointer-events:none;white-space:nowrap;}
+.spec-overlay-text{position:absolute;background:rgba(0,0,0,0.55);padding:4px 8px;
+  border-radius:4px;cursor:move;border:1px dashed rgba(255,255,255,.4);}
+
+.adj-row{display:flex;align-items:center;gap:10px;}
+.adj-label{font-size:11px;color:var(--sub);min-width:70px;}
+.adj-slider{flex:1;accent-color:var(--green);}
+.adj-val{font-size:11px;color:var(--text);min-width:36px;text-align:right;}
+
+/* ── 편집 모달 ── */
+#edit-modal .modal{width:min(480px,100%);}
+
+/* 알림 토스트 */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--s3);border:1px solid var(--bd2);
+  border-radius:10px;padding:12px 18px;font-size:13px;font-weight:600;
+  transform:translateY(80px);opacity:0;transition:all .25s;z-index:9000;max-width:320px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.ok{border-color:var(--green);color:var(--green);}
+.toast.err{border-color:var(--red);color:var(--red);}
+.toast.info{border-color:var(--blue);color:var(--blue);}
+
+/* 반응형 */
+@media(max-width:800px){
+  .main-layout{grid-template-columns:1fr;}
+  .upload-panel{max-height:none;border-right:none;border-bottom:1px solid var(--border);}
+  .gallery-panel{max-height:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── 잠금 화면 ─────────────────────────── -->
+<div id="lock-screen">
+  <div class="lock-logo">DK <span>Gallery</span> Manager</div>
+  <div class="lock-box">
+    <h2>비밀번호 입력</h2>
+    <input type="password" id="lock-input" placeholder="••••••••" autocomplete="current-password">
+    <div class="lock-err" id="lock-err"></div>
+    <button class="btn btn-primary" style="width:100%;padding:11px" onclick="Auth.login()">입장</button>
+  </div>
+</div>
+
+<!-- ── 앱 ─────────────────────────────────── -->
+<div id="app">
+
+  <!-- 헤더 -->
+  <div class="header">
+    <div class="hdr-logo">DK <span>Gallery</span> Manager</div>
+    <div class="tab-btns">
+      <button class="tab-btn active" onclick="switchTab('macro')">📷 Macro</button>
+      <button class="tab-btn" onclick="switchTab('portrait')">🎞 Portrait</button>
+    </div>
+    <div class="hdr-spacer"></div>
+    <div class="hdr-status" id="gh-status">GitHub 미연결</div>
+    <button class="btn btn-ghost btn-sm" onclick="UI.openSettings()">⚙ 설정</button>
+    <button class="btn btn-ghost btn-sm" onclick="Auth.logout()">나가기</button>
+  </div>
+
+  <!-- 스탯바 -->
+  <div class="stats-bar">
+    <div class="stat">총 이미지: <strong id="stat-total">-</strong></div>
+    <div class="stat">와이드: <strong id="stat-wide">-</strong></div>
+    <div class="stat">현재 탭: <strong id="stat-tab">-</strong></div>
+    <div class="stat" id="stat-last">마지막 업로드: -</div>
+  </div>
+
+  <div class="main-layout">
+
+    <!-- ── 업로드 패널 ── -->
+    <div class="upload-panel">
+      <div class="panel-title">새 이미지 업로드</div>
+
+      <!-- 드롭존 -->
+      <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+        <div class="dz-icon">📁</div>
+        <div class="dz-text">원본 이미지를 드롭하세요</div>
+        <div class="dz-sub">클릭 또는 드래그 · JPG, PNG, WEBP</div>
+      </div>
+      <input type="file" id="file-input" accept="image/*" style="display:none" onchange="Upload.onFileSelect(this.files[0])">
+
+      <!-- 미리보기 (파일 선택 후) -->
+      <div class="drop-preview" id="drop-preview" style="display:none">
+        <img id="drop-preview-img" src="" alt="">
+        <div class="dp-num" id="drop-preview-num"></div>
+      </div>
+
+      <!-- 메타데이터 입력 -->
+      <div id="upload-form" style="display:none;display:flex;flex-direction:column;gap:12px;">
+        <div class="field">
+          <label>제목 (Title)</label>
+          <input type="text" id="up-title" placeholder="예: Glass Reflection">
+        </div>
+        <div class="field">
+          <label>설명 (Description)</label>
+          <textarea id="up-text" placeholder="예: Reflection and light resting quietly..."></textarea>
+        </div>
+        <div class="field">
+          <label>촬영 스펙</label>
+          <input type="text" id="up-spec" placeholder="예: 100mm · f/1.4 · 1/250s · ISO 100">
+        </div>
+        <div class="toggle-row">
+          <label>와이드 이미지로 표시</label>
+          <label class="toggle"><input type="checkbox" id="up-wide"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <label>워터마크 삽입</label>
+          <label class="toggle"><input type="checkbox" id="up-watermark" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <label>촬영정보 이미지에 합성</label>
+          <label class="toggle"><input type="checkbox" id="up-spec-burn"><span class="toggle-slider"></span></label>
+        </div>
+
+        <button class="btn btn-blue" style="width:100%;padding:11px" onclick="Upload.openPreview()">👁 미리보기 및 위치 조정</button>
+        <button class="btn btn-primary" style="width:100%;padding:11px" onclick="Upload.start()">⬆️ GitHub에 업로드</button>
+      </div>
+
+      <!-- 진행 상황 -->
+      <div class="upload-progress" id="upload-progress">
+        <div class="prog-step" id="prog-1"><span class="prog-dot"></span> big 이미지 업로드</div>
+        <div class="prog-step" id="prog-2"><span class="prog-dot"></span> small 이미지 업로드</div>
+        <div class="prog-step" id="prog-3"><span class="prog-dot"></span> index HTML 갱신</div>
+      </div>
+    </div>
+
+    <!-- ── 갤러리 목록 ── -->
+    <div class="gallery-panel">
+      <div class="gallery-toolbar">
+        <input type="text" class="search-input" id="search-input" placeholder="제목, 번호 검색..." oninput="UI.renderGallery()">
+        <button class="btn btn-ghost btn-sm" onclick="GalleryState.reload()">🔄 새로고침</button>
+      </div>
+      <div class="gallery-grid" id="gallery-grid">
+        <div class="loading-state">
+          <div style="font-size:24px;margin-bottom:8px">⏳</div>
+          GitHub에서 불러오는 중...
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 설정 모달 ──────────────────────────── -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>⚙ 전역 설정</h2>
+      <button class="btn btn-ghost btn-icon" onclick="UI.closeModal('settings-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="setting-section">
+        <h3>GitHub 연결</h3>
+        <div class="field">
+          <label>Personal Access Token (repo 권한)</label>
+          <input type="password" id="cfg-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+        </div>
+        <div class="field">
+          <label>저장소</label>
+          <input type="text" id="cfg-repo" value="dksequence/dksequence.github.io" readonly>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="Settings.testToken()">연결 테스트</button>
+      </div>
+
+      <div class="setting-section">
+        <h3>워터마크</h3>
+        <div class="wm-preview-box" id="wm-preview-box">
+          <span style="color:var(--muted);font-size:12px">워터마크 없음</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('wm-input').click()">워터마크 이미지 업로드 (PNG 권장)</button>
+        <input type="file" id="wm-input" accept="image/*" style="display:none" onchange="Settings.loadWatermark(this)">
+        <div class="field-row">
+          <div class="field">
+            <label>기본 크기 (%)</label>
+            <input type="number" id="cfg-wm-size" value="15" min="5" max="50">
+          </div>
+          <div class="field">
+            <label>기본 투명도 (%)</label>
+            <input type="number" id="cfg-wm-opacity" value="70" min="10" max="100">
+          </div>
+        </div>
+        <div class="field">
+          <label>기본 위치</label>
+          <select id="cfg-wm-pos">
+            <option value="rb">우하단</option>
+            <option value="lb">좌하단</option>
+            <option value="rt">우상단</option>
+            <option value="lt">좌상단</option>
+            <option value="c">중앙</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="setting-section">
+        <h3>촬영정보 텍스트 기본 스타일</h3>
+        <div class="field-row">
+          <div class="field">
+            <label>폰트 크기 (px)</label>
+            <input type="number" id="cfg-spec-size" value="18" min="10" max="60">
+          </div>
+          <div class="field">
+            <label>배경 투명도 (%)</label>
+            <input type="number" id="cfg-spec-bg" value="55" min="0" max="100">
+          </div>
+        </div>
+        <div class="field">
+          <label>텍스트 색상</label>
+          <select id="cfg-spec-color">
+            <option value="#ffffff">흰색</option>
+            <option value="#000000">검정</option>
+            <option value="#ffff00">노랑</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>기본 위치</label>
+          <select id="cfg-spec-pos">
+            <option value="lb">좌하단</option>
+            <option value="rb">우하단</option>
+            <option value="lt">좌상단</option>
+            <option value="rt">우상단</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="setting-section">
+        <h3>비밀번호 변경</h3>
+        <div class="field-row">
+          <div class="field">
+            <label>새 비밀번호</label>
+            <input type="password" id="cfg-pwd-new" placeholder="">
+          </div>
+          <div class="field">
+            <label>확인</label>
+            <input type="password" id="cfg-pwd-confirm" placeholder="">
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="Settings.changePassword()">비밀번호 변경</button>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="UI.closeModal('settings-modal')">취소</button>
+      <button class="btn btn-primary" onclick="Settings.save()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 미리보기/위치 조정 모달 ─────────────── -->
+<div class="modal-overlay" id="preview-modal">
+  <div class="modal" id="preview-modal-inner">
+    <div class="modal-head">
+      <h2>👁 미리보기 · 위치 조정</h2>
+      <button class="btn btn-ghost btn-icon" onclick="UI.closeModal('preview-modal')">×</button>
+    </div>
+    <div class="modal-body" style="gap:16px">
+      <div class="preview-container" id="preview-container">
+        <img id="preview-img" src="" alt="">
+        <div class="overlay-item" id="wm-overlay" style="display:none">
+          <img id="wm-overlay-img" src="" alt="">
+          <div class="oi-handle" id="wm-handle"></div>
+        </div>
+        <div class="spec-overlay-text" id="spec-overlay" style="display:none">
+          <span id="spec-overlay-txt"></span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="font-size:12px;font-weight:700;color:var(--sub)">워터마크 조정</div>
+        <div class="adj-row">
+          <span class="adj-label">투명도</span>
+          <input type="range" class="adj-slider" id="adj-wm-opacity" min="10" max="100" value="70" oninput="Preview.updateWm()">
+          <span class="adj-val" id="adj-wm-opacity-val">70%</span>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:var(--sub)">촬영정보 조정</div>
+        <div class="adj-row">
+          <span class="adj-label">폰트 크기</span>
+          <input type="range" class="adj-slider" id="adj-spec-size" min="10" max="40" value="18" oninput="Preview.updateSpec()">
+          <span class="adj-val" id="adj-spec-size-val">18px</span>
+        </div>
+        <div class="adj-row">
+          <span class="adj-label">배경 투명도</span>
+          <input type="range" class="adj-slider" id="adj-spec-bg" min="0" max="100" value="55" oninput="Preview.updateSpec()">
+          <span class="adj-val" id="adj-spec-bg-val">55%</span>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--muted)">워터마크와 텍스트를 드래그하여 위치를 조정하세요. 코너 핸들로 크기를 조절할 수 있습니다.</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="UI.closeModal('preview-modal')">닫기</button>
+      <button class="btn btn-primary" onclick="UI.closeModal('preview-modal')">위치 확정</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 편집 모달 ──────────────────────────── -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal" id="edit-modal-inner">
+    <div class="modal-head">
+      <h2>✏️ 이미지 정보 편집</h2>
+      <button class="btn btn-ghost btn-icon" onclick="UI.closeModal('edit-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-num">
+      <div class="field"><label>제목</label><input type="text" id="edit-title"></div>
+      <div class="field"><label>설명</label><textarea id="edit-text" style="min-height:72px"></textarea></div>
+      <div class="field"><label>촬영 스펙</label><input type="text" id="edit-spec"></div>
+      <div class="toggle-row">
+        <label>와이드 이미지</label>
+        <label class="toggle"><input type="checkbox" id="edit-wide"><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="UI.closeModal('edit-modal')">취소</button>
+      <button class="btn btn-primary" onclick="GalleryActions.saveEdit()">저장 & GitHub 반영</button>
+    </div>
+  </div>
+</div>
+
+<!-- 토스트 -->
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+// ══════════════════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════════════════
+const CFG = {
+  REPO:   'dksequence/dksequence.github.io',
+  BRANCH: 'main',
+  BIG_PX: 2000, SMALL_PX: 600,
+  BIG_Q:  0.88,  SMALL_Q:  0.82,
+  TABS: {
+    macro: {
+      label:'Macro · Sequence 01',
+      bigDir:'gallery/big', smallDir:'gallery/small',
+      indexFile:'html/macro_index.html',
+      defaultTitle:'The Poetry of Detail',
+      thumbBase:'../gallery/small/',
+    },
+    portrait: {
+      label:'Portrait · Sequence 02',
+      bigDir:'portrait/photo/big', smallDir:'portrait/photo/small',
+      indexFile:'html/portrait_index.html',
+      defaultTitle:'Portrait in Sequence',
+      thumbBase:'../portrait/photo/small/',
+    },
+  },
+  KEY: {
+    PWD:'dgm_pwd', TOKEN:'dgm_tok', WM_IMG:'dgm_wm', WM_CFG:'dgm_wm_cfg',
+    SPEC_CFG:'dgm_spec', META:'dgm_meta_',
+  },
+};
+
+// ══════════════════════════════════════════════════════════════
+// STORE (localStorage wrapper)
+// ══════════════════════════════════════════════════════════════
+const Store = {
+  get:(k,d=null)=>{ try{ const v=localStorage.getItem(k); return v===null?d:JSON.parse(v); }catch{return d;} },
+  set:(k,v)=>localStorage.setItem(k,JSON.stringify(v)),
+  rm:(k)=>localStorage.removeItem(k),
+};
+
+// ══════════════════════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════════════════════
+const Auth = {
+  DEFAULT_PWD: 'dk2026',
+
+  async _hash(s){
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+    return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+  },
+
+  async login(){
+    const pw = document.getElementById('lock-input').value;
+    const err = document.getElementById('lock-err');
+    if(!pw){ err.textContent='비밀번호를 입력하세요'; return; }
+
+    let stored = Store.get(CFG.KEY.PWD);
+    if(!stored){
+      stored = await this._hash(this.DEFAULT_PWD);
+      Store.set(CFG.KEY.PWD, stored);
+    }
+    const hashed = await this._hash(pw);
+    if(hashed === stored){
+      document.getElementById('lock-screen').style.display='none';
+      document.getElementById('app').style.display='flex';
+      App.init();
+    } else {
+      err.textContent='비밀번호가 틀렸습니다';
+      document.getElementById('lock-input').value='';
+    }
+  },
+
+  logout(){
+    document.getElementById('app').style.display='none';
+    document.getElementById('lock-screen').style.display='flex';
+    document.getElementById('lock-input').value='';
+    document.getElementById('lock-err').textContent='';
+  },
+
+  async change(newPw){
+    Store.set(CFG.KEY.PWD, await this._hash(newPw));
+  },
+};
+
+document.getElementById('lock-input').addEventListener('keydown', e=>{
+  if(e.key==='Enter') Auth.login();
+});
+
+// ══════════════════════════════════════════════════════════════
+// GITHUB API
+// ══════════════════════════════════════════════════════════════
+const GH = {
+  get token(){ return Store.get(CFG.KEY.TOKEN,''); },
+
+  async _call(method, path, body=null){
+    const headers = {
+      Authorization: `Bearer ${this.token}`,
+      Accept: 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json',
+    };
+    const opts = {method, headers};
+    if(body) opts.body = JSON.stringify(body);
+    const res = await fetch(`https://api.github.com/repos/${CFG.REPO}/contents/${path}`, opts);
+    if(res.status===404) return null;
+    if(!res.ok) throw new Error(`GitHub ${res.status}: ${await res.text()}`);
+    return method==='DELETE' ? true : res.json();
+  },
+
+  async getFile(path){ return this._call('GET', path); },
+
+  async putText(path, content, msg, sha=null){
+    const b64 = btoa(unescape(encodeURIComponent(content)));
+    const body = {message:msg, content:b64, branch:CFG.BRANCH};
+    if(sha) body.sha = sha;
+    return this._call('PUT', path, body);
+  },
+
+  async putBinary(path, base64, msg, sha=null){
+    const body = {message:msg, content:base64, branch:CFG.BRANCH};
+    if(sha) body.sha = sha;
+    return this._call('PUT', path, body);
+  },
+
+  async deleteFile(path, msg, sha){
+    return this._call('DELETE', path, {message:msg, sha, branch:CFG.BRANCH});
+  },
+
+  async test(){
+    const res = await fetch(`https://api.github.com/repos/${CFG.REPO}`, {
+      headers:{Authorization:`Bearer ${this.token}`}
+    });
+    return res.ok;
+  },
+};
+
+// ══════════════════════════════════════════════════════════════
+// IMAGE PROCESSOR
+// ══════════════════════════════════════════════════════════════
+const ImgProc = {
+  async loadImg(src){
+    return new Promise(res=>{
+      const img=new Image(); img.crossOrigin='anonymous';
+      img.onload=()=>res(img);
+      img.src=src;
+    });
+  },
+
+  async fileToImg(file){
+    return new Promise(res=>{
+      const img=new Image();
+      const url=URL.createObjectURL(file);
+      img.onload=()=>{ URL.revokeObjectURL(url); res(img); };
+      img.src=url;
+    });
+  },
+
+  async resize(file, maxPx, quality){
+    const img = await this.fileToImg(file);
+    const {width:w, height:h} = img;
+    const ratio = Math.min(maxPx/w, maxPx/h, 1);
+    const nw = Math.round(w*ratio), nh = Math.round(h*ratio);
+    const canvas = document.createElement('canvas');
+    canvas.width=nw; canvas.height=nh;
+    canvas.getContext('2d').drawImage(img,0,0,nw,nh);
+    return new Promise(res=>canvas.toBlob(res,'image/jpeg',quality));
+  },
+
+  // composite: draw image + optional watermark + optional spec text
+  async composite(file, maxPx, quality, wmState, specState){
+    const img = await this.fileToImg(file);
+    const {width:w, height:h} = img;
+    const ratio = Math.min(maxPx/w, maxPx/h, 1);
+    const nw = Math.round(w*ratio), nh = Math.round(h*ratio);
+
+    const canvas = document.createElement('canvas');
+    canvas.width=nw; canvas.height=nh;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img,0,0,nw,nh);
+
+    // Watermark
+    if(wmState && wmState.src){
+      const wmImg = await this.loadImg(wmState.src);
+      const wmW = Math.round(nw * wmState.sizeRatio);
+      const wmH = Math.round(wmW * wmImg.height / wmImg.width);
+      const wmX = Math.round(wmState.xRatio * nw);
+      const wmY = Math.round(wmState.yRatio * nh);
+      ctx.globalAlpha = wmState.opacity / 100;
+      ctx.drawImage(wmImg, wmX, wmY, wmW, wmH);
+      ctx.globalAlpha = 1;
+    }
+
+    // Spec text
+    if(specState && specState.text){
+      const fs = Math.round(specState.fontSize * ratio);
+      ctx.font = `${fs}px -apple-system,Arial,sans-serif`;
+      const lines = specState.text.split('\n');
+      const padding = Math.round(8*ratio);
+      const lineH = fs+4;
+      const boxW = Math.max(...lines.map(l=>ctx.measureText(l).width)) + padding*2;
+      const boxH = lines.length * lineH + padding*2;
+      const sx = Math.round(specState.xRatio * nw);
+      const sy = Math.round(specState.yRatio * nh);
+      ctx.globalAlpha = specState.bgOpacity / 100;
+      ctx.fillStyle = '#000';
+      ctx.fillRect(sx, sy, boxW, boxH);
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = specState.color || '#fff';
+      lines.forEach((l,i)=>{
+        ctx.fillText(l, sx+padding, sy+padding+fs+i*lineH);
+      });
+    }
+
+    return new Promise(res=>canvas.toBlob(res,'image/jpeg',quality));
+  },
+
+  async blobToB64(blob){
+    return new Promise(res=>{
+      const fr=new FileReader();
+      fr.onload=()=>res(fr.result.split(',')[1]);
+      fr.readAsDataURL(blob);
+    });
+  },
+};
+
+// ══════════════════════════════════════════════════════════════
+// GALLERY STATE
+// ══════════════════════════════════════════════════════════════
+const GalleryState = {
+  tab: 'macro',
+  cache: {macro:null, portrait:null},
+
+  getTab(){ return CFG.TABS[this.tab]; },
+  getData(){ return this.cache[this.tab]; },
+
+  pad(n){ return String(n).padStart(4,'0'); },
+
+  async load(tab){
+    this.tab = tab;
+    if(!this.cache[tab]) await this.fetchIndex(tab);
+    UI.renderStats();
+    UI.renderGallery();
+  },
+
+  async reload(){
+    this.cache[this.tab] = null;
+    await this.load(this.tab);
+  },
+
+  async fetchIndex(tab){
+    const cfg = CFG.TABS[tab];
+    try {
+      const file = await GH.getFile(cfg.indexFile);
+      if(!file){ this.cache[tab]={total:0,wide:[],titles:{},texts:{},specs:{},sha:'',raw:''}; return; }
+      const raw = decodeURIComponent(escape(atob(file.content.replace(/\n/g,''))));
+      this.cache[tab] = {...this._parse(raw), sha:file.sha, raw};
+    } catch(e){
+      console.error(e);
+      toast('인덱스 로드 실패: '+e.message,'err');
+      this.cache[tab]={total:0,wide:[],titles:{},texts:{},specs:{},sha:'',raw:''};
+    }
+  },
+
+  _parse(html){
+    const rm = (p,src)=>{ const m=src.match(p); return m?m[1]:null; };
+
+    const total = parseInt(rm(/const TOTAL_IMAGES\s*=\s*(\d+)/,html)||'0');
+
+    const wideRaw = rm(/const WIDE_IMAGES\s*=\s*\[([\s\S]*?)\]/,html)||'';
+    const wide = wideRaw.split(',').map(s=>parseInt(s.trim())).filter(n=>!isNaN(n));
+
+    const titles={}, texts={};
+    const titleBlock = rm(/const TITLE_OVERRIDES\s*=\s*\{([\s\S]*?)\}\s*;/,html)||'';
+    for(const m of titleBlock.matchAll(/(\d+)\s*:\s*"((?:[^"\\]|\\.)*)"/g))
+      titles[+m[1]] = m[2].replace(/\\"/g,'"');
+    for(const m of titleBlock.matchAll(/(\d+)\s*:\s*'((?:[^'\\]|\\.)*)'/g))
+      titles[+m[1]] = m[2].replace(/\\'/g,"'");
+
+    const textBlock = rm(/const TEXT_OVERRIDES\s*=\s*\{([\s\S]*?)\}\s*;/,html)||'';
+    for(const m of textBlock.matchAll(/(\d+)\s*:\s*"((?:[^"\\]|\\.)*)"/g))
+      texts[+m[1]] = m[2].replace(/\\"/g,'"');
+    for(const m of textBlock.matchAll(/(\d+)\s*:\s*'((?:[^'\\]|\\.)*)'/g))
+      texts[+m[1]] = m[2].replace(/\\'/g,"'");
+
+    // specs stored in localStorage
+    const specs = Store.get(CFG.KEY.META+this.tab,{});
+
+    return {total,wide,titles,texts,specs};
+  },
+
+  rebuildHtml(){
+    const d = this.getData(), tab=this.tab;
+    if(!d) return null;
+    let html = d.raw;
+
+    html = html.replace(/const TOTAL_IMAGES\s*=\s*\d+/, `const TOTAL_IMAGES = ${d.total}`);
+
+    html = html.replace(
+      /const WIDE_IMAGES\s*=\s*\[[\s\S]*?\]/,
+      `const WIDE_IMAGES = [${d.wide.sort((a,b)=>b-a).join(', ')}]`
+    );
+
+    const esc = s => s.replace(/\\/g,'\\\\').replace(/"/g,'\\"');
+    const titleLines = Object.entries(d.titles).sort(([a],[b])=>+a-+b)
+      .map(([n,t])=>`  ${n}:"${esc(t)}"`).join(',\n');
+    html = html.replace(
+      /const TITLE_OVERRIDES\s*=\s*\{[\s\S]*?\}\s*;/,
+      `const TITLE_OVERRIDES = {\n${titleLines}\n};`
+    );
+
+    const textLines = Object.entries(d.texts).sort(([a],[b])=>+a-+b)
+      .map(([n,t])=>`  ${n}:"${esc(t)}"`).join(',\n');
+    html = html.replace(
+      /const TEXT_OVERRIDES\s*=\s*\{[\s\S]*?\}\s*;/,
+      `const TEXT_OVERRIDES = {\n${textLines}\n};`
+    );
+
+    return html;
+  },
+
+  async pushIndex(msg='update gallery index'){
+    const d = this.getData();
+    const newHtml = this.rebuildHtml();
+    if(!newHtml) return;
+    const cfg = CFG.TABS[this.tab];
+    await GH.putText(cfg.indexFile, newHtml, msg, d.sha);
+    // Refresh SHA
+    const f = await GH.getFile(cfg.indexFile);
+    if(f){ d.sha=f.sha; d.raw=decodeURIComponent(escape(atob(f.content.replace(/\n/g,'')))); }
+  },
+};
+
+// ══════════════════════════════════════════════════════════════
+// UPLOAD
+// ══════════════════════════════════════════════════════════════
+const Upload = {
+  file: null,
+  nextNum: 0,
+  wmPos: {xRatio:0.02, yRatio:0.92, sizeRatio:0.15, opacity:70},
+  specPos: {xRatio:0.02, yRatio:0.85, fontSize:18, bgOpacity:55, color:'#ffffff'},
+
+  onFileSelect(file){
+    if(!file) return;
+    this.file = file;
+    const d = GalleryState.getData();
+    this.nextNum = d ? d.total+1 : 1;
+
+    const url = URL.createObjectURL(file);
+    const prev = document.getElementById('drop-preview');
+    const img  = document.getElementById('drop-preview-img');
+    const num  = document.getElementById('drop-preview-num');
+    img.src = url;
+    num.textContent = '#'+String(this.nextNum).padStart(4,'0');
+    prev.style.display = 'block';
+    document.getElementById('upload-form').style.display='flex';
+    document.getElementById('upload-progress').style.display='none';
+    document.getElementById('drop-zone').style.display='none';
+
+    // Pre-fill spec from settings
+    const specCfg = Store.get(CFG.KEY.SPEC_CFG,{});
+    this.specPos.fontSize   = specCfg.fontSize||18;
+    this.specPos.bgOpacity  = specCfg.bgOpacity||55;
+    this.specPos.color      = specCfg.color||'#ffffff';
+
+    const wmCfg = Store.get(CFG.KEY.WM_CFG,{});
+    if(wmCfg.sizeRatio) this.wmPos.sizeRatio = wmCfg.sizeRatio/100;
+    if(wmCfg.opacity)   this.wmPos.opacity   = wmCfg.opacity;
+    this._setPosByName(this.wmPos,  wmCfg.pos||'rb');
+    this._setPosByName(this.specPos, specCfg.pos||'lb');
+  },
+
+  _setPosByName(obj, pos){
+    const map={rb:{x:0.82,y:0.92},lb:{x:0.02,y:0.92},rt:{x:0.82,y:0.02},lt:{x:0.02,y:0.02},c:{x:0.42,y:0.45}};
+    const p=map[pos]||map.rb;
+    obj.xRatio=p.x; obj.yRatio=p.y;
+  },
+
+  openPreview(){
+    if(!this.file){ toast('파일을 먼저 선택해주세요','err'); return; }
+    const spec = document.getElementById('up-spec').value;
+    Preview.open(this.file, this.wmPos, {...this.specPos, text:spec});
+  },
+
+  _prog(step, state){
+    const el=document.getElementById('prog-'+step);
+    el.className='prog-step '+(state==='active'?'active':state==='done'?'done':'err');
+    el.innerHTML = state==='active'
+      ? '<span class="prog-spin"></span> '
+      : '<span class="prog-dot"></span> ';
+    el.innerHTML += step===1?'big 이미지 업로드':step===2?'small 이미지 업로드':'index HTML 갱신';
+  },
+
+  async start(){
+    if(!this.file){ toast('파일을 선택해주세요','err'); return; }
+    if(!GH.token){ toast('GitHub 토큰을 설정에서 입력해주세요','err'); return; }
+
+    const title  = document.getElementById('up-title').value;
+    const text   = document.getElementById('up-text').value;
+    const spec   = document.getElementById('up-spec').value;
+    const wide   = document.getElementById('up-wide').checked;
+    const useWm  = document.getElementById('up-watermark').checked;
+    const burnSpec = document.getElementById('up-spec-burn').checked;
+
+    const d   = GalleryState.getData();
+    const cfg = GalleryState.getTab();
+    const num = d ? d.total+1 : 1;
+    const pad = String(num).padStart(4,'0');
+
+    document.getElementById('upload-progress').style.display='block';
+    [1,2,3].forEach(i=>this._prog(i,''));
+
+    const wmSrc = Store.get(CFG.KEY.WM_IMG,null);
+    const wmState  = useWm && wmSrc ? {...this.wmPos, src:wmSrc} : null;
+    const specState = burnSpec && spec ? {...this.specPos, text:spec} : null;
+
+    try {
+      // big
+      this._prog(1,'active');
+      const bigBlob  = await ImgProc.composite(this.file, CFG.BIG_PX, CFG.BIG_Q, wmState, specState);
+      const bigB64   = await ImgProc.blobToB64(bigBlob);
+      await GH.putBinary(`${cfg.bigDir}/${pad}_full.jpg`, bigB64, `feat: add ${pad} big (${cfg.label||''})`);
+      this._prog(1,'done');
+
+      // small (watermark proportionally, no spec text on small)
+      this._prog(2,'active');
+      const smallWmState = wmState ? {...wmState, fontSize: undefined} : null;
+      const smallBlob = await ImgProc.composite(this.file, CFG.SMALL_PX, CFG.SMALL_Q, smallWmState, null);
+      const smallB64  = await ImgProc.blobToB64(smallBlob);
+      await GH.putBinary(`${cfg.smallDir}/${pad}_small.jpg`, smallB64, `feat: add ${pad} small`);
+      this._prog(2,'done');
+
+      // index
+      this._prog(3,'active');
+      d.total = num;
+      if(title) d.titles[num] = title;
+      if(text)  d.texts[num]  = text;
+      if(wide)  d.wide.push(num);
+      if(spec)  d.specs[num]  = spec;
+      Store.set(CFG.KEY.META+GalleryState.tab, d.specs);
+
+      await GalleryState.pushIndex(`feat: add image ${pad}`);
+      this._prog(3,'done');
+
+      toast(`#${pad} 업로드 완료!','ok`);
+      this.reset();
+      UI.renderStats();
+      UI.renderGallery();
+
+    } catch(e){
+      toast('오류: '+e.message,'err');
+      console.error(e);
+    }
+  },
+
+  reset(){
+    this.file=null;
+    document.getElementById('drop-zone').style.display='block';
+    document.getElementById('drop-preview').style.display='none';
+    document.getElementById('upload-form').style.display='none';
+    document.getElementById('up-title').value='';
+    document.getElementById('up-text').value='';
+    document.getElementById('up-spec').value='';
+    document.getElementById('up-wide').checked=false;
+    document.getElementById('up-watermark').checked=true;
+    document.getElementById('up-spec-burn').checked=false;
+    document.getElementById('file-input').value='';
+  },
+};
+
+// Drop zone events
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover',e=>{ e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+dz.addEventListener('drop',e=>{ e.preventDefault(); dz.classList.remove('drag-over'); Upload.onFileSelect(e.dataTransfer.files[0]); });
+
+// ══════════════════════════════════════════════════════════════
+// PREVIEW (watermark & spec drag positioning)
+// ══════════════════════════════════════════════════════════════
+const Preview = {
+  wmEl: null, specEl: null, containerEl: null,
+
+  open(file, wmPos, specState){
+    const url = URL.createObjectURL(file);
+    const img = document.getElementById('preview-img');
+    img.onload=()=>{ URL.revokeObjectURL(url); this._setup(wmPos, specState); };
+    img.src = url;
+
+    document.getElementById('adj-wm-opacity').value = wmPos.opacity;
+    document.getElementById('adj-wm-opacity-val').textContent = wmPos.opacity+'%';
+    document.getElementById('adj-spec-size').value = specState.fontSize||18;
+    document.getElementById('adj-spec-size-val').textContent = (specState.fontSize||18)+'px';
+    document.getElementById('adj-spec-bg').value = specState.bgOpacity||55;
+    document.getElementById('adj-spec-bg-val').textContent = (specState.bgOpacity||55)+'%';
+
+    document.getElementById('preview-modal').classList.add('open');
+  },
+
+  _setup(wmPos, specState){
+    this.containerEl = document.getElementById('preview-container');
+    this.wmEl   = document.getElementById('wm-overlay');
+    this.specEl = document.getElementById('spec-overlay');
+
+    const cw = this.containerEl.offsetWidth;
+    const ch = this.containerEl.offsetHeight;
+
+    const wmSrc = Store.get(CFG.KEY.WM_IMG,null);
+    if(wmSrc){
+      document.getElementById('wm-overlay-img').src = wmSrc;
+      const wmW = Math.round(cw * wmPos.sizeRatio);
+      this.wmEl.style.cssText = `display:flex;width:${wmW}px;height:auto;min-height:20px;
+        left:${Math.round(wmPos.xRatio*cw)}px;top:${Math.round(wmPos.yRatio*ch)}px;`;
+      this.wmEl.style.opacity = wmPos.opacity/100;
+      this._makeDraggable(this.wmEl, wmPos, cw, ch, true);
+    }
+
+    if(specState.text){
+      document.getElementById('spec-overlay-txt').textContent = specState.text;
+      this.specEl.style.cssText = `display:block;font-size:${specState.fontSize||18}px;
+        color:${specState.color||'#fff'};
+        background:rgba(0,0,0,${(specState.bgOpacity||55)/100});
+        left:${Math.round((specState.xRatio||0.02)*cw)}px;
+        top:${Math.round((specState.yRatio||0.85)*ch)}px;`;
+      this._makeDraggable(this.specEl, specState, cw, ch, false);
+    }
+  },
+
+  _makeDraggable(el, posObj, cw, ch, hasResize){
+    let startX,startY,startL,startT,dragging=false;
+    el.addEventListener('mousedown', e=>{
+      if(e.target.id==='wm-handle') return;
+      dragging=true;
+      startX=e.clientX; startY=e.clientY;
+      startL=parseInt(el.style.left)||0;
+      startT=parseInt(el.style.top)||0;
+      e.preventDefault();
+    });
+    document.addEventListener('mousemove', e=>{
+      if(!dragging) return;
+      const nx=startL+(e.clientX-startX), ny=startT+(e.clientY-startY);
+      el.style.left=nx+'px'; el.style.top=ny+'px';
+      posObj.xRatio=nx/cw; posObj.yRatio=ny/ch;
+    });
+    document.addEventListener('mouseup', ()=>{ dragging=false; });
+
+    // Resize handle for watermark
+    if(hasResize){
+      const handle=document.getElementById('wm-handle');
+      let rDragging=false, rStartX=0, rStartW=0;
+      handle.addEventListener('mousedown', e=>{
+        rDragging=true; rStartX=e.clientX;
+        rStartW=el.offsetWidth; e.preventDefault(); e.stopPropagation();
+      });
+      document.addEventListener('mousemove', e=>{
+        if(!rDragging) return;
+        const nw=Math.max(40, rStartW+(e.clientX-rStartX));
+        el.style.width=nw+'px';
+        posObj.sizeRatio=nw/cw;
+      });
+      document.addEventListener('mouseup', ()=>{ rDragging=false; });
+    }
+  },
+
+  updateWm(){
+    const v=document.getElementById('adj-wm-opacity').value;
+    document.getElementById('adj-wm-opacity-val').textContent=v+'%';
+    if(this.wmEl){ this.wmEl.style.opacity=v/100; Upload.wmPos.opacity=+v; }
+  },
+
+  updateSpec(){
+    const fs=document.getElementById('adj-spec-size').value;
+    const bg=document.getElementById('adj-spec-bg').value;
+    document.getElementById('adj-spec-size-val').textContent=fs+'px';
+    document.getElementById('adj-spec-bg-val').textContent=bg+'%';
+    if(this.specEl){
+      this.specEl.style.fontSize=fs+'px';
+      this.specEl.style.background=`rgba(0,0,0,${bg/100})`;
+      Upload.specPos.fontSize=+fs;
+      Upload.specPos.bgOpacity=+bg;
+    }
+  },
+};
+
+// ══════════════════════════════════════════════════════════════
+// GALLERY ACTIONS (edit / delete)
+// ══════════════════════════════════════════════════════════════
+const GalleryActions = {
+  openEdit(num){
+    const d = GalleryState.getData();
+    document.getElementById('edit-num').value=num;
+    document.getElementById('edit-title').value=d.titles[num]||'';
+    document.getElementById('edit-text').value=d.texts[num]||'';
+    document.getElementById('edit-spec').value=d.specs[num]||'';
+    document.getElementById('edit-wide').checked=d.wide.includes(num);
+    document.getElementById('edit-modal').classList.add('open');
+  },
+
+  async saveEdit(){
+    const num   = +document.getElementById('edit-num').value;
+    const title = document.getElementById('edit-title').value;
+    const text  = document.getElementById('edit-text').value;
+    const spec  = document.getElementById('edit-spec').value;
+    const wide  = document.getElementById('edit-wide').checked;
+    const d     = GalleryState.getData();
+
+    if(title) d.titles[num]=title; else delete d.titles[num];
+    if(text)  d.texts[num]=text;   else delete d.texts[num];
+    if(spec)  d.specs[num]=spec;   else delete d.specs[num];
+    Store.set(CFG.KEY.META+GalleryState.tab, d.specs);
+
+    if(wide && !d.wide.includes(num)) d.wide.push(num);
+    if(!wide) d.wide=d.wide.filter(n=>n!==num);
+
+    UI.closeModal('edit-modal');
+    toast('저장 중...','info');
+    try {
+      await GalleryState.pushIndex(`edit: update metadata for ${String(num).padStart(4,'0')}`);
+      toast('저장 완료','ok');
+      UI.renderGallery();
+    } catch(e){ toast('저장 실패: '+e.message,'err'); }
+  },
+
+  async deleteItem(num){
+    if(!confirm(`#${String(num).padStart(4,'0')} 이미지를 삭제하시겠습니까?\n(GitHub에서도 삭제됩니다)`)) return;
+
+    const d   = GalleryState.getData();
+    const cfg = GalleryState.getTab();
+    const pad = String(num).padStart(4,'0');
+    toast('삭제 중...','info');
+
+    try {
+      // Delete big
+      const bigF = await GH.getFile(`${cfg.bigDir}/${pad}_full.jpg`);
+      if(bigF) await GH.deleteFile(`${cfg.bigDir}/${pad}_full.jpg`, `del: remove ${pad} big`, bigF.sha);
+
+      // Delete small
+      const smF = await GH.getFile(`${cfg.smallDir}/${pad}_small.jpg`);
+      if(smF) await GH.deleteFile(`${cfg.smallDir}/${pad}_small.jpg`, `del: remove ${pad} small`, smF.sha);
+
+      // Update index
+      delete d.titles[num]; delete d.texts[num]; delete d.specs[num];
+      d.wide = d.wide.filter(n=>n!==num);
+      if(d.total===num) d.total=num-1;
+      Store.set(CFG.KEY.META+GalleryState.tab, d.specs);
+
+      await GalleryState.pushIndex(`del: remove image ${pad}`);
+      toast(`#${pad} 삭제 완료`,'ok');
+      UI.renderStats();
+      UI.renderGallery();
+    } catch(e){ toast('삭제 실패: '+e.message,'err'); }
+  },
+};
+
+// ══════════════════════════════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════════════════════════════
+const Settings = {
+  load(){
+    document.getElementById('cfg-token').value = Store.get(CFG.KEY.TOKEN,'')||'';
+    const wmCfg = Store.get(CFG.KEY.WM_CFG,{});
+    document.getElementById('cfg-wm-size').value    = wmCfg.size||15;
+    document.getElementById('cfg-wm-opacity').value = wmCfg.opacity||70;
+    document.getElementById('cfg-wm-pos').value     = wmCfg.pos||'rb';
+    const spCfg = Store.get(CFG.KEY.SPEC_CFG,{});
+    document.getElementById('cfg-spec-size').value  = spCfg.fontSize||18;
+    document.getElementById('cfg-spec-bg').value    = spCfg.bgOpacity||55;
+    document.getElementById('cfg-spec-color').value = spCfg.color||'#ffffff';
+    document.getElementById('cfg-spec-pos').value   = spCfg.pos||'lb';
+    const wmImg = Store.get(CFG.KEY.WM_IMG,null);
+    if(wmImg){
+      document.getElementById('wm-preview-box').innerHTML=`<img src="${wmImg}">`;
+    }
+  },
+
+  save(){
+    const token = document.getElementById('cfg-token').value.trim();
+    if(token) Store.set(CFG.KEY.TOKEN, token);
+    Store.set(CFG.KEY.WM_CFG,{
+      size:    +document.getElementById('cfg-wm-size').value,
+      opacity: +document.getElementById('cfg-wm-opacity').value,
+      pos:      document.getElementById('cfg-wm-pos').value,
+      sizeRatio: (+document.getElementById('cfg-wm-size').value)/100,
+    });
+    Store.set(CFG.KEY.SPEC_CFG,{
+      fontSize:  +document.getElementById('cfg-spec-size').value,
+      bgOpacity: +document.getElementById('cfg-spec-bg').value,
+      color:      document.getElementById('cfg-spec-color').value,
+      pos:        document.getElementById('cfg-spec-pos').value,
+    });
+    UI.closeModal('settings-modal');
+    UI.updateGhStatus();
+    toast('설정 저장 완료','ok');
+  },
+
+  loadWatermark(input){
+    const file=input.files[0]; if(!file) return;
+    const fr=new FileReader();
+    fr.onload=e=>{
+      Store.set(CFG.KEY.WM_IMG, e.target.result);
+      document.getElementById('wm-preview-box').innerHTML=`<img src="${e.target.result}">`;
+      toast('워터마크 저장됨','ok');
+    };
+    fr.readAsDataURL(file);
+  },
+
+  async testToken(){
+    const token = document.getElementById('cfg-token').value.trim();
+    if(!token){ toast('토큰을 입력하세요','err'); return; }
+    Store.set(CFG.KEY.TOKEN, token);
+    const ok = await GH.test();
+    toast(ok?'GitHub 연결 성공 ✅':'연결 실패 - 토큰을 확인하세요', ok?'ok':'err');
+    UI.updateGhStatus();
+  },
+
+  async changePassword(){
+    const np=document.getElementById('cfg-pwd-new').value;
+    const cp=document.getElementById('cfg-pwd-confirm').value;
+    if(!np){ toast('새 비밀번호를 입력하세요','err'); return; }
+    if(np!==cp){ toast('비밀번호가 일치하지 않습니다','err'); return; }
+    await Auth.change(np);
+    document.getElementById('cfg-pwd-new').value='';
+    document.getElementById('cfg-pwd-confirm').value='';
+    toast('비밀번호 변경 완료','ok');
+  },
+};
+
+// ══════════════════════════════════════════════════════════════
+// UI
+// ══════════════════════════════════════════════════════════════
+const UI = {
+  renderStats(){
+    const d=GalleryState.getData();
+    document.getElementById('stat-total').textContent = d?d.total:'?';
+    document.getElementById('stat-wide').textContent  = d?d.wide.length:'?';
+    document.getElementById('stat-tab').textContent   = CFG.TABS[GalleryState.tab].label;
+  },
+
+  renderGallery(){
+    const d   = GalleryState.getData();
+    const grid = document.getElementById('gallery-grid');
+    if(!d){ grid.innerHTML='<div class="loading-state"><div style="font-size:24px;margin-bottom:8px">⏳</div>불러오는 중...</div>'; return; }
+    if(!d.total){ grid.innerHTML='<div class="empty-state"><div class="es-icon">📭</div>이미지가 없습니다</div>'; return; }
+
+    const q = document.getElementById('search-input').value.toLowerCase();
+    const cfg = GalleryState.getTab();
+    let html = '';
+    for(let i=d.total;i>=1;i--){
+      const pad=String(i).padStart(4,'0');
+      const title=d.titles[i]||cfg.defaultTitle;
+      const spec=d.specs[i]||'';
+      const isWide=d.wide.includes(i);
+      if(q && !String(i).includes(q) && !title.toLowerCase().includes(q)) continue;
+      html+=`<div class="g-card${isWide?' wide-card':''}">
+        <div class="g-thumb">
+          <img src="${cfg.thumbBase}${pad}_small.jpg" alt="" loading="lazy"
+            onerror="this.parentNode.innerHTML='<div class=\\'g-thumb-err\\'>🖼</div>'">
+          <div class="g-badge">#${pad}</div>
+          ${isWide?'<div class="g-wide-badge">WIDE</div>':''}
+        </div>
+        <div class="g-info">
+          <div class="g-title">${escHtml(title)}</div>
+          <div class="g-spec">${escHtml(spec)}</div>
+        </div>
+        <div class="g-actions">
+          <button class="btn btn-ghost btn-sm btn-icon" title="편집" onclick="GalleryActions.openEdit(${i})">✏️</button>
+          <button class="btn btn-ghost btn-sm btn-icon" title="${isWide?'와이드 해제':'와이드 지정'}" onclick="GalleryActions.toggleWide(${i})">
+            ${isWide?'⬛':'▬'}
+          </button>
+          <button class="btn btn-danger btn-sm btn-icon" title="삭제" onclick="GalleryActions.deleteItem(${i})">🗑</button>
+        </div>
+      </div>`;
+    }
+    grid.innerHTML = html||'<div class="empty-state"><div class="es-icon">🔍</div>검색 결과 없음</div>';
+  },
+
+  updateGhStatus(){
+    const el=document.getElementById('gh-status');
+    if(GH.token){ el.textContent='GitHub 연결됨'; el.className='hdr-status ok'; }
+    else { el.textContent='GitHub 미연결'; el.className='hdr-status err'; }
+  },
+
+  openSettings(){ Settings.load(); document.getElementById('settings-modal').classList.add('open'); },
+  closeModal(id){ document.getElementById(id).classList.remove('open'); },
+};
+
+// toggle wide
+GalleryActions.toggleWide = async function(num){
+  const d=GalleryState.getData();
+  if(d.wide.includes(num)) d.wide=d.wide.filter(n=>n!==num);
+  else d.wide.push(num);
+  try {
+    await GalleryState.pushIndex(`edit: toggle wide for ${String(num).padStart(4,'0')}`);
+    toast('와이드 설정 변경','ok');
+    UI.renderGallery();
+  } catch(e){ toast('실패: '+e.message,'err'); }
+};
+
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ══════════════════════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════════════════════
+let _toastTimer=null;
+function toast(msg,type='info'){
+  const el=document.getElementById('toast');
+  el.textContent=msg;
+  el.className=`toast show ${type}`;
+  clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(()=>{ el.className='toast'; },3500);
+}
+
+// ══════════════════════════════════════════════════════════════
+// TAB SWITCH
+// ══════════════════════════════════════════════════════════════
+function switchTab(tab){
+  GalleryState.tab=tab;
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    b.classList.toggle('active',i===(tab==='macro'?0:1));
+  });
+  Upload.reset();
+  document.getElementById('gallery-grid').innerHTML='<div class="loading-state"><div style="font-size:24px;margin-bottom:8px">⏳</div>불러오는 중...</div>';
+  GalleryState.load(tab);
+}
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(el=>{
+  el.addEventListener('click', e=>{ if(e.target===el) el.classList.remove('open'); });
+});
+
+// ══════════════════════════════════════════════════════════════
+// APP INIT
+// ══════════════════════════════════════════════════════════════
+const App = {
+  async init(){
+    UI.updateGhStatus();
+    if(!GH.token){
+      toast('설정에서 GitHub 토큰을 먼저 입력해주세요','info');
+      UI.openSettings();
+      return;
+    }
+    await GalleryState.load('macro');
+  },
+};
+</script>
+</body>
+</html>
