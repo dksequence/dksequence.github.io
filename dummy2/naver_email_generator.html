@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>네이버 예약 메일 생성기</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Apple SD Gothic Neo',sans-serif;background:#f5f5f5;padding:24px;}
+.wrap{max-width:820px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+h1{grid-column:1/-1;font-size:20px;font-weight:700;color:#222;padding-bottom:16px;border-bottom:2px solid #333;margin-bottom:4px;}
+.panel{background:#fff;border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,0.08);}
+.panel h2{font-size:15px;font-weight:700;color:#444;margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid #eee;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12px;color:#666;margin-bottom:5px;font-weight:600;letter-spacing:0.03em;}
+.field input,.field select{width:100%;padding:9px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;color:#222;background:#fafafa;}
+.field input:focus,.field select:focus{outline:none;border-color:#03C75A;background:#fff;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.btn-gen{width:100%;padding:14px;background:#03C75A;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;margin-top:8px;}
+.btn-gen:hover{background:#02b34e;}
+.btn-dl{width:100%;padding:14px;background:#1a1a1a;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;margin-top:10px;display:none;}
+.btn-dl:hover{background:#333;}
+.btn-copy{width:100%;padding:10px;background:#f0f0f0;color:#333;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:8px;display:none;}
+.btn-copy:hover{background:#e0e0e0;}
+.preview-wrap{position:relative;}
+#preview{width:100%;height:420px;border:1px solid #ddd;border-radius:10px;background:#fff;}
+.tag{display:inline-block;font-size:11px;padding:3px 8px;border-radius:2rem;background:#e8f5e9;color:#2e7d32;margin-bottom:14px;font-weight:600;}
+.status{font-size:13px;color:#03C75A;font-weight:600;margin-top:8px;display:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📧 네이버 예약 메일 생성기 — Make 테스트용</h1>
+
+  <!-- 입력 패널 -->
+  <div class="panel">
+    <h2>예약 정보 입력</h2>
+    <div class="tag">변동 항목만 입력하세요</div>
+
+    <div class="field">
+      <label>예약자명 *</label>
+      <input type="text" id="f-name" placeholder="예: 홍길동님" value="엄혜정님">
+    </div>
+    <div class="field">
+      <label>예약신청 일시 *</label>
+      <input type="text" id="f-applied" placeholder="예: 2026.04.08. 20:05:00" value="2026.04.08. 20:05:00">
+    </div>
+    <div class="field">
+      <label>예약번호 * (10자리)</label>
+      <input type="text" id="f-resno" placeholder="예: 1202237743" value="1111111111" maxlength="10">
+    </div>
+    <div class="field">
+      <label>예약상품 *</label>
+      <input type="text" id="f-product" placeholder="예: 두컷화보 (화보스냅)" value="두컷화보 (화보스냅)">
+    </div>
+    <div class="field">
+      <label>이용일시 *</label>
+      <input type="text" id="f-datetime" placeholder="예: 2026.04.11.(토) 오후 3:00" value="2026.04.11.(토) 오후 3:00">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>인원 *</label>
+        <input type="text" id="f-people" placeholder="예: 2명" value="2명">
+      </div>
+      <div class="field">
+        <label>인원 설명</label>
+        <input type="text" id="f-people-desc" placeholder="예: 두컷화보" value="두컷화보">
+      </div>
+    </div>
+    <div class="field">
+      <label>결제금액</label>
+      <input type="text" id="f-amount" placeholder="예: 두컷화보(화보스냅) 1,000원 = 1,000원" value="두컷화보(화보스냅) 1,000원 = 1,000원">
+    </div>
+    <div class="field">
+      <label>결제수단</label>
+      <select id="f-payment">
+        <option value="신용카드 간편결제">신용카드 간편결제</option>
+        <option value="네이버페이">네이버페이</option>
+        <option value="현금">현금</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>요청사항</label>
+      <input type="text" id="f-request" placeholder="없으면 - 입력" value="-">
+    </div>
+
+    <button class="btn-gen" onclick="generate()">✅ 메일 HTML 생성</button>
+    <button class="btn-dl" id="btn-dl" onclick="download()">⬇️ HTML 파일 다운로드</button>
+    <button class="btn-copy" id="btn-copy" onclick="copyHtml()">📋 HTML 소스 복사</button>
+    <div class="status" id="status"></div>
+  </div>
+
+  <!-- 미리보기 패널 -->
+  <div class="panel preview-wrap">
+    <h2>미리보기</h2>
+    <iframe id="preview" frameborder="0"></iframe>
+    <div style="margin-top:12px;font-size:12px;color:#999;">생성 후 다음메일 → HTML 모드에 붙여넣기해서 발송하세요</div>
+  </div>
+</div>
+
+<script>
+var generatedHtml = '';
+
+function buildHtml() {
+  var name     = document.getElementById('f-name').value || '예약자님';
+  var applied  = document.getElementById('f-applied').value || '';
+  var resno    = document.getElementById('f-resno').value || '';
+  var product  = document.getElementById('f-product').value || '';
+  var dt       = document.getElementById('f-datetime').value || '';
+  var people   = document.getElementById('f-people').value || '';
+  var pdesc    = document.getElementById('f-people-desc').value || '';
+  var amount   = document.getElementById('f-amount').value || '';
+  var payment  = document.getElementById('f-payment').value || '신용카드 간편결제';
+  var request  = document.getElementById('f-request').value || '-';
+
+  var useDate = dt + ', ' + people + ' (' + pdesc + ')';
+
+  return '<html>\n<head>\n    <style>\n        p{margin-top:0;margin-bottom:0}\n    </style>\n</head>\n<body>\n<div style="color:#111;font-family:Apple SD Gothic Neo,Malgun Gothic,\'맑은 고딕\',sans-serif;font-size:10pt;line-height:1.5;">\n<p><br></p>\n<table style="width:595px;margin:0px auto;background-color:rgb(255,255,255);text-align:left;" cellspacing="0" cellpadding="0">\n<tbody>\n<tr><td height="30" colspan="3"></td></tr>\n<tr>\n  <td width="21"></td>\n  <td>\n    <table style="width:553px;" cellspacing="0" cellpadding="0"><tbody>\n    <tr><td style="font-size:28px;color:rgb(66,66,64);line-height:34px;vertical-align:top;">\n      새로운 예약이<br>\n      <span style="color:rgb(30,200,0);">새로운 예약이 확정</span>&nbsp;되었습니다.\n    </td></tr>\n    <tr><td height="13"></td></tr>\n    <tr><td style="font-size:14px;color:rgb(105,105,105);line-height:24px;vertical-align:top;">예약 내역을 확인해 주세요.</td></tr>\n    <tr><td height="22"></td></tr>\n    </tbody></table>\n  </td>\n  <td width="21"></td>\n</tr>\n<tr><td style="background:rgb(229,229,229);" height="1" colspan="3"></td></tr>\n<tr><td height="26" colspan="3"></td></tr>\n<tr>\n  <td width="21" rowspan="3"></td>\n  <td>\n    <table style="width:553px;" cellspacing="0" cellpadding="0"><tbody>\n    <tr>\n      <td style="padding-bottom:9px;font-size:14px;color:rgb(105,105,105);vertical-align:top;" width="90">예약자명</td>\n      <td style="padding-bottom:9px;font-size:14px;color:rgb(51,51,51);vertical-align:top;">' + name + '</td>\n    </tr>\n    <tr>\n      <td style="padding-bottom:9px;font-size:14px;color:rgb(105,105,105);vertical-align:top;" width="90">예약신청 일시</td>\n      <td style="padding-bottom:9px;font-size:14px;color:rgb(51,51,51);vertical-align:top;">' + applied + '</td>\n    </tr>\n    <tr><td height="47" colspan="2"></td></tr>\n    </tbody></table>\n  </td>\n  <td width="21" rowspan="3"></td>\n</tr>\n<tr>\n  <td>\n    <table style="width:553px;" cellspacing="0" cellpadding="0"><tbody>\n    <tr><td style="font-size:14px;font-weight:bold;color:rgb(0,0,0);vertical-align:top;" height="24">예약내역</td></tr>\n    <tr><td style="background:rgb(66,66,64);" height="2"></td></tr>\n    <tr><td height="20"></td></tr>\n    <tr>\n      <td>\n        <table style="width:553px;" cellspacing="0" cellpadding="0"><tbody>\n        <tr>\n          <td style="padding-bottom:5px;font-size:14px;color:rgb(105,105,105);line-height:23px;vertical-align:top;" width="90">예약번호</td>\n          <td style="padding-bottom:5px;font-size:14px;color:rgb(0,0,0);line-height:23px;vertical-align:top;">' + resno + '</td>\n        </tr>\n        <tr>\n          <td style="padding-bottom:5px;font-size:14px;color:rgb(105,105,105);line-height:23px;vertical-align:top;" width="90">예약상품</td>\n          <td style="padding-bottom:5px;font-size:14px;color:rgb(0,0,0);line-height:23px;vertical-align:top;">' + product + '</td>\n        </tr>\n        <tr>\n          <td style="padding-bottom:5px;font-size:14px;color:rgb(105,105,105);line-height:23px;vertical-align:top;" width="90">이용일시</td>\n          <td style="padding-bottom:5px;font-size:14px;color:rgb(0,0,0);line-height:23px;vertical-align:top;">' + useDate + '</td>\n        </tr>\n        <tr>\n          <td style="padding-bottom:9px;font-size:14px;color:rgb(105,105,105);line-height:23px;vertical-align:top;" width="90">결제상태</td>\n          <td style="padding-bottom:9px;font-size:14px;color:rgb(0,0,0);line-height:23px;vertical-align:top;">결제완료</td>\n        </tr>\n        <tr>\n          <td style="padding-bottom:9px;font-size:14px;color:rgb(105,105,105);line-height:23px;vertical-align:top;" width="90">결제수단</td>\n          <td style="padding-bottom:9px;font-size:14px;color:rgb(0,0,0);line-height:23px;vertical-align:top;">' + payment + '</td>\n        </tr>\n        <tr>\n          <td style="padding-bottom:9px;font-size:14px;color:rgb(105,105,105);line-height:23px;vertical-align:top;" width="90">결제금액</td>\n          <td style="padding-bottom:9px;font-size:14px;color:rgb(0,0,0);line-height:23px;vertical-align:top;">' + amount + '</td>\n        </tr>\n        <tr>\n          <td style="padding-bottom:9px;font-size:14px;color:rgb(105,105,105);line-height:23px;vertical-align:top;" width="90">요청사항</td>\n          <td style="padding-bottom:9px;font-size:14px;color:rgb(0,0,0);line-height:23px;vertical-align:top;">' + request + '</td>\n        </tr>\n        </tbody></table>\n      </td>\n    </tr>\n    </tbody></table>\n  </td>\n</tr>\n</tbody>\n</table>\n</div>\n</body>\n</html>';
+}
+
+function generate() {
+  generatedHtml = buildHtml();
+  var iframe = document.getElementById('preview');
+  iframe.srcdoc = generatedHtml;
+  document.getElementById('btn-dl').style.display = 'block';
+  document.getElementById('btn-copy').style.display = 'block';
+  var s = document.getElementById('status');
+  s.style.display = 'block';
+  s.textContent = '✅ 생성 완료! 다운로드 또는 소스 복사 후 다음메일 HTML 모드에 붙여넣으세요.';
+}
+
+function download() {
+  var name = document.getElementById('f-resno').value || 'test';
+  var blob = new Blob([generatedHtml], {type: 'text/html;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'naver_reservation_' + name + '.html';
+  a.click();
+}
+
+function copyHtml() {
+  navigator.clipboard.writeText(generatedHtml).then(function() {
+    document.getElementById('btn-copy').textContent = '✅ 복사 완료!';
+    setTimeout(function(){ document.getElementById('btn-copy').textContent = '📋 HTML 소스 복사'; }, 2000);
+  });
+}
+
+// 페이지 로드 시 자동 미리보기
+window.onload = function() { generate(); };
+</script>
+</body>
+</html>
