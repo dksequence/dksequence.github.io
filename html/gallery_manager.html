@@ -265,7 +265,7 @@ html,body{width:100%;min-height:100%;background:var(--bg);color:var(--text);
         </div>
         <div class="field">
           <label>촬영 스펙</label>
-          <input type="text" id="up-spec" placeholder="예: 100mm · f/1.4 · 1/250s · ISO 100">
+          <input type="text" id="up-spec" value="100mm 1/50 f4.5 ISO-100  (Focus Bracketing)" placeholder="예: 100mm · f/1.4 · 1/250s · ISO 100">
         </div>
         <div class="toggle-row">
           <label>와이드 이미지로 표시</label>
@@ -459,24 +459,57 @@ html,body{width:100%;min-height:100%;background:var(--bg);color:var(--text);
 
 <!-- ── 편집 모달 ──────────────────────────── -->
 <div class="modal-overlay" id="edit-modal">
-  <div class="modal" id="edit-modal-inner">
+  <div class="modal" id="edit-modal-inner" style="max-width:560px">
     <div class="modal-head">
-      <h2>✏️ 이미지 정보 편집</h2>
+      <h2>✏️ 이미지 편집</h2>
       <button class="btn btn-ghost btn-icon" onclick="UI.closeModal('edit-modal')">×</button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="edit-num">
-      <div class="field"><label>제목</label><input type="text" id="edit-title"></div>
-      <div class="field"><label>설명</label><textarea id="edit-text" style="min-height:72px"></textarea></div>
-      <div class="field"><label>촬영 스펙</label><input type="text" id="edit-spec"></div>
-      <div class="toggle-row">
-        <label>와이드 이미지</label>
-        <label class="toggle"><input type="checkbox" id="edit-wide"><span class="toggle-slider"></span></label>
+
+      <!-- 메타데이터 -->
+      <div class="setting-section" style="margin:0;padding:0;border:none;gap:10px;display:flex;flex-direction:column;">
+        <div style="font-size:11px;font-weight:800;color:var(--sub);text-transform:uppercase;letter-spacing:.06em">메타데이터</div>
+        <div class="field"><label>제목</label><input type="text" id="edit-title"></div>
+        <div class="field"><label>설명</label><textarea id="edit-text" style="min-height:72px"></textarea></div>
+        <div class="field"><label>촬영 스펙</label><input type="text" id="edit-spec"></div>
+        <div class="toggle-row">
+          <label>와이드 이미지</label>
+          <label class="toggle"><input type="checkbox" id="edit-wide"><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+
+      <!-- 이미지 교체 / 효과 조정 -->
+      <div style="border-top:1px solid var(--border);padding-top:14px;display:flex;flex-direction:column;gap:10px;">
+        <div style="font-size:11px;font-weight:800;color:var(--sub);text-transform:uppercase;letter-spacing:.06em">이미지 교체 &amp; 효과 조정 <span style="font-weight:400;color:var(--muted)">(선택사항)</span></div>
+        <div style="font-size:11px;color:var(--muted)">새 원본 파일을 선택하면 big/small 재생성 후 GitHub에 교체 업로드됩니다.</div>
+
+        <!-- 파일 드롭존 (편집용) -->
+        <div class="drop-zone" id="edit-drop-zone" style="padding:16px 12px;" onclick="document.getElementById('edit-file-input').click()">
+          <div class="dz-icon" style="font-size:20px">📁</div>
+          <div class="dz-text" style="font-size:12px">교체할 원본 이미지를 드롭하세요</div>
+          <div class="dz-sub">선택하지 않으면 기존 이미지 유지</div>
+        </div>
+        <input type="file" id="edit-file-input" accept="image/*" style="display:none" onchange="GalleryActions.onEditFileSelect(this.files[0])">
+
+        <!-- 선택된 파일명 표시 -->
+        <div id="edit-file-name" style="font-size:12px;color:var(--green);display:none"></div>
+
+        <div class="toggle-row">
+          <label>워터마크 삽입</label>
+          <label class="toggle"><input type="checkbox" id="edit-watermark" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <label>촬영정보 이미지에 합성</label>
+          <label class="toggle"><input type="checkbox" id="edit-spec-burn"><span class="toggle-slider"></span></label>
+        </div>
+
+        <button class="btn btn-blue" id="edit-preview-btn" style="width:100%;padding:10px;display:none" onclick="GalleryActions.openEditPreview()">👁 미리보기 &amp; 워터마크/텍스트 위치 조정</button>
       </div>
     </div>
     <div class="modal-foot">
       <button class="btn btn-ghost" onclick="UI.closeModal('edit-modal')">취소</button>
-      <button class="btn btn-primary" onclick="GalleryActions.saveEdit()">저장 & GitHub 반영</button>
+      <button class="btn btn-primary" onclick="GalleryActions.saveEdit()">저장 &amp; GitHub 반영</button>
     </div>
   </div>
 </div>
@@ -963,23 +996,35 @@ const Upload = {
   },
 };
 
-// Drop zone events
+// Drop zone events (new upload)
 const dz = document.getElementById('drop-zone');
 dz.addEventListener('dragover',e=>{ e.preventDefault(); dz.classList.add('drag-over'); });
 dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
 dz.addEventListener('drop',e=>{ e.preventDefault(); dz.classList.remove('drag-over'); Upload.onFileSelect(e.dataTransfer.files[0]); });
+
+// Drop zone events (edit modal)
+const edz = document.getElementById('edit-drop-zone');
+edz.addEventListener('dragover',e=>{ e.preventDefault(); edz.classList.add('drag-over'); });
+edz.addEventListener('dragleave',()=>edz.classList.remove('drag-over'));
+edz.addEventListener('drop',e=>{ e.preventDefault(); edz.classList.remove('drag-over'); GalleryActions.onEditFileSelect(e.dataTransfer.files[0]); });
 
 // ══════════════════════════════════════════════════════════════
 // PREVIEW (watermark & spec drag positioning)
 // ══════════════════════════════════════════════════════════════
 const Preview = {
   wmEl: null, specEl: null, containerEl: null,
+  _ctx: 'upload',  // 'upload' | 'edit'
+  _wmPosRef: null,
+  _specPosRef: null,
 
   open(file, wmPos, specState){
     const url = URL.createObjectURL(file);
     const img = document.getElementById('preview-img');
     img.onload=()=>{ URL.revokeObjectURL(url); this._setup(wmPos, specState); };
     img.src = url;
+
+    this._wmPosRef = wmPos;
+    this._specPosRef = specState;
 
     document.getElementById('adj-wm-opacity').value = wmPos.opacity;
     document.getElementById('adj-wm-opacity-val').textContent = wmPos.opacity+'%';
@@ -1059,7 +1104,8 @@ const Preview = {
   updateWm(){
     const v=document.getElementById('adj-wm-opacity').value;
     document.getElementById('adj-wm-opacity-val').textContent=v+'%';
-    if(this.wmEl){ this.wmEl.style.opacity=v/100; Upload.wmPos.opacity=+v; }
+    if(this.wmEl){ this.wmEl.style.opacity=v/100; }
+    if(this._wmPosRef) this._wmPosRef.opacity=+v;
   },
 
   updateSpec(){
@@ -1070,9 +1116,8 @@ const Preview = {
     if(this.specEl){
       this.specEl.style.fontSize=fs+'px';
       this.specEl.style.background=`rgba(0,0,0,${bg/100})`;
-      Upload.specPos.fontSize=+fs;
-      Upload.specPos.bgOpacity=+bg;
     }
+    if(this._specPosRef){ this._specPosRef.fontSize=+fs; this._specPosRef.bgOpacity=+bg; }
   },
 };
 
@@ -1080,6 +1125,10 @@ const Preview = {
 // GALLERY ACTIONS (edit / delete)
 // ══════════════════════════════════════════════════════════════
 const GalleryActions = {
+  _editFile: null,
+  _editWmPos: null,
+  _editSpecPos: null,
+
   openEdit(num){
     const d = GalleryState.getData();
     document.getElementById('edit-num').value=num;
@@ -1087,7 +1136,44 @@ const GalleryActions = {
     document.getElementById('edit-text').value=d.texts[num]||'';
     document.getElementById('edit-spec').value=d.specs[num]||'';
     document.getElementById('edit-wide').checked=d.wide.includes(num);
+    // 파일 교체 영역 초기화
+    this._editFile=null;
+    this._editWmPos={...Upload.wmPos};
+    this._editSpecPos={...Upload.specPos};
+    document.getElementById('edit-file-input').value='';
+    document.getElementById('edit-file-name').style.display='none';
+    document.getElementById('edit-file-name').textContent='';
+    document.getElementById('edit-preview-btn').style.display='none';
+    document.getElementById('edit-watermark').checked=true;
+    document.getElementById('edit-spec-burn').checked=false;
     document.getElementById('edit-modal').classList.add('open');
+  },
+
+  onEditFileSelect(file){
+    if(!file) return;
+    this._editFile=file;
+    const nm=document.getElementById('edit-file-name');
+    nm.textContent='선택됨: '+file.name;
+    nm.style.display='block';
+    document.getElementById('edit-preview-btn').style.display='block';
+    // 워터마크/스펙 기본 설정 반영
+    const wmCfg=Store.get(CFG.KEY.WM_CFG,{});
+    if(wmCfg.sizeRatio) this._editWmPos.sizeRatio=wmCfg.sizeRatio/100;
+    if(wmCfg.opacity)   this._editWmPos.opacity=wmCfg.opacity;
+    Upload._setPosByName(this._editWmPos, wmCfg.pos||'rb');
+    const spCfg=Store.get(CFG.KEY.SPEC_CFG,{});
+    this._editSpecPos.fontSize=spCfg.fontSize||18;
+    this._editSpecPos.bgOpacity=spCfg.bgOpacity||55;
+    this._editSpecPos.color=spCfg.color||'#ffffff';
+    Upload._setPosByName(this._editSpecPos, spCfg.pos||'lb');
+  },
+
+  openEditPreview(){
+    if(!this._editFile){ toast('파일을 먼저 선택해주세요','err'); return; }
+    const spec=document.getElementById('edit-spec').value;
+    // Preview 모듈을 edit 컨텍스트로 실행
+    Preview._ctx='edit';
+    Preview.open(this._editFile, this._editWmPos, {...this._editSpecPos, text:spec});
   },
 
   async saveEdit(){
@@ -1096,6 +1182,8 @@ const GalleryActions = {
     const text  = document.getElementById('edit-text').value;
     const spec  = document.getElementById('edit-spec').value;
     const wide  = document.getElementById('edit-wide').checked;
+    const useWm = document.getElementById('edit-watermark').checked;
+    const burnSpec = document.getElementById('edit-spec-burn').checked;
     const d     = GalleryState.getData();
 
     if(title) d.titles[num]=title; else delete d.titles[num];
@@ -1107,6 +1195,41 @@ const GalleryActions = {
     if(!wide) d.wide=d.wide.filter(n=>n!==num);
 
     UI.closeModal('edit-modal');
+
+    // 이미지 교체가 있는 경우 → big/small 재생성 후 GitHub 업로드
+    if(this._editFile){
+      if(!GH.token){ toast('GitHub 토큰을 설정에서 입력해주세요','err'); return; }
+      const cfg = GalleryState.getTab();
+      const pad = String(num).padStart(4,'0');
+      const wmSrc = Store.get(CFG.KEY.WM_IMG,null);
+      const wmState  = useWm && wmSrc ? {...this._editWmPos, src:wmSrc} : null;
+      const specState = burnSpec && spec ? {...this._editSpecPos, text:spec} : null;
+
+      toast('이미지 교체 중 (1/3) big 생성...','info');
+      try {
+        const bigBlob  = await ImgProc.composite(this._editFile, CFG.BIG_PX, CFG.BIG_Q, wmState, specState);
+        const bigB64   = await ImgProc.blobToB64(bigBlob);
+        const bigExist = await GH.getFile(`${cfg.bigDir}/${pad}_full.jpg`);
+        await GH.putBinary(`${cfg.bigDir}/${pad}_full.jpg`, bigB64, `edit: replace ${pad} big`, bigExist?bigExist.sha:null);
+
+        toast('이미지 교체 중 (2/3) small 생성...','info');
+        const smallWmState = wmState ? {...wmState} : null;
+        const smallBlob = await ImgProc.composite(this._editFile, CFG.SMALL_PX, CFG.SMALL_Q, smallWmState, null);
+        const smallB64  = await ImgProc.blobToB64(smallBlob);
+        const smallExist = await GH.getFile(`${cfg.smallDir}/${pad}_small.jpg`);
+        await GH.putBinary(`${cfg.smallDir}/${pad}_small.jpg`, smallB64, `edit: replace ${pad} small`, smallExist?smallExist.sha:null);
+
+        toast('이미지 교체 중 (3/3) index 갱신...','info');
+        await GalleryState.pushIndex(`edit: update ${pad}`);
+        toast(`#${pad} 교체 완료`,'ok');
+        UI.renderStats();
+        UI.renderGallery();
+      } catch(e){ toast('교체 실패: '+e.message,'err'); console.error(e); }
+      this._editFile=null;
+      return;
+    }
+
+    // 메타데이터만 수정
     toast('저장 중...','info');
     try {
       await GalleryState.pushIndex(`edit: update metadata for ${String(num).padStart(4,'0')}`);
