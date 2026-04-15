@@ -810,7 +810,12 @@ const GalleryState = {
     const newHtml = this.rebuildHtml();
     if(!newHtml) return;
     const cfg = CFG.TABS[this.tab];
-    await GH.putText(cfg.indexFile, newHtml, msg, d.sha);
+    // SHA가 없으면 현재 파일에서 조회 (파일이 존재하는 경우 SHA 필수)
+    if(!d.sha){
+      const cur = await GH.getFile(cfg.indexFile);
+      if(cur) d.sha = cur.sha;
+    }
+    await GH.putText(cfg.indexFile, newHtml, msg, d.sha||null);
     // Refresh SHA
     const f = await GH.getFile(cfg.indexFile);
     if(f){ d.sha=f.sha; d.raw=decodeURIComponent(escape(atob(f.content.replace(/\n/g,'')))); }
@@ -903,17 +908,21 @@ const Upload = {
     try {
       // big
       this._prog(1,'active');
+      const bigPath  = `${cfg.bigDir}/${pad}_full.jpg`;
       const bigBlob  = await ImgProc.composite(this.file, CFG.BIG_PX, CFG.BIG_Q, wmState, specState);
       const bigB64   = await ImgProc.blobToB64(bigBlob);
-      await GH.putBinary(`${cfg.bigDir}/${pad}_full.jpg`, bigB64, `feat: add ${pad} big (${cfg.label||''})`);
+      const bigExist = await GH.getFile(bigPath);
+      await GH.putBinary(bigPath, bigB64, `feat: add ${pad} big (${cfg.label||''})`, bigExist ? bigExist.sha : null);
       this._prog(1,'done');
 
       // small (watermark proportionally, no spec text on small)
       this._prog(2,'active');
+      const smallPath = `${cfg.smallDir}/${pad}_small.jpg`;
       const smallWmState = wmState ? {...wmState, fontSize: undefined} : null;
       const smallBlob = await ImgProc.composite(this.file, CFG.SMALL_PX, CFG.SMALL_Q, smallWmState, null);
       const smallB64  = await ImgProc.blobToB64(smallBlob);
-      await GH.putBinary(`${cfg.smallDir}/${pad}_small.jpg`, smallB64, `feat: add ${pad} small`);
+      const smallExist = await GH.getFile(smallPath);
+      await GH.putBinary(smallPath, smallB64, `feat: add ${pad} small`, smallExist ? smallExist.sha : null);
       this._prog(2,'done');
 
       // index
