@@ -179,6 +179,18 @@ html,body{width:100%;min-height:100%;background:var(--bg);color:var(--text);
 /* ── 편집 모달 ── */
 #edit-modal .modal{width:min(480px,100%);}
 
+/* ── 드래그 정렬 ── */
+.g-card{transition:opacity .15s;}
+.g-card.drag-source{opacity:.35;}
+.g-card.drag-over-top{border-top:2px solid var(--green)!important;}
+.g-card.drag-over-bot{border-bottom:2px solid var(--green)!important;}
+.g-drag-handle{cursor:grab;color:var(--muted);padding:2px 4px;font-size:14px;user-select:none;line-height:1;}
+.g-drag-handle:active{cursor:grabbing;}
+.sort-save-bar{display:none;background:var(--s2);border-bottom:1px solid var(--green);
+  padding:8px 20px;gap:12px;align-items:center;justify-content:flex-end;}
+.sort-save-bar.visible{display:flex;}
+.sort-save-bar span{font-size:12px;color:var(--green);flex:1;}
+
 /* 알림 토스트 */
 .toast{position:fixed;bottom:24px;right:24px;background:var(--s3);border:1px solid var(--bd2);
   border-radius:10px;padding:12px 18px;font-size:13px;font-weight:600;
@@ -231,6 +243,13 @@ html,body{width:100%;min-height:100%;background:var(--bg);color:var(--text);
     <div class="stat">와이드: <strong id="stat-wide">-</strong></div>
     <div class="stat">현재 탭: <strong id="stat-tab">-</strong></div>
     <div class="stat" id="stat-last">마지막 업로드: -</div>
+  </div>
+
+  <!-- 순서 저장 바 (드래그 후 나타남) -->
+  <div class="sort-save-bar" id="sort-save-bar">
+    <span>⇅ 순서가 변경됐습니다. GitHub에 저장하시겠습니까?</span>
+    <button class="btn btn-ghost btn-sm" onclick="SortManager.discard()">되돌리기</button>
+    <button class="btn btn-primary btn-sm" onclick="SortManager.save()">순서 저장</button>
   </div>
 
   <div class="main-layout">
@@ -789,6 +808,10 @@ const GalleryState = {
     const wideRaw = rm(/const WIDE_IMAGES\s*=\s*\[([\s\S]*?)\]/,html)||'';
     const wide = wideRaw.split(',').map(s=>parseInt(s.trim())).filter(n=>!isNaN(n));
 
+    const orderRaw = rm(/const DISPLAY_ORDER\s*=\s*\[([\s\S]*?)\]/,html)||'';
+    let order = orderRaw.split(',').map(s=>parseInt(s.trim())).filter(n=>!isNaN(n));
+    if(!order.length) order = Array.from({length:total},(_,k)=>total-k);
+
     const titles={}, texts={};
     const titleBlock = rm(/const TITLE_OVERRIDES\s*=\s*\{([\s\S]*?)\}\s*;/,html)||'';
     for(const m of titleBlock.matchAll(/(\d+)\s*:\s*"((?:[^"\\]|\\.)*)"/g))
@@ -805,7 +828,7 @@ const GalleryState = {
     // specs stored in localStorage
     const specs = Store.get(CFG.KEY.META+this.tab,{});
 
-    return {total,wide,titles,texts,specs};
+    return {total,wide,order,titles,texts,specs};
   },
 
   rebuildHtml(){
@@ -819,6 +842,19 @@ const GalleryState = {
       /const WIDE_IMAGES\s*=\s*\[[\s\S]*?\]/,
       `const WIDE_IMAGES = [${d.wide.sort((a,b)=>b-a).join(', ')}]`
     );
+
+    // DISPLAY_ORDER 업데이트 (존재하면 교체, 없으면 WIDE_IMAGES 뒤에 삽입)
+    if(/const DISPLAY_ORDER\s*=\s*\[/.test(html)){
+      html = html.replace(
+        /const DISPLAY_ORDER\s*=\s*\[[\s\S]*?\]/,
+        `const DISPLAY_ORDER = [${d.order.join(', ')}]`
+      );
+    } else {
+      html = html.replace(
+        /(const WIDE_IMAGES\s*=\s*\[[\s\S]*?\];)/,
+        `$1\n    const DISPLAY_ORDER = [${d.order.join(', ')}];`
+      );
+    }
 
     const esc = s => s.replace(/\\/g,'\\\\').replace(/"/g,'\\"');
     const titleLines = Object.entries(d.titles).sort(([a],[b])=>+a-+b)
@@ -965,6 +1001,8 @@ const Upload = {
       if(text)  d.texts[num]  = text;
       if(wide)  d.wide.push(num);
       if(spec)  d.specs[num]  = spec;
+      if(!d.order) d.order = Array.from({length:num-1},(_,k)=>num-1-k);
+      d.order.unshift(num); // 새 이미지는 표시 순서 맨 앞
       Store.set(CFG.KEY.META+GalleryState.tab, d.specs);
 
       await GalleryState.pushIndex(`feat: add image ${pad}`);
@@ -1258,6 +1296,7 @@ const GalleryActions = {
       // Update index
       delete d.titles[num]; delete d.texts[num]; delete d.specs[num];
       d.wide = d.wide.filter(n=>n!==num);
+      if(d.order) d.order = d.order.filter(n=>n!==num);
       if(d.total===num) d.total=num-1;
       Store.set(CFG.KEY.META+GalleryState.tab, d.specs);
 
@@ -1361,14 +1400,15 @@ const UI = {
 
     const q = document.getElementById('search-input').value.toLowerCase();
     const cfg = GalleryState.getTab();
+    const order = d.order && d.order.length ? d.order : Array.from({length:d.total},(_,k)=>d.total-k);
     let html = '';
-    for(let i=d.total;i>=1;i--){
+    for(const i of order){
       const pad=String(i).padStart(4,'0');
       const title=d.titles[i]||cfg.defaultTitle;
       const spec=d.specs[i]||'';
       const isWide=d.wide.includes(i);
       if(q && !String(i).includes(q) && !title.toLowerCase().includes(q)) continue;
-      html+=`<div class="g-card${isWide?' wide-card':''}">
+      html+=`<div class="g-card${isWide?' wide-card':''}" draggable="true" data-num="${i}">
         <div class="g-thumb">
           <img src="${cfg.thumbBase}${pad}_small.jpg" alt="" loading="lazy"
             onerror="this.parentNode.innerHTML='<div class=\\'g-thumb-err\\'>🖼</div>'">
@@ -1380,6 +1420,7 @@ const UI = {
           <div class="g-spec">${escHtml(spec)}</div>
         </div>
         <div class="g-actions">
+          <span class="g-drag-handle" title="드래그하여 순서 변경">⠿</span>
           <button class="btn btn-ghost btn-sm btn-icon" title="편집" onclick="GalleryActions.openEdit(${i})">✏️</button>
           <button class="btn btn-ghost btn-sm btn-icon" title="${isWide?'와이드 해제':'와이드 지정'}" onclick="GalleryActions.toggleWide(${i})">
             ${isWide?'⬛':'▬'}
@@ -1389,6 +1430,7 @@ const UI = {
       </div>`;
     }
     grid.innerHTML = html||'<div class="empty-state"><div class="es-icon">🔍</div>검색 결과 없음</div>';
+    SortManager.bindEvents();
   },
 
   updateGhStatus(){
@@ -1414,6 +1456,82 @@ GalleryActions.toggleWide = async function(num){
 };
 
 function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ══════════════════════════════════════════════════════════════
+// SORT MANAGER (drag-to-reorder)
+// ══════════════════════════════════════════════════════════════
+const SortManager = {
+  _dragNum: null,
+  _changed: false,
+  _origOrder: null,
+
+  bindEvents(){
+    const cards = document.querySelectorAll('#gallery-grid .g-card[draggable]');
+    cards.forEach(card=>{
+      card.addEventListener('dragstart', e=>{
+        this._dragNum = +card.dataset.num;
+        this._origOrder = this._origOrder || [...(GalleryState.getData().order||[])];
+        card.classList.add('drag-source');
+        e.dataTransfer.effectAllowed='move';
+      });
+      card.addEventListener('dragend', ()=>{
+        card.classList.remove('drag-source','drag-over-top','drag-over-bot');
+        document.querySelectorAll('.g-card').forEach(c=>c.classList.remove('drag-over-top','drag-over-bot'));
+      });
+      card.addEventListener('dragover', e=>{
+        e.preventDefault();
+        e.dataTransfer.dropEffect='move';
+        const rect=card.getBoundingClientRect();
+        const mid=rect.top+rect.height/2;
+        document.querySelectorAll('.g-card').forEach(c=>c.classList.remove('drag-over-top','drag-over-bot'));
+        card.classList.add(e.clientY<mid?'drag-over-top':'drag-over-bot');
+      });
+      card.addEventListener('dragleave', ()=>{
+        card.classList.remove('drag-over-top','drag-over-bot');
+      });
+      card.addEventListener('drop', e=>{
+        e.preventDefault();
+        const targetNum = +card.dataset.num;
+        if(this._dragNum===targetNum) return;
+        const d = GalleryState.getData();
+        if(!d.order) d.order = Array.from({length:d.total},(_,k)=>d.total-k);
+        const fromIdx = d.order.indexOf(this._dragNum);
+        let toIdx = d.order.indexOf(targetNum);
+        if(fromIdx<0||toIdx<0) return;
+        // insert before or after
+        const rect=card.getBoundingClientRect();
+        const insertAfter = e.clientY >= rect.top+rect.height/2;
+        d.order.splice(fromIdx,1);
+        toIdx = d.order.indexOf(targetNum);
+        d.order.splice(insertAfter?toIdx+1:toIdx, 0, this._dragNum);
+        this._changed=true;
+        document.getElementById('sort-save-bar').classList.add('visible');
+        UI.renderGallery();
+      });
+    });
+  },
+
+  discard(){
+    const d=GalleryState.getData();
+    if(this._origOrder) d.order=[...this._origOrder];
+    this._changed=false;
+    this._origOrder=null;
+    document.getElementById('sort-save-bar').classList.remove('visible');
+    UI.renderGallery();
+  },
+
+  async save(){
+    if(!GH.token){ toast('GitHub 토큰을 설정에서 입력해주세요','err'); return; }
+    toast('순서 저장 중...','info');
+    try {
+      await GalleryState.pushIndex('edit: update display order');
+      this._changed=false;
+      this._origOrder=null;
+      document.getElementById('sort-save-bar').classList.remove('visible');
+      toast('순서 저장 완료','ok');
+    } catch(e){ toast('저장 실패: '+e.message,'err'); }
+  },
+};
 
 // ══════════════════════════════════════════════════════════════
 // TOAST
