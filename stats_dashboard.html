@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>DK 운영 통계</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #090909;
+      --s1:     #111;
+      --s2:     #181818;
+      --s3:     #222;
+      --border: rgba(255,255,255,0.07);
+      --bd2:    rgba(255,255,255,0.13);
+      --text:   #f0f0f0;
+      --sub:    rgba(255,255,255,0.45);
+      --muted:  rgba(255,255,255,0.2);
+      /* mode colors */
+      --mc: #5b9cf6;   /* daily  – blue   */
+    }
+    html, body {
+      width:100%; min-height:100%;
+      background:var(--bg); color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    /* ── ACCENT ── */
+    .accent-bar { height:3px; background:linear-gradient(90deg,var(--mc),#a78bfa 50%,#3ecf72); transition:background .4s; }
+
+    /* ── HEADER ── */
+    .header { background:var(--s1); border-bottom:1px solid var(--border); padding:12px 18px; position:sticky; top:0; z-index:200; }
+    .header-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+    .header-left  { display:flex; align-items:center; gap:11px; }
+    .logo { width:36px; height:36px; border-radius:10px; background:linear-gradient(145deg,#1d1d1d,#0a0a0a); border:1px solid var(--bd2); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:900; flex-shrink:0; }
+    .header-title { font-size:15px; font-weight:800; }
+    .header-sub   { font-size:11px; color:var(--sub); margin-top:1px; }
+    .header-right { display:flex; align-items:center; gap:7px; }
+    .updated-txt  { font-size:11px; color:var(--muted); white-space:nowrap; }
+    .hdr-btn { border:1px solid var(--bd2); background:var(--s2); color:var(--sub); border-radius:8px; padding:6px 12px; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; text-decoration:none; display:inline-flex; align-items:center; gap:4px; transition:background .15s,color .15s; }
+    .hdr-btn:hover { background:var(--s3); color:var(--text); }
+
+    /* ── MODE TABS ── */
+    .mode-bar { background:var(--s1); border-bottom:1px solid var(--border); }
+    .mode-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:0 18px; gap:10px; }
+    .mode-tabs  { display:flex; }
+    .mode-tab {
+      padding:11px 18px; font-size:13px; font-weight:700; cursor:pointer; color:var(--sub);
+      background:transparent; border:none; position:relative; transition:color .15s; white-space:nowrap;
+    }
+    .mode-tab::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; border-radius:2px 2px 0 0; background:transparent; transition:background .2s; }
+    .mode-tab.active { color:var(--text); }
+    .mode-tab.active::after { background:var(--mc); }
+
+    /* ── DATE NAV ── */
+    .date-nav { display:flex; align-items:center; gap:6px; padding:8px 0; }
+    .nav-btn { width:30px; height:30px; border:1px solid var(--bd2); background:var(--s2); color:var(--sub); border-radius:8px; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; transition:background .12s,color .12s; flex-shrink:0; }
+    .nav-btn:hover { background:var(--s3); color:var(--text); }
+    .period-label { font-size:13px; font-weight:700; min-width:200px; text-align:center; }
+    .today-btn { border:1px solid var(--bd2); background:var(--s2); color:var(--sub); border-radius:8px; padding:5px 11px; font-size:12px; font-weight:600; cursor:pointer; transition:background .12s,color .12s; white-space:nowrap; }
+    .today-btn:hover { background:var(--s3); color:var(--text); }
+
+    /* ── CONTENT ── */
+    .content { max-width:1200px; margin:0 auto; padding:16px 16px 60px; }
+
+    /* ── LOADING / ERROR ── */
+    .state-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:50vh; gap:14px; color:var(--sub); }
+    .spinner { width:34px; height:34px; border-radius:50%; border:3px solid var(--border); border-top-color:var(--mc); animation:spin .8s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .state-txt { font-size:14px; }
+    .retry-btn { border:1px solid var(--bd2); background:var(--s2); color:var(--text); border-radius:10px; padding:9px 20px; font-size:13px; font-weight:700; cursor:pointer; }
+    .retry-btn:hover { background:var(--s3); }
+
+    /* ── CARDS ── */
+    .cards { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:12px; }
+    @media(max-width:900px){ .cards{ grid-template-columns:repeat(2,1fr); } }
+    @media(max-width:500px){ .cards{ grid-template-columns:1fr 1fr; } }
+
+    .card {
+      background:var(--s1); border:1px solid var(--border);
+      border-radius:15px; padding:16px 18px; position:relative; overflow:hidden;
+      transition:border-color .15s;
+    }
+    .card:hover { border-color:var(--bd2); }
+    .card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--cc, #5b9cf6); }
+    .card-label { font-size:11px; color:var(--sub); margin-bottom:9px; letter-spacing:.02em; }
+    .card-value {
+      font-size:30px; font-weight:900; line-height:1;
+      background:var(--cc, #5b9cf6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .card-unit  { font-size:13px; font-weight:700; margin-left:2px; }
+    .card-sub   { font-size:11px; color:var(--muted); margin-top:5px; }
+    .card-icon  { position:absolute; right:14px; top:14px; font-size:26px; opacity:.1; }
+
+    /* ── CHART GRID ── */
+    .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
+    .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:10px; }
+    @media(max-width:900px){ .grid-2,.grid-3{ grid-template-columns:1fr; } }
+
+    /* ── CHART CARD ── */
+    .chart-card { background:var(--s1); border:1px solid var(--border); border-radius:15px; padding:16px 18px; margin-bottom:10px; transition:border-color .15s; }
+    .chart-card:hover { border-color:var(--bd2); }
+
+    .chart-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+    .chart-title  { font-size:13px; font-weight:700; }
+    .chart-badge  { font-size:10px; color:var(--sub); background:rgba(255,255,255,0.06); border-radius:20px; padding:2px 8px; }
+
+    .chart-wrap { position:relative; }
+    .chart-wrap canvas { display:block; }
+
+    /* ── DONUT ── */
+    .donut-wrap { position:relative; display:flex; flex-direction:column; align-items:center; }
+    .donut-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-56%); text-align:center; pointer-events:none; }
+    .donut-pct { font-size:24px; font-weight:900; line-height:1; }
+    .donut-lbl { font-size:10px; color:var(--sub); margin-top:2px; }
+
+    /* ── LEGEND ── */
+    .legend { display:flex; flex-wrap:wrap; gap:5px 12px; margin-top:10px; justify-content:center; }
+    .legend-item { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--sub); }
+    .legend-dot  { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+
+    /* ── 수익 없음 안내 ── */
+    .no-price {
+      display:flex; align-items:center; justify-content:center; gap:6px;
+      font-size:11px; color:var(--muted); margin-top:4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="accent-bar" id="accentBar"></div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="logo">DK</div>
+      <div>
+        <div class="header-title">DK 운영 통계</div>
+        <div class="header-sub">통합마스터로그 실시간 분석</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="updated-txt" id="updatedAt"></span>
+      <button class="hdr-btn" onclick="loadStats()">↺</button>
+      <a class="hdr-btn" href="https://docs.google.com/spreadsheets/d/1TVzwgFW5oaqL2e0LjCZl0ZPc_gxcr7cFESZ-sqOIjeU/edit" target="_blank" rel="noopener">↗ 원본</a>
+    </div>
+  </div>
+</header>
+
+<!-- MODE BAR -->
+<div class="mode-bar">
+  <div class="mode-inner">
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-mode="daily"   onclick="switchMode('daily')">📅 일간</button>
+      <button class="mode-tab"        data-mode="weekly"  onclick="switchMode('weekly')">📈 주간</button>
+      <button class="mode-tab"        data-mode="monthly" onclick="switchMode('monthly')">📊 월간</button>
+    </div>
+    <div class="date-nav">
+      <button class="nav-btn" onclick="navigate(-1)">‹</button>
+      <span class="period-label" id="periodLabel">—</span>
+      <button class="nav-btn" onclick="navigate(1)">›</button>
+      <button class="today-btn" onclick="goToday()">오늘</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <div class="state-screen" id="loadingView">
+    <div class="spinner"></div>
+    <div class="state-txt" id="loadingTxt">데이터 불러오는 중...</div>
+  </div>
+
+  <div class="state-screen" id="errorView" style="display:none">
+    <div style="font-size:36px">⚠️</div>
+    <div class="state-txt" id="errorMsg">데이터를 불러오지 못했습니다.</div>
+    <button class="retry-btn" onclick="loadStats()">다시 시도</button>
+  </div>
+
+  <div id="dashboard" style="display:none">
+
+    <!-- ① 요약 카드 -->
+    <div class="cards">
+      <div class="card" style="--cc:linear-gradient(135deg,#5b9cf6,#818cf8)">
+        <div class="card-icon">📋</div>
+        <div class="card-label">예약 건수</div>
+        <div class="card-value" id="c-count">—</div>
+        <div class="card-sub" id="c-count-sub"></div>
+      </div>
+      <div class="card" style="--cc:linear-gradient(135deg,#38bdf8,#34d399)">
+        <div class="card-icon">👥</div>
+        <div class="card-label">총 인원</div>
+        <div class="card-value" id="c-people">—<span class="card-unit" style="font-size:16px">명</span></div>
+        <div class="card-sub" id="c-people-sub"></div>
+      </div>
+      <div class="card" style="--cc:linear-gradient(135deg,#f59e0b,#fb923c)">
+        <div class="card-icon">💰</div>
+        <div class="card-label">예상 수익</div>
+        <div class="card-value" id="c-revenue">—</div>
+        <div class="card-sub" id="c-revenue-sub"></div>
+      </div>
+      <div class="card" style="--cc:linear-gradient(135deg,#a78bfa,#ec4899)">
+        <div class="card-icon">✅</div>
+        <div class="card-label">체크인율</div>
+        <div class="card-value" id="c-checkin">—</div>
+        <div class="card-sub" id="c-checkin-sub"></div>
+      </div>
+    </div>
+
+    <!-- ② 기간 분포 바 차트 -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <span class="chart-title" id="barChartTitle">📈 예약 분포</span>
+        <span class="chart-badge" id="badge-bar"></span>
+      </div>
+      <div class="chart-wrap" style="height:170px">
+        <canvas id="chart-bar"></canvas>
+      </div>
+    </div>
+
+    <!-- ③ 상품별 + 유입경로 -->
+    <div class="grid-2">
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">📦 상품별 예약</span>
+          <span class="chart-badge" id="badge-prod"></span>
+        </div>
+        <div class="donut-wrap" style="height:190px">
+          <canvas id="chart-product"></canvas>
+          <div class="donut-center">
+            <div class="donut-pct" id="prod-center" style="color:#f59e0b">—</div>
+            <div class="donut-lbl">종류</div>
+          </div>
+        </div>
+        <div class="legend" id="legend-product"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">📡 유입 경로</span>
+          <span class="chart-badge" id="badge-src"></span>
+        </div>
+        <div class="chart-wrap" style="height:190px">
+          <canvas id="chart-source"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- ④ 편집 / 발송 / SNS -->
+    <div class="grid-3">
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">✏️ 편집 완료율</span>
+          <span class="chart-badge" id="badge-edit"></span>
+        </div>
+        <div class="donut-wrap" style="height:150px">
+          <canvas id="chart-edit"></canvas>
+          <div class="donut-center">
+            <div class="donut-pct" id="edit-pct" style="color:#5b9cf6">—</div>
+            <div class="donut-lbl">완료</div>
+          </div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">📨 발송 완료율</span>
+          <span class="chart-badge" id="badge-deliv"></span>
+        </div>
+        <div class="donut-wrap" style="height:150px">
+          <canvas id="chart-delivery"></canvas>
+          <div class="donut-center">
+            <div class="donut-pct" id="deliv-pct" style="color:#34d399">—</div>
+            <div class="donut-lbl">발송</div>
+          </div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">📸 SNS 동의율</span>
+          <span class="chart-badge" id="badge-sns"></span>
+        </div>
+        <div class="donut-wrap" style="height:150px">
+          <canvas id="chart-sns"></canvas>
+          <div class="donut-center">
+            <div class="donut-pct" id="sns-pct" style="color:#a78bfa">—</div>
+            <div class="donut-lbl">동의</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /#dashboard -->
+</div>
+
+<script>
+// ── 설정 ─────────────────────────────────────────────────────
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwoqVAZVZclcog_8hGo6W5xKCGWdK9HHRCw-CtidsA3sygtPJatZ88b82iouE0brF0G/exec';
+
+const MODE_COLOR = {
+  daily:   { mc: '#5b9cf6', grad: 'linear-gradient(90deg,#5b9cf6,#818cf8 50%,#3ecf72)' },
+  weekly:  { mc: '#34d399', grad: 'linear-gradient(90deg,#34d399,#38bdf8 50%,#5b9cf6)' },
+  monthly: { mc: '#a78bfa', grad: 'linear-gradient(90deg,#a78bfa,#ec4899 50%,#fb923c)' }
+};
+
+const PALETTE = ['#5b9cf6','#a78bfa','#f59e0b','#34d399','#fb7185','#38bdf8','#fb923c','#a3e635','#e879f9','#67e8f9'];
+
+// ── 상태 ──────────────────────────────────────────────────────
+let mode    = 'daily';
+let target  = todayStr();
+let charts  = {};
+
+// ── 날짜 유틸 ──────────────────────────────────────────────────
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+function thisMonthStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}`;
+}
+function mondayStr(dateStr) {
+  const d = new Date(dateStr);
+  const day = d.getDay();
+  d.setDate(d.getDate() - (day === 0 ? 6 : day - 1));
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+function pad(n) { return String(n).padStart(2,'0'); }
+
+function periodDisplay(m, t) {
+  const KO_DAY = ['일','월','화','수','목','금','토'];
+  if (m === 'daily') {
+    const d = new Date(t);
+    return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${KO_DAY[d.getDay()]})`;
+  }
+  if (m === 'weekly') {
+    const mon = new Date(t);
+    const sun = new Date(t); sun.setDate(sun.getDate()+6);
+    const wk  = Math.ceil(mon.getDate()/7);
+    return `${mon.getFullYear()}년 ${mon.getMonth()+1}월 ${wk}주 · ${pad(mon.getMonth()+1)}/${pad(mon.getDate())}~${pad(sun.getMonth()+1)}/${pad(sun.getDate())}`;
+  }
+  // monthly
+  const [y,mo] = t.split('-');
+  return `${y}년 ${parseInt(mo)}월`;
+}
+
+// ── 모드 / 날짜 전환 ───────────────────────────────────────────
+function switchMode(m) {
+  mode = m;
+  target = m === 'daily'   ? todayStr()    :
+           m === 'weekly'  ? mondayStr(todayStr()) :
+                             thisMonthStr();
+  updateModeUI();
+  loadStats();
+}
+
+function navigate(dir) {
+  if (mode === 'daily') {
+    const d = new Date(target); d.setDate(d.getDate()+dir);
+    target = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  } else if (mode === 'weekly') {
+    const d = new Date(target); d.setDate(d.getDate()+dir*7);
+    target = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  } else {
+    const [y,mo] = target.split('-').map(Number);
+    const d = new Date(y, mo-1+dir, 1);
+    target = `${d.getFullYear()}-${pad(d.getMonth()+1)}`;
+  }
+  document.getElementById('periodLabel').textContent = periodDisplay(mode, target);
+  loadStats();
+}
+
+function goToday() {
+  target = mode === 'daily'  ? todayStr()    :
+           mode === 'weekly' ? mondayStr(todayStr()) :
+                               thisMonthStr();
+  document.getElementById('periodLabel').textContent = periodDisplay(mode, target);
+  loadStats();
+}
+
+function updateModeUI() {
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+  const col = MODE_COLOR[mode];
+  document.documentElement.style.setProperty('--mc', col.mc);
+  document.getElementById('accentBar').style.background = col.grad;
+  document.getElementById('periodLabel').textContent = periodDisplay(mode, target);
+  document.getElementById('loadingTxt').textContent = '데이터 불러오는 중...';
+}
+
+// ── JSONP fetch ────────────────────────────────────────────────
+function fetchStats(m, t) {
+  return new Promise((resolve, reject) => {
+    const cb  = 'gasStats_' + Date.now();
+    const tag = document.createElement('script');
+    window[cb] = (data) => { resolve(data); delete window[cb]; tag.remove(); };
+    tag.src    = `${GAS_URL}?action=getStats&mode=${m}&target=${encodeURIComponent(t)}&callback=${cb}`;
+    tag.onerror = () => reject(new Error('네트워크 오류'));
+    document.head.appendChild(tag);
+    setTimeout(() => { reject(new Error('응답 시간 초과 (20s)')); }, 20000);
+  });
+}
+
+// ── 메인 로드 ──────────────────────────────────────────────────
+async function loadStats() {
+  show('loadingView'); hide('errorView'); hide('dashboard');
+  destroyCharts();
+  try {
+    const res = await fetchStats(mode, target);
+    if (!res.ok) throw new Error(res.error || '알 수 없는 오류');
+    renderDashboard(res);
+  } catch(e) {
+    document.getElementById('errorMsg').textContent = '오류: ' + e.message;
+    show('errorView'); hide('loadingView');
+  }
+}
+
+// ── 렌더 ───────────────────────────────────────────────────────
+function renderDashboard(d) {
+  const s   = d.summary;
+  const col = MODE_COLOR[mode];
+
+  document.getElementById('updatedAt').textContent = d.updatedAt + ' 기준';
+
+  // ① 카드
+  setText('c-count',      s.count);
+  setText('c-count-sub',  d.periodLabel);
+  setText('c-people',     s.people);
+  setText('c-people-sub', s.count ? `1건 평균 ${(s.people/s.count).toFixed(1)}명` : '');
+
+  if (d.hasPrices) {
+    setText('c-revenue',     wonFmt(s.revenue));
+    setText('c-revenue-sub', s.count ? '1건 평균 ' + wonFmt(Math.round(s.revenue/s.count)) : '');
+    document.getElementById('c-revenue-sub').innerHTML =
+      document.getElementById('c-revenue-sub').textContent;
+  } else {
+    document.getElementById('c-revenue').textContent = '—';
+    document.getElementById('c-revenue-sub').innerHTML =
+      '<span style="font-size:10px;color:var(--muted)">⚙ 예약 시트에 결제금액 컬럼 필요</span>';
+  }
+
+  setText('c-checkin',     s.checkinRate + '%');
+  setText('c-checkin-sub', `완료 ${d.checkin.done} / 미완료 ${d.checkin.pending}`);
+
+  // ② 바 차트 (시간대/요일/일별)
+  const barTitle = { daily:'⏰ 시간대별 예약', weekly:'📅 요일별 예약', monthly:'📆 일별 예약' };
+  setText('barChartTitle', barTitle[mode]);
+  setText('badge-bar', `합계 ${d.summary.count}건`);
+  charts.bar = makeBarChart('chart-bar', d.barChart.labels, d.barChart.data, col.mc);
+
+  // ③ 상품별
+  const prodE = sortedEntries(d.products);
+  setText('badge-prod', prodE.length + '종');
+  setText('prod-center', prodE.length);
+  charts.product = makeDonutChart('chart-product', prodE.map(e=>e[0]), prodE.map(e=>e[1]), PALETTE);
+  renderLegend('legend-product', prodE, PALETTE);
+
+  // ③ 유입경로
+  const srcE = sortedEntries(d.sources);
+  setText('badge-src', srcE.length + '경로');
+  charts.source = makeHBarChart('chart-source', srcE.map(e=>e[0]), srcE.map(e=>e[1]));
+
+  // ④ 편집
+  setText('badge-edit', `${d.editStatus.done}/${d.editStatus.done+d.editStatus.pending}`);
+  setText('edit-pct',   s.editRate + '%');
+  charts.edit = makeRateDonut('chart-edit', s.editRate, '#5b9cf6');
+
+  // ④ 발송
+  setText('badge-deliv', `${d.delivery.done}/${d.delivery.done+d.delivery.pending}`);
+  setText('deliv-pct',   s.deliveryRate + '%');
+  charts.delivery = makeRateDonut('chart-delivery', s.deliveryRate, '#34d399');
+
+  // ④ SNS
+  setText('badge-sns', `${d.sns.yes}/${d.sns.yes+d.sns.no}`);
+  setText('sns-pct',   s.snsRate + '%');
+  charts.sns = makeRateDonut('chart-sns', s.snsRate, '#a78bfa');
+
+  hide('loadingView'); show('dashboard');
+}
+
+// ── 차트 팩토리 ────────────────────────────────────────────────
+const BASE_OPT = {
+  responsive:true, maintainAspectRatio:false,
+  animation:{ duration:500 },
+  plugins:{ legend:{ display:false } }
+};
+
+function makeBarChart(id, labels, data, mc) {
+  const ctx  = getCtx(id);
+  const grad = ctx.createLinearGradient(0,0,0,170);
+  grad.addColorStop(0, mc + 'dd');
+  grad.addColorStop(1, mc + '44');
+  return new Chart(ctx, {
+    type:'bar',
+    data:{ labels, datasets:[{ data, backgroundColor:grad, borderRadius:5, borderSkipped:false }] },
+    options:{ ...BASE_OPT, scales:{ x:xScale(), y:yScale() } }
+  });
+}
+
+function makeDonutChart(id, labels, data, colors) {
+  return new Chart(getCtx(id), {
+    type:'doughnut',
+    data:{ labels, datasets:[{ data, backgroundColor:colors.slice(0,data.length), borderWidth:2, borderColor:'#111', hoverOffset:5 }] },
+    options:{ ...BASE_OPT, cutout:'67%',
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{
+        label:(ctx) => ` ${ctx.label}: ${ctx.raw}건 (${pct(ctx.raw, ctx.dataset.data.reduce((a,b)=>a+b,0))}%)`
+      }}}
+    }
+  });
+}
+
+function makeHBarChart(id, labels, data) {
+  const colors = labels.map((_,i) => PALETTE[i%PALETTE.length] + 'bb');
+  return new Chart(getCtx(id), {
+    type:'bar',
+    data:{ labels, datasets:[{ data, backgroundColor:colors, borderRadius:4, borderSkipped:false }] },
+    options:{ ...BASE_OPT, indexAxis:'y',
+      scales:{
+        x:{ grid:{ color:'rgba(255,255,255,0.05)' }, border:{ display:false }, ticks:{ color:'rgba(255,255,255,0.35)', font:{ size:11 } } },
+        y:{ grid:{ display:false }, border:{ display:false }, ticks:{ color:'rgba(255,255,255,0.6)', font:{ size:11 } } }
+      }
+    }
+  });
+}
+
+function makeRateDonut(id, rate, color) {
+  return new Chart(getCtx(id), {
+    type:'doughnut',
+    data:{ datasets:[{ data:[rate, 100-rate], backgroundColor:[color,'rgba(255,255,255,0.05)'], borderWidth:0 }] },
+    options:{ ...BASE_OPT, cutout:'72%', plugins:{ legend:{ display:false }, tooltip:{ enabled:false } } }
+  });
+}
+
+function xScale() {
+  return { grid:{ color:'rgba(255,255,255,0.05)' }, border:{ display:false }, ticks:{ color:'rgba(255,255,255,0.3)', font:{ size:10 }, maxRotation:0 } };
+}
+function yScale() {
+  return { grid:{ color:'rgba(255,255,255,0.05)' }, border:{ display:false }, ticks:{ color:'rgba(255,255,255,0.3)', font:{ size:10 } } };
+}
+
+// ── 레전드 ─────────────────────────────────────────────────────
+function renderLegend(id, entries, colors) {
+  const total = entries.reduce((a,e)=>a+e[1],0);
+  document.getElementById(id).innerHTML = entries.map(([k,v],i) =>
+    `<div class="legend-item">
+       <span class="legend-dot" style="background:${colors[i%colors.length]}"></span>
+       <span>${k} <span style="opacity:.45">${v}건</span></span>
+     </div>`
+  ).join('');
+}
+
+// ── 유틸 ───────────────────────────────────────────────────────
+function getCtx(id) { return document.getElementById(id).getContext('2d'); }
+function setText(id, v) { const el=document.getElementById(id); if(el) el.textContent=v; }
+function show(id) { document.getElementById(id).style.display=''; }
+function hide(id) { document.getElementById(id).style.display='none'; }
+function sortedEntries(obj) { return Object.entries(obj).sort((a,b)=>b[1]-a[1]); }
+function pct(v, t) { return t ? Math.round(v/t*100) : 0; }
+function wonFmt(n) { return '₩' + n.toLocaleString('ko-KR'); }
+function destroyCharts() { Object.values(charts).forEach(c=>c&&c.destroy()); charts={}; }
+
+// ── 초기화 ─────────────────────────────────────────────────────
+updateModeUI();
+loadStats();
+</script>
+</body>
+</html>
