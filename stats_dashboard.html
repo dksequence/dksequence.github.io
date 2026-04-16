@@ -312,6 +312,7 @@
         <div class="chart-header">
           <span class="chart-title">📸 SNS 동의율</span>
           <span class="chart-badge" id="badge-sns"></span>
+          <a href="https://docs.google.com/spreadsheets/d/1TVzwgFW5oaqL2e0LjCZl0ZPc_gxcr7cFESZ-sqOIjeU" target="_blank" class="hdr-btn" style="margin-left:auto;font-size:11px;padding:4px 9px">시트 ↗</a>
         </div>
         <div class="donut-wrap" style="height:150px">
           <canvas id="chart-sns"></canvas>
@@ -341,13 +342,14 @@
                 <th>결과물</th>
                 <th>발송 상태</th>
                 <th>발송 시각</th>
+                <th>열람</th>
               </tr>
             </thead>
             <tbody id="customer-tbody"></tbody>
           </table>
         </div>
         <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:10px;color:var(--muted)">
-          ※ 메일 열람 여부는 현재 추적 미구현 — 발송 상태만 표시됩니다
+          ※ 열람: 고객이 메일 내 결과물 링크를 클릭한 시각 기준으로 기록됩니다
         </div>
       </div>
     </div>
@@ -544,8 +546,9 @@ function renderDashboard(d) {
     setText('badge-customers', list.length + '명');
     const tbody = document.getElementById('customer-tbody');
     tbody.innerHTML = list.map(c => {
-      const isSent = c.delivSt && c.delivSt.indexOf('발송완료') === 0;
-      const isEdit = c.editSt  && (c.editSt.indexOf('완료') === 0);
+      const isSent   = c.delivSt && c.delivSt.indexOf('발송완료') === 0;
+      const isEdit   = c.editSt  && c.editSt.indexOf('완료') !== -1;
+      const isClicked = !!(c.clickedAt);
       const sentPill = isSent
         ? `<span class="badge-pill pill-sent">발송완료</span>`
         : `<span class="badge-pill pill-unsent">미발송</span>`;
@@ -555,16 +558,18 @@ function renderDashboard(d) {
       const resultBtn = c.resultUrl
         ? `<a class="badge-pill pill-link" href="${c.resultUrl}" target="_blank">링크 ↗</a>`
         : `<span style="color:var(--muted);font-size:11px">—</span>`;
-      const sentTime = isSent && c.delivAt
-        ? `<div class="cl-sent-time">${c.delivAt.substring(0,16)}</div>` : '';
+      const clickPill = isClicked
+        ? `<span class="badge-pill pill-sent" title="${escHtml(c.clickedAt)}">열람 ✓<div class="cl-sent-time" style="font-size:9px;margin-top:2px">${c.clickedAt.substring(5,16)}</div></span>`
+        : `<span class="badge-pill" style="background:rgba(255,255,255,0.06);color:var(--muted)">미확인</span>`;
       return `<tr>
         <td class="cl-time">${c.time||'—'}</td>
         <td class="cl-name">${escHtml(c.name||'—')}</td>
         <td class="cl-product">${escHtml(c.product||'—')}</td>
         <td>${editPill}</td>
         <td>${resultBtn}</td>
-        <td>${sentPill}${sentTime}</td>
-        <td class="cl-sent-time">${isSent && c.delivAt ? c.delivAt.substring(0,16) : '—'}</td>
+        <td>${sentPill}</td>
+        <td class="cl-sent-time">${isSent && c.delivAt ? c.delivAt : '—'}</td>
+        <td>${clickPill}</td>
       </tr>`;
     }).join('');
   } else {
