@@ -273,7 +273,7 @@ html,body{width:100%;min-height:100%;background:var(--bg);color:var(--text);
       </div>
 
       <!-- 메타데이터 입력 -->
-      <div id="upload-form" style="display:none;display:flex;flex-direction:column;gap:12px;">
+      <div id="upload-form" style="display:none;flex-direction:column;gap:12px;">
         <div class="field">
           <label>제목 (Title)</label>
           <input type="text" id="up-title" placeholder="예: Glass Reflection">
@@ -291,12 +291,12 @@ html,body{width:100%;min-height:100%;background:var(--bg);color:var(--text);
           <label class="toggle"><input type="checkbox" id="up-wide"><span class="toggle-slider"></span></label>
         </div>
         <div class="toggle-row">
-          <label>워터마크 삽입</label>
+          <label>워터마크 삽입 <span id="wm-status-badge" style="font-size:10px;color:var(--muted);margin-left:4px"></span></label>
           <label class="toggle"><input type="checkbox" id="up-watermark" checked><span class="toggle-slider"></span></label>
         </div>
         <div class="toggle-row">
           <label>촬영정보 이미지에 합성</label>
-          <label class="toggle"><input type="checkbox" id="up-spec-burn"><span class="toggle-slider"></span></label>
+          <label class="toggle"><input type="checkbox" id="up-spec-burn" checked><span class="toggle-slider"></span></label>
         </div>
 
         <button class="btn btn-blue" style="width:100%;padding:11px" onclick="Upload.openPreview()">👁 미리보기 및 위치 조정</button>
@@ -928,6 +928,14 @@ const Upload = {
     if(wmCfg.opacity)   this.wmPos.opacity   = wmCfg.opacity;
     this._setPosByName(this.wmPos,  wmCfg.pos||'rb');
     this._setPosByName(this.specPos, specCfg.pos||'lb');
+
+    // 워터마크 이미지 상태 표시
+    const wmBadge = document.getElementById('wm-status-badge');
+    if(wmBadge){
+      const hasWm = !!Store.get(CFG.KEY.WM_IMG, null);
+      wmBadge.textContent = hasWm ? '✓ 이미지 설정됨' : '⚠ 이미지 없음 — 설정에서 업로드 필요';
+      wmBadge.style.color = hasWm ? 'var(--green)' : 'var(--orange)';
+    }
   },
 
   _setPosByName(obj, pos){
@@ -971,6 +979,7 @@ const Upload = {
     [1,2,3].forEach(i=>this._prog(i,''));
 
     const wmSrc = Store.get(CFG.KEY.WM_IMG,null);
+    if(useWm && !wmSrc){ toast('워터마크 이미지가 없습니다. ⚙ 설정에서 워터마크 PNG를 먼저 업로드하세요.','err'); return; }
     const wmState  = useWm && wmSrc ? {...this.wmPos, src:wmSrc} : null;
     const specState = burnSpec && spec ? {...this.specPos, text:spec} : null;
 
@@ -1029,7 +1038,7 @@ const Upload = {
     document.getElementById('up-spec').value='';
     document.getElementById('up-wide').checked=false;
     document.getElementById('up-watermark').checked=true;
-    document.getElementById('up-spec-burn').checked=false;
+    document.getElementById('up-spec-burn').checked=true;
     document.getElementById('file-input').value='';
   },
 };
