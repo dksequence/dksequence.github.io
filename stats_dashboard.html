@@ -127,6 +127,35 @@
       display:flex; align-items:center; justify-content:center; gap:6px;
       font-size:11px; color:var(--muted); margin-top:4px;
     }
+
+    /* ── 고객 리스트 ── */
+    .customer-list { width:100%; border-collapse:collapse; font-size:12px; }
+    .customer-list th {
+      padding:8px 12px; text-align:left; font-size:10px; font-weight:700;
+      color:var(--sub); letter-spacing:.06em; text-transform:uppercase;
+      border-bottom:1px solid var(--border); white-space:nowrap;
+    }
+    .customer-list td {
+      padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.04);
+      vertical-align:middle; white-space:nowrap;
+    }
+    .customer-list tr:last-child td { border-bottom:none; }
+    .customer-list tr:hover td { background:rgba(255,255,255,0.02); }
+    .cl-name { font-weight:700; color:var(--text); }
+    .cl-product { color:var(--sub); font-size:11px; max-width:160px; overflow:hidden; text-overflow:ellipsis; }
+    .cl-time { color:var(--muted); font-size:11px; }
+    .badge-pill {
+      display:inline-block; padding:2px 8px; border-radius:20px;
+      font-size:10px; font-weight:700; white-space:nowrap;
+    }
+    .pill-sent    { background:rgba(52,211,153,0.12); color:#34d399; border:1px solid rgba(52,211,153,0.25); }
+    .pill-unsent  { background:rgba(255,255,255,0.05); color:var(--muted); border:1px solid var(--border); }
+    .pill-edit-ok { background:rgba(91,156,246,0.12); color:#5b9cf6; border:1px solid rgba(91,156,246,0.25); }
+    .pill-edit-no { background:rgba(255,255,255,0.05); color:var(--muted); border:1px solid var(--border); }
+    .pill-link    { background:rgba(201,168,76,0.12); color:#c9a84c; border:1px solid rgba(201,168,76,0.25); text-decoration:none; }
+    .pill-link:hover { background:rgba(201,168,76,0.25); }
+    .cl-sent-time { font-size:10px; color:var(--muted); margin-top:2px; }
+    #customer-section { display:none; }
   </style>
 </head>
 <body>
@@ -290,6 +319,35 @@
             <div class="donut-pct" id="sns-pct" style="color:#a78bfa">—</div>
             <div class="donut-lbl">동의</div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ⑤ 고객 리스트 (daily 모드 전용) -->
+    <div id="customer-section">
+      <div class="chart-card" style="margin-bottom:10px">
+        <div class="chart-header">
+          <span class="chart-title">👤 당일 고객 현황</span>
+          <span class="chart-badge" id="badge-customers"></span>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="customer-list">
+            <thead>
+              <tr>
+                <th>시간</th>
+                <th>이름</th>
+                <th>상품</th>
+                <th>편집</th>
+                <th>결과물</th>
+                <th>발송 상태</th>
+                <th>발송 시각</th>
+              </tr>
+            </thead>
+            <tbody id="customer-tbody"></tbody>
+          </table>
+        </div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:10px;color:var(--muted)">
+          ※ 메일 열람 여부는 현재 추적 미구현 — 발송 상태만 표시됩니다
         </div>
       </div>
     </div>
@@ -478,8 +536,45 @@ function renderDashboard(d) {
   setText('sns-pct',   s.snsRate + '%');
   charts.sns = makeRateDonut('chart-sns', s.snsRate, '#a78bfa');
 
+  // ⑤ 고객 리스트 (daily 모드에서만 표시)
+  const custSec = document.getElementById('customer-section');
+  if (mode === 'daily' && d.customers && d.customers.length) {
+    custSec.style.display = 'block';
+    const list = d.customers.slice().sort((a,b)=> (a.time||'').localeCompare(b.time||''));
+    setText('badge-customers', list.length + '명');
+    const tbody = document.getElementById('customer-tbody');
+    tbody.innerHTML = list.map(c => {
+      const isSent = c.delivSt && c.delivSt.indexOf('발송완료') === 0;
+      const isEdit = c.editSt  && (c.editSt.indexOf('완료') === 0);
+      const sentPill = isSent
+        ? `<span class="badge-pill pill-sent">발송완료</span>`
+        : `<span class="badge-pill pill-unsent">미발송</span>`;
+      const editPill = isEdit
+        ? `<span class="badge-pill pill-edit-ok">완료</span>`
+        : `<span class="badge-pill pill-edit-no">대기</span>`;
+      const resultBtn = c.resultUrl
+        ? `<a class="badge-pill pill-link" href="${c.resultUrl}" target="_blank">링크 ↗</a>`
+        : `<span style="color:var(--muted);font-size:11px">—</span>`;
+      const sentTime = isSent && c.delivAt
+        ? `<div class="cl-sent-time">${c.delivAt.substring(0,16)}</div>` : '';
+      return `<tr>
+        <td class="cl-time">${c.time||'—'}</td>
+        <td class="cl-name">${escHtml(c.name||'—')}</td>
+        <td class="cl-product">${escHtml(c.product||'—')}</td>
+        <td>${editPill}</td>
+        <td>${resultBtn}</td>
+        <td>${sentPill}${sentTime}</td>
+        <td class="cl-sent-time">${isSent && c.delivAt ? c.delivAt.substring(0,16) : '—'}</td>
+      </tr>`;
+    }).join('');
+  } else {
+    custSec.style.display = 'none';
+  }
+
   hide('loadingView'); show('dashboard');
 }
+
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 // ── 차트 팩토리 ────────────────────────────────────────────────
 const BASE_OPT = {
