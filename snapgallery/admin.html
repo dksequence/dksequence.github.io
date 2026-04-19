@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DK Gallery — 관리</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #111; color: #ddd; font-family: 'Helvetica Neue', Arial, sans-serif; min-height: 100vh; }
+
+    /* ── Login ── */
+    .login-wrap {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh;
+    }
+    .login-box {
+      background: #1a1a1a; border: 1px solid #2a2a2a;
+      padding: 40px 48px; width: 320px; text-align: center;
+    }
+    .login-box h2 { font-size: 0.85rem; letter-spacing: 0.3em; font-weight: 400; margin-bottom: 28px; color: #888; text-transform: uppercase; }
+    .login-box input {
+      width: 100%; background: #111; border: 1px solid #2e2e2e; color: #ddd;
+      padding: 10px 14px; font-size: 0.85rem; margin-bottom: 12px; outline: none;
+    }
+    .login-box input:focus { border-color: #555; }
+    .login-box button {
+      width: 100%; background: #fff; color: #111; border: none;
+      padding: 11px; font-size: 0.78rem; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer;
+    }
+    .login-box button:hover { background: #ddd; }
+    .login-err { color: #c44; font-size: 0.75rem; margin-top: 10px; }
+
+    /* ── App Shell ── */
+    #app { display: none; }
+
+    .topbar {
+      background: #1a1a1a; border-bottom: 1px solid #222;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 24px; position: sticky; top: 0; z-index: 100;
+    }
+    .topbar-title { font-size: 0.8rem; letter-spacing: 0.25em; color: #888; text-transform: uppercase; }
+    .topbar-actions { display: flex; gap: 8px; }
+
+    .btn {
+      background: none; border: 1px solid #333; color: #888;
+      padding: 7px 18px; font-size: 0.72rem; letter-spacing: 0.15em;
+      text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+    }
+    .btn:hover { border-color: #888; color: #ccc; }
+    .btn.primary { background: #fff; color: #111; border-color: #fff; }
+    .btn.primary:hover { background: #ddd; }
+    .btn.danger { border-color: #633; color: #c66; }
+    .btn.danger:hover { background: #c66; color: #fff; border-color: #c66; }
+
+    /* ── Status bar ── */
+    .statusbar {
+      padding: 8px 24px; font-size: 0.72rem; letter-spacing: 0.1em;
+      color: #555; border-bottom: 1px solid #1e1e1e; min-height: 32px;
+    }
+    .statusbar.ok  { color: #4a4; }
+    .statusbar.err { color: #c44; }
+
+    /* ── Photo List ── */
+    .photo-list { padding: 20px 24px; max-width: 1100px; margin: 0 auto; }
+
+    .photo-item {
+      display: grid;
+      grid-template-columns: 28px 80px 1fr 180px 100px 80px 80px;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: #161616;
+      border: 1px solid #1e1e1e;
+      margin-bottom: 6px;
+      cursor: grab;
+      transition: background 0.15s;
+    }
+    .photo-item:hover { background: #1d1d1d; }
+    .photo-item.dragging { opacity: 0.4; border-color: #555; }
+    .photo-item.drag-over { border-color: #888; background: #222; }
+
+    .drag-handle { color: #333; font-size: 1rem; cursor: grab; user-select: none; text-align: center; }
+    .drag-handle:hover { color: #888; }
+
+    .thumb-wrap { width: 80px; height: 56px; overflow: hidden; background: #0a0a0a; flex-shrink: 0; }
+    .thumb-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .item-name { font-size: 0.78rem; color: #aaa; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .item-cat input {
+      width: 100%; background: #111; border: 1px solid #2a2a2a; color: #ccc;
+      padding: 6px 10px; font-size: 0.78rem; outline: none;
+    }
+    .item-cat input:focus { border-color: #555; }
+
+    .item-versions { display: flex; gap: 4px; }
+    .ver-badge {
+      font-size: 0.62rem; padding: 2px 6px; border: 1px solid;
+      letter-spacing: 0.08em; text-transform: uppercase; border-radius: 2px;
+    }
+    .ver-badge.on  { border-color: #3a3; color: #3a3; }
+    .ver-badge.off { border-color: #2a2a2a; color: #333; }
+
+    /* active toggle */
+    .toggle { position: relative; width: 36px; height: 20px; cursor: pointer; margin: 0 auto; }
+    .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-track {
+      position: absolute; inset: 0; background: #2a2a2a;
+      border-radius: 20px; transition: background 0.2s;
+    }
+    .toggle input:checked + .toggle-track { background: #4a8; }
+    .toggle-thumb {
+      position: absolute; top: 2px; left: 2px;
+      width: 16px; height: 16px; background: #666; border-radius: 50%;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .toggle input:checked ~ .toggle-thumb { transform: translateX(16px); background: #fff; }
+
+    .delete-btn {
+      background: none; border: none; color: #444; font-size: 1rem;
+      cursor: pointer; padding: 4px 8px; transition: color 0.2s; text-align: center;
+    }
+    .delete-btn:hover { color: #c44; }
+
+    /* ── Empty ── */
+    .empty { text-align: center; padding: 80px; color: #333; font-size: 0.8rem; letter-spacing: 0.2em; }
+
+    /* ── List header ── */
+    .list-header {
+      display: grid;
+      grid-template-columns: 28px 80px 1fr 180px 100px 80px 80px;
+      gap: 12px;
+      padding: 6px 12px;
+      font-size: 0.65rem; letter-spacing: 0.15em; color: #444; text-transform: uppercase;
+      border-bottom: 1px solid #1e1e1e; margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Login -->
+<div class="login-wrap" id="login-wrap">
+  <div class="login-box">
+    <h2>Gallery Admin</h2>
+    <input type="password" id="pw-input" placeholder="비밀번호" autocomplete="current-password">
+    <button id="pw-btn">로그인</button>
+    <div class="login-err" id="login-err"></div>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app">
+  <div class="topbar">
+    <span class="topbar-title">DK Gallery 관리</span>
+    <div class="topbar-actions">
+      <button class="btn" id="btn-scan">Drive 스캔</button>
+      <button class="btn primary" id="btn-save">저장</button>
+    </div>
+  </div>
+  <div class="statusbar" id="statusbar">항목을 로딩 중...</div>
+
+  <div class="photo-list" id="photo-list">
+    <div class="list-header">
+      <span></span>
+      <span>썸네일</span>
+      <span>파일명</span>
+      <span>카테고리</span>
+      <span>버전</span>
+      <span style="text-align:center">표시</span>
+      <span style="text-align:center">삭제</span>
+    </div>
+    <div id="items-container"></div>
+  </div>
+</div>
+
+<script>
+// ── 설정 ─────────────────────────────────────────────────────────────
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbza3xJgitKxhm06ZNb-f9RcPOqC8cMoFBlrqXIzqmilc7YPhX_SYph3vnAVlN_SkFRaig/exec';
+const PASSWORD = '';                // 로그인 시 입력값 사용
+
+let pw = '';
+let items = [];  // { photoId, displayName, category, order, active, fileId_original, fileId_poster, fileId_watermark }
+
+// ── 인증 ─────────────────────────────────────────────────────────────
+function thumbUrl(fileId) {
+  return `https://drive.google.com/thumbnail?id=${fileId}&sz=w120`;
+}
+
+document.getElementById('pw-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('pw-btn').click();
+});
+
+document.getElementById('pw-btn').addEventListener('click', async () => {
+  pw = document.getElementById('pw-input').value.trim();
+  if (!pw) return;
+  setStatus('연결 중...');
+  try {
+    const res = await gasGet('admin');
+    if (!res.ok) throw new Error(res.error);
+    items = res.data;
+    document.getElementById('login-wrap').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    renderList();
+    setStatus(`총 ${items.length}개 항목 로드됨`, 'ok');
+  } catch (e) {
+    document.getElementById('login-err').textContent = '인증 실패 또는 연결 오류';
+  }
+});
+
+// ── API ──────────────────────────────────────────────────────────────
+async function gasGet(action) {
+  const res = await fetch(`${GAS_URL}?action=${action}`);
+  return res.json();
+}
+
+async function gasPost(body) {
+  const res = await fetch(GAS_URL, {
+    method: 'POST',
+    redirect: 'follow',
+    body: JSON.stringify({ ...body, password: pw }),
+  });
+  return res.json();
+}
+
+// ── Drive 스캔 ───────────────────────────────────────────────────────
+document.getElementById('btn-scan').addEventListener('click', async () => {
+  setStatus('Drive 스캔 중...');
+  try {
+    const res = await gasPost({ action: 'scan' });
+    if (!res.ok) throw new Error(res.error);
+    const { added, total } = res.data;
+    // 목록 새로고침
+    const list = await gasGet('admin');
+    items = list.data;
+    renderList();
+    setStatus(`스캔 완료 — 전체 ${total}개, 신규 ${added}개 추가됨`, 'ok');
+  } catch (e) {
+    setStatus('스캔 실패: ' + e.message, 'err');
+  }
+});
+
+// ── 저장 ─────────────────────────────────────────────────────────────
+document.getElementById('btn-save').addEventListener('click', async () => {
+  setStatus('저장 중...');
+  try {
+    // 1. 메타데이터(category, active) 저장
+    const saveRes = await gasPost({ action: 'save', items: items.map(i => ({
+      photoId:  i.photoId,
+      category: i.category,
+      active:   i.active,
+    }))});
+    if (!saveRes.ok) throw new Error(saveRes.error);
+
+    // 2. 순서 저장
+    const orderRes = await gasPost({ action: 'reorder', orders: items.map((i, idx) => ({
+      photoId: i.photoId,
+      order:   idx + 1,
+    }))});
+    if (!orderRes.ok) throw new Error(orderRes.error);
+
+    setStatus('저장 완료', 'ok');
+  } catch (e) {
+    setStatus('저장 실패: ' + e.message, 'err');
+  }
+});
+
+// ── 렌더링 ───────────────────────────────────────────────────────────
+function renderList() {
+  const container = document.getElementById('items-container');
+  if (!items.length) {
+    container.innerHTML = '<div class="empty">항목이 없습니다. Drive 스캔을 실행하세요.</div>';
+    return;
+  }
+
+  container.innerHTML = items.map((item, idx) => {
+    const thumbId = item.fileId_watermark || item.fileId_original || item.fileId_poster;
+    const thumb   = thumbId ? `<img src="${thumbUrl(thumbId)}" alt="">` : '';
+    const hasOri  = !!item.fileId_original;
+    const hasPos  = !!item.fileId_poster;
+    const hasWm   = !!item.fileId_watermark;
+
+    return `
+    <div class="photo-item" draggable="true" data-idx="${idx}" data-id="${item.photoId}">
+      <span class="drag-handle">⠿</span>
+      <div class="thumb-wrap">${thumb}</div>
+      <span class="item-name" title="${item.displayName}">${item.displayName}</span>
+      <div class="item-cat">
+        <input type="text" value="${item.category || ''}" placeholder="카테고리 입력"
+          data-id="${item.photoId}" class="cat-input">
+      </div>
+      <div class="item-versions">
+        <span class="ver-badge ${hasOri ? 'on':'off'}">원본</span>
+        <span class="ver-badge ${hasWm  ? 'on':'off'}">WM</span>
+        <span class="ver-badge ${hasPos ? 'on':'off'}">디자인</span>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" ${item.active === true || item.active === 'TRUE' ? 'checked' : ''}
+          data-id="${item.photoId}" class="active-toggle">
+        <div class="toggle-track"></div>
+        <div class="toggle-thumb"></div>
+      </label>
+      <button class="delete-btn" data-id="${item.photoId}" title="삭제">✕</button>
+    </div>`;
+  }).join('');
+
+  // 카테고리 입력 이벤트
+  container.querySelectorAll('.cat-input').forEach(input => {
+    input.addEventListener('change', e => {
+      const item = items.find(i => i.photoId === e.target.dataset.id);
+      if (item) item.category = e.target.value.trim();
+    });
+  });
+
+  // active 토글
+  container.querySelectorAll('.active-toggle').forEach(chk => {
+    chk.addEventListener('change', e => {
+      const item = items.find(i => i.photoId === e.target.dataset.id);
+      if (item) item.active = e.target.checked;
+    });
+  });
+
+  // 삭제
+  container.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', async e => {
+      const id = e.currentTarget.dataset.id;
+      const item = items.find(i => i.photoId === id);
+      if (!confirm(`"${item?.displayName}" 을(를) 목록에서 삭제할까요?\n(Drive 파일은 삭제되지 않습니다)`)) return;
+      setStatus('삭제 중...');
+      try {
+        const res = await gasPost({ action: 'delete', photoId: id });
+        if (!res.ok) throw new Error(res.error);
+        items = items.filter(i => i.photoId !== id);
+        renderList();
+        setStatus('삭제 완료', 'ok');
+      } catch (e) {
+        setStatus('삭제 실패: ' + e.message, 'err');
+      }
+    });
+  });
+
+  initDragDrop();
+}
+
+// ── 드래그앤드롭 순서 변경 ────────────────────────────────────────────
+function initDragDrop() {
+  const container = document.getElementById('items-container');
+  let dragSrc = null;
+
+  container.querySelectorAll('.photo-item').forEach(el => {
+    el.addEventListener('dragstart', e => {
+      dragSrc = el;
+      el.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    el.addEventListener('dragend', () => {
+      el.classList.remove('dragging');
+      container.querySelectorAll('.photo-item').forEach(i => i.classList.remove('drag-over'));
+      // DOM 순서대로 items 배열 재정렬
+      const newOrder = [...container.querySelectorAll('.photo-item')]
+        .map(el => items.find(i => i.photoId === el.dataset.id))
+        .filter(Boolean);
+      items = newOrder;
+    });
+    el.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      if (el !== dragSrc) {
+        container.querySelectorAll('.photo-item').forEach(i => i.classList.remove('drag-over'));
+        el.classList.add('drag-over');
+      }
+    });
+    el.addEventListener('drop', e => {
+      e.preventDefault();
+      if (dragSrc && dragSrc !== el) {
+        const allItems = [...container.querySelectorAll('.photo-item')];
+        const srcIdx = allItems.indexOf(dragSrc);
+        const tgtIdx = allItems.indexOf(el);
+        if (srcIdx < tgtIdx) el.after(dragSrc);
+        else el.before(dragSrc);
+      }
+    });
+  });
+}
+
+// ── 상태 표시 ────────────────────────────────────────────────────────
+function setStatus(msg, type = '') {
+  const el = document.getElementById('statusbar');
+  el.textContent = msg;
+  el.className = 'statusbar' + (type ? ' ' + type : '');
+}
+</script>
+</body>
+</html>

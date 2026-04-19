@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DK Gallery</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0f0f0f;
+      color: #fff;
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .header {
+      text-align: center;
+      padding: 72px 20px 48px;
+    }
+    .header h1 {
+      font-size: 2.4rem;
+      font-weight: 200;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .header p {
+      color: #666;
+      font-size: 0.75rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+    }
+    .slideshow-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 28px;
+      background: none;
+      border: 1px solid #333;
+      color: #888;
+      padding: 10px 28px;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .slideshow-btn:hover { border-color: #fff; color: #fff; }
+    .slideshow-btn svg { width: 13px; height: 13px; fill: currentColor; }
+
+    /* ── Filter ── */
+    .filter {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      padding: 0 20px 48px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      background: none;
+      border: 1px solid #2e2e2e;
+      color: #666;
+      padding: 7px 22px;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover { border-color: #888; color: #ccc; }
+    .filter-btn.active { background: #fff; color: #0f0f0f; border-color: #fff; }
+
+    /* ── Masonry Grid (이미지 비율 유지) ── */
+    .gallery {
+      columns: 4 220px;
+      column-gap: 6px;
+      padding: 0 6px 60px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+    .gallery-item {
+      break-inside: avoid;
+      margin-bottom: 6px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      background: #1a1a1a;
+    }
+    /* 이미지 온전히 표시 — 잘림 없음 */
+    .gallery-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.4s ease, opacity 0.3s;
+    }
+    .gallery-item:hover img { transform: scale(1.03); opacity: 0.88; }
+
+    .gallery-item .overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: flex-end;
+      padding: 14px;
+      background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .gallery-item:hover .overlay { opacity: 1; }
+    .overlay-tag {
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      color: #ddd;
+      text-transform: uppercase;
+    }
+
+    /* ── Empty / Loading ── */
+    .state-msg {
+      text-align: center;
+      padding: 100px 20px;
+      color: #444;
+      font-size: 0.82rem;
+      letter-spacing: 0.2em;
+    }
+
+    /* ── Lightbox ── */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.96);
+      z-index: 1000;
+      flex-direction: column;
+    }
+    .lightbox.open { display: flex; }
+
+    .lb-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 28px;
+      flex-shrink: 0;
+      border-bottom: 1px solid #1e1e1e;
+    }
+    .lb-tabs { display: flex; gap: 6px; }
+    .lb-tab {
+      background: none;
+      border: 1px solid #333;
+      color: #777;
+      padding: 6px 20px;
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lb-tab:hover { border-color: #888; color: #ccc; }
+    .lb-tab.active { background: #fff; color: #0f0f0f; border-color: #fff; }
+
+    .lb-close {
+      background: none;
+      border: none;
+      color: #666;
+      font-size: 1.4rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px 8px;
+      transition: color 0.2s;
+    }
+    .lb-close:hover { color: #fff; }
+
+    .lb-body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 24px 72px;
+      min-height: 0;
+    }
+
+    /* CSS 레이어 합성 (Canvas CORS 대체) */
+    .lb-img-stack {
+      position: relative;
+      max-width: 100%;
+      max-height: calc(100vh - 160px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #lb-base {
+      max-width: 100%;
+      max-height: calc(100vh - 160px);
+      object-fit: contain;
+      display: block;
+    }
+    #lb-overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: none;
+    }
+
+    .lb-spinner {
+      position: absolute;
+      color: #444;
+      font-size: 0.78rem;
+      letter-spacing: 0.2em;
+    }
+
+    .lb-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: 1px solid #2a2a2a;
+      color: #666;
+      width: 44px;
+      height: 44px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .lb-nav:hover { border-color: #888; color: #fff; }
+    .lb-prev { left: 16px; }
+    .lb-next { right: 16px; }
+
+    .lb-footer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 28px;
+      flex-shrink: 0;
+      border-top: 1px solid #1e1e1e;
+    }
+    .lb-filename {
+      font-size: 0.72rem;
+      color: #555;
+      letter-spacing: 0.1em;
+    }
+    .lb-download {
+      background: #fff;
+      color: #0f0f0f;
+      border: none;
+      padding: 11px 36px;
+      font-size: 0.75rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .lb-download:hover { background: #e0e0e0; }
+
+    /* ── Slideshow ── */
+    .slideshow {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 2000;
+      overflow: hidden;
+    }
+    .slideshow.open { display: block; }
+    .slideshow:-webkit-full-screen { display: block; }
+    .slideshow:fullscreen           { display: block; }
+
+    .ss-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      opacity: 0;
+      transition: opacity 1.2s ease;
+    }
+    .ss-layer.active { opacity: 1; }
+
+    /* 키오스크: 화면 전체를 90도 회전 → 가로 모니터에서 세로 디스플레이 효과 */
+    .ss-inner {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .kiosk-active .ss-inner {
+      width: 100vh;
+      height: 100vw;
+      top: calc(50% - 50vw);
+      left: calc(50% - 50vh);
+      transform: rotate(90deg);
+      transform-origin: center center;
+    }
+    /* 키오스크 모드에서 이미지 완전 풀스크린 (검정 공간 없음) */
+    .kiosk-active .ss-layer {
+      object-fit: cover;
+    }
+
+    /* 좌상단 QR 오버레이 (키오스크 전용) */
+    .ss-qr-overlay {
+      display: none;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .ss-qr-overlay .qr-box {
+      width: 160px;
+    }
+    .ss-qr-overlay .qr-box img {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 0 4px rgba(0,0,0,0.6));
+    }
+
+    .kiosk-active .ss-qr-overlay { display: flex; }
+
+    @media (max-width: 768px) {
+      .header h1 { font-size: 1.6rem; letter-spacing: 0.3em; }
+      .gallery { columns: 2 160px; }
+      .lb-body { padding: 16px 52px; }
+    }
+    @media (max-width: 480px) {
+      .gallery { columns: 2 130px; column-gap: 4px; padding: 0 4px 40px; }
+      .gallery-item { margin-bottom: 4px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>DK Gallery</h1>
+  <p>중문별장 스냅 갤러리</p>
+  <div style="display:flex;gap:10px;justify-content:center;margin-top:28px;">
+    <button class="slideshow-btn" id="ss-start-btn">
+      <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      Slideshow
+    </button>
+    <button class="slideshow-btn" id="ss-kiosk-btn" title="세로 화면 전체 채움">
+      <svg viewBox="0 0 24 24"><path d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm5 15a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></svg>
+      세로 디스플레이
+    </button>
+  </div>
+</div>
+
+<!-- Slideshow (전체화면) -->
+<div class="slideshow" id="slideshow">
+  <div class="ss-inner" id="ss-inner">
+    <img class="ss-layer" id="ss-layer-a" src="" alt="">
+    <img class="ss-layer" id="ss-layer-b" src="" alt="">
+  </div>
+
+  <!-- 좌상단 QR (키오스크 모드에서만 표시) -->
+  <div class="ss-qr-overlay" id="ss-qr-overlay">
+    <div class="qr-box">
+      <img src="source/qr.png" alt="QR">
+    </div>
+  </div>
+
+  <!-- ESC 안내 (일반 모드) -->
+  <div style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);font-size:0.65rem;letter-spacing:0.2em;color:rgba(255,255,255,0.2);z-index:5;pointer-events:none;" id="ss-hint">ESC — 종료</div>
+</div>
+
+
+<div class="filter" id="filter">
+  <button class="filter-btn active" data-cat="all">ALL</button>
+</div>
+
+<div id="gallery" class="gallery"></div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <div class="lb-header">
+    <div class="lb-tabs" id="lb-tabs">
+      <button class="lb-tab active" data-ver="watermark">워터마크</button>
+      <button class="lb-tab" data-ver="original">원본</button>
+      <button class="lb-tab" data-ver="poster">디자인</button>
+    </div>
+    <button class="lb-close" id="lb-close">✕</button>
+  </div>
+
+  <div class="lb-body">
+    <button class="lb-nav lb-prev" id="lb-prev">‹</button>
+    <div class="lb-img-stack">
+      <img id="lb-base" src="" alt="">
+      <img id="lb-overlay" src="" alt="">
+    </div>
+    <div class="lb-spinner" id="lb-spinner" style="display:none">Loading...</div>
+    <button class="lb-nav lb-next" id="lb-next">›</button>
+  </div>
+
+  <div class="lb-footer">
+    <span class="lb-filename" id="lb-filename"></span>
+    <button class="lb-download" id="lb-download">Download</button>
+  </div>
+</div>
+
+<script>
+// ── 설정 ────────────────────────────────────────────────────────────
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbza3xJgitKxhm06ZNb-f9RcPOqC8cMoFBlrqXIzqmilc7YPhX_SYph3vnAVlN_SkFRaig/exec';
+
+function thumbUrl(fileId, size) {
+  return `https://drive.google.com/thumbnail?id=${fileId}&sz=w${size || 800}`;
+}
+function downloadUrl(fileId) {
+  return `https://drive.google.com/uc?export=download&id=${fileId}`;
+}
+
+// GAS 데이터 → 내부 포맷 변환
+function toItem(d) {
+  return {
+    id:        d.photoId,
+    name:      d.displayName,
+    cat:       d.category || '',
+    original:  d.fileId_original  ? thumbUrl(d.fileId_original, 1600)  : '',
+    watermark: d.fileId_watermark ? thumbUrl(d.fileId_watermark, 1600) : '',
+    poster:    d.fileId_poster    ? thumbUrl(d.fileId_poster, 1600)    : '',
+    // 다운로드용 원본 fileId
+    _origId:   d.fileId_original  || '',
+    _posterId: d.fileId_poster    || '',
+    _wmId:     d.fileId_watermark || '',
+  };
+}
+
+// ── State ────────────────────────────────────────────────────────────
+let allItems = [];
+let filtered = [...allItems];
+let curIndex = 0;
+let curVer = 'original';
+
+// ── Gallery Render ───────────────────────────────────────────────────
+function renderGallery(cat) {
+  filtered = cat === 'all' ? allItems : allItems.filter(i => i.cat === cat);
+  const el = document.getElementById('gallery');
+  if (!filtered.length) {
+    el.innerHTML = '<div class="state-msg">사진이 없습니다.</div>';
+    return;
+  }
+  el.innerHTML = filtered.map((item, idx) => {
+    const thumbSrc = item.watermark || item.original;
+    return `<div class="gallery-item" data-idx="${idx}">
+      <img src="${thumbSrc}" alt="${item.name}" loading="lazy">
+      <div class="overlay"><span class="overlay-tag">${item.cat}</span></div>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('.gallery-item').forEach(el => {
+    el.addEventListener('click', () => openLightbox(+el.dataset.idx));
+  });
+}
+
+// ── Filter ───────────────────────────────────────────────────────────
+document.getElementById('filter').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGallery(btn.dataset.cat);
+});
+
+// ── Lightbox ─────────────────────────────────────────────────────────
+function openLightbox(idx) {
+  curIndex = idx;
+  const item = filtered[idx];
+  // 기본 탭: watermark 있으면 watermark, 없으면 original
+  curVer = item.watermark ? 'watermark' : 'original';
+  document.getElementById('lightbox').classList.add('open');
+  renderLbTabs();
+  compositeAndShow();
+}
+
+function renderLbTabs() {
+  const item = filtered[curIndex];
+  document.querySelectorAll('.lb-tab').forEach(btn => {
+    const ver = btn.dataset.ver;
+    // 해당 버전 파일이 없으면 숨김
+    const hasFile = ver === 'original' ? !!item.original
+                  : ver === 'watermark' ? !!item.watermark
+                  : !!item.poster;
+    btn.style.display = hasFile ? '' : 'none';
+    btn.classList.toggle('active', ver === curVer);
+  });
+  document.getElementById('lb-filename').textContent = item.name;
+}
+
+function compositeAndShow() {
+  const item    = filtered[curIndex];
+  const base    = document.getElementById('lb-base');
+  const overlay = document.getElementById('lb-overlay');
+
+  // 원본은 항상 베이스
+  base.src = item.original;
+
+  // 탭별 오버레이
+  if (curVer === 'watermark' && item.watermark) {
+    overlay.src = item.watermark;
+    overlay.style.display = 'block';
+  } else if (curVer === 'poster' && item.poster) {
+    overlay.src = item.poster;
+    overlay.style.display = 'block';
+  } else {
+    overlay.style.display = 'none';
+    overlay.src = '';
+  }
+}
+
+// 탭 클릭
+document.getElementById('lb-tabs').addEventListener('click', e => {
+  const btn = e.target.closest('.lb-tab');
+  if (!btn) return;
+  curVer = btn.dataset.ver;
+  renderLbTabs();
+  compositeAndShow();
+});
+
+// 닫기
+document.getElementById('lb-close').addEventListener('click', () =>
+  document.getElementById('lightbox').classList.remove('open'));
+document.getElementById('lightbox').addEventListener('click', e => {
+  if (e.target === e.currentTarget)
+    document.getElementById('lightbox').classList.remove('open');
+});
+
+// 이전/다음
+document.getElementById('lb-prev').addEventListener('click', () => {
+  curIndex = (curIndex - 1 + filtered.length) % filtered.length;
+  const item = filtered[curIndex];
+  curVer = item.watermark ? 'watermark' : 'original';
+  renderLbTabs(); compositeAndShow();
+});
+document.getElementById('lb-next').addEventListener('click', () => {
+  curIndex = (curIndex + 1) % filtered.length;
+  const item = filtered[curIndex];
+  curVer = item.watermark ? 'watermark' : 'original';
+  renderLbTabs(); compositeAndShow();
+});
+
+// 키보드
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('lightbox').classList.contains('open')) return;
+  if (e.key === 'Escape') document.getElementById('lightbox').classList.remove('open');
+  if (e.key === 'ArrowLeft') document.getElementById('lb-prev').click();
+  if (e.key === 'ArrowRight') document.getElementById('lb-next').click();
+});
+
+// 다운로드 — 현재 버전의 Drive 원본 파일 직접 다운로드
+document.getElementById('lb-download').addEventListener('click', () => {
+  const item = filtered[curIndex];
+  const fileId = curVer === 'watermark' ? item._wmId
+               : curVer === 'poster'    ? item._posterId
+               : item._origId;
+  if (!fileId) return;
+  window.open(downloadUrl(fileId), '_blank');
+});
+
+// ── Slideshow ────────────────────────────────────────────────────────
+const SS = {
+  timer: null,
+  queue: [],
+  idx: 0,
+  front: 'a',   // 현재 보이는 레이어
+
+  layerA: document.getElementById('ss-layer-a'),
+  layerB: document.getElementById('ss-layer-b'),
+  el:     document.getElementById('slideshow'),
+
+  shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  },
+
+  buildQueue() {
+    // 워터마크본 우선, 없으면 original (썸네일 URL 사용)
+    this.queue = this.shuffle(allItems).map(i => i.watermark || i.original).filter(Boolean);
+  },
+
+  start(fillMode = false) {
+    this.buildQueue();
+    this.idx = 0;
+    this.el.classList.add('open');
+
+    // 세로 디스플레이 모드: kiosk-active 클래스로 flex 3단 레이아웃 전환
+    if (fillMode) {
+      this.el.classList.add('kiosk-active');
+      document.getElementById('ss-hint').style.display = 'none';
+    } else {
+      this.el.classList.remove('kiosk-active');
+      document.getElementById('ss-hint').style.display = '';
+    }
+
+    // 전체화면 요청
+    const req = this.el.requestFullscreen || this.el.webkitRequestFullscreen
+             || this.el.mozRequestFullScreen || this.el.msRequestFullscreen;
+    if (req) req.call(this.el);
+
+    // 첫 이미지 즉시 표시
+    this.layerA.src = this.queue[0];
+    this.layerA.classList.add('active');
+    this.layerB.classList.remove('active');
+    this.front = 'a';
+    this.timer = setInterval(() => this.next(), 3000);
+  },
+
+  next() {
+    this.idx = (this.idx + 1) % this.queue.length;
+    if (this.idx === 0) this.buildQueue();
+
+    const incoming = this.front === 'a' ? this.layerB : this.layerA;
+    const outgoing  = this.front === 'a' ? this.layerA : this.layerB;
+
+    let swapped = false;
+    const swap = () => {
+      if (swapped) return;
+      swapped = true;
+      incoming.onload = null;
+      incoming.classList.add('active');
+      outgoing.classList.remove('active');
+      this.front = this.front === 'a' ? 'b' : 'a';
+    };
+
+    incoming.onload = swap;
+    incoming.src = this.queue[this.idx];
+    if (incoming.complete && incoming.naturalWidth) swap();
+  },
+
+  stop() {
+    clearInterval(this.timer);
+    this.timer = null;
+    this.layerA.classList.remove('active');
+    this.layerB.classList.remove('active');
+    this.el.classList.remove('open');
+    this.el.classList.remove('kiosk-active');
+    if (document.fullscreenElement) document.exitFullscreen();
+  }
+};
+
+document.getElementById('ss-start-btn').addEventListener('click', () => SS.start(false));
+document.getElementById('ss-kiosk-btn').addEventListener('click', () => SS.start(true));
+
+// 전체화면 종료 시 슬라이드쇼도 정지
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement && SS.timer) SS.stop();
+});
+
+// ESC 키로 슬라이드쇼 종료
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && SS.el.classList.contains('open')) SS.stop();
+});
+
+// ?kiosk=1 파라미터 → 페이지 로드 시 세로 디스플레이 자동 시작
+if (new URLSearchParams(location.search).get('kiosk') === '1') {
+  // 갤러리 데이터 렌더 후 바로 시작 (사용자 제스처 없이는 fullscreen 불가한 브라우저 대비)
+  window.addEventListener('click', function startKiosk() {
+    SS.start(true);
+    window.removeEventListener('click', startKiosk);
+  }, { once: true });
+  // 화면에 안내 표시
+  document.body.insertAdjacentHTML('beforeend',
+    '<div id="kiosk-hint" style="position:fixed;inset:0;display:flex;align-items:center;' +
+    'justify-content:center;background:#000;color:#555;font-size:0.8rem;' +
+    'letter-spacing:0.2em;z-index:9999;cursor:pointer;">화면을 터치하면 시작됩니다</div>'
+  );
+  document.getElementById('kiosk-hint').addEventListener('click', () => {
+    document.getElementById('kiosk-hint').remove();
+  });
+}
+
+// ── Init — GAS에서 데이터 로드 ──────────────────────────────────────
+async function loadGallery() {
+  document.getElementById('gallery').innerHTML =
+    '<div class="state-msg">Loading...</div>';
+  try {
+    const res  = await fetch(GAS_URL + '?action=gallery');
+    const json = await res.json();
+    if (!json.ok) throw new Error(json.error);
+    allItems = json.data.map(toItem);
+    renderCategories();
+    renderGallery('all');
+  } catch (e) {
+    document.getElementById('gallery').innerHTML =
+      '<div class="state-msg">갤러리를 불러오지 못했습니다.<br>' + e.message + '</div>';
+  }
+}
+
+function renderCategories() {
+  const cats = [...new Set(allItems.map(i => i.cat).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ko'));
+  const filter = document.getElementById('filter');
+  filter.innerHTML = '<button class="filter-btn active" data-cat="all">ALL</button>'
+    + cats.map(c => `<button class="filter-btn" data-cat="${c}">${c}</button>`).join('');
+}
+
+loadGallery();
+</script>
+</body>
+</html>
