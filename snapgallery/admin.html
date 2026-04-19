@@ -160,13 +160,23 @@
   <div class="statusbar" id="statusbar">항목을 로딩 중...</div>
 
   <!-- 슬라이드쇼 설정 -->
-  <div style="padding:10px 24px;background:#161616;border-bottom:1px solid #222;display:flex;align-items:center;gap:16px;">
+  <div style="padding:10px 24px;background:#161616;border-bottom:1px solid #222;display:flex;flex-wrap:wrap;align-items:center;gap:16px;">
     <span style="font-size:0.72rem;letter-spacing:0.15em;color:#666;text-transform:uppercase;">슬라이드쇼 전환 시간</span>
     <div style="display:flex;gap:6px;" id="ss-interval-btns">
       <button class="btn ss-iv-btn" data-val="3000">3초</button>
       <button class="btn ss-iv-btn" data-val="4000">4초</button>
       <button class="btn ss-iv-btn" data-val="5000">5초</button>
       <button class="btn ss-iv-btn" data-val="6000">6초</button>
+    </div>
+  </div>
+  <div style="padding:10px 24px;background:#161616;border-bottom:1px solid #222;display:flex;flex-wrap:wrap;align-items:center;gap:16px;">
+    <span style="font-size:0.72rem;letter-spacing:0.15em;color:#666;text-transform:uppercase;white-space:nowrap;">슬라이드쇼 텍스트</span>
+    <div style="display:flex;gap:8px;flex:1;min-width:280px;">
+      <input id="ss-line1-input" type="text" placeholder="Line 1 (영문)"
+        style="flex:1;background:#111;border:1px solid #2e2e2e;color:#ccc;padding:6px 10px;font-size:0.78rem;outline:none;">
+      <input id="ss-line2-input" type="text" placeholder="Line 2 (영문)"
+        style="flex:1;background:#111;border:1px solid #2e2e2e;color:#ccc;padding:6px 10px;font-size:0.78rem;outline:none;">
+      <button class="btn primary" id="ss-text-save-btn">저장</button>
     </div>
   </div>
 
@@ -406,6 +416,18 @@ function initIntervalBtns() {
   });
 }
 initIntervalBtns();
+
+// ── 슬라이드쇼 텍스트 설정 ───────────────────────────────────────────
+function initTextInputs() {
+  document.getElementById('ss-line1-input').value = localStorage.getItem('ss_line1') || '';
+  document.getElementById('ss-line2-input').value = localStorage.getItem('ss_line2') || '';
+  document.getElementById('ss-text-save-btn').addEventListener('click', () => {
+    localStorage.setItem('ss_line1', document.getElementById('ss-line1-input').value.trim());
+    localStorage.setItem('ss_line2', document.getElementById('ss-line2-input').value.trim());
+    setStatus('텍스트 저장 완료', 'ok');
+  });
+}
+initTextInputs();
 
 // ── 상태 표시 ────────────────────────────────────────────────────────
 function setStatus(msg, type = '') {

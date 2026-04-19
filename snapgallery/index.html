@@ -266,11 +266,19 @@
       inset: 0;
       background: #000;
       z-index: 2000;
+      flex-direction: column;
+    }
+    .slideshow.open { display: flex; }
+    .slideshow:-webkit-full-screen { display: flex; }
+    .slideshow:fullscreen           { display: flex; }
+
+    /* 사진 영역 — 남는 공간 모두 차지 */
+    .ss-inner {
+      flex: 1;
+      min-height: 0;
+      position: relative;
       overflow: hidden;
     }
-    .slideshow.open { display: block; }
-    .slideshow:-webkit-full-screen { display: block; }
-    .slideshow:fullscreen           { display: block; }
 
     .ss-layer {
       position: absolute;
@@ -278,55 +286,47 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
+      object-position: center top;
       opacity: 0;
       transition: opacity 1.2s ease;
     }
     .ss-layer.active { opacity: 1; }
 
-    /* 키오스크: 화면 전체를 90도 회전 → 가로 모니터에서 세로 디스플레이 효과 */
-    .ss-inner {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-    }
-    .kiosk-active .ss-inner {
-      width: 100vh;
-      height: 100vw;
-      top: calc(50% - 50vw);
-      left: calc(50% - 50vh);
-      transform: rotate(90deg);
-      transform-origin: center center;
-    }
-    /* 키오스크 모드: 90도 회전 후 시각적으로 우측에 붙음 (top = 회전 후 오른쪽) */
-    .kiosk-active .ss-layer {
-      object-fit: contain;
-      object-position: center top;
-    }
-
-    /* 좌상단 QR 오버레이 (키오스크 전용) */
-    .ss-qr-overlay {
-      display: none;
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      z-index: 10;
-      display: none;
+    /* ── 하단 정보 바 (QR + 텍스트) ── */
+    .ss-info-bar {
+      flex-shrink: 0;
+      background: #000;
+      display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
+      justify-content: center;
+      padding: 14px 20px 18px;
+      gap: 6px;
     }
-    .ss-qr-overlay .qr-box {
-      width: 160px;
+    .ss-qr-row {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      align-items: flex-end;
     }
-    .ss-qr-overlay .qr-box img {
-      width: 100%;
-      height: auto;
+    .ss-qr-row img {
+      height: 90px;
+      width: auto;
       display: block;
-      filter: drop-shadow(0 0 4px rgba(0,0,0,0.6));
     }
-
-    .kiosk-active .ss-qr-overlay { display: flex; }
+    .ss-brand {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.85);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    .ss-text-line {
+      font-size: 0.62rem;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+    }
 
     @media (max-width: 768px) {
       .header h1 { font-size: 1.6rem; letter-spacing: 0.3em; }
@@ -363,15 +363,18 @@
     <img class="ss-layer" id="ss-layer-b" src="" alt="">
   </div>
 
-  <!-- 좌상단 QR (키오스크 모드에서만 표시) -->
-  <div class="ss-qr-overlay" id="ss-qr-overlay">
-    <div class="qr-box">
-      <img src="source/qr.png" alt="QR">
+  <!-- 하단 정보 바 -->
+  <div class="ss-info-bar" id="ss-info-bar">
+    <div class="ss-qr-row">
+      <img id="ss-qr1" src="source/qr.png" alt="QR">
+      <img id="ss-qr2" src="source/qr2.png" alt="QR2">
     </div>
+    <div class="ss-brand">DKsequence X 중문별장</div>
+    <div class="ss-text-line" id="ss-line1"></div>
+    <div class="ss-text-line" id="ss-line2"></div>
   </div>
 
-  <!-- ESC 안내 (일반 모드) -->
-  <div style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);font-size:0.65rem;letter-spacing:0.2em;color:rgba(255,255,255,0.2);z-index:5;pointer-events:none;" id="ss-hint">ESC — 종료</div>
+  <div id="ss-hint" style="position:absolute;top:16px;right:20px;font-size:0.65rem;letter-spacing:0.2em;color:rgba(255,255,255,0.2);z-index:5;pointer-events:none;">ESC — 종료</div>
 </div>
 
 
@@ -413,8 +416,7 @@
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbza3xJgitKxhm06ZNb-f9RcPOqC8cMoFBlrqXIzqmilc7YPhX_SYph3vnAVlN_SkFRaig/exec';
 
 function thumbUrl(fileId, size) {
-  // authuser=0: iOS Safari ITP 쿠키 차단 우회
-  return `https://lh3.googleusercontent.com/d/${fileId}=w${size || 800}`;
+  return `https://drive.google.com/thumbnail?id=${fileId}&sz=w${size || 800}`;
 }
 function downloadUrl(fileId) {
   return `https://drive.google.com/uc?export=download&id=${fileId}`;
@@ -602,13 +604,9 @@ const SS = {
     this.idx = 0;
     this.el.classList.add('open');
 
-    if (fillMode) {
-      this.el.classList.add('kiosk-active');
-      document.getElementById('ss-hint').style.display = 'none';
-    } else {
-      this.el.classList.remove('kiosk-active');
-      document.getElementById('ss-hint').style.display = '';
-    }
+    // 텍스트 라인 업데이트
+    document.getElementById('ss-line1').textContent = localStorage.getItem('ss_line1') || '';
+    document.getElementById('ss-line2').textContent = localStorage.getItem('ss_line2') || '';
 
     const req = this.el.requestFullscreen || this.el.webkitRequestFullscreen
              || this.el.mozRequestFullScreen || this.el.msRequestFullscreen;
@@ -618,7 +616,7 @@ const SS = {
     this.layerA.classList.add('active');
     this.layerB.classList.remove('active');
     this.front = 'a';
-    this.timer = true;  // 실행 중 플래그
+    this.timer = true;
     this._go();
   },
 
@@ -663,7 +661,6 @@ const SS = {
     this.layerA.classList.remove('active');
     this.layerB.classList.remove('active');
     this.el.classList.remove('open');
-    this.el.classList.remove('kiosk-active');
     if (document.fullscreenElement) document.exitFullscreen();
   }
 };
