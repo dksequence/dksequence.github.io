@@ -159,6 +159,17 @@
   </div>
   <div class="statusbar" id="statusbar">항목을 로딩 중...</div>
 
+  <!-- 슬라이드쇼 설정 -->
+  <div style="padding:10px 24px;background:#161616;border-bottom:1px solid #222;display:flex;align-items:center;gap:16px;">
+    <span style="font-size:0.72rem;letter-spacing:0.15em;color:#666;text-transform:uppercase;">슬라이드쇼 전환 시간</span>
+    <div style="display:flex;gap:6px;" id="ss-interval-btns">
+      <button class="btn ss-iv-btn" data-val="3000">3초</button>
+      <button class="btn ss-iv-btn" data-val="4000">4초</button>
+      <button class="btn ss-iv-btn" data-val="5000">5초</button>
+      <button class="btn ss-iv-btn" data-val="6000">6초</button>
+    </div>
+  </div>
+
   <div class="photo-list" id="photo-list">
     <div class="list-header">
       <span></span>
@@ -381,6 +392,20 @@ function initDragDrop() {
     });
   });
 }
+
+// ── 슬라이드쇼 인터벌 설정 ───────────────────────────────────────────
+function initIntervalBtns() {
+  const current = localStorage.getItem('ss_interval') || '3000';
+  document.querySelectorAll('.ss-iv-btn').forEach(btn => {
+    btn.classList.toggle('primary', btn.dataset.val === current);
+    btn.addEventListener('click', () => {
+      localStorage.setItem('ss_interval', btn.dataset.val);
+      document.querySelectorAll('.ss-iv-btn').forEach(b => b.classList.remove('primary'));
+      btn.classList.add('primary');
+    });
+  });
+}
+initIntervalBtns();
 
 // ── 상태 표시 ────────────────────────────────────────────────────────
 function setStatus(msg, type = '') {

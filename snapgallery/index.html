@@ -298,9 +298,9 @@
       transform: rotate(90deg);
       transform-origin: center center;
     }
-    /* 키오스크 모드에서 이미지 완전 풀스크린 (검정 공간 없음) */
+    /* 키오스크 모드: 이미지 전체 표시 (워터마크 잘림 방지) */
     .kiosk-active .ss-layer {
-      object-fit: cover;
+      object-fit: contain;
     }
 
     /* 좌상단 QR 오버레이 (키오스크 전용) */
@@ -585,8 +585,14 @@ const SS = {
   },
 
   buildQueue() {
-    // 워터마크본 우선, 없으면 original (썸네일 URL 사용)
-    this.queue = this.shuffle(allItems).map(i => i.watermark || i.original).filter(Boolean);
+    // 워터마크 + 디자인(포스터) 모두 포함, 없으면 original
+    const imgs = [];
+    this.shuffle(allItems).forEach(i => {
+      if (i.watermark) imgs.push(i.watermark);
+      if (i.poster)    imgs.push(i.poster);
+      if (!i.watermark && !i.poster && i.original) imgs.push(i.original);
+    });
+    this.queue = imgs;
   },
 
   start(fillMode = false) {
@@ -613,7 +619,8 @@ const SS = {
     this.layerA.classList.add('active');
     this.layerB.classList.remove('active');
     this.front = 'a';
-    this.timer = setInterval(() => this.next(), 3000);
+    const interval = parseInt(localStorage.getItem('ss_interval') || '3000');
+    this.timer = setInterval(() => this.next(), interval);
   },
 
   next() {
