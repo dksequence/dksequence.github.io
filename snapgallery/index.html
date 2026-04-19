@@ -298,10 +298,10 @@
       transform: rotate(90deg);
       transform-origin: center center;
     }
-    /* 키오스크 모드: 이미지 오른쪽 정렬 (회전 후 시각적으로 우측에 붙음, 왼쪽 검정) */
+    /* 키오스크 모드: 90도 회전 후 시각적으로 우측에 붙음 (top = 회전 후 오른쪽) */
     .kiosk-active .ss-layer {
       object-fit: contain;
-      object-position: center bottom;
+      object-position: center top;
     }
 
     /* 좌상단 QR 오버레이 (키오스크 전용) */
