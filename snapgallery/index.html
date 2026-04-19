@@ -292,7 +292,7 @@
     }
     .ss-layer.active { opacity: 1; }
 
-    /* ── 하단 정보 바 (QR + 텍스트) ── */
+    /* ── 정보 바 (가로모드: 하단 / 세로모드: 좌측 패널) ── */
     .ss-info-bar {
       flex-shrink: 0;
       background: #000;
@@ -305,9 +305,8 @@
     }
     .ss-qr-row {
       display: flex;
-      gap: 20px;
       justify-content: center;
-      align-items: flex-end;
+      align-items: center;
     }
     .ss-qr-row img {
       height: 90px;
@@ -326,6 +325,23 @@
       letter-spacing: 0.15em;
       color: rgba(255,255,255,0.5);
       text-align: center;
+    }
+
+    /* ── 세로 디스플레이 모드 (kiosk) ── */
+    .slideshow.kiosk-active { flex-direction: row; }
+    .kiosk-active .ss-info-bar {
+      order: -1;
+      width: 280px;
+      flex-shrink: 0;
+      padding: 40px 24px;
+      border-right: 1px solid #111;
+    }
+    .kiosk-active .ss-layer {
+      object-position: right center;
+    }
+    .kiosk-active #ss-qr {
+      transform: rotate(90deg);
+      height: 120px;
     }
 
     @media (max-width: 768px) {
@@ -366,8 +382,7 @@
   <!-- 하단 정보 바 -->
   <div class="ss-info-bar" id="ss-info-bar">
     <div class="ss-qr-row">
-      <img id="ss-qr1" src="source/qr.png" alt="QR">
-      <img id="ss-qr2" src="source/qr2.png" alt="QR2">
+      <img id="ss-qr" src="source/qr2.png" alt="QR">
     </div>
     <div class="ss-brand">DKsequence X 중문별장</div>
     <div class="ss-text-line" id="ss-line1"></div>
@@ -604,6 +619,12 @@ const SS = {
     this.idx = 0;
     this.el.classList.add('open');
 
+    if (fillMode) {
+      this.el.classList.add('kiosk-active');
+    } else {
+      this.el.classList.remove('kiosk-active');
+    }
+
     // 텍스트 라인 업데이트
     document.getElementById('ss-line1').textContent = localStorage.getItem('ss_line1') || '';
     document.getElementById('ss-line2').textContent = localStorage.getItem('ss_line2') || '';
@@ -661,6 +682,7 @@ const SS = {
     this.layerA.classList.remove('active');
     this.layerB.classList.remove('active');
     this.el.classList.remove('open');
+    this.el.classList.remove('kiosk-active');
     if (document.fullscreenElement) document.exitFullscreen();
   }
 };
