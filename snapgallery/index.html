@@ -292,9 +292,9 @@
     }
     .ss-layer.active { opacity: 1; }
 
-    /* 키오스크: 전체 사진 표시, 오른쪽 정렬 (왼쪽에 QR 패널 공간) */
+    /* 키오스크: 상하우 여백 없이 꽉 채움, 왼쪽만 잘림 (QR 패널 영역) */
     .kiosk-active .ss-layer {
-      object-fit: contain;
+      object-fit: cover;
       object-position: right center;
     }
 
