@@ -301,13 +301,13 @@
     /* ── 정보 바 (가로모드: 하단 / 세로모드: 좌측 패널) ── */
     .ss-info-bar {
       flex-shrink: 0;
-      background: #000;
+      background: linear-gradient(to right, #1c0808 0%, #0f0202 45%, #000 100%);
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
-      justify-content: center;
-      padding: 14px 20px 18px;
-      gap: 6px;
+      padding: 20px 50px;
+      gap: 48px;
+      height: 150px;
     }
     .ss-qr-row {
       display: flex;
@@ -315,23 +315,33 @@
       align-items: center;
     }
     .ss-qr-row img {
-      height: 90px;
+      height: 100px;
       width: auto;
       display: block;
     }
+    .ss-text-section {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
     .ss-brand {
-      font-size: 0.7rem;
+      font-size: 0.95rem;
       letter-spacing: 0.2em;
-      color: rgba(255,255,255,0.85);
+      color: rgba(255,255,255,0.92);
       text-transform: uppercase;
-      margin-top: 4px;
+      margin-bottom: 6px;
     }
     .ss-text-line {
       font-size: 0.72rem;
-      letter-spacing: 0.15em;
-      color: rgba(255,255,255,0.65);
-      text-align: center;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.55);
       min-height: 1em;
+    }
+    /* kiosk 에서 숨겨지는 일반 QR */
+    .ss-qr-single img {
+      height: 100px;
+      width: auto;
+      display: block;
     }
 
     /* ── Canvas (슬라이드쇼 내부 컨테이너) ── */
@@ -373,13 +383,14 @@
 
     /* 사이드바: CSS 아래쪽 = 화면 왼쪽 */
     .kiosk-active .ss-info-bar {
-      height: 300px;                   /* 회전 후 사이드바 '너비'가 됨 */
+      height: 360px;                   /* 회전 후 사이드바 '너비'가 됨 */
       width: 100%;                     /* 회전 후 사이드바 '높이'(화면 전체) */
-      padding: 40px 50px;
-      background: #000;
+      padding: 44px 56px;
+      background: linear-gradient(to bottom, #1c0808 0%, #0f0202 45%, #000 100%);
+      border-top: 1px solid rgba(255,255,255,0.1);
       display: flex;
       flex-direction: row;             /* 좌→우 = 화면 위→아래 */
-      align-items: center;             /* CSS 수직 중앙 = 화면 가로 중앙 */
+      align-items: center;
       gap: 50px;
       flex-shrink: 0;
     }
@@ -388,50 +399,61 @@
     .ss-qr-group { display: none; }
     .kiosk-active .ss-qr-group {
       display: flex;
-      flex-direction: row;             /* 좌→우 = 화면 위→아래 (QR 수직 나열) */
-      gap: 24px;
+      flex-direction: row;
+      gap: 28px;
       align-items: center;
+      flex-shrink: 0;
     }
     .kiosk-active .ss-qr-row {
       display: flex;
-      flex-direction: column;          /* 위→아래 = 화면 우→좌 (QR우측, 라벨좌측) */
+      flex-direction: column;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
     .kiosk-active .ss-qr-row img {
-      width: 100px;
-      height: 100px;
+      width: 130px;
+      height: 130px;
       background: #fff;
       padding: 6px;
       display: block;
     }
     .kiosk-active .ss-qr-label {
-      font-size: 0.65rem;
-      letter-spacing: 0.12em;
-      color: #999;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.7);
       text-transform: uppercase;
       white-space: nowrap;
+    }
+
+    /* ── 구분선 ── */
+    .ss-divider { display: none; }
+    .kiosk-active .ss-divider {
+      display: block;
+      width: 1px;
+      height: 65%;
+      background: rgba(255,255,255,0.15);
+      flex-shrink: 0;
     }
 
     /* ── 브랜드 & 텍스트 ── */
     .kiosk-active .ss-text-section {
       display: flex;
-      flex-direction: column;          /* 위→아래 = 화면 우→좌 */
-      gap: 6px;
+      flex-direction: column;
+      gap: 8px;
     }
     .kiosk-active .ss-brand {
-      font-size: 1.1rem;
+      font-size: 1.5rem;
       font-weight: 300;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.15em;
       color: #fff;
       white-space: nowrap;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
     .kiosk-active .ss-text-line {
-      font-size: 0.72rem;
-      color: rgba(255,255,255,0.45);
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.6);
       line-height: 1.6;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       white-space: nowrap;
     }
 
@@ -491,8 +513,11 @@
 
       <!-- 일반 모드용 단일 QR -->
       <div class="ss-qr-single">
-        <img id="ss-qr" src="source/qr2.png" alt="QR" style="height:90px; width:auto;">
+        <img id="ss-qr" src="source/qr2.png" alt="QR">
       </div>
+
+      <!-- kiosk: QR과 텍스트 사이 구분선 -->
+      <div class="ss-divider"></div>
 
       <div class="ss-text-section">
         <div class="ss-brand">DKsequence X 중문별장</div>
