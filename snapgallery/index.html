@@ -413,7 +413,8 @@
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbza3xJgitKxhm06ZNb-f9RcPOqC8cMoFBlrqXIzqmilc7YPhX_SYph3vnAVlN_SkFRaig/exec';
 
 function thumbUrl(fileId, size) {
-  return `https://drive.google.com/thumbnail?id=${fileId}&sz=w${size || 800}`;
+  // authuser=0: iOS Safari ITP 쿠키 차단 우회
+  return `https://lh3.googleusercontent.com/d/${fileId}=w${size || 800}`;
 }
 function downloadUrl(fileId) {
   return `https://drive.google.com/uc?export=download&id=${fileId}`;
@@ -452,7 +453,7 @@ function renderGallery(cat) {
   el.innerHTML = filtered.map((item, idx) => {
     const thumbSrc = item.watermark || item.original;
     return `<div class="gallery-item" data-idx="${idx}">
-      <img src="${thumbSrc}" alt="${item.name}" loading="lazy">
+      <img src="${thumbSrc}" alt="${item.name}">
       <div class="overlay"><span class="overlay-tag">${item.cat}</span></div>
     </div>`;
   }).join('');
