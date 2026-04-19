@@ -544,7 +544,7 @@
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbza3xJgitKxhm06ZNb-f9RcPOqC8cMoFBlrqXIzqmilc7YPhX_SYph3vnAVlN_SkFRaig/exec';
 
 function thumbUrl(fileId, size) {
-  return `https://drive.google.com/thumbnail?id=${fileId}&sz=w${size || 800}`;
+  return `https://drive.google.com/thumbnail?id=${fileId}&sz=w${size || 800}&authuser=0`;
 }
 function downloadUrl(fileId) {
   return `https://drive.google.com/uc?export=download&id=${fileId}`;
