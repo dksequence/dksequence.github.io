@@ -292,6 +292,12 @@
     }
     .ss-layer.active { opacity: 1; }
 
+    /* 키오스크: 전체 사진 표시, 오른쪽 정렬 (왼쪽에 QR 패널 공간) */
+    .kiosk-active .ss-layer {
+      object-fit: contain;
+      object-position: right center;
+    }
+
     /* ── 정보 바 (가로모드: 하단 / 세로모드: 좌측 패널) ── */
     .ss-info-bar {
       flex-shrink: 0;
@@ -337,8 +343,15 @@
       position: relative;
     }
 
-    /* ── 세로 디스플레이 모드 (kiosk) ── */
-    /* .slideshow는 그대로 두고 내부 ss-canvas만 90° 회전 */
+    /* ══════════════════════════════════════════════════════
+       세로 디스플레이 모드 (kiosk)
+       ──────────────────────────────────────────────────────
+       캔버스가 rotate(90deg) 되므로 좌표 매핑:
+         CSS 위   → 화면 오른쪽  (사진 영역)
+         CSS 아래 → 화면 왼쪽    (사이드바)
+         CSS 왼쪽 → 화면 위
+         CSS 오른쪽→ 화면 아래
+       ══════════════════════════════════════════════════════ */
     .kiosk-active #ss-canvas {
       width: 100vh;
       height: 100vw;
@@ -346,30 +359,85 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%) rotate(90deg);
-      flex-direction: column;
+      flex-direction: column;          /* 위→아래 = 화면 우→좌 */
+      display: flex;
+      background: #000;
     }
+
+    /* 사진 영역: CSS 위쪽 = 화면 오른쪽 */
+    .kiosk-active .ss-inner {
+      flex: 1;
+      min-height: 0;
+      width: 100%;
+    }
+
+    /* 사이드바: CSS 아래쪽 = 화면 왼쪽 */
     .kiosk-active .ss-info-bar {
-      position: absolute;
-      top: 30px;
-      left: 30px;
-      width: auto;
-      padding: 0;
-      background: transparent;
-      align-items: flex-start;
-      gap: 12px;
-      z-index: 10;
+      height: 300px;                   /* 회전 후 사이드바 '너비'가 됨 */
+      width: 100%;                     /* 회전 후 사이드바 '높이'(화면 전체) */
+      padding: 40px 50px;
+      background: #000;
+      display: flex;
+      flex-direction: row;             /* 좌→우 = 화면 위→아래 */
+      align-items: center;             /* CSS 수직 중앙 = 화면 가로 중앙 */
+      gap: 50px;
+      flex-shrink: 0;
     }
-    .kiosk-active #ss-qr {
-      height: 160px;
+
+    /* ── QR 섹션 ── */
+    .ss-qr-group { display: none; }
+    .kiosk-active .ss-qr-group {
+      display: flex;
+      flex-direction: row;             /* 좌→우 = 화면 위→아래 (QR 수직 나열) */
+      gap: 24px;
+      align-items: center;
+    }
+    .kiosk-active .ss-qr-row {
+      display: flex;
+      flex-direction: column;          /* 위→아래 = 화면 우→좌 (QR우측, 라벨좌측) */
+      align-items: center;
+      gap: 8px;
+    }
+    .kiosk-active .ss-qr-row img {
+      width: 100px;
+      height: 100px;
+      background: #fff;
+      padding: 6px;
+      display: block;
+    }
+    .kiosk-active .ss-qr-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      color: #999;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* ── 브랜드 & 텍스트 ── */
+    .kiosk-active .ss-text-section {
+      display: flex;
+      flex-direction: column;          /* 위→아래 = 화면 우→좌 */
+      gap: 6px;
     }
     .kiosk-active .ss-brand {
-      font-size: 1rem;
-      letter-spacing: 0.22em;
+      font-size: 1.1rem;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: #fff;
+      white-space: nowrap;
+      margin-bottom: 12px;
     }
     .kiosk-active .ss-text-line {
-      font-size: 0.85rem;
-      color: rgba(255,255,255,0.7);
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.6;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
     }
+
+    /* 일반 가로 모드용 QR 전환 */
+    .ss-qr-single { display: block; }
+    .kiosk-active .ss-qr-single { display: none; }
 
     @media (max-width: 768px) {
       .header h1 { font-size: 1.6rem; letter-spacing: 0.3em; }
@@ -409,12 +477,28 @@
 
     <!-- 정보 바 (가로모드: 하단 / 세로모드: 좌상단 절대위치) -->
     <div class="ss-info-bar" id="ss-info-bar">
-      <div class="ss-qr-row">
-        <img id="ss-qr" src="source/qr2.png" alt="QR">
+      <!-- Kiosk 전용 QR 그룹 -->
+      <div class="ss-qr-group">
+        <div class="ss-qr-row">
+          <div class="ss-qr-label">DKsequence</div>
+          <img src="source/QR-1.png" alt="QR1">
+        </div>
+        <div class="ss-qr-row">
+          <div class="ss-qr-label">Reservation</div>
+          <img src="source/QR-2.png" alt="QR2">
+        </div>
       </div>
-      <div class="ss-brand">DKsequence X 중문별장</div>
-      <div class="ss-text-line" id="ss-line1"></div>
-      <div class="ss-text-line" id="ss-line2"></div>
+
+      <!-- 일반 모드용 단일 QR -->
+      <div class="ss-qr-single">
+        <img id="ss-qr" src="source/qr2.png" alt="QR" style="height:90px; width:auto;">
+      </div>
+
+      <div class="ss-text-section">
+        <div class="ss-brand">DKsequence X 중문별장</div>
+        <div class="ss-text-line" id="ss-line1"></div>
+        <div class="ss-text-line" id="ss-line2"></div>
+      </div>
     </div>
 
     <div id="ss-hint" style="position:absolute;top:16px;right:20px;font-size:0.65rem;letter-spacing:0.2em;color:rgba(255,255,255,0.2);z-index:5;pointer-events:none;">ESC — 종료</div>
