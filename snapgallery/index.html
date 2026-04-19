@@ -321,27 +321,45 @@
       margin-top: 4px;
     }
     .ss-text-line {
-      font-size: 0.62rem;
+      font-size: 0.72rem;
       letter-spacing: 0.15em;
-      color: rgba(255,255,255,0.5);
+      color: rgba(255,255,255,0.65);
       text-align: center;
+      min-height: 1em;
     }
 
     /* ── 세로 디스플레이 모드 (kiosk) ── */
-    .slideshow.kiosk-active { flex-direction: row; }
-    .kiosk-active .ss-info-bar {
-      order: -1;
-      width: 280px;
-      flex-shrink: 0;
-      padding: 40px 24px;
-      border-right: 1px solid #111;
+    /* 모니터가 물리적으로 세워져 있고 OS는 가로 상태 → 전체 90° 회전 */
+    .slideshow.kiosk-active {
+      inset: auto;
+      width: 100vh;
+      height: 100vw;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(90deg);
+      flex-direction: column;
     }
-    .kiosk-active .ss-layer {
-      object-position: right center;
+    .kiosk-active .ss-info-bar {
+      position: absolute;
+      top: 30px;
+      left: 30px;
+      width: auto;
+      padding: 0;
+      background: transparent;
+      align-items: flex-start;
+      gap: 12px;
+      z-index: 10;
     }
     .kiosk-active #ss-qr {
-      transform: rotate(90deg);
-      height: 120px;
+      height: 160px;
+    }
+    .kiosk-active .ss-brand {
+      font-size: 1rem;
+      letter-spacing: 0.22em;
+    }
+    .kiosk-active .ss-text-line {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.7);
     }
 
     @media (max-width: 768px) {
