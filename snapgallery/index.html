@@ -727,18 +727,29 @@ const SS = {
     this.queue = imgs;
   },
 
+  _kioskFillMode: false,
+
+  _applyKioskCanvas() {
+    const el = document.fullscreenElement || this.el;
+    const w = el.clientWidth  || window.innerWidth;
+    const h = el.clientHeight || window.innerHeight;
+    const canvas = document.getElementById('ss-canvas');
+    canvas.style.cssText = `width:${h}px;height:${w}px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(90deg);display:flex;flex-direction:column`;
+  },
+
   start(fillMode = false) {
+    if (!allItems.length) return; // 갤러리 데이터 로드 전이면 무시
     this.buildQueue();
     this.idx = 0;
+    this._kioskFillMode = fillMode;
     this.el.classList.add('open');
 
-    const canvas = document.getElementById('ss-canvas');
     if (fillMode) {
       this.el.classList.add('kiosk-active');
-      canvas.style.cssText = 'width:100vh;height:100vw;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(90deg);display:flex;flex-direction:column';
+      this._applyKioskCanvas(); // 즉시 적용 (로컬/비-fullscreen 환경용)
     } else {
       this.el.classList.remove('kiosk-active');
-      canvas.style.cssText = '';
+      document.getElementById('ss-canvas').style.cssText = '';
     }
 
     // 텍스트 라인 업데이트
@@ -807,9 +818,13 @@ const SS = {
 document.getElementById('ss-start-btn').addEventListener('click', () => SS.start(false));
 document.getElementById('ss-kiosk-btn').addEventListener('click', () => SS.start(true));
 
-// 전체화면 종료 시 슬라이드쇼도 정지
+// fullscreen 진입 시 kiosk 캔버스 재계산, 종료 시 슬라이드쇼 정지
 document.addEventListener('fullscreenchange', () => {
-  if (!document.fullscreenElement && SS.timer) SS.stop();
+  if (document.fullscreenElement) {
+    if (SS.timer && SS._kioskFillMode) SS._applyKioskCanvas();
+  } else if (SS.timer) {
+    SS.stop();
+  }
 });
 
 // ESC 키로 슬라이드쇼 종료
