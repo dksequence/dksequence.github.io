@@ -648,10 +648,19 @@ const SS = {
     this.idx = 0;
     this.el.classList.add('open');
 
+    const canvas = document.getElementById('ss-canvas');
     if (fillMode) {
       this.el.classList.add('kiosk-active');
+      const vw = window.innerWidth, vh = window.innerHeight;
+      canvas.style.cssText = [
+        `width:${vh}px`, `height:${vw}px`,
+        'position:absolute', 'top:50%', 'left:50%',
+        'transform:translate(-50%,-50%) rotate(90deg)',
+        'display:flex', 'flex-direction:column',
+      ].join(';');
     } else {
       this.el.classList.remove('kiosk-active');
+      canvas.style.cssText = '';
     }
 
     // 텍스트 라인 업데이트
@@ -712,6 +721,7 @@ const SS = {
     this.layerB.classList.remove('active');
     this.el.classList.remove('open');
     this.el.classList.remove('kiosk-active');
+    document.getElementById('ss-canvas').style.cssText = '';
     if (document.fullscreenElement) document.exitFullscreen();
   }
 };
