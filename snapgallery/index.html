@@ -292,9 +292,9 @@
     }
     .ss-layer.active { opacity: 1; }
 
-    /* 키오스크: 상하우 여백 없이 꽉 채움, 왼쪽만 잘림 (QR 패널 영역) */
+    /* 키오스크: 사진 잘림 없이 전체 표시, 오른쪽 정렬 */
     .kiosk-active .ss-layer {
-      object-fit: cover;
+      object-fit: contain;
       object-position: right center;
     }
 
@@ -397,32 +397,18 @@
 
     /* ── QR 섹션 ── */
     .ss-qr-group { display: none; }
-    .kiosk-active .ss-qr-group {
+    /* kiosk에서도 ss-qr-group 숨기고 ss-qr-single 사용 */
+    .kiosk-active .ss-qr-group { display: none; }
+    .kiosk-active .ss-qr-single {
       display: flex;
-      flex-direction: row;
-      gap: 28px;
       align-items: center;
+      justify-content: center;
       flex-shrink: 0;
     }
-    .kiosk-active .ss-qr-row {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-    }
-    .kiosk-active .ss-qr-row img {
-      width: 130px;
-      height: 130px;
-      background: #fff;
-      padding: 6px;
-      display: block;
-    }
-    .kiosk-active .ss-qr-label {
-      font-size: 0.7rem;
-      letter-spacing: 0.15em;
-      color: rgba(255,255,255,0.7);
-      text-transform: uppercase;
-      white-space: nowrap;
+    .kiosk-active .ss-qr-single img {
+      width: 150px;
+      height: 150px;
+      object-fit: contain;
     }
 
     /* ── 구분선 ── */
@@ -457,9 +443,8 @@
       white-space: nowrap;
     }
 
-    /* 일반 가로 모드용 QR 전환 */
+    /* 일반 가로 모드: ss-qr-single 표시 */
     .ss-qr-single { display: block; }
-    .kiosk-active .ss-qr-single { display: none; }
 
     @media (max-width: 768px) {
       .header h1 { font-size: 1.6rem; letter-spacing: 0.3em; }
