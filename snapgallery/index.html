@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DK Gallery</title>
-  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;300;400&family=Noto+Sans+KR:wght@300;400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;300;400&family=Noto+Sans+KR:wght@300;400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -510,6 +510,56 @@
       right: auto;
     }
 
+    /* ── Show Texts 오버레이 ── */
+    .ss-show-text {
+      position: absolute;
+      z-index: 60;
+      pointer-events: none;
+      display: none;
+    }
+    .ss-txt-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .ss-show-line {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 300;
+      font-style: italic;
+      color: rgba(255,255,255,0.88);
+      text-shadow: 0 2px 22px rgba(0,0,0,0.9), 0 1px 6px rgba(0,0,0,0.6);
+      letter-spacing: 0.07em;
+      opacity: 0;
+      will-change: transform, opacity;
+      text-align: center;
+    }
+
+    @keyframes txt-ltr {
+      0%   { transform: translateX(-2%); opacity: 0; }
+      12%  { opacity: 1; }
+      78%  { opacity: 1; }
+      100% { transform: translateX(2%);  opacity: 0; }
+    }
+    @keyframes txt-rtl {
+      0%   { transform: translateX(2%);  opacity: 0; }
+      12%  { opacity: 1; }
+      78%  { opacity: 1; }
+      100% { transform: translateX(-2%); opacity: 0; }
+    }
+    @keyframes txt-ttb {
+      0%   { transform: translateY(-2%); opacity: 0; }
+      12%  { opacity: 1; }
+      78%  { opacity: 1; }
+      100% { transform: translateY(2%);  opacity: 0; }
+    }
+    @keyframes txt-btt {
+      0%   { transform: translateY(2%);  opacity: 0; }
+      12%  { opacity: 1; }
+      78%  { opacity: 1; }
+      100% { transform: translateY(-2%); opacity: 0; }
+    }
+
     @media (max-width: 768px) {
       .header h1 { font-size: 1.6rem; letter-spacing: 0.3em; }
       .gallery { columns: 2 160px; }
@@ -576,6 +626,14 @@
     </div>
 
     <div id="ss-hint" style="position:absolute;top:16px;right:20px;font-size:0.65rem;letter-spacing:0.2em;color:rgba(255,255,255,0.2);z-index:5;pointer-events:none;">ESC — 종료</div>
+  </div>
+
+  <!-- Show Texts 오버레이 (ss-canvas 밖, slideshow 기준 좌표) -->
+  <div id="ss-show-text" class="ss-show-text">
+    <div class="ss-txt-block" id="ss-txt-block">
+      <div class="ss-show-line" id="ss-txt-line1"></div>
+      <div class="ss-show-line" id="ss-txt-line2"></div>
+    </div>
   </div>
 
   <!-- 투명 네비게이션 탭존 (가로: 좌=이전/우=다음, 세로: 상=이전/하=다음) -->
@@ -861,6 +919,7 @@ const SS = {
     this.timer = true;
     this._kenBurns(this.layerA);
     this._go();
+    ShowText.load().then(() => ShowText.start());
   },
 
   _go() {
@@ -928,7 +987,150 @@ const SS = {
     this.el.classList.remove('kiosk-active');
     document.getElementById('ss-canvas').style.cssText = '';
     if (document.fullscreenElement) document.exitFullscreen();
+    ShowText.stop();
   }
+};
+
+// ── ShowText 모듈 ────────────────────────────────────────────────────
+const ShowText = {
+  texts: [],
+  _timer: null,
+  _counter: 0,
+
+  async load() {
+    try {
+      const res  = await fetch(GAS_URL + '?action=texts');
+      const json = await res.json();
+      if (json.ok && Array.isArray(json.data)) {
+        this.texts = json.data
+          .filter(t => t.active === true || t.active === 'TRUE')
+          .sort((a, b) => Number(a.order) - Number(b.order));
+      }
+    } catch (e) { /* 데이터 없으면 표시 안 함 */ }
+  },
+
+  start() {
+    this.stop();
+    if (!this.texts.length) return;
+    this._counter = 0;
+    this._tick();
+  },
+
+  stop() {
+    clearTimeout(this._timer);
+    this._timer = null;
+    const wrap  = document.getElementById('ss-show-text');
+    const block = document.getElementById('ss-txt-block');
+    wrap.style.display = 'none';
+    if (block) block.style.cssText = '';
+    ['ss-txt-line1', 'ss-txt-line2'].forEach(id => {
+      const el = document.getElementById(id);
+      el.style.animation = 'none';
+      el.style.opacity   = '0';
+    });
+  },
+
+  _tick() {
+    if (!SS.timer) return;
+    const t     = this.texts[Math.floor(Math.random() * this.texts.length)];
+    const l1    = document.getElementById('ss-txt-line1');
+    const l2    = document.getElementById('ss-txt-line2');
+    const wrap  = document.getElementById('ss-show-text');
+    const block = document.getElementById('ss-txt-block');
+    const isKiosk = SS.el.classList.contains('kiosk-active');
+    const dur   = parseInt(localStorage.getItem('ss_text_interval') || '15000') / 1000;
+    const even  = this._counter % 2 === 0;
+
+    l1.textContent = t.line1 || '';
+    l2.textContent = t.line2 || '';
+
+    // 애니메이션 리셋 (reflow 강제)
+    l1.style.animation = 'none';
+    l2.style.animation = 'none';
+    l1.offsetHeight;
+
+    if (isKiosk) {
+      // ── 키오스크 ──────────────────────────────────────────────────────
+      // 텍스트 영역: 물리 X 215~575px (정보바 바로 우측 띠 = 빨간 박스)
+      // rotate(90deg) → 뷰어가 좌→우로 정상 독해
+      // Y축 상/중/하 랜덤 → 뷰어 portrait 내 위치 다양화
+
+      const xCenter = 390; // 빨간박스 중심 (215~575 사이)
+      const yZones  = [
+        Math.round(window.innerHeight * 0.22),
+        Math.round(window.innerHeight * 0.50),
+        Math.round(window.innerHeight * 0.78),
+      ];
+      const yPx = yZones[Math.floor(Math.random() * 3)];
+
+      // 화면 밖 넘침 방지: yPx에서 위아래 여백 계산 → maxWidth 결정
+      const margin  = 24;
+      const halfH   = Math.min(yPx, window.innerHeight - yPx) - margin;
+      const lineMax = Math.max(Math.round(halfH * 1.88), 260);
+
+      const fs = 'clamp(2.5rem, 6vh, 5.5rem)';
+      [l1, l2].forEach(l => {
+        l.style.fontSize   = fs;
+        l.style.whiteSpace = 'normal';
+        l.style.maxWidth   = `${lineMax}px`;
+        l.style.textAlign  = 'center';
+      });
+
+      wrap.style.cssText = `
+        position:absolute;
+        left:${xCenter}px; top:${yPx}px;
+        transform:translate(-50%,-50%);
+        display:flex;
+        z-index:60; pointer-events:none;
+      `;
+      block.style.cssText = `
+        display:flex; flex-direction:column;
+        align-items:center; gap:14px;
+        transform:rotate(90deg);
+        transform-origin:center center;
+      `;
+
+    } else {
+      // ── 가로 모드: 정보바 위, 좌/중/우 랜덤 ──
+      const infoBarH = 90;
+      const hZones   = ['flex-start', 'center', 'flex-end'];
+      const justify  = hZones[Math.floor(Math.random() * 3)];
+
+      const fs = 'clamp(3.5rem, 7vw, 8rem)';
+      [l1, l2].forEach(l => {
+        l.style.fontSize   = fs;
+        l.style.whiteSpace = 'normal';
+        l.style.maxWidth   = '80vw';
+        l.style.textAlign  = justify === 'flex-start' ? 'left'
+                           : justify === 'flex-end'   ? 'right' : 'center';
+      });
+
+      wrap.style.cssText = `
+        position:absolute;
+        left:0; right:0;
+        bottom:${infoBarH + 44}px;
+        display:flex;
+        justify-content:${justify};
+        padding:0 6%;
+        z-index:60; pointer-events:none;
+      `;
+      block.style.cssText = `
+        display:flex; flex-direction:column;
+        align-items:${justify};
+        gap:14px; transform:none;
+      `;
+    }
+
+    // 방향 교차: 짝→ltr/rtl, 홀→rtl/ltr
+    l1.style.animation = `${even ? 'txt-ltr' : 'txt-rtl'} ${dur}s ease-in-out forwards`;
+    l2.style.animation = `${even ? 'txt-rtl' : 'txt-ltr'} ${dur}s ease-in-out forwards`;
+
+    wrap.style.display = 'flex';
+    this._counter++;
+
+    const interval = parseInt(localStorage.getItem('ss_text_interval') || '15000');
+    this._timer = setTimeout(() => this._tick(), interval);
+  },
 };
 
 document.getElementById('ss-start-btn').addEventListener('click', () => SS.start(false));
