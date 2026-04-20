@@ -1146,10 +1146,11 @@ const ShowText = {
                            : justify === 'flex-end'   ? 'right' : 'center';
       });
 
-      // 세로 랜덤: 인포바 위(하한) ~ 화면 90% 지점(상한) 사이
-      const bottomMin = infoBarH + 44;
-      const bottomMax = Math.round(window.innerHeight * 0.10);  // top 90% = bottom 10%
-      const bottomPx  = bottomMin + Math.round(Math.random() * Math.max(0, window.innerHeight - bottomMin - bottomMax));
+      // 세로 랜덤: 인포바 위(하한)에서 위로 화면 높이의 10% 범위 내 랜덤
+      // → 화면 하단 기준 약 75~90% 구간(하단에서 134px ~ 134+10%px)
+      const bottomMin  = infoBarH + 44;
+      const randomBand = Math.round(window.innerHeight * 0.10);
+      const bottomPx   = bottomMin + Math.round(Math.random() * randomBand);
 
       wrap.style.cssText = `
         position:absolute;
