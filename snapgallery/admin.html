@@ -75,7 +75,7 @@
 
     .photo-item {
       display: grid;
-      grid-template-columns: 28px 80px 1fr 150px 110px 230px 70px 50px;
+      grid-template-columns: 28px 80px 1fr 150px 70px 230px 70px 50px;
       align-items: center;
       gap: 12px;
       padding: 8px 12px;
@@ -115,12 +115,13 @@
     }
     .item-cat input:focus { border-color: #555; }
 
-    .item-versions { display: flex; gap: 3px; }
+    .item-versions { display: flex; flex-direction: column; gap: 3px; }
     .ver-badge {
       font-size: 0.62rem; padding: 3px 7px; border: 1px solid;
       letter-spacing: 0.05em; text-transform: uppercase; border-radius: 2px;
+      text-align: center;
     }
-    .ver-badge.on  { border-color: #3a3; color: #3a3; }
+    .ver-badge.on  { border-color: #4a8cff; color: #4a8cff; }
     .ver-badge.off { border-color: #2a2a2a; color: #333; }
 
     /* active toggle */
@@ -164,7 +165,7 @@
     /* ── List header ── */
     .list-header {
       display: grid;
-      grid-template-columns: 28px 80px 1fr 150px 110px 230px 70px 50px;
+      grid-template-columns: 28px 80px 1fr 150px 70px 230px 70px 50px;
       gap: 12px;
       padding: 8px 12px;
       font-size: 0.72rem; letter-spacing: 0.15em; color: #fff; text-transform: uppercase;
@@ -372,9 +373,9 @@ function renderList() {
           data-id="${item.photoId}" class="cat-input">
       </div>
       <div class="item-versions">
-        <span class="ver-badge ${hasOri ? 'on':'off'}">원본</span>
+        <span class="ver-badge ${hasOri ? 'on':'off'}">Original</span>
         <span class="ver-badge ${hasWm  ? 'on':'off'}">WM</span>
-        <span class="ver-badge ${hasPos ? 'on':'off'}">디자인</span>
+        <span class="ver-badge ${hasPos ? 'on':'off'}">Design</span>
       </div>
       <div class="ss-src-btns">
         <button class="ss-src-btn ${ss==='original'?'on':''} ${!hasOri?'disabled':''}"
