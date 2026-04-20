@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DK Gallery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;300;400&family=Noto+Sans+KR:wght@300;400&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       background: #0f0f0f;
       color: #fff;
-      font-family: 'Helvetica Neue', Arial, sans-serif;
+      font-family: 'Raleway', 'Noto Sans KR', 'Helvetica Neue', Arial, sans-serif;
       min-height: 100vh;
     }
 
@@ -272,12 +273,12 @@
     .slideshow:-webkit-full-screen { display: flex; }
     .slideshow:fullscreen           { display: flex; }
 
-    /* 사진 영역 — 남는 공간 모두 차지 */
+    /* 사진 영역 — 캔버스 전체 오버레이 (가로/세로 공통) */
     .ss-inner {
-      flex: 1;
-      min-height: 0;
-      position: relative;
+      position: absolute;
+      inset: 0;
       overflow: hidden;
+      z-index: 1;
     }
 
     .ss-layer {
@@ -285,8 +286,8 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: contain;
-      object-position: center top;
+      object-fit: cover;
+      object-position: center top;  /* 사진 위쪽 기준점 */
       opacity: 0;
       transition: opacity 1.2s ease;
     }
@@ -298,16 +299,19 @@
       object-position: center bottom;
     }
 
-    /* ── 정보 바 (가로모드: 하단 / 세로모드: 좌측 패널) ── */
+    /* ── 정보 바 — 사진 위 오버레이, 아래쪽 기준점 (가로/세로 공통) ── */
     .ss-info-bar {
-      flex-shrink: 0;
-      background: linear-gradient(to right, #1c0808 0%, #0f0202 45%, #000 100%);
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.3);
       display: flex;
       flex-direction: row;
       align-items: center;
-      padding: 20px 50px;
-      gap: 48px;
-      height: 150px;
+      padding: 18px 40px;
+      gap: 40px;
+      z-index: 2;
     }
     .ss-qr-row {
       display: flex;
@@ -348,8 +352,6 @@
     #ss-canvas {
       width: 100%;
       height: 100%;
-      display: flex;
-      flex-direction: column;
       position: relative;
     }
 
@@ -767,9 +769,9 @@ const SS = {
       document.getElementById('ss-canvas').style.cssText = '';
     }
 
-    // 텍스트 라인 업데이트
-    document.getElementById('ss-line1').textContent = localStorage.getItem('ss_line1') || '';
-    document.getElementById('ss-line2').textContent = localStorage.getItem('ss_line2') || '';
+    // 텍스트 라인 업데이트 (admin에서 저장 안 됐으면 기본값 표시)
+    document.getElementById('ss-line1').textContent = localStorage.getItem('ss_line1') || 'We live through moments';
+    document.getElementById('ss-line2').textContent = localStorage.getItem('ss_line2') || 'The experience of leaving a travel moment as a pictorial';
 
     const req = this.el.requestFullscreen || this.el.webkitRequestFullscreen
              || this.el.mozRequestFullScreen || this.el.msRequestFullscreen;
