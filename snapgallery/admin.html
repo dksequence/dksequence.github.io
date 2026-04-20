@@ -234,6 +234,7 @@
 <script>
 // ── 설정 ─────────────────────────────────────────────────────────────
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbz29KKvjvBOHK3QszCDE4s2GOCzSz4edwChl5HnW_cpj6FGBaSmh58gkbK6M1SwmrDwOQ/exec';
+const ADMIN_PW = '8888';  // 클라이언트 비밀번호 (GAS gallery.gs와 동일하게 유지)
 
 let pw = '';
 let items = [];
@@ -253,20 +254,16 @@ document.getElementById('pw-btn').addEventListener('click', async () => {
 
   const errEl = document.getElementById('login-err');
   errEl.textContent = '';
-  setStatus('인증 중...');
 
+  // 클라이언트 사이드 비밀번호 체크 (GAS POST CORS 이슈 우회)
+  if (entered !== ADMIN_PW) {
+    errEl.textContent = '비밀번호가 올바르지 않습니다';
+    return;
+  }
+
+  pw = entered;
+  setStatus('목록 로딩 중...');
   try {
-    // POST로 비밀번호 실제 검증 (빈 save 요청)
-    const authRes = await gasPostAuth({ action: 'save', items: [] }, entered);
-    if (!authRes.ok) {
-      setStatus('');
-      errEl.textContent = '비밀번호가 올바르지 않습니다';
-      return;
-    }
-    pw = entered;
-
-    // 비밀번호 OK → 목록 로드
-    setStatus('목록 로딩 중...');
     const res = await gasGet('admin');
     if (!res.ok) throw new Error(res.error);
     items = res.data;
@@ -275,8 +272,9 @@ document.getElementById('pw-btn').addEventListener('click', async () => {
     renderList();
     setStatus(`총 ${items.length}개 항목 로드됨`, 'ok');
   } catch (e) {
+    pw = '';
+    errEl.textContent = '데이터 로드 오류: ' + e.message;
     setStatus('');
-    errEl.textContent = '연결 오류: ' + e.message;
   }
 });
 
@@ -286,19 +284,7 @@ async function gasGet(action) {
   return res.json();
 }
 
-// 인증 전용 POST (no-cors fallback 없음 — 응답을 반드시 읽어야 함)
-async function gasPostAuth(body, password) {
-  body.password = password;
-  const res = await fetch(GAS_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify(body),
-    redirect: 'follow',
-  });
-  return res.json();
-}
-
-// 일반 POST (인증 후 사용, no-cors fallback 포함)
+// POST (인증 후 사용, no-cors fallback 포함)
 async function gasPost(body) {
   body.password = pw;
   const init = {
