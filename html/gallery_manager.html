@@ -582,7 +582,7 @@ const Store = {
 // AUTH
 // ══════════════════════════════════════════════════════════════
 const Auth = {
-  DEFAULT_PWD: 'dk2026',
+  DEFAULT_PWD: '8888',
 
   async _hash(s){
     const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
