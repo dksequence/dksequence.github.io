@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
@@ -1074,22 +1074,26 @@ const ShowText = {
 
       const xCenter = 390; // 빨간박스 중심 (215~575 사이)
       const yZones  = [
-        Math.round(window.innerHeight * 0.22),
+        Math.round(window.innerHeight * 0.30),
         Math.round(window.innerHeight * 0.50),
-        Math.round(window.innerHeight * 0.78),
+        Math.round(window.innerHeight * 0.70),
       ];
       const yPx = yZones[Math.floor(Math.random() * 3)];
 
-      // 화면 밖 넘침 방지: yPx에서 위아래 여백 계산 → maxWidth 결정
+      // 화면 밖 넘침 방지: yPx에서 위아래 여백 계산 → lineMax 결정
       const margin  = 24;
       const halfH   = Math.min(yPx, window.innerHeight - yPx) - margin;
       const lineMax = Math.max(Math.round(halfH * 1.88), 260);
 
-      const fs = 'clamp(1.25rem, 3vh, 2.75rem)';
+      // 동적 폰트 사이즈: 기본 +30%, 긴 줄은 자동 축소 (nowrap 보장)
+      const baseFontPx = Math.min(3.9 / 100 * window.innerHeight, 3.575 * 16);
+      const maxLen     = Math.max(l1.textContent.length, l2.textContent.length, 1);
+      const fitPx      = Math.min(baseFontPx, lineMax / (maxLen * 0.60));
+      const fsPx       = `${Math.max(Math.round(fitPx), 12)}px`;
       [l1, l2].forEach(l => {
-        l.style.fontSize   = fs;
-        l.style.whiteSpace = 'normal';
-        l.style.maxWidth   = `${lineMax}px`;
+        l.style.fontSize   = fsPx;
+        l.style.whiteSpace = 'nowrap';
+        l.style.maxWidth   = '';
         l.style.textAlign  = 'center';
       });
 
@@ -1113,11 +1117,15 @@ const ShowText = {
       const hZones   = ['flex-start', 'center', 'flex-end'];
       const justify  = hZones[Math.floor(Math.random() * 3)];
 
-      const fs = 'clamp(1.75rem, 3.5vw, 4rem)';
+      // 동적 폰트 사이즈: 기본 +30%, 긴 줄은 자동 축소 (nowrap 보장)
+      const lsBasePx = Math.min(4.55 / 100 * window.innerWidth, 5.2 * 16);
+      const lsMaxLen = Math.max(l1.textContent.length, l2.textContent.length, 1);
+      const lsFitPx  = Math.min(lsBasePx, (0.80 * window.innerWidth) / (lsMaxLen * 0.60));
+      const lsFsPx   = `${Math.max(Math.round(lsFitPx), 12)}px`;
       [l1, l2].forEach(l => {
-        l.style.fontSize   = fs;
-        l.style.whiteSpace = 'normal';
-        l.style.maxWidth   = '80vw';
+        l.style.fontSize   = lsFsPx;
+        l.style.whiteSpace = 'nowrap';
+        l.style.maxWidth   = '';
         l.style.textAlign  = justify === 'flex-start' ? 'left'
                            : justify === 'flex-end'   ? 'right' : 'center';
       });
