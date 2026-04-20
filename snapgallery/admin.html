@@ -65,7 +65,7 @@
 
     .photo-item {
       display: grid;
-      grid-template-columns: 28px 80px 1fr 180px 100px 80px 80px;
+      grid-template-columns: 28px 80px 1fr 150px 100px 90px 80px 80px;
       align-items: center;
       gap: 12px;
       padding: 10px 12px;
@@ -128,12 +128,22 @@
     /* ── List header ── */
     .list-header {
       display: grid;
-      grid-template-columns: 28px 80px 1fr 180px 100px 80px 80px;
+      grid-template-columns: 28px 80px 1fr 150px 100px 90px 80px 80px;
       gap: 12px;
       padding: 6px 12px;
       font-size: 0.65rem; letter-spacing: 0.15em; color: #444; text-transform: uppercase;
       border-bottom: 1px solid #1e1e1e; margin-bottom: 8px;
     }
+
+    /* ── SS source toggle ── */
+    .ss-src-btns { display: flex; gap: 3px; }
+    .ss-src-btn {
+      font-size: 0.58rem; padding: 2px 6px;
+      border: 1px solid #2a2a2a; background: none; color: #444;
+      letter-spacing: 0.05em; cursor: pointer; transition: all 0.15s; border-radius: 2px;
+    }
+    .ss-src-btn:hover { border-color: #555; color: #888; }
+    .ss-src-btn.on { background: #4a8; border-color: #4a8; color: #fff; }
   </style>
 </head>
 <body>
@@ -187,6 +197,7 @@
       <span>파일명</span>
       <span>카테고리</span>
       <span>버전</span>
+      <span style="text-align:center">SS</span>
       <span style="text-align:center">표시</span>
       <span style="text-align:center">삭제</span>
     </div>
@@ -269,6 +280,7 @@ document.getElementById('btn-save').addEventListener('click', async () => {
       photoId:  i.photoId,
       category: i.category,
       active:   i.active,
+      ssSource: i.ssSource || 'original',
     }))});
     if (!saveRes.ok) throw new Error(saveRes.error);
 
@@ -299,10 +311,13 @@ function renderList() {
     const hasOri  = !!item.fileId_original;
     const hasPos  = !!item.fileId_poster;
     const hasWm   = !!item.fileId_watermark;
+    const ss = item.ssSource || 'original';
+    const ssOri = (ss === 'original' || ss === 'both');
+    const ssPos = (ss === 'poster'   || ss === 'both');
 
     return `
     <div class="photo-item" draggable="true" data-idx="${idx}" data-id="${item.photoId}">
-      <span class="drag-handle">⠿</span>
+      <span class="drag-handle">⠇</span>
       <div class="thumb-wrap">${thumb}</div>
       <span class="item-name" title="${item.displayName}">${item.displayName}</span>
       <div class="item-cat">
@@ -313,6 +328,10 @@ function renderList() {
         <span class="ver-badge ${hasOri ? 'on':'off'}">원본</span>
         <span class="ver-badge ${hasWm  ? 'on':'off'}">WM</span>
         <span class="ver-badge ${hasPos ? 'on':'off'}">디자인</span>
+      </div>
+      <div class="ss-src-btns">
+        <button class="ss-src-btn ${ssOri ? 'on':''} ${!hasOri ? 'off':''}" data-id="${item.photoId}" data-src="original">원본</button>
+        <button class="ss-src-btn ${ssPos ? 'on':''} ${!hasPos ? 'off':''}" data-id="${item.photoId}" data-src="poster">디자인</button>
       </div>
       <label class="toggle">
         <input type="checkbox" ${item.active === true || item.active === 'TRUE' ? 'checked' : ''}
@@ -337,6 +356,40 @@ function renderList() {
     chk.addEventListener('change', e => {
       const item = items.find(i => i.photoId === e.target.dataset.id);
       if (item) item.active = e.target.checked;
+    });
+  });
+
+  // 슬라이드쇼 소스 토글
+  container.querySelectorAll('.ss-src-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const id  = e.target.dataset.id;
+      const src = e.target.dataset.src;  // 'original' or 'poster'
+      const item = items.find(i => i.photoId === id);
+      if (!item) return;
+      const cur = item.ssSource || 'original';
+      // 토글 로직: 클릭한 것이 켜져있으면 끄고, 꿈져있으면 켜기
+      let isOn;
+      if (src === 'original') isOn = (cur === 'original' || cur === 'both');
+      else                    isOn = (cur === 'poster'   || cur === 'both');
+
+      if (isOn) {
+        // 끄기 — 최소 1개는 선택되어야 함
+        if (cur === 'both')     item.ssSource = (src === 'original') ? 'poster' : 'original';
+        // 하나만 켜져있는데 또 끄면 무시
+      } else {
+        // 켜기
+        if (cur === 'original' && src === 'poster')  item.ssSource = 'both';
+        else if (cur === 'poster' && src === 'original') item.ssSource = 'both';
+        else item.ssSource = src;
+      }
+      // 버튼 UI 업데이트
+      const row = e.target.closest('.photo-item');
+      const btns = row.querySelectorAll('.ss-src-btn');
+      const ss = item.ssSource || 'original';
+      btns.forEach(b => {
+        const s = b.dataset.src;
+        b.classList.toggle('on', s === 'original' ? (ss === 'original' || ss === 'both') : (ss === 'poster' || ss === 'both'));
+      });
     });
   });
 

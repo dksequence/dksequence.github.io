@@ -494,17 +494,17 @@
       <div class="ss-qr-group">
         <div class="ss-qr-row">
           <div class="ss-qr-label">DKsequence</div>
-          <img src="source/QR-1.png" alt="QR1">
+          <img src="../source/QR-1.png" alt="QR1">
         </div>
         <div class="ss-qr-row">
           <div class="ss-qr-label">Reservation</div>
-          <img src="source/QR-2.png" alt="QR2">
+          <img src="../source/QR-2.png" alt="QR2">
         </div>
       </div>
 
       <!-- 일반 모드용 단일 QR -->
       <div class="ss-qr-single">
-        <img id="ss-qr" src="source/qr2.png" alt="QR">
+        <img id="ss-qr" src="../source/qr2.png" alt="QR">
       </div>
 
       <!-- kiosk: QR과 텍스트 사이 구분선 -->
@@ -519,6 +519,9 @@
 
     <div id="ss-hint" style="position:absolute;top:16px;right:20px;font-size:0.65rem;letter-spacing:0.2em;color:rgba(255,255,255,0.2);z-index:5;pointer-events:none;">ESC — 종료</div>
   </div>
+
+  <!-- 보이지 않는 종료 버튼 (우측 상단, 아이패드용) -->
+  <div id="ss-exit-btn" style="position:absolute;top:0;right:0;width:80px;height:80px;z-index:9999;cursor:pointer;" onclick="SS.stop()"></div>
 </div>
 
 
@@ -579,6 +582,7 @@ function toItem(d) {
     _origId:   d.fileId_original  || '',
     _posterId: d.fileId_poster    || '',
     _wmId:     d.fileId_watermark || '',
+    ssSource:  d.ssSource         || 'original',
   };
 }
 
@@ -733,12 +737,23 @@ const SS = {
   },
 
   buildQueue() {
-    // 워터마크 + 디자인(포스터) 모두 포함, 없으면 original
+    // 관리자 설정(ssSource)에 따라 각 사진당 1장씩 큐 구성
+    // 모든 사진이 한 번씩 나온 뒤 다시 셔플
     const imgs = [];
     this.shuffle(allItems).forEach(i => {
-      if (i.watermark) imgs.push(i.watermark);
-      if (i.poster)    imgs.push(i.poster);
-      if (!i.watermark && !i.poster && i.original) imgs.push(i.original);
+      const src = i.ssSource || 'original';
+      if (src === 'both') {
+        // 둘 다 선택된 경우: 랜덤으로 하나만 (같은 사이클 내 중복 방지)
+        if (i.original && i.poster) {
+          imgs.push(Math.random() < 0.5 ? i.original : i.poster);
+        } else {
+          imgs.push(i.original || i.poster);
+        }
+      } else if (src === 'poster' && i.poster) {
+        imgs.push(i.poster);
+      } else if (i.original) {
+        imgs.push(i.original);
+      }
     });
     this.queue = imgs;
   },
