@@ -530,8 +530,14 @@
       color: rgba(255, 218, 112, 0.92);
       letter-spacing: 0.07em;
       opacity: 0;
-      will-change: transform, opacity, text-shadow;
+      will-change: transform, opacity, text-shadow, color;
       text-align: center;
+    }
+    .ss-first-char {
+      font-size: 1.4em;
+      line-height: 0.85;
+      display: inline-block;
+      vertical-align: baseline;
     }
 
     @keyframes txt-glow-pulse {
@@ -550,6 +556,12 @@
           0 0 90px rgba(200, 120,  0,  0.22),
           0 2px 8px rgba(0, 0, 0, 0.7);
       }
+    }
+    @keyframes txt-shimmer {
+      0%, 100% { color: rgba(255, 218, 112, 0.92); }
+      35%      { color: rgba(255, 248, 210, 0.98); }
+      50%      { color: rgba(255, 255, 255, 0.96); }
+      65%      { color: rgba(255, 248, 210, 0.98); }
     }
 
     @keyframes txt-ltr {
@@ -1058,8 +1070,12 @@ const ShowText = {
     const dur   = parseInt(localStorage.getItem('ss_text_interval') || '15000') / 1000;
     const even  = this._counter % 2 === 0;
 
-    l1.textContent = t.line1 || '';
-    l2.textContent = t.line2 || '';
+    function setLineHTML(el, text) {
+      if (!text) { el.innerHTML = ''; return; }
+      el.innerHTML = `<span class="ss-first-char">${text[0]}</span>${text.slice(1)}`;
+    }
+    setLineHTML(l1, t.line1 || '');
+    setLineHTML(l2, t.line2 || '');
 
     // 애니메이션 리셋 (reflow 강제)
     l1.style.animation = 'none';
@@ -1146,10 +1162,11 @@ const ShowText = {
       `;
     }
 
-    // 방향 교차: 짝→ltr/rtl, 홀→rtl/ltr  +  금빛 글로우 pulse 동시 적용
-    const glow = 'txt-glow-pulse 4.5s ease-in-out infinite';
-    l1.style.animation = `${even ? 'txt-ltr' : 'txt-rtl'} ${dur}s ease-in-out forwards, ${glow}`;
-    l2.style.animation = `${even ? 'txt-rtl' : 'txt-ltr'} ${dur}s ease-in-out forwards, ${glow}`;
+    // 방향 교차 drift + glow pulse + shimmer 동시 적용
+    const glow    = 'txt-glow-pulse 4.5s ease-in-out infinite';
+    const shimmer = 'txt-shimmer 7s ease-in-out infinite';
+    l1.style.animation = `${even ? 'txt-ltr' : 'txt-rtl'} ${dur}s ease-in-out forwards, ${glow}, ${shimmer}`;
+    l2.style.animation = `${even ? 'txt-rtl' : 'txt-ltr'} ${dur}s ease-in-out forwards, ${glow}, ${shimmer} 1.8s`;
 
     wrap.style.display = 'flex';
     this._counter++;
