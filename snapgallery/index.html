@@ -527,12 +527,29 @@
       font-family: 'Cormorant Garamond', Georgia, serif;
       font-weight: 300;
       font-style: italic;
-      color: rgba(255,255,255,0.88);
-      text-shadow: 0 2px 22px rgba(0,0,0,0.9), 0 1px 6px rgba(0,0,0,0.6);
+      color: rgba(255, 218, 112, 0.92);
       letter-spacing: 0.07em;
       opacity: 0;
-      will-change: transform, opacity;
+      will-change: transform, opacity, text-shadow;
       text-align: center;
+    }
+
+    @keyframes txt-glow-pulse {
+      0%, 100% {
+        text-shadow:
+          0 0 6px  rgba(255, 215, 80,  0.65),
+          0 0 18px rgba(255, 185, 30,  0.40),
+          0 0 40px rgba(210, 140,  0,  0.20),
+          0 2px 8px rgba(0, 0, 0, 0.7);
+      }
+      50% {
+        text-shadow:
+          0 0 10px rgba(255, 228, 110, 1.00),
+          0 0 28px rgba(255, 200, 50,  0.75),
+          0 0 58px rgba(230, 160,  0,  0.50),
+          0 0 90px rgba(200, 120,  0,  0.22),
+          0 2px 8px rgba(0, 0, 0, 0.7);
+      }
     }
 
     @keyframes txt-ltr {
@@ -575,7 +592,7 @@
 
 <div class="header">
   <h1>DK Gallery</h1>
-  <p>DKsequence Snap Gallery</p>
+  <p>중문별장 스냅 갤러리</p>
   <div style="display:flex;gap:10px;justify-content:center;margin-top:28px;">
     <button class="slideshow-btn" id="ss-start-btn">
       <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -583,7 +600,7 @@
     </button>
     <button class="slideshow-btn" id="ss-kiosk-btn" title="세로 화면 전체 채움">
       <svg viewBox="0 0 24 24"><path d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm5 15a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></svg>
-      Vertical
+      세로 디스플레이
     </button>
   </div>
 </div>
@@ -1068,7 +1085,7 @@ const ShowText = {
       const halfH   = Math.min(yPx, window.innerHeight - yPx) - margin;
       const lineMax = Math.max(Math.round(halfH * 1.88), 260);
 
-      const fs = 'clamp(2.5rem, 6vh, 5.5rem)';
+      const fs = 'clamp(1.25rem, 3vh, 2.75rem)';
       [l1, l2].forEach(l => {
         l.style.fontSize   = fs;
         l.style.whiteSpace = 'normal';
@@ -1085,7 +1102,7 @@ const ShowText = {
       `;
       block.style.cssText = `
         display:flex; flex-direction:column;
-        align-items:center; gap:14px;
+        align-items:center; gap:6px;
         transform:rotate(90deg);
         transform-origin:center center;
       `;
@@ -1096,7 +1113,7 @@ const ShowText = {
       const hZones   = ['flex-start', 'center', 'flex-end'];
       const justify  = hZones[Math.floor(Math.random() * 3)];
 
-      const fs = 'clamp(3.5rem, 7vw, 8rem)';
+      const fs = 'clamp(1.75rem, 3.5vw, 4rem)';
       [l1, l2].forEach(l => {
         l.style.fontSize   = fs;
         l.style.whiteSpace = 'normal';
@@ -1117,13 +1134,14 @@ const ShowText = {
       block.style.cssText = `
         display:flex; flex-direction:column;
         align-items:${justify};
-        gap:14px; transform:none;
+        gap:6px; transform:none;
       `;
     }
 
-    // 방향 교차: 짝→ltr/rtl, 홀→rtl/ltr
-    l1.style.animation = `${even ? 'txt-ltr' : 'txt-rtl'} ${dur}s ease-in-out forwards`;
-    l2.style.animation = `${even ? 'txt-rtl' : 'txt-ltr'} ${dur}s ease-in-out forwards`;
+    // 방향 교차: 짝→ltr/rtl, 홀→rtl/ltr  +  금빛 글로우 pulse 동시 적용
+    const glow = 'txt-glow-pulse 4.5s ease-in-out infinite';
+    l1.style.animation = `${even ? 'txt-ltr' : 'txt-rtl'} ${dur}s ease-in-out forwards, ${glow}`;
+    l2.style.animation = `${even ? 'txt-rtl' : 'txt-ltr'} ${dur}s ease-in-out forwards, ${glow}`;
 
     wrap.style.display = 'flex';
     this._counter++;
