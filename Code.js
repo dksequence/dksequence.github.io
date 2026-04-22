@@ -10,8 +10,10 @@ var SHEET_NAME_2ND = '2차_체크인';
 var MASTER_SS_ID = '1TVzwgFW5oaqL2e0LjCZl0ZPc_gxcr7cFESZ-sqOIjeU';
 var MASTER_SHEET_NAME = '통합마스터로그';
 var ROOT_FOLDER_ID = '1MJlGEFWKN4ipSQp5e-cEmPSFJ7gyGvMN';
-var CALENDAR_ID = 'b80af760ccd9b450a8bdea35f6fd6a43fb8e2eba5f0be964af5043ef9d30ca2e@group.calendar.google.com';
+var CALENDAR_ID = 'b80af7602c3b8adf0a6f46b7befc29a0d87c0fce22bf3d826982a470cfa8449c@group.calendar.google.com';
 var DELIVERY_FROM_EMAIL = 'dkseq4@gmail.com';
+var GAS_EXEC_URL = 'https://script.google.com/macros/s/AKfycbzJhFhrORZVILdIIHA_9vY5eoaML7iNzKBnD_3RqyRvu88BTCvdAifJOzBik8Y1e5CEfw/exec';
+var CLICK_LOG_SHEET = '링크클릭로그';
 
 // ── 필드 정의 (순서 고정) ──────────────────────────────────────
 var MASTER_HEADERS = [
@@ -25,6 +27,10 @@ var MASTER_HEADERS = [
 function doGet(e) {
   // GitHub Pages에서 GET 쿼리스트링으로 API 호출 시 처리
   if (e && e.parameter && e.parameter.action) {
+    // 링크 클릭 추적: HTML 리다이렉트 반환
+    if (e.parameter.action === 'trackClick') {
+      return handleTrackClick(e.parameter);
+    }
     try {
       var payload = e.parameter.payload ? JSON.parse(e.parameter.payload) : e.parameter;
       var result = processRequest(JSON.stringify(payload));
@@ -95,6 +101,12 @@ function processRequest(jsonString) {
       return checkUpdate(req.date, req.lastHash);
     } else if (action === 'runMigration') {
       return { ok: true, result: migrateDataToMaster() };
+    } else if (action === 'getStats') {
+      return getStats(req.mode, req.target);
+    } else if (action === 'getHubData') {
+      return getHubData();
+    } else if (action === 'setHubData') {
+      return setHubData(req.data);
     } else {
       return { ok: false, error: 'Unknown action: ' + action };
     }
@@ -180,13 +192,16 @@ function getReservations(dateStr, timeReq) {
         // 현장에서 확인된 실명이 마스터 로그에 있다면 해당 이름으로 표시
         var masterRealName = String(row[3] || '').trim();
         if (masterRealName) combined[resno].name = masterRealName;
-        
+        combined[resno].email = String(row[7] || '').trim();
+        combined[resno].phone = String(row[8] || '').trim();
+        combined[resno].memo  = String(row[9] || '').trim();
+
         // 중요: 마스터 시트에 시간이 비어있다면 네이버에서 가져온 원래 시간을 보존함
         var masterTime = "";
         var rowTime = row[1];
         if (rowTime instanceof Date) masterTime = Utilities.formatDate(rowTime, 'Asia/Seoul', 'HH:mm');
         else masterTime = String(rowTime || '').trim();
-        
+
         if (masterTime && masterTime.indexOf(':') !== -1) {
           combined[resno].time = masterTime;
         }
@@ -199,7 +214,7 @@ function getReservations(dateStr, timeReq) {
         } else {
           timeStr = String(rowTime || '').trim();
         }
-        
+
         combined[resno] = {
           resno: resno,
           name: String(row[3] || '이름없음').trim(),
@@ -207,7 +222,10 @@ function getReservations(dateStr, timeReq) {
           people: String(row[6] || '1'),
           time: timeStr,
           source: String(row[10] || 'A').toUpperCase(),
-          checkedIn: !!checkinAt
+          checkedIn: !!checkinAt,
+          email: String(row[7] || '').trim(),
+          phone: String(row[8] || '').trim(),
+          memo:  String(row[9] || '').trim(),
         };
       }
 
@@ -697,16 +715,17 @@ function markEditDone(resno) {
       }
     }
     
-    // 2. [자동 복구] 시트에 링크가 없거나 유효하지 않으면 드라이브에서 직접 검색
+    // 2. [자동 복구] 시트에 링크가 없거나 유효하지 않으면 드라이브 전체에서 검색 (예약번호 기준)
     if (!resultUrl) {
-      var searchName = resno + '_' + realName;
-      var folders = DriveApp.getFolderById(ROOT_FOLDER_ID).searchFolders("title contains '" + resno + "'");
+      // 루트 폴더와 상관없이 예약번호가 포함된 폴더를 드라이브 전체에서 검색
+      var folders = DriveApp.searchFolders("title contains '" + resno + "' and trashed = false");
       if (folders.hasNext()) {
         var foundFolder = folders.next();
         foundFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
         resultUrl = 'https://drive.google.com/drive/folders/' + foundFolder.getId();
-        // 시트의 원본 폴더 링크(M열)도 업데이트
-        sheet.getRange(targetRow, 13).setValue(resultUrl);
+        // 시트의 폴더 링크(Column M - index 12) 및 결과 링크(Column O - index 14) 업데이트
+        sheet.getRange(targetRow, 13).setValue(resultUrl); 
+        sheet.getRange(targetRow, 15).setValue(resultUrl);
       }
     }
     
@@ -746,9 +765,26 @@ function sendDeliveryEmail(resno) {
     var date = String(rowData[0] || '');           // date (Column A)
     var resultUrl = String(rowData[14] || '');     // result_url (Column O)
     
-    if (!resultUrl) return { ok: false, error: '보정완료 처리가 필요합니다. (공유 링크가 생성되지 않았습니다)' };
+    // [자동 복구] 발송 시점에 링크가 없으면 드라이브에서 직접 검색하여 채워넣음
+    if (!resultUrl) {
+      var resnoStr = String(rowData[2] || '');
+      var folders = DriveApp.searchFolders("title contains '" + resnoStr + "' and trashed = false");
+      if (folders.hasNext()) {
+        var foundFolder = folders.next();
+        foundFolder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+        resultUrl = 'https://drive.google.com/drive/folders/' + foundFolder.getId();
+        // 시트에 즉시 기록하여 다음에는 검색 안하게 함
+        sheet.getRange(targetRow, 15).setValue(resultUrl); 
+        sheet.getRange(targetRow, 14).setValue('보정완료'); // 상태도 완료로 갱신
+      }
+    }
     
-    var htmlBody = buildDeliveryEmailHtml(customerName, product, people, date, resultUrl);
+    if (!resultUrl) return { ok: false, error: '발송 불가: 보정완료 처리가 필요합니다 (V55-실패: 고객 폴더를 찾을 수 없습니다)' };
+    
+    // 클릭 추적 URL 생성 (실제 URL로 리다이렉트하면서 열람 기록)
+    var trackUrl = GAS_EXEC_URL + '?action=trackClick&resno=' + encodeURIComponent(resno)
+                 + '&url=' + encodeURIComponent(resultUrl);
+    var htmlBody = buildDeliveryEmailHtml(customerName, product, people, date, resultUrl, trackUrl);
     
     var options = {
       htmlBody: htmlBody,
@@ -756,14 +792,13 @@ function sendDeliveryEmail(resno) {
       bcc: 'kitan98@hanmail.net'
     };
     
-    // 이메일 발송 계정 (dkseq4@gmail.com) 적용
-    // 만약 스크립트 실행 계정이 dkseq4이거나 해당 계정이 가명(alias) 등록되어 있으면 from 속성을 적용
-    var aliases = GmailApp.getAliases();
-    var currentUser = Session.getActiveUser().getEmail();
-    if (aliases.indexOf(DELIVERY_FROM_EMAIL) !== -1 || currentUser === DELIVERY_FROM_EMAIL) {
-      options.from = DELIVERY_FROM_EMAIL;
-    }
-
+    var options = {
+      htmlBody: htmlBody,
+      name: 'DKsequence × 중문별장',
+      bcc: 'kitan98@hanmail.net'
+    };
+    
+    // 복잡한 권한 승인이 필요한 from 설정 대신 기본 발송 계정 사용
     GmailApp.sendEmail(email, 
       'DKsequence × 중문별장 — ' + customerName + '님의 촬영 결과물이 준비되었습니다',
       '촬영 결과물 확인: ' + resultUrl,
@@ -783,18 +818,53 @@ function sendDeliveryEmail(resno) {
   }
 }
 
+// ── 링크 클릭 추적 핸들러 ──────────────────────────────────────
+function handleTrackClick(params) {
+  var resno = String(params.resno || '').trim();
+  var redirectUrl = String(params.url || '').trim();
+
+  if (resno && redirectUrl) {
+    try {
+      var ss = SpreadsheetApp.openById(MASTER_SS_ID);
+      var sheet = ss.getSheetByName(CLICK_LOG_SHEET);
+      if (!sheet) {
+        sheet = ss.insertSheet(CLICK_LOG_SHEET);
+        sheet.appendRow(['resno', 'clicked_at', 'redirect_url']);
+        sheet.setFrozenRows(1);
+      }
+      var now = Utilities.formatDate(new Date(), 'Asia/Seoul', 'yyyy-MM-dd HH:mm:ss');
+      sheet.appendRow([resno, now, redirectUrl]);
+    } catch(e) {
+      // 로그 실패해도 리다이렉트는 진행
+    }
+  }
+
+  if (redirectUrl) {
+    return HtmlService.createHtmlOutput(
+      '<!DOCTYPE html><html><head>' +
+      '<meta http-equiv="refresh" content="0;url=' + redirectUrl + '">' +
+      '</head><body>' +
+      '<script>window.location.replace("' + redirectUrl + '");</script>' +
+      '<p>잠시 후 결과물 페이지로 이동합니다...</p>' +
+      '</body></html>'
+    );
+  }
+  return HtmlService.createHtmlOutput('<p>잘못된 링크입니다.</p>');
+}
+
 // ── 납품 이메일 HTML 템플릿 ───────────────────────────────────
-function buildDeliveryEmailHtml(name, product, people, date, resultUrl) {
+function buildDeliveryEmailHtml(name, product, people, date, resultUrl, trackUrl) {
   try {
     // email_template.html 파일을 템플릿으로 불러옴
     var template = HtmlService.createTemplateFromFile('email_template');
-    
+
     // 템플릿 내의 <?= ?> 변수에 실제 데이터 매핑
     template.name = name;
     template.product = product;
     template.people = people;
     template.date = date;
     template.resultUrl = resultUrl;
+    template.trackUrl = trackUrl || resultUrl; // 추적 URL (없으면 원본 URL)
     
     // 최종 HTML 생성
     return template.evaluate().getContent();
@@ -903,5 +973,31 @@ function sendSampleEmailForBoss() {
   );
   return '샘플 메일이 ' + testEmail + '로 발송되었습니다.';
 }
-// Update: 2026-04-13 17:22
-// Update: 2026-04-13 17:22
+// ── 운영 허브 데이터 동기화 ───────────────────────────────────
+function getHubData() {
+  try {
+    var ss    = SpreadsheetApp.openById(MASTER_SS_ID);
+    var sheet = ss.getSheetByName('_hub_sync');
+    if (!sheet) return { ok: true, data: null };
+    var val = sheet.getRange(1, 1).getValue();
+    if (!val) return { ok: true, data: null };
+    return { ok: true, data: JSON.parse(val) };
+  } catch(e) {
+    return { ok: false, error: e.toString() };
+  }
+}
+
+function setHubData(data) {
+  try {
+    var ss    = SpreadsheetApp.openById(MASTER_SS_ID);
+    var sheet = ss.getSheetByName('_hub_sync');
+    if (!sheet) {
+      sheet = ss.insertSheet('_hub_sync');
+      sheet.hideSheet();
+    }
+    sheet.getRange(1, 1).setValue(JSON.stringify(data));
+    return { ok: true };
+  } catch(e) {
+    return { ok: false, error: e.toString() };
+  }
+}
