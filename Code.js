@@ -192,9 +192,12 @@ function getReservations(dateStr, timeReq) {
         // 현장에서 확인된 실명이 마스터 로그에 있다면 해당 이름으로 표시
         var masterRealName = String(row[3] || '').trim();
         if (masterRealName) combined[resno].name = masterRealName;
-        combined[resno].email = String(row[7] || '').trim();
-        combined[resno].phone = String(row[8] || '').trim();
-        combined[resno].memo  = String(row[9] || '').trim();
+        combined[resno].email          = String(row[7]  || '').trim();
+        combined[resno].phone          = String(row[8]  || '').trim();
+        combined[resno].memo           = String(row[9]  || '').trim();
+        combined[resno].privacyConsent = String(row[17] || '').trim();
+        combined[resno].snsConsent     = String(row[18] || '').trim();
+        combined[resno].type           = String(row[19] || '').trim();
 
         // 중요: 마스터 시트에 시간이 비어있다면 네이버에서 가져온 원래 시간을 보존함
         var masterTime = "";
@@ -223,9 +226,12 @@ function getReservations(dateStr, timeReq) {
           time: timeStr,
           source: String(row[10] || 'A').toUpperCase(),
           checkedIn: !!checkinAt,
-          email: String(row[7] || '').trim(),
-          phone: String(row[8] || '').trim(),
-          memo:  String(row[9] || '').trim(),
+          email:          String(row[7]  || '').trim(),
+          phone:          String(row[8]  || '').trim(),
+          memo:           String(row[9]  || '').trim(),
+          privacyConsent: String(row[17] || '').trim(),
+          snsConsent:     String(row[18] || '').trim(),
+          type:           String(row[19] || '').trim(),
         };
       }
 
@@ -407,7 +413,7 @@ function checkin(req) {
         '',               // delivery_sent_at
         req.privacyConsent ? 'Y' : 'N',
         req.snsConsent ? 'Y' : 'N',
-        req.isNew ? '현장결제' : '사전예약'
+        req.isNew ? ('현장결제' + (req.paymentMethod ? '(' + req.paymentMethod + ')' : '')) : '사전예약'
       ]);
     } else {
       // 기존 예약 행 업데이트
