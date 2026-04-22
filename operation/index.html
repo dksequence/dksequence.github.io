@@ -1251,6 +1251,8 @@ function goNewCamera() {
   if (!privacyOn) { showToast('개인정보 수집 동의는 필수입니다'); return; }
 
   var activePayTab = document.querySelector('.pay-tab.active');
+  var isExperience = CURRENT_ADD_TYPE === 'V';
+  var rawMemo = document.getElementById('new-memo').value.trim();
   CUR = {
     resno          : document.getElementById('new-code').textContent,
     maskedName     : '',
@@ -1260,10 +1262,11 @@ function goNewCamera() {
     time           : document.getElementById('new-time').value,
     email          : document.getElementById('new-email').value.trim(),
     phone          : document.getElementById('new-phone').value.trim(),
-    memo           : document.getElementById('new-memo').value.trim(),
+    memo           : isExperience ? ('[체험/테스트] ' + rawMemo).trim() : rawMemo,
     privacyConsent : privacyOn,
     snsConsent     : document.getElementById('toggle-sns2').classList.contains('on'),
     paymentMethod  : activePayTab ? activePayTab.textContent.trim() : '',
+    source         : isExperience ? 'V' : 'A',
     isNew          : true,
   };
 
