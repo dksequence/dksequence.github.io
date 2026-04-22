@@ -61,7 +61,20 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 .customer-card{background:var(--surface-high);border-radius:1rem;padding:20px 22px;cursor:pointer;
   display:flex;align-items:center;gap:14px;transition:background .15s;}
 .customer-card:active{background:var(--surface-highest);}
-.customer-card.done{opacity:.35;pointer-events:none;}
+.customer-card.done{opacity:.55;}
+/* ── 고객 상세 모달 ── */
+#detail-modal{display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);align-items:flex-end;justify-content:center;}
+#detail-modal.open{display:flex;}
+.detail-sheet{background:var(--surface-high);border-radius:1.5rem 1.5rem 0 0;width:100%;max-width:600px;padding:32px 24px 48px;border-top:1px solid var(--outline);}
+.detail-handle{width:48px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:0 auto 28px;}
+.detail-title{font-size:28px;font-weight:800;color:#fff;margin-bottom:6px;}
+.detail-resno{font-size:16px;color:var(--on-surface-dim);font-family:monospace;letter-spacing:.06em;margin-bottom:24px;}
+.detail-row{display:flex;align-items:center;gap:12px;padding:16px 0;border-bottom:1px solid var(--outline);}
+.detail-row:last-of-type{border-bottom:none;}
+.detail-key{font-size:16px;color:var(--on-surface-dim);width:80px;flex-shrink:0;}
+.detail-val{font-size:22px;color:#fff;font-weight:600;word-break:break-all;}
+.detail-val.empty{color:rgba(255,255,255,.25);font-weight:400;font-size:18px;}
+.detail-close{margin-top:24px;width:100%;padding:20px;border-radius:1rem;background:var(--surface-highest);border:1px solid var(--outline);color:var(--on-surface-dim);font-size:20px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;}
 .card-info{flex:1;min-width:0;}
 .card-name{font-size:26px;font-weight:700;color:#fff;}
 .card-realname{font-size:12px;color:var(--on-surface-dim);}
@@ -497,6 +510,21 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
   </div>
 </div>
 
+<!-- ════════════════ 고객 상세 모달 ════════════════ -->
+<div id="detail-modal" onclick="if(event.target===this)closeDetail()">
+  <div class="detail-sheet">
+    <div class="detail-handle"></div>
+    <div class="detail-title" id="dm-name"></div>
+    <div class="detail-resno" id="dm-resno"></div>
+    <div class="detail-row"><span class="detail-key">상품</span><span class="detail-val" id="dm-product"></span></div>
+    <div class="detail-row"><span class="detail-key">인원/시간</span><span class="detail-val" id="dm-people"></span></div>
+    <div class="detail-row"><span class="detail-key">전화번호</span><span class="detail-val" id="dm-phone"></span></div>
+    <div class="detail-row"><span class="detail-key">이메일</span><span class="detail-val" id="dm-email"></span></div>
+    <div class="detail-row"><span class="detail-key">메모</span><span class="detail-val" id="dm-memo"></span></div>
+    <button class="detail-close" onclick="closeDetail()">닫기</button>
+  </div>
+</div>
+
 <!-- ════════════════ 신규 고객 (현장 결제) ════════════════ -->
 <div id="s-new" class="screen">
   <div class="topbar">
@@ -900,9 +928,30 @@ function renderList(reservations) {
         (r.checkedIn ? '완료' : '대기') + '</div>';
     if (!r.checkedIn) {
       card.onclick = function() { goCheckin(r); };
+    } else {
+      card.onclick = function() { showDetail(r); };
     }
     list.appendChild(card);
   });
+}
+
+// ── 완료 고객 상세 보기 ────────────────────────────────
+function showDetail(r) {
+  function val(v) {
+    return v ? '<span class="detail-val">' + v + '</span>'
+             : '<span class="detail-val empty">미입력</span>';
+  }
+  document.getElementById('dm-name').textContent    = r.name || '이름없음';
+  document.getElementById('dm-resno').textContent   = r.resno;
+  document.getElementById('dm-product').innerHTML   = val(r.product);
+  document.getElementById('dm-people').innerHTML    = val(r.people ? r.people + '인 · ' + r.time : '');
+  document.getElementById('dm-phone').innerHTML     = val(r.phone);
+  document.getElementById('dm-email').innerHTML     = val(r.email);
+  document.getElementById('dm-memo').innerHTML      = val(r.memo);
+  document.getElementById('detail-modal').classList.add('open');
+}
+function closeDetail() {
+  document.getElementById('detail-modal').classList.remove('open');
 }
 
 // ── 체크인 화면 ───────────────────────────────────────
