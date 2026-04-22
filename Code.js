@@ -448,7 +448,7 @@ function savePhotoPost(req) {
     var dateFolder = getOrCreateFolder(yearFolder, req.date);
     var timeFolder = getOrCreateFolder(dateFolder, req.time);
     
-    var customerFolderName = req.resno + '_' + req.realName;
+    var customerFolderName = req.resno + '_' + sanitizeFolderName(req.realName);
     var customerFolder = getOrCreateFolder(timeFolder, customerFolderName);
     
     var blob = Utilities.newBlob(
@@ -468,6 +468,10 @@ function savePhotoPost(req) {
   } catch (err) {
     return { ok: false, error: err.toString() };
   }
+}
+
+function sanitizeFolderName(name) {
+  return String(name || '').replace(/[\/\\:*?"<>|]/g, '_').trim() || '이름없음';
 }
 
 function getOrCreateFolder(parent, name) {
@@ -756,6 +760,8 @@ function sendDeliveryEmail(resno) {
     
     var email = String(rowData[7] || '').trim(); // email (Column H)
     if (!email) return { ok: false, error: '이메일 주소가 없습니다.' };
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return { ok: false, error: '유효하지 않은 이메일 주소: ' + email };
     
     var customerName = String(rowData[3] || '고객'); // real_name (Column D)
     var product = String(rowData[5] || '');        // product (Column F)
@@ -790,18 +796,25 @@ function sendDeliveryEmail(resno) {
       bcc: 'kitan98@hanmail.net'
     };
     
-    // 복잡한 권한 승인이 필요한 from 설정 대신 기본 발송 계정 사용
-    GmailApp.sendEmail(email, 
-      'DKsequence × 중문별장 — ' + customerName + '님의 촬영 결과물이 준비되었습니다',
-      '촬영 결과물 확인: ' + resultUrl,
-      options
-    );
-    
     var now = new Date();
     var sentAt = Utilities.formatDate(now, 'Asia/Seoul', 'yyyy-MM-dd HH:mm:ss');
-    sheet.getRange(targetRow, 16).setValue('발송완료 (' + sentAt.split(' ')[0] + ')'); // delivery_status (Column P)
-    sheet.getRange(targetRow, 17).setValue(sentAt); // delivery_sent_at (Column Q)
-    
+
+    try {
+      GmailApp.sendEmail(email,
+        'DKsequence × 중문별장 — ' + customerName + '님의 촬영 결과물이 준비되었습니다',
+        '촬영 결과물 확인: ' + resultUrl,
+        options
+      );
+    } catch (emailErr) {
+      Logger.log('GmailApp.sendEmail failed for ' + resno + ': ' + emailErr.toString());
+      sheet.getRange(targetRow, 16).setValue('발송실패 (' + sentAt.split(' ')[0] + ')');
+      sheet.getRange(targetRow, 17).setValue(sentAt);
+      return { ok: false, error: '이메일 발송 실패: ' + emailErr.message };
+    }
+
+    sheet.getRange(targetRow, 16).setValue('발송완료 (' + sentAt.split(' ')[0] + ')');
+    sheet.getRange(targetRow, 17).setValue(sentAt);
+
     return { ok: true, sentAt: sentAt };
   } catch (err) {
     return { ok: false, error: err.toString() };
