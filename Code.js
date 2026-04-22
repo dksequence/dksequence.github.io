@@ -300,27 +300,25 @@ function checkUpdate(dateStr, lastHash) {
 // ── 워크인 코드 생성 ────────────────────────────────────────
 function getWalkInCode(dateStr) {
   try {
-    var ss = SpreadsheetApp.openById(SHEET_ID);
-    var sheet2 = ss.getSheetByName(SHEET_NAME_2ND);
-    if (!sheet2) {
+    var masterSS = SpreadsheetApp.openById(MASTER_SS_ID);
+    var masterSheet = masterSS.getSheetByName(MASTER_SHEET_NAME);
+    if (!masterSheet) {
       return { ok: true, code: dateStr + '-W1' };
     }
-    
-    var data = sheet2.getDataRange().getValues();
+
+    var data = masterSheet.getDataRange().getValues();
     var maxNum = 0;
+    var pattern = dateStr.replace(/[^0-9]/g, '') ;
     for (var i = 1; i < data.length; i++) {
-      var resno = String(data[i][3] || '');
-      var pattern = dateStr + '-W';
-      if (resno.indexOf(pattern) === 0) {
-        var numPart = resno.replace(pattern, '');
-        var num = parseInt(numPart);
-        if (!isNaN(num) && num > maxNum) {
-          maxNum = num;
-        }
+      var resno = String(data[i][2] || ''); // reservation_no는 Col C (index 2)
+      var wPattern = pattern + '-W';
+      if (resno.indexOf(wPattern) === 0) {
+        var num = parseInt(resno.replace(wPattern, ''));
+        if (!isNaN(num) && num > maxNum) maxNum = num;
       }
     }
-    
-    return { ok: true, code: dateStr + '-W' + (maxNum + 1) };
+
+    return { ok: true, code: pattern + '-W' + (maxNum + 1) };
   } catch (err) {
     return { ok: false, error: err.toString() };
   }
@@ -785,12 +783,6 @@ function sendDeliveryEmail(resno) {
     var trackUrl = GAS_EXEC_URL + '?action=trackClick&resno=' + encodeURIComponent(resno)
                  + '&url=' + encodeURIComponent(resultUrl);
     var htmlBody = buildDeliveryEmailHtml(customerName, product, people, date, resultUrl, trackUrl);
-    
-    var options = {
-      htmlBody: htmlBody,
-      name: 'DKsequence × 중문별장',
-      bcc: 'kitan98@hanmail.net'
-    };
     
     var options = {
       htmlBody: htmlBody,
