@@ -520,6 +520,9 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
     <div class="detail-row"><span class="detail-key">인원/시간</span><span class="detail-val" id="dm-people"></span></div>
     <div class="detail-row"><span class="detail-key">전화번호</span><span class="detail-val" id="dm-phone"></span></div>
     <div class="detail-row"><span class="detail-key">이메일</span><span class="detail-val" id="dm-email"></span></div>
+    <div class="detail-row"><span class="detail-key">결제방법</span><span class="detail-val" id="dm-payment"></span></div>
+    <div class="detail-row"><span class="detail-key">개인정보동의</span><span class="detail-val" id="dm-privacy"></span></div>
+    <div class="detail-row"><span class="detail-key">마케팅동의</span><span class="detail-val" id="dm-sns"></span></div>
     <div class="detail-row"><span class="detail-key">메모</span><span class="detail-val" id="dm-memo"></span></div>
     <button class="detail-close" onclick="closeDetail()">닫기</button>
   </div>
@@ -941,12 +944,21 @@ function showDetail(r) {
     return v ? '<span class="detail-val">' + v + '</span>'
              : '<span class="detail-val empty">미입력</span>';
   }
+  function consent(v) {
+    if (!v) return '<span class="detail-val empty">정보없음</span>';
+    return v === 'Y'
+      ? '<span class="detail-val" style="color:var(--success)">동의</span>'
+      : '<span class="detail-val" style="color:var(--danger)">미동의</span>';
+  }
   document.getElementById('dm-name').textContent    = r.name || '이름없음';
   document.getElementById('dm-resno').textContent   = r.resno;
   document.getElementById('dm-product').innerHTML   = val(r.product);
   document.getElementById('dm-people').innerHTML    = val(r.people ? r.people + '인 · ' + r.time : '');
   document.getElementById('dm-phone').innerHTML     = val(r.phone);
   document.getElementById('dm-email').innerHTML     = val(r.email);
+  document.getElementById('dm-payment').innerHTML   = val(r.type);
+  document.getElementById('dm-privacy').innerHTML   = consent(r.privacyConsent);
+  document.getElementById('dm-sns').innerHTML       = consent(r.snsConsent);
   document.getElementById('dm-memo').innerHTML      = val(r.memo);
   document.getElementById('detail-modal').classList.add('open');
 }
@@ -1140,6 +1152,7 @@ function startSaving() {
       memo:           CUR.memo,
       isNew:          CUR.isNew || false,
       source:         CUR.source || 'A',
+      paymentMethod:  CUR.paymentMethod || '',
       folderId:       CUR.folderId,
       fileUrl:        CUR.fileUrl,
     }, function(err2, res2) {
@@ -1237,6 +1250,7 @@ function goNewCamera() {
   var privacyOn = document.getElementById('toggle-privacy2').classList.contains('on');
   if (!privacyOn) { showToast('개인정보 수집 동의는 필수입니다'); return; }
 
+  var activePayTab = document.querySelector('.pay-tab.active');
   CUR = {
     resno          : document.getElementById('new-code').textContent,
     maskedName     : '',
@@ -1249,6 +1263,7 @@ function goNewCamera() {
     memo           : document.getElementById('new-memo').value.trim(),
     privacyConsent : privacyOn,
     snsConsent     : document.getElementById('toggle-sns2').classList.contains('on'),
+    paymentMethod  : activePayTab ? activePayTab.textContent.trim() : '',
     isNew          : true,
   };
 
