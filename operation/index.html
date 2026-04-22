@@ -771,7 +771,7 @@ function getToday() {
 
 // ── 화면 전환 ─────────────────────────────────────────
 function show(id) {
-  if (id === 's-dashboard') playSound('EFFECT008'); // 복귀 시 사운드
+  if (id === 's-dashboard') { playSound('EFFECT008'); CUR = {}; }
   document.querySelectorAll('.screen').forEach(function(s){
     s.classList.remove('active');
     s.style.display = 'none';
@@ -956,7 +956,7 @@ function closeDetail() {
 
 // ── 체크인 화면 ───────────────────────────────────────
 function goCheckin(r) {
-  CUR = { resno: r.resno, maskedName: r.name, product: r.product, people: r.people, time: SELECTED_TIME, isNew: false };
+  CUR = { resno: r.resno, maskedName: r.name, product: r.product, people: r.people, time: SELECTED_TIME, isNew: false, source: r.source || 'N' };
   document.getElementById('ci-topname').textContent  = r.name;
   document.getElementById('ci-resno').textContent    = r.resno;
   document.getElementById('ci-product').textContent  = r.product;
@@ -1105,6 +1105,7 @@ function startSaving() {
     if (err || !photoRes.ok) {
       setStep(1, 'error', '사진 업로드 실패');
       showToast('사진 저장 실패: ' + (err ? err.message : photoRes.error));
+      setTimeout(function() { show('s-checkin'); }, 2500);
       return;
     }
     CUR.folderId = photoRes.folderId;
@@ -1112,7 +1113,7 @@ function startSaving() {
     CUR.rowNum   = null;
     setStep(1, 'ok', CUR.filename);
 
-    // Step 2: 체크인 데이터 → 시트 (JSONP — 텍스트만)
+    // Step 2: 체크인 데이터 → 시트
     setStep(2, 'loading', '스프레드시트 기록 중...');
     callApi({
       action:         'checkin',
@@ -1129,12 +1130,14 @@ function startSaving() {
       snsConsent:     CUR.snsConsent,
       memo:           CUR.memo,
       isNew:          CUR.isNew || false,
+      source:         CUR.source || 'A',
       folderId:       CUR.folderId,
       fileUrl:        CUR.fileUrl,
     }, function(err2, res2) {
       if (err2 || !res2.ok) {
         setStep(2, 'error', '시트 기록 실패: ' + (err2 ? err2.message : res2.error));
-        showToast('시트 저장 실패');
+        showToast('시트 저장 실패 — 뒤로가기 후 재시도하세요');
+        setTimeout(function() { show('s-checkin'); }, 3000);
         return;
       }
       setStep(2, 'ok', '기록 완료');
@@ -1278,10 +1281,10 @@ function postPhoto(base64, filename, cb) {
     return;
   }
   
-  // 외부 환경 (GitHub Pages) -> fetch POST 우회 전송 (no-cors)
+  // 외부 환경 (GitHub Pages) -> fetch POST (text/plain = simple request, CORS 허용)
   fetch(GAS_URL, {
     method: 'POST',
-    mode: 'no-cors',
+    redirect: 'follow',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify({
       action  : 'savePhotoPost',
@@ -1294,9 +1297,10 @@ function postPhoto(base64, filename, cb) {
       base64  : base64
     })
   })
-  .then(() => {
-    // no-cors는 결과 확인이 안되므로 성공으로 간주하고 진행
-    cb(null, { ok: true, folderId: '', fileUrl: '' });
+  .then(function(r) { return r.text(); })
+  .then(function(text) {
+    try { cb(null, JSON.parse(text)); }
+    catch(e) { cb(new Error('사진 응답 파싱 오류: ' + text.substring(0, 80))); }
   })
   .catch(function(err) { cb(err); });
 }
@@ -1454,7 +1458,7 @@ function submitCheckin() {
     date: getToday(),
     time: document.getElementById('new-time').value,
     realName: document.getElementById('new-name').value,
-    maskedName: document.getElementById('new-name').value.charAt(0) + '*' + document.getElementById('new-name').value.slice(-1),
+    maskedName: (function(n){ return n.length <= 1 ? n : n.charAt(0) + '*'.repeat(Math.max(1, n.length - 2)) + (n.length > 2 ? n.slice(-1) : ''); })(document.getElementById('new-name').value),
     product: document.getElementById('new-product').value,
     people: document.getElementById('new-people').value,
     email: document.getElementById('new-email').value,
