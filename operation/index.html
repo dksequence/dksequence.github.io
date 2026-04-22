@@ -1095,11 +1095,20 @@ function takePhoto() {
 
 // ── 저장 단계 실행 ────────────────────────────────────
 function startSaving() {
+  if (CUR.email) {
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(CUR.email)) {
+      showToast('이메일 형식이 올바르지 않습니다. 수정 후 다시 시도하세요.');
+      show('s-checkin');
+      return;
+    }
+  }
+
   document.getElementById('saving-name-label').textContent = CUR.realname + ' · ' + CUR.resno;
   resetSteps();
   show('s-saving');
 
-  // Step 1: 사진 → 드라이브 (form POST — base64 전송)
+  // Step 1: 사진 → 드라이브
   setStep(1, 'loading', '구글 드라이브 업로드 중...');
   postPhoto(CUR.base64, CUR.filename, function(err, photoRes) {
     if (err || !photoRes.ok) {
@@ -1458,7 +1467,7 @@ function submitCheckin() {
     date: getToday(),
     time: document.getElementById('new-time').value,
     realName: document.getElementById('new-name').value,
-    maskedName: (function(n){ return n.length <= 1 ? n : n.charAt(0) + '*'.repeat(Math.max(1, n.length - 2)) + (n.length > 2 ? n.slice(-1) : ''); })(document.getElementById('new-name').value),
+    maskedName: (function(n){ if(n.length<=1) return n; if(n.length===2) return n.charAt(0)+'*'; return n.charAt(0)+'*'.repeat(n.length-2)+n.slice(-1); })(document.getElementById('new-name').value),
     product: document.getElementById('new-product').value,
     people: document.getElementById('new-people').value,
     email: document.getElementById('new-email').value,
