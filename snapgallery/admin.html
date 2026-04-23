@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DK Gallery — 관리</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,400&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { background: #111; color: #ddd; font-family: 'Helvetica Neue', Arial, sans-serif; min-height: 100vh; }
@@ -159,6 +160,44 @@
     .ss-src-btn.disabled { opacity: 0.25; cursor: default; }
     .ss-src-btn.disabled:hover { border-color: #2a2a2a; color: #666; }
 
+    /* ── Show Texts section ── */
+    .texts-section {
+      padding: 16px 24px; background: #161616; border-bottom: 1px solid #222;
+    }
+    .texts-section-header {
+      display: flex; align-items: center; gap: 16px; margin-bottom: 14px;
+    }
+    .texts-grid {
+      max-height: 420px; overflow-y: auto; border: 1px solid #1e1e1e;
+      display: none;  /* 기본 접힘 */
+    }
+    .texts-grid.open { display: block; }
+    .texts-toggle-btn {
+      background: none; border: 1px solid #333; color: #888;
+      padding: 5px 14px; font-size: 0.75rem; letter-spacing: 0.12em;
+      text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .texts-toggle-btn:hover { border-color: #888; color: #fff; }
+    .texts-toggle-arrow { display: inline-block; transition: transform 0.2s; font-size: 0.6rem; }
+    .texts-toggle-btn.open .texts-toggle-arrow { transform: rotate(180deg); }
+    .texts-row {
+      display: grid;
+      grid-template-columns: 28px 1fr 1fr 36px;
+      align-items: center; gap: 8px;
+      padding: 5px 10px; border-bottom: 1px solid #1a1a1a;
+    }
+    .texts-row:last-child { border-bottom: none; }
+    .texts-row:hover { background: #1a1a1a; }
+    .texts-row-num { font-size: 0.68rem; color: #444; text-align: center; }
+    .texts-row input {
+      width: 100%; background: #111; border: 1px solid #222; color: #ccc;
+      padding: 5px 8px; font-size: 0.78rem; outline: none;
+      font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic;
+    }
+    .texts-row input:focus { border-color: #555; }
+    .texts-row input::placeholder { color: #383838; font-style: italic; }
+
     /* ── Empty ── */
     .empty { text-align: center; padding: 80px; color: #444; font-size: 0.85rem; letter-spacing: 0.2em; }
 
@@ -217,6 +256,30 @@
     </div>
   </div>
 
+  <!-- Show Texts 섹션 -->
+  <div class="texts-section">
+    <div class="texts-section-header">
+      <span class="settings-label">Show Texts</span>
+      <div style="display:flex;gap:6px;" id="ss-text-interval-btns">
+        <button class="btn ss-ti-btn" data-val="8000">8초</button>
+        <button class="btn ss-ti-btn" data-val="12000">12초</button>
+        <button class="btn ss-ti-btn" data-val="18000">18초</button>
+        <button class="btn ss-ti-btn" data-val="25000">25초</button>
+        <button class="btn ss-ti-btn" data-val="30000">30초</button>
+      </div>
+      <button class="texts-toggle-btn" id="texts-toggle-btn">
+        목록 펼치기 <span class="texts-toggle-arrow">▼</span>
+      </button>
+      <button class="btn primary" id="texts-save-btn" style="margin-left:auto">텍스트 저장</button>
+    </div>
+    <div id="texts-expandable" style="display:none;">
+      <div style="display:grid;grid-template-columns:28px 1fr 1fr 36px;gap:8px;padding:4px 10px 6px;font-size:0.68rem;letter-spacing:0.12em;color:#666;text-transform:uppercase;border-bottom:1px solid #222;">
+        <span></span><span>Line 1</span><span>Line 2</span><span style="text-align:center">ON</span>
+      </div>
+      <div class="texts-grid open" id="texts-grid"></div>
+    </div>
+  </div>
+
   <div class="photo-list" id="photo-list">
     <div class="list-header">
       <span></span>
@@ -239,6 +302,71 @@ const ADMIN_PW = '8888';  // 클라이언트 비밀번호 (GAS gallery.gs와 동
 
 let pw = '';
 let items = [];
+let texts = [];   // Show Texts 데이터
+
+// ── Show Texts 기본 문장 (50개) ───────────────────────────────────────
+const DEFAULT_TEXTS = [
+  // Travel 여행
+  { line1: 'Every road leads somewhere new',          line2: 'every step whispers of dreams' },
+  { line1: 'We left without a map',                   line2: 'and found beauty along the way' },
+  { line1: 'The world is soft with light',            line2: 'we just pass through its grace' },
+  { line1: 'To travel is to fall in love',            line2: 'with places yet unimagined' },
+  { line1: 'Some journeys have no destination',       line2: 'only a desire to keep moving' },
+  // Memory 추억
+  { line1: 'What we remember glows softly',           line2: 'like lanterns lit in the fog' },
+  { line1: 'The sweetest memories',                   line2: 'are ones we did not know we made' },
+  { line1: 'We carry our days like flowers',          line2: 'pressed between who we are' },
+  { line1: 'Time passes, but warmth remains',         line2: 'folded into corners of our hearts' },
+  { line1: 'Memory is a room we return to',           line2: 'long after the door has closed' },
+  // Remembrance 기억
+  { line1: 'I remember how the light fell',           line2: 'through leaves, onto your hands' },
+  { line1: 'Some things stay with you',               line2: 'not as images but as feelings' },
+  { line1: 'To remember is to hold someone',          line2: 'across the distance of years' },
+  { line1: 'The mind forgets, but the heart',         line2: 'keeps everything safe and still' },
+  { line1: 'Even forgetting is a keeping',            line2: 'the shape of what once moved us' },
+  // Record 기록
+  { line1: 'We write not only to remember',           line2: 'but to prove that we were here' },
+  { line1: 'Every photograph is a letter',            line2: 'sealed with light and silence' },
+  { line1: 'A record is not just what',               line2: 'but how it felt to be alive' },
+  { line1: 'We document the days we love',            line2: 'so they do not dissolve in time' },
+  { line1: 'The camera does not capture',             line2: 'it gives moments a place to rest' },
+  // Moment 순간
+  { line1: 'A moment is all we ever have',            line2: 'and all we ever need' },
+  { line1: 'The smallest moments hold most',          line2: 'they are the ones that stay' },
+  { line1: 'Between one breath and the next',         line2: 'something beautiful passes by' },
+  { line1: 'Time is not lost, transformed',           line2: 'into moments that define us' },
+  { line1: 'Some moments ask nothing of you',         line2: 'only that you be present' },
+  // Friendship 우정
+  { line1: 'A friend walks in',                       line2: 'when the whole world walks out' },
+  { line1: 'We laughed without reason',               line2: 'and that was reason enough' },
+  { line1: 'The best conversations happen',           line2: 'when no one tries to be anyone' },
+  { line1: 'Side by side or miles apart',             line2: 'good friends are always near' },
+  { line1: 'With you, ordinary days become',          line2: 'the ones I will always remember' },
+  // Love 사랑
+  { line1: 'Love is not what you say',                line2: 'but what you do unseen' },
+  { line1: 'You were a season I loved',               line2: 'a warmth I still carry with me' },
+  { line1: 'To love is to truly see',                 line2: 'not as they are but could be' },
+  { line1: 'Some loves are quiet and steady',         line2: 'like a river never stopping' },
+  { line1: 'In your presence I learned',              line2: 'what it means to feel at home' },
+  // Meeting 만남
+  { line1: 'Every meeting is a small miracle',        line2: 'disguised as chance' },
+  { line1: 'Some people arrive and rearrange',        line2: 'the whole world you once knew' },
+  { line1: 'I did not know I was waiting',            line2: 'until you appeared' },
+  { line1: 'The best encounters begin',               line2: 'with a look that says I see you' },
+  { line1: 'To meet someone truly',                   line2: 'is to find a new country' },
+  // Photo 사진
+  { line1: 'A photograph holds a secret',             line2: 'the more it tells, the less known' },
+  { line1: 'Light falls once, never the same',        line2: 'what time forgets, cameras hold' },
+  { line1: 'We take pictures because we know',        line2: 'beauty is borrowed, not owned' },
+  { line1: 'Every photograph holds a story',          line2: 'that words alone cannot hold' },
+  { line1: 'The best portraits are not posed',        line2: 'they are simply witnessed' },
+  // Joyful Heart 즐거운 마음
+  { line1: 'Joy is not a destination',                line2: 'it is the way you choose to walk' },
+  { line1: 'Let yourself be light today',             line2: 'the world will carry its weight' },
+  { line1: 'There is a quiet happiness',              line2: 'in doing nothing but being here' },
+  { line1: 'Smile not for perfection',                line2: 'but because you are in it' },
+  { line1: 'The heart that plays is never old',       line2: 'never truly far from home' },
+];
 
 // ── 인증 ─────────────────────────────────────────────────────────────
 function thumbUrl(fileId) {
@@ -265,12 +393,24 @@ document.getElementById('pw-btn').addEventListener('click', async () => {
   pw = entered;
   setStatus('목록 로딩 중...');
   try {
-    const res = await gasGet('admin');
-    if (!res.ok) throw new Error(res.error);
-    items = res.data;
+    const [galleryRes, textsRes] = await Promise.all([
+      gasGet('admin'),
+      gasGet('texts'),
+    ]);
+    if (!galleryRes.ok) throw new Error(galleryRes.error);
+    items = galleryRes.data;
+    const loaded = Array.isArray(textsRes.data) ? textsRes.data.filter(t => t.line1 || t.line2) : [];
+    if (loaded.length === 0) {
+      // GAS에 데이터 없으면 기본 문장으로 초기화
+      texts = DEFAULT_TEXTS.map((t, i) => ({ id: '', line1: t.line1, line2: t.line2, active: true, order: i + 1 }));
+    } else {
+      texts = loaded;
+      while (texts.length < 50) texts.push({ id: '', line1: '', line2: '', active: true, order: texts.length + 1 });
+    }
     document.getElementById('login-wrap').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     renderList();
+    renderTexts();
     setStatus(`총 ${items.length}개 항목 로드됨`, 'ok');
   } catch (e) {
     pw = '';
@@ -490,6 +630,74 @@ function initDragDrop() {
     });
   });
 }
+
+// ── Show Texts 렌더링 ────────────────────────────────────────────────
+function renderTexts() {
+  const grid = document.getElementById('texts-grid');
+  grid.innerHTML = texts.map((t, i) => `
+    <div class="texts-row">
+      <span class="texts-row-num">${String(i+1).padStart(2,'0')}</span>
+      <input type="text" placeholder="Line 1 — e.g. Every frame holds a story"
+        value="${(t.line1||'').replace(/"/g,'&quot;')}" data-idx="${i}" data-field="line1">
+      <input type="text" placeholder="Line 2 — e.g. A moment of light and shadow"
+        value="${(t.line2||'').replace(/"/g,'&quot;')}" data-idx="${i}" data-field="line2">
+      <label class="toggle">
+        <input type="checkbox" ${t.active !== false && t.active !== 'FALSE' ? 'checked' : ''}
+          data-idx="${i}" class="txt-active-toggle">
+        <div class="toggle-track"></div>
+        <div class="toggle-thumb"></div>
+      </label>
+    </div>`).join('');
+
+  grid.querySelectorAll('input[data-field]').forEach(inp => {
+    inp.addEventListener('input', e => {
+      texts[+e.target.dataset.idx][e.target.dataset.field] = e.target.value;
+    });
+  });
+  grid.querySelectorAll('.txt-active-toggle').forEach(chk => {
+    chk.addEventListener('change', e => {
+      texts[+e.target.dataset.idx].active = e.target.checked;
+    });
+  });
+}
+
+// 펼침/접힘 토글
+document.getElementById('texts-toggle-btn').addEventListener('click', () => {
+  const btn  = document.getElementById('texts-toggle-btn');
+  const wrap = document.getElementById('texts-expandable');
+  const open = wrap.style.display !== 'none';
+  wrap.style.display = open ? 'none' : 'block';
+  btn.classList.toggle('open', !open);
+  btn.childNodes[0].textContent = open ? '목록 펼치기 ' : '목록 접기 ';
+});
+
+document.getElementById('texts-save-btn').addEventListener('click', async () => {
+  setStatus('텍스트 저장 중...');
+  try {
+    const payload = texts
+      .filter(t => t.line1 || t.line2)  // 빈 행은 제외
+      .map((t, i) => ({ id: t.id || '', line1: t.line1, line2: t.line2, active: t.active !== false, order: i + 1 }));
+    const res = await gasPost({ action: 'saveTexts', texts: payload });
+    if (!res.ok) throw new Error(res.error);
+    setStatus('텍스트 저장 완료', 'ok');
+  } catch (e) {
+    setStatus('텍스트 저장 실패: ' + e.message, 'err');
+  }
+});
+
+// ── Show Texts 인터벌 ────────────────────────────────────────────────
+function initTextIntervalBtns() {
+  const current = localStorage.getItem('ss_text_interval') || '15000';
+  document.querySelectorAll('.ss-ti-btn').forEach(btn => {
+    btn.classList.toggle('primary', btn.dataset.val === current);
+    btn.addEventListener('click', () => {
+      localStorage.setItem('ss_text_interval', btn.dataset.val);
+      document.querySelectorAll('.ss-ti-btn').forEach(b => b.classList.remove('primary'));
+      btn.classList.add('primary');
+    });
+  });
+}
+initTextIntervalBtns();
 
 // ── 슬라이드쇼 인터벌 ────────────────────────────────────────────────
 function initIntervalBtns() {
