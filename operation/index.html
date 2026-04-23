@@ -411,7 +411,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 <!-- ════════════════ 촬영 ════════════════ -->
 <div id="s-camera" class="screen" style="display:none;flex-direction:column;min-height:100vh;">
   <div class="topbar">
-    <button class="back-btn" onclick="stopCamera();show('s-checkin')">← 체크인</button>
+    <button class="back-btn" onclick="stopCamera();show(CUR.isNew ? 's-new' : 's-checkin')">← 뒤로</button>
     <div style="text-align:center;">
       <div class="topbar-title" id="cam-name-label"></div>
       <div class="topbar-sub" style="font-family:monospace;font-size:11px;" id="cam-resno-label"></div>
@@ -1169,6 +1169,7 @@ function startSaving() {
       setTimeout(function() {
         playSound('EFFECT007'); // 저장 완료 성공음!
         setStep(3, 'ok', '완료');
+        FULL_DATA = null; // 대시보드 복귀 시 목록 자동 새로고침
         setTimeout(showDone, 400);
       }, 500);
     });
