@@ -198,6 +198,40 @@
     .texts-row input:focus { border-color: #555; }
     .texts-row input::placeholder { color: #383838; font-style: italic; }
 
+    /* ── Upload Panel ── */
+    .upload-panel {
+      padding: 16px 24px; background: #161616; border-bottom: 1px solid #222;
+    }
+    .upload-panel-header {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .upload-body { margin-top: 14px; }
+    .upload-row {
+      display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end;
+    }
+    .upload-col { display: flex; flex-direction: column; gap: 6px; }
+    .upload-file-label {
+      display: inline-block; background: none; border: 1px dashed #444; color: #888;
+      padding: 10px 24px; font-size: 0.78rem; letter-spacing: 0.15em;
+      text-transform: uppercase; cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    }
+    .upload-file-label:hover { border-color: #aaa; color: #fff; }
+    .upload-filename { font-size: 0.72rem; color: #555; letter-spacing: 0.06em; margin-top: 2px; }
+    .upload-select-label { font-size: 0.68rem; letter-spacing: 0.15em; color: #888; text-transform: uppercase; }
+    .upload-select {
+      background: #111; border: 1px solid #2e2e2e; color: #ccc;
+      padding: 8px 12px; font-size: 0.8rem; outline: none; min-width: 220px; cursor: pointer;
+    }
+    .upload-select:focus { border-color: #555; }
+    .upload-previews { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+    .upload-preview-box { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    .upload-preview-box canvas { display: block; background: #0a0a0a; border: 1px solid #2a2a2a; }
+    .upload-preview-lbl { font-size: 0.62rem; color: #555; letter-spacing: 0.12em; text-transform: uppercase; }
+    .upload-progress-wrap { margin-top: 12px; display: none; }
+    .upload-progress-bar { height: 2px; background: #2a2a2a; border-radius: 2px; overflow: hidden; }
+    .upload-progress-fill { height: 100%; background: #4a8cff; width: 0%; transition: width 0.4s; }
+    .upload-progress-msg { font-size: 0.72rem; color: #666; letter-spacing: 0.08em; margin-top: 6px; }
+
     /* ── Empty ── */
     .empty { text-align: center; padding: 80px; color: #444; font-size: 0.85rem; letter-spacing: 0.2em; }
 
@@ -277,6 +311,52 @@
         <span></span><span>Line 1</span><span>Line 2</span><span style="text-align:center">ON</span>
       </div>
       <div class="texts-grid open" id="texts-grid"></div>
+    </div>
+  </div>
+
+  <!-- 새 사진 업로드 -->
+  <div class="upload-panel">
+    <div class="upload-panel-header">
+      <span class="settings-label">새 사진 추가</span>
+      <button class="btn" id="upload-toggle-btn">펼치기 ▼</button>
+    </div>
+    <div class="upload-body" id="upload-body" style="display:none;">
+      <div class="upload-row">
+        <div class="upload-col">
+          <input type="file" id="upload-file-input" accept="image/jpeg,image/jpg,image/png,image/webp" style="display:none;">
+          <label class="upload-file-label" for="upload-file-input">파일 선택</label>
+          <div class="upload-filename" id="upload-filename">선택된 파일 없음</div>
+        </div>
+        <div class="upload-col">
+          <span class="upload-select-label">레터링 디자인</span>
+          <select class="upload-select" id="upload-letter-select">
+            <option value="">-- 선택 없음 --</option>
+          </select>
+        </div>
+        <div class="upload-col">
+          <button class="btn primary" id="upload-btn" disabled>업로드 및 등록</button>
+        </div>
+      </div>
+      <div class="upload-previews" id="upload-previews" style="display:none;">
+        <div class="upload-preview-box">
+          <canvas id="preview-original" width="200" height="134"></canvas>
+          <span class="upload-preview-lbl">원본</span>
+        </div>
+        <div class="upload-preview-box">
+          <canvas id="preview-watermark" width="200" height="134"></canvas>
+          <span class="upload-preview-lbl">워터마크</span>
+        </div>
+        <div class="upload-preview-box">
+          <canvas id="preview-letter" width="200" height="134"></canvas>
+          <span class="upload-preview-lbl">레터링</span>
+        </div>
+      </div>
+      <div class="upload-progress-wrap" id="upload-progress-wrap">
+        <div class="upload-progress-bar">
+          <div class="upload-progress-fill" id="upload-progress-fill"></div>
+        </div>
+        <div class="upload-progress-msg" id="upload-progress-msg"></div>
+      </div>
     </div>
   </div>
 
@@ -420,8 +500,9 @@ document.getElementById('pw-btn').addEventListener('click', async () => {
 });
 
 // ── API ──────────────────────────────────────────────────────────────
-async function gasGet(action) {
-  const res = await fetch(`${GAS_URL}?action=${action}`);
+async function gasGet(action, params = {}) {
+  const qs = new URLSearchParams({ action, ...params });
+  const res = await fetch(`${GAS_URL}?${qs}`);
   return res.json();
 }
 
@@ -731,6 +812,230 @@ function setStatus(msg, type = '') {
   el.textContent = msg;
   el.className = 'statusbar' + (type ? ' ' + type : '');
 }
+
+// ── 업로드 모듈 ──────────────────────────────────────────────────────
+const Upload = {
+  file:            null,
+  dataUrl:         null,
+  originalImg:     null,
+  wmImg:           null,
+  letterImgCache:  {},
+  overlayData:     null,
+
+  async initPanel() {
+    if (this.overlayData) return;
+    setStatus('오버레이 파일 로딩 중...');
+    try {
+      const res = await gasGet('getOverlays');
+      if (!res.ok) throw new Error(res.error);
+      this.overlayData = res.data;
+
+      if (this.overlayData.watermark) {
+        this.wmImg = await this._fetchImg(this.overlayData.watermark.fileId);
+      }
+
+      const sel = document.getElementById('upload-letter-select');
+      const letters = this.overlayData.letters || [];
+      sel.innerHTML = '<option value="">-- 선택 없음 --</option>'
+        + letters.map(l => `<option value="${l.fileId}">${l.name}</option>`).join('');
+
+      setStatus('');
+    } catch (e) {
+      setStatus('오버레이 로드 실패: ' + e.message, 'err');
+    }
+  },
+
+  async onFileChange(file) {
+    this.file = file;
+    document.getElementById('upload-filename').textContent =
+      `${file.name}  (${(file.size / 1024 / 1024).toFixed(1)} MB)`;
+
+    this.dataUrl     = await this._readDataUrl(file);
+    this.originalImg = await this._imgFromSrc(this.dataUrl);
+
+    await this._renderPreviews();
+    document.getElementById('upload-previews').style.display = 'flex';
+    document.getElementById('upload-btn').disabled = false;
+  },
+
+  async onLetterChange() {
+    if (!this.originalImg) return;
+    await this._renderPreviews();
+  },
+
+  async _renderPreviews() {
+    const letterFileId = document.getElementById('upload-letter-select').value;
+    let letterImg = null;
+    if (letterFileId) {
+      if (!this.letterImgCache[letterFileId]) {
+        this.letterImgCache[letterFileId] = await this._fetchImg(letterFileId);
+      }
+      letterImg = this.letterImgCache[letterFileId];
+    }
+    this._drawPreview('preview-original',  this.originalImg, null);
+    this._drawPreview('preview-watermark', this.originalImg, this.wmImg);
+    this._drawPreview('preview-letter',    this.originalImg, letterImg);
+  },
+
+  _drawPreview(canvasId, baseImg, overlayImg) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas || !baseImg) return;
+    const W = canvas.width, H = canvas.height;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#0a0a0a';
+    ctx.fillRect(0, 0, W, H);
+    const scale = Math.min(W / baseImg.naturalWidth, H / baseImg.naturalHeight);
+    const dw = baseImg.naturalWidth * scale;
+    const dh = baseImg.naturalHeight * scale;
+    const dx = (W - dw) / 2, dy = (H - dh) / 2;
+    ctx.drawImage(baseImg, dx, dy, dw, dh);
+    if (overlayImg) ctx.drawImage(overlayImg, dx, dy, dw, dh);
+  },
+
+  _composite(baseImg, overlayImg) {
+    const c   = document.createElement('canvas');
+    c.width   = baseImg.naturalWidth;
+    c.height  = baseImg.naturalHeight;
+    const ctx = c.getContext('2d');
+    ctx.drawImage(baseImg, 0, 0);
+    if (overlayImg) ctx.drawImage(overlayImg, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', 0.88).split(',')[1];
+  },
+
+  _setProgress(pct, msg) {
+    const wrap = document.getElementById('upload-progress-wrap');
+    wrap.style.display = 'block';
+    document.getElementById('upload-progress-fill').style.width = pct + '%';
+    document.getElementById('upload-progress-msg').textContent = msg;
+  },
+
+  async upload() {
+    if (!this.file || !this.originalImg) return;
+    const btn = document.getElementById('upload-btn');
+    btn.disabled = true;
+
+    try {
+      // 1. 원본 업로드 (raw 파일 그대로 전송)
+      this._setProgress(10, '원본 업로드 중...');
+      const origBase64 = this.dataUrl.split(',')[1];
+      const origMime   = this.dataUrl.split(';')[0].split(':')[1];
+      const origRes = await gasPost({
+        action: 'uploadOriginal',
+        filename: this.file.name,
+        base64:   origBase64,
+        mimeType: origMime,
+      });
+      if (!origRes.ok) throw new Error('원본 업로드 실패: ' + origRes.error);
+      const { photoId } = origRes.data;
+
+      // 2. 워터마크 합성 & 업로드
+      if (this.wmImg) {
+        this._setProgress(40, '워터마크 합성 & 업로드 중...');
+        const wmB64 = this._composite(this.originalImg, this.wmImg);
+        const wmRes = await gasPost({
+          action: 'uploadVariant',
+          photoId,
+          variantType: 'watermark',
+          base64:   wmB64,
+          mimeType: 'image/jpeg',
+        });
+        if (!wmRes.ok) throw new Error('워터마크 업로드 실패: ' + wmRes.error);
+      }
+
+      // 3. 레터링 합성 & 업로드
+      const letterFileId = document.getElementById('upload-letter-select').value;
+      const letterImg    = letterFileId ? this.letterImgCache[letterFileId] : null;
+      if (letterImg) {
+        this._setProgress(70, '레터링 합성 & 업로드 중...');
+        const letterB64 = this._composite(this.originalImg, letterImg);
+        const letterRes = await gasPost({
+          action: 'uploadVariant',
+          photoId,
+          variantType: 'poster',
+          base64:   letterB64,
+          mimeType: 'image/jpeg',
+        });
+        if (!letterRes.ok) throw new Error('레터링 업로드 실패: ' + letterRes.error);
+      }
+
+      // 4. 완료
+      this._setProgress(100, '완료!');
+      setStatus(`업로드 완료 — ${origRes.data.displayName}`, 'ok');
+      const list = await gasGet('admin');
+      items = list.data;
+      renderList();
+      this._reset();
+
+    } catch (e) {
+      setStatus('업로드 오류: ' + e.message, 'err');
+      btn.disabled = false;
+    }
+  },
+
+  _reset() {
+    this.file = null; this.dataUrl = null; this.originalImg = null;
+    document.getElementById('upload-file-input').value = '';
+    document.getElementById('upload-filename').textContent = '선택된 파일 없음';
+    document.getElementById('upload-previews').style.display = 'none';
+    document.getElementById('upload-progress-wrap').style.display = 'none';
+    document.getElementById('upload-btn').disabled = true;
+    ['original', 'watermark', 'letter'].forEach(t => {
+      const c = document.getElementById(`preview-${t}`);
+      if (!c) return;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#0a0a0a';
+      ctx.fillRect(0, 0, c.width, c.height);
+    });
+  },
+
+  _readDataUrl(file) {
+    return new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload  = e => res(e.target.result);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+  },
+
+  _imgFromSrc(src) {
+    return new Promise((res, rej) => {
+      const img = new Image();
+      img.onload  = () => res(img);
+      img.onerror = rej;
+      img.src = src;
+    });
+  },
+
+  async _fetchImg(fileId) {
+    const res = await gasGet('getFileBase64', { fileId });
+    if (!res.ok) return null;
+    return this._imgFromSrc(`data:${res.data.mimeType};base64,${res.data.base64}`);
+  },
+};
+
+// 패널 토글
+document.getElementById('upload-toggle-btn').addEventListener('click', () => {
+  const body = document.getElementById('upload-body');
+  const btn  = document.getElementById('upload-toggle-btn');
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  btn.textContent    = open ? '펼치기 ▼' : '접기 ▲';
+  if (!open) Upload.initPanel();
+});
+
+// 파일 선택
+document.getElementById('upload-file-input').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (file) Upload.onFileChange(file);
+});
+
+// 레터링 선택 변경
+document.getElementById('upload-letter-select').addEventListener('change', () => {
+  Upload.onLetterChange();
+});
+
+// 업로드 실행
+document.getElementById('upload-btn').addEventListener('click', () => Upload.upload());
 </script>
 </body>
 </html>
