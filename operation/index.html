@@ -1226,6 +1226,8 @@ function showDone() {
 
 // ── 신규 고객 관련 ─────────────────────────────────
 function initNewScreen() {
+  // 즉시 날짜 기반 기본값 설정 (API 응답 전에 빈 화면 방지)
+  document.getElementById('new-code').textContent = getToday() + '-W?';
   regenWalkInCode();
   // 현재 선택된 타임 기본값으로
   var sel = document.getElementById('new-time');
@@ -1250,6 +1252,15 @@ function goNewCamera() {
 
   var privacyOn = document.getElementById('toggle-privacy2').classList.contains('on');
   if (!privacyOn) { showToast('개인정보 수집 동의는 필수입니다'); return; }
+
+  // 접수 코드 유효성 확인 (로딩 중이거나 잘못된 형식이면 차단)
+  var codeEl = document.getElementById('new-code');
+  var code = codeEl ? codeEl.textContent.trim() : '';
+  if (!code || code.indexOf('-W') === -1 || code.indexOf('?') !== -1) {
+    showToast('접수 코드 확인 중입니다. 잠시 후 다시 시도해주세요.');
+    regenWalkInCode();
+    return;
+  }
 
   var activePayTab = document.querySelector('.pay-tab.active');
   var isExperience = CURRENT_ADD_TYPE === 'V';
