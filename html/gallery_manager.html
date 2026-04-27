@@ -918,7 +918,7 @@ const Upload = {
     this.specPos.color      = specCfg.color||'#ffffff';
 
     const wmCfg = Store.get(CFG.KEY.WM_CFG,{});
-    if(wmCfg.sizeRatio) this.wmPos.sizeRatio = wmCfg.sizeRatio/100;
+    if(wmCfg.sizeRatio) this.wmPos.sizeRatio = wmCfg.sizeRatio;
     if(wmCfg.opacity)   this.wmPos.opacity   = wmCfg.opacity;
     this._setPosByName(this.wmPos,  wmCfg.pos||'rb');
     this._setPosByName(this.specPos, specCfg.pos||'lb');
@@ -1199,7 +1199,7 @@ const GalleryActions = {
     document.getElementById('edit-preview-btn').style.display='block';
     // 워터마크/스펙 기본 설정 반영
     const wmCfg=Store.get(CFG.KEY.WM_CFG,{});
-    if(wmCfg.sizeRatio) this._editWmPos.sizeRatio=wmCfg.sizeRatio/100;
+    if(wmCfg.sizeRatio) this._editWmPos.sizeRatio=wmCfg.sizeRatio;
     if(wmCfg.opacity)   this._editWmPos.opacity=wmCfg.opacity;
     Upload._setPosByName(this._editWmPos, wmCfg.pos||'rb');
     const spCfg=Store.get(CFG.KEY.SPEC_CFG,{});
