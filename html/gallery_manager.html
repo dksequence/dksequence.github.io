@@ -633,6 +633,7 @@ const GH = {
       'Content-Type': 'application/json',
     };
     const opts = {method, headers};
+    if(method === 'GET') opts.cache = 'no-store';
     if(body) opts.body = JSON.stringify(body);
     const res = await fetch(`https://api.github.com/repos/${CFG.REPO}/contents/${path}`, opts);
     if(res.status===404) return null;
@@ -879,9 +880,8 @@ const GalleryState = {
       if(cur) d.sha = cur.sha;
     }
     await GH.putText(cfg.indexFile, newHtml, msg, d.sha||null);
-    // Refresh SHA
-    const f = await GH.getFile(cfg.indexFile);
-    if(f){ d.sha=f.sha; d.raw=decodeURIComponent(escape(atob(f.content.replace(/\n/g,'')))); }
+    // 서버 상태와 완전 동기화
+    await this.fetchIndex(this.tab);
   },
 };
 
@@ -1413,7 +1413,7 @@ const UI = {
       if(q && !String(i).includes(q) && !title.toLowerCase().includes(q)) continue;
       html+=`<div class="g-card${isWide?' wide-card':''}" draggable="true" data-num="${i}">
         <div class="g-thumb">
-          <img src="${cfg.thumbBase}${pad}_small.jpg" alt="" loading="lazy"
+          <img src="${cfg.thumbBase}${pad}_small.jpg?v=${d.sha?d.sha.slice(0,8):Date.now()}" alt="" loading="lazy"
             onerror="this.parentNode.innerHTML='<div class=\\'g-thumb-err\\'>🖼</div>'">
           <div class="g-badge">#${pad}</div>
           ${isWide?'<div class="g-wide-badge">WIDE</div>':''}
