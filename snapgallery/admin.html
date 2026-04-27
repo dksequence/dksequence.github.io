@@ -337,6 +337,24 @@
           <button class="btn primary" id="upload-btn" disabled>업로드 및 등록</button>
         </div>
       </div>
+      <!-- 폴더 일괄 업로드 -->
+      <div class="upload-row" style="margin-top:16px;padding-top:16px;border-top:1px solid #222;">
+        <div class="upload-col">
+          <input type="file" id="upload-folder-input" accept="image/jpeg,image/jpg,image/png,image/webp" webkitdirectory multiple style="display:none;">
+          <label class="upload-file-label" for="upload-folder-input">폴더 선택</label>
+          <div class="upload-filename" id="upload-folder-info">선택된 폴더 없음</div>
+        </div>
+        <div class="upload-col">
+          <button class="btn primary" id="upload-folder-btn" disabled>폴더 일괄 업로드</button>
+        </div>
+      </div>
+      <div class="upload-progress-wrap" id="folder-progress-wrap" style="display:none;margin-top:12px;">
+        <div class="upload-progress-bar">
+          <div class="upload-progress-fill" id="folder-progress-fill"></div>
+        </div>
+        <div class="upload-progress-msg" id="folder-progress-msg"></div>
+      </div>
+
       <div class="upload-previews" id="upload-previews" style="display:none;">
         <div class="upload-preview-box">
           <canvas id="preview-original" width="200" height="134"></canvas>
@@ -1036,6 +1054,113 @@ document.getElementById('upload-letter-select').addEventListener('change', () =>
 
 // 업로드 실행
 document.getElementById('upload-btn').addEventListener('click', () => Upload.upload());
+
+// ── 폴더 일괄 업로드 ─────────────────────────────────────────────────
+const FolderUpload = {
+  files: [],
+
+  onFolderChange(fileList) {
+    const images = Array.from(fileList).filter(f =>
+      /\.(jpe?g|png|webp)$/i.test(f.name)
+    );
+    this.files = images;
+    document.getElementById('upload-folder-info').textContent =
+      images.length > 0 ? `${images.length}개 이미지 파일 선택됨` : '이미지 파일 없음';
+    document.getElementById('upload-folder-btn').disabled = images.length === 0;
+  },
+
+  async uploadAll() {
+    if (!this.files.length) return;
+    const btn = document.getElementById('upload-folder-btn');
+    btn.disabled = true;
+    const total = this.files.length;
+    let success = 0, failed = 0;
+
+    document.getElementById('folder-progress-wrap').style.display = 'block';
+
+    await Upload.initPanel();
+
+    for (let i = 0; i < this.files.length; i++) {
+      const file = this.files[i];
+      const pct = Math.round((i / total) * 100);
+      document.getElementById('folder-progress-fill').style.width = pct + '%';
+      document.getElementById('folder-progress-msg').textContent =
+        `(${i + 1}/${total}) ${file.name} 업로드 중...`;
+      setStatus(`폴더 업로드 중... ${i + 1}/${total}`);
+
+      try {
+        await this._uploadOne(file);
+        success++;
+      } catch (e) {
+        failed++;
+        console.error('업로드 실패:', file.name, e);
+      }
+    }
+
+    document.getElementById('folder-progress-fill').style.width = '100%';
+    document.getElementById('folder-progress-msg').textContent =
+      `완료 — ${success}개 성공${failed > 0 ? `, ${failed}개 실패` : ''}`;
+    setStatus(`폴더 업로드 완료 — ${success}/${total}개`, 'ok');
+
+    const list = await gasGet('admin');
+    items = list.data;
+    renderList();
+
+    btn.disabled = false;
+    this.files = [];
+    document.getElementById('upload-folder-input').value = '';
+    document.getElementById('upload-folder-info').textContent = '선택된 폴더 없음';
+  },
+
+  async _uploadOne(file) {
+    const dataUrl = await Upload._readDataUrl(file);
+    const img = await Upload._imgFromSrc(dataUrl);
+
+    const origBase64 = dataUrl.split(',')[1];
+    const origMime   = dataUrl.split(';')[0].split(':')[1];
+    const origRes = await gasPost({
+      action: 'uploadOriginal',
+      filename: file.name,
+      base64:   origBase64,
+      mimeType: origMime,
+    });
+    if (!origRes.ok) throw new Error(origRes.error);
+    const { photoId } = origRes.data;
+
+    if (Upload.wmImg) {
+      const wmB64 = Upload._composite(img, Upload.wmImg);
+      const wmRes = await gasPost({
+        action: 'uploadVariant', photoId, variantType: 'watermark',
+        base64: wmB64, mimeType: 'image/jpeg',
+      });
+      if (!wmRes.ok) throw new Error(wmRes.error);
+    }
+
+    const letterFileId = document.getElementById('upload-letter-select').value;
+    if (letterFileId) {
+      if (!Upload.letterImgCache[letterFileId]) {
+        Upload.letterImgCache[letterFileId] = await Upload._fetchImg(letterFileId);
+      }
+      const letterImg = Upload.letterImgCache[letterFileId];
+      if (letterImg) {
+        const letterB64 = Upload._composite(img, letterImg);
+        const lRes = await gasPost({
+          action: 'uploadVariant', photoId, variantType: 'poster',
+          base64: letterB64, mimeType: 'image/jpeg',
+        });
+        if (!lRes.ok) throw new Error(lRes.error);
+      }
+    }
+  },
+};
+
+document.getElementById('upload-folder-input').addEventListener('change', e => {
+  FolderUpload.onFolderChange(e.target.files);
+});
+
+document.getElementById('upload-folder-btn').addEventListener('click', () => {
+  FolderUpload.uploadAll();
+});
 </script>
 </body>
 </html>
