@@ -673,7 +673,7 @@ function renderList() {
     btn.addEventListener('click', async e => {
       const id = e.currentTarget.dataset.id;
       const item = items.find(i => i.photoId === id);
-      if (!confirm(`"${item?.displayName}" 을(를) 목록에서 삭제할까요?\n(Drive 파일은 삭제되지 않습니다)`)) return;
+      if (!confirm(`"${item?.displayName}" 을(를) 삭제할까요?\n(Drive 파일도 함께 삭제됩니다)`)) return;
       setStatus('삭제 중...');
       try {
         const res = await gasPost({ action: 'delete', photoId: id });
