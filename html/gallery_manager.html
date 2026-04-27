@@ -594,13 +594,7 @@ const Auth = {
     const err = document.getElementById('lock-err');
     if(!pw){ err.textContent='비밀번호를 입력하세요'; return; }
 
-    let stored = Store.get(CFG.KEY.PWD);
-    if(!stored){
-      stored = await this._hash(this.DEFAULT_PWD);
-      Store.set(CFG.KEY.PWD, stored);
-    }
-    const hashed = await this._hash(pw);
-    if(hashed === stored){
+    if(pw === this.DEFAULT_PWD){
       document.getElementById('lock-screen').style.display='none';
       document.getElementById('app').style.display='flex';
       App.init();
