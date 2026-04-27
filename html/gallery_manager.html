@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <title>DK Gallery Manager</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -673,9 +675,10 @@ const GH = {
 // ══════════════════════════════════════════════════════════════
 const ImgProc = {
   async loadImg(src){
-    return new Promise(res=>{
-      const img=new Image(); img.crossOrigin='anonymous';
+    return new Promise((res,rej)=>{
+      const img=new Image();
       img.onload=()=>res(img);
+      img.onerror=()=>rej(new Error('이미지 로드 실패: '+src.slice(0,40)));
       img.src=src;
     });
   },
@@ -925,10 +928,16 @@ const Upload = {
 
     // 워터마크 이미지 상태 표시
     const wmBadge = document.getElementById('wm-status-badge');
+    const wmToggle = document.getElementById('up-watermark');
+    const hasWm = !!Store.get(CFG.KEY.WM_IMG, null);
     if(wmBadge){
-      const hasWm = !!Store.get(CFG.KEY.WM_IMG, null);
-      wmBadge.textContent = hasWm ? '✓ 이미지 설정됨' : '⚠ 이미지 없음 — 설정에서 업로드 필요';
-      wmBadge.style.color = hasWm ? 'var(--green)' : 'var(--orange)';
+      wmBadge.textContent = hasWm ? '✓ 설정됨' : '✗ 미설정 — ⚙ 설정에서 PNG 업로드 필요';
+      wmBadge.style.color = hasWm ? 'var(--green)' : '#ff6b6b';
+      wmBadge.style.fontWeight = hasWm ? '' : '600';
+    }
+    if(wmToggle){
+      wmToggle.checked = hasWm;
+      wmToggle.disabled = !hasWm;
     }
   },
 
@@ -973,7 +982,11 @@ const Upload = {
     [1,2,3].forEach(i=>this._prog(i,''));
 
     const wmSrc = Store.get(CFG.KEY.WM_IMG,null);
-    if(useWm && !wmSrc){ toast('워터마크 이미지가 없습니다. ⚙ 설정에서 워터마크 PNG를 먼저 업로드하세요.','err'); return; }
+    if(useWm && !wmSrc){
+      document.getElementById('upload-progress').style.display='none';
+      alert('워터마크 이미지가 설정되지 않았습니다.\n\n⚙ 설정 → 워터마크 섹션에서 PNG 파일을 먼저 업로드해주세요.');
+      return;
+    }
     const wmState  = useWm && wmSrc ? {...this.wmPos, src:wmSrc} : null;
     const specState = burnSpec && spec ? {...this.specPos, text:spec} : null;
 
