@@ -549,7 +549,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
     <div style="background:var(--surface-low);border-radius:1rem;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;">
       <div>
         <div style="font-size:16px;font-weight:500;color:var(--primary);font-family:monospace;letter-spacing:.04em;" id="new-code">로딩 중...</div>
-        <div style="font-size:11px;color:var(--on-surface-dim);margin-top:3px;">날짜-W순번 형식</div>
+        <div style="font-size:11px;color:var(--on-surface-dim);margin-top:3px;">날짜-R순번 형식</div>
       </div>
       <button onclick="regenWalkInCode()" style="font-size:12px;color:var(--on-surface-dim);cursor:pointer;padding:7px 14px;border-radius:2rem;border:1px solid var(--outline);background:transparent;font-family:'Inter',sans-serif;">다음 번호</button>
     </div>
@@ -1227,7 +1227,7 @@ function showDone() {
 // ── 신규 고객 관련 ─────────────────────────────────
 function initNewScreen() {
   // 즉시 날짜 기반 기본값 설정 (API 응답 전에 빈 화면 방지)
-  document.getElementById('new-code').textContent = getToday() + '-W?';
+  document.getElementById('new-code').textContent = getToday() + '-R?';
   regenWalkInCode();
   // 현재 선택된 타임 기본값으로
   var sel = document.getElementById('new-time');
@@ -1237,7 +1237,7 @@ function initNewScreen() {
 function regenWalkInCode() {
   callApi({ action: 'getWalkInCode', date: getToday() }, function(err, res) {
     var el = document.getElementById('new-code');
-    if (el) el.textContent = (err || !res.ok) ? getToday() + '-W1' : res.code;
+    if (el) el.textContent = (err || !res.ok) ? getToday() + '-R1' : res.code;
   });
 }
 
@@ -1256,7 +1256,7 @@ function goNewCamera() {
   // 접수 코드 유효성 확인 (로딩 중이거나 잘못된 형식이면 차단)
   var codeEl = document.getElementById('new-code');
   var code = codeEl ? codeEl.textContent.trim() : '';
-  if (!code || code.indexOf('-W') === -1 || code.indexOf('?') !== -1) {
+  if (!code || code.indexOf('-R') === -1 || code.indexOf('?') !== -1) {
     showToast('접수 코드 확인 중입니다. 잠시 후 다시 시도해주세요.');
     regenWalkInCode();
     return;
