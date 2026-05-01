@@ -607,6 +607,10 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
       <div class="pay-tab" onclick="setPayTab(this)">현금</div>
       <div class="pay-tab" onclick="setPayTab(this)">계좌이체</div>
     </div>
+    <div class="field-group" style="margin-bottom:20px;">
+      <div class="field-label">결제금액 <span class="opt">선택</span></div>
+      <input class="field-input" type="number" id="new-amount" placeholder="0" inputmode="numeric" min="0" style="text-align:right;"/>
+    </div>
 
     <!-- 동의 -->
     <div class="consent-block">
@@ -1153,6 +1157,7 @@ function startSaving() {
       isNew:          CUR.isNew || false,
       source:         CUR.source || 'A',
       paymentMethod:  CUR.paymentMethod || '',
+      paymentAmount:  CUR.paymentAmount || 0,
       folderId:       CUR.folderId,
       fileUrl:        CUR.fileUrl,
     }, function(err2, res2) {
@@ -1278,6 +1283,7 @@ function goNewCamera() {
     privacyConsent : privacyOn,
     snsConsent     : document.getElementById('toggle-sns2').classList.contains('on'),
     paymentMethod  : activePayTab ? activePayTab.textContent.trim() : '',
+    paymentAmount  : parseInt(document.getElementById('new-amount').value || '0') || 0,
     source         : isExperience ? 'V' : 'A',
     isNew          : true,
   };
