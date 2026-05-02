@@ -778,7 +778,7 @@ function getToday() {
 
 // ── 화면 전환 ─────────────────────────────────────────
 function show(id) {
-  if (id === 's-dashboard') { playSound('EFFECT008'); CUR = {}; }
+  if (id === 's-dashboard') { playSound('EFFECT008'); CUR = {}; if (!FULL_DATA) loadReservations(SELECTED_TIME); }
   document.querySelectorAll('.screen').forEach(function(s){
     s.classList.remove('active');
     s.style.display = 'none';
