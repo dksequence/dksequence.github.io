@@ -36,11 +36,17 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 .sync-btn.new { background: var(--warn); box-shadow: 0 0 15px var(--warn); }
 .sync-btn:active { transform: scale(0.95); }
 
-/* ── 소스 배지 (N/A/V) ── */
+/* ── 소스 배지 (N/현장/무료) ── */
 .avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: #fff; flex-shrink: 0; }
 .avatar.source-n { background: #00c73c; } /* 네이버 초록 */
-.avatar.source-a { background: #0071e3; } /* 현장 파랑 */
-.avatar.source-v { background: #f0a500; } /* 체험 노랑 */
+.avatar.source-a { background: #0071e3; font-size: 13px; } /* 현장 파랑 */
+.avatar.source-v { background: #f0a500; font-size: 13px; } /* 무료 노랑 */
+
+/* ── 취소 카드 ── */
+.customer-card.cancelled .card-name,
+.customer-card.cancelled .card-meta,
+.customer-card.cancelled .card-resno { color: #a78bfa; }
+.badge-cancelled { background: rgba(139,92,246,0.15); color: #a78bfa; border: 1px solid rgba(139,92,246,0.5); }
 
 .back-btn{font-size:12px;color:var(--primary);cursor:pointer;padding:6px 14px;border-radius:2rem;
   background:rgba(171,199,255,.08);border:none;font-family:'Inter',sans-serif;}
@@ -524,7 +530,11 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
     <div class="detail-row"><span class="detail-key">개인정보동의</span><span class="detail-val" id="dm-privacy"></span></div>
     <div class="detail-row"><span class="detail-key">마케팅동의</span><span class="detail-val" id="dm-sns"></span></div>
     <div class="detail-row"><span class="detail-key">메모</span><span class="detail-val" id="dm-memo"></span></div>
-    <button class="detail-close" onclick="closeDetail()">닫기</button>
+    <div style="display:flex;gap:8px;margin-top:20px;">
+      <button id="dm-cancel-btn" onclick="confirmCancel()" style="flex:1;padding:14px;border-radius:1rem;border:1px solid rgba(139,92,246,0.6);background:rgba(139,92,246,0.1);color:#a78bfa;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;"></button>
+      <button onclick="confirmDelete()" style="flex:1;padding:14px;border-radius:1rem;border:1px solid rgba(239,68,68,0.5);background:rgba(239,68,68,0.08);color:#f87171;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">삭제</button>
+      <button class="detail-close" onclick="closeDetail()" style="flex:1;">닫기</button>
+    </div>
   </div>
 </div>
 
@@ -918,32 +928,46 @@ function renderList(reservations) {
   list.innerHTML = '';
   reservations.forEach(function(r) {
     var card = document.createElement('div');
-    card.className = 'customer-card' + (r.checkedIn ? ' done' : '');
-    
-    // 소스별 아이콘 및 클래스 설정 (N, A, V 전용 색상)
+    var isCancelled = !!r.cancelled;
+    card.className = 'customer-card' + (r.checkedIn ? ' done' : '') + (isCancelled ? ' cancelled' : '');
+
+    // 소스 배지: N=N, A=현장, V=무료
     var src = (r.source || 'A').toUpperCase();
     var sourceClass = 'source-' + src.toLowerCase();
-    
+    var avatarText = src === 'A' ? '현장' : src === 'V' ? '무료' : src;
+
+    // 상태 배지
+    var badgeClass, badgeLabel;
+    if (isCancelled) {
+      badgeClass = 'badge-cancelled'; badgeLabel = '취소';
+    } else if (r.checkedIn) {
+      badgeClass = 'badge-done'; badgeLabel = '완료';
+    } else {
+      badgeClass = 'badge-wait'; badgeLabel = '대기';
+    }
+
     card.innerHTML =
-      '<div class="avatar ' + sourceClass + '">' + src + '</div>' +
+      '<div class="avatar ' + sourceClass + '">' + avatarText + '</div>' +
       '<div class="card-info">' +
         '<div class="card-name">' + r.name + '</div>' +
         '<div class="card-meta">' + r.product + ' · ' + r.people + '인 · ' + r.time + '</div>' +
         '<div class="card-resno">' + r.resno + '</div>' +
       '</div>' +
-      '<div class="badge ' + (r.checkedIn ? 'badge-done' : 'badge-wait') + '">' +
-        (r.checkedIn ? '완료' : '대기') + '</div>';
-    if (!r.checkedIn) {
-      card.onclick = function() { goCheckin(r); };
-    } else {
+      '<div class="badge ' + badgeClass + '">' + badgeLabel + '</div>';
+
+    if (isCancelled || r.checkedIn) {
       card.onclick = function() { showDetail(r); };
+    } else {
+      card.onclick = function() { goCheckin(r); };
     }
     list.appendChild(card);
   });
 }
 
 // ── 완료 고객 상세 보기 ────────────────────────────────
+var DETAIL_CUR = null;
 function showDetail(r) {
+  DETAIL_CUR = r;
   function val(v) {
     return v ? '<span class="detail-val">' + v + '</span>'
              : '<span class="detail-val empty">미입력</span>';
@@ -964,10 +988,36 @@ function showDetail(r) {
   document.getElementById('dm-privacy').innerHTML   = consent(r.privacyConsent);
   document.getElementById('dm-sns').innerHTML       = consent(r.snsConsent);
   document.getElementById('dm-memo').innerHTML      = val(r.memo);
+  var cancelBtn = document.getElementById('dm-cancel-btn');
+  cancelBtn.textContent = r.cancelled ? '취소 해제' : '예약 취소';
   document.getElementById('detail-modal').classList.add('open');
 }
 function closeDetail() {
   document.getElementById('detail-modal').classList.remove('open');
+}
+function confirmCancel() {
+  if (!DETAIL_CUR) return;
+  var r = DETAIL_CUR;
+  var isCancelled = !!r.cancelled;
+  var msg = isCancelled
+    ? r.name + ' 고객의 취소를 해제하시겠습니까?\n서버에도 반영됩니다.'
+    : r.name + ' 고객을 예약 취소 처리하시겠습니까?\n카드는 취소 상태로 표시되며 서버에도 반영됩니다.';
+  if (!confirm(msg)) return;
+  closeDetail();
+  callApi({ action: 'cancelCheckin', resno: r.resno, cancel: !isCancelled }, function(err, res) {
+    if (err || (res && !res.ok)) { alert('오류: ' + (err || (res && res.error))); return; }
+    loadReservations(SELECTED_TIME);
+  });
+}
+function confirmDelete() {
+  if (!DETAIL_CUR) return;
+  var r = DETAIL_CUR;
+  if (!confirm(r.name + ' 고객을 삭제하시겠습니까?\n서버에서도 기록이 완전히 삭제됩니다.')) return;
+  closeDetail();
+  callApi({ action: 'deleteCheckin', resno: r.resno }, function(err, res) {
+    if (err || (res && !res.ok)) { alert('오류: ' + (err || (res && res.error))); return; }
+    loadReservations(SELECTED_TIME);
+  });
 }
 
 // ── 체크인 화면 ───────────────────────────────────────
