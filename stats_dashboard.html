@@ -39,7 +39,7 @@
     .header-title { font-size:15px; font-weight:800; }
     .header-sub   { font-size:11px; color:var(--sub); margin-top:1px; }
     .header-right { display:flex; align-items:center; gap:7px; }
-    .updated-txt  { font-size:11px; color:var(--muted); white-space:nowrap; }
+    .updated-txt  { font-size:11px; color:var(--text); white-space:nowrap; }
     .hdr-btn { border:1px solid var(--bd2); background:var(--s2); color:var(--sub); border-radius:8px; padding:6px 12px; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; text-decoration:none; display:inline-flex; align-items:center; gap:4px; transition:background .15s,color .15s; }
     .hdr-btn:hover { background:var(--s3); color:var(--text); }
 
@@ -691,9 +691,10 @@ function renderDashboard(d) {
   renderLegend('legend-product', prodE, PALETTE);
 
   // ③ 유입경로
+  const SRC_LABEL = { N:'네이버', A:'현장', V:'무료' };
   const srcE = sortedEntries(d.sources);
   setText('badge-src', srcE.length + '경로');
-  charts.source = makeHBarChart('chart-source', srcE.map(e=>e[0]), srcE.map(e=>e[1]));
+  charts.source = makeHBarChart('chart-source', srcE.map(e=>SRC_LABEL[e[0]]||e[0]), srcE.map(e=>e[1]));
 
   // ④ 편집
   setText('badge-edit', `${d.editStatus.done}/${d.editStatus.done+d.editStatus.pending}`);
@@ -724,7 +725,7 @@ function renderDashboard(d) {
       const db = (b.date||'') + (b.time||'');
       return da.localeCompare(db);
     });
-    setText('badge-customers', list.length + '명');
+    setText('badge-customers', (s.people || list.length) + '명');
     const tbody = document.getElementById('customer-tbody');
     tbody.innerHTML = list.map(c => {
       const isSent    = c.delivSt && c.delivSt.indexOf('발송완료') === 0;
@@ -885,13 +886,14 @@ function buildAnalyticsHtml(d) {
   }).join('');
 
   // ── 유입경로 ──
+  const _srcLabel = { N:'네이버', A:'현장', V:'무료' };
   const srcE = Object.entries(d.sources).sort((a,b) => b[1]-a[1]);
   const srcTotal = srcE.reduce((a,[,v]) => a+v, 0);
   const srcHtml = srcE.map(([k,v], i) => {
     const wpct = srcTotal ? Math.round(v/srcTotal*100) : 0;
     const c = PALETTE[i % PALETTE.length];
     return `<div class="rpt-hrow">
-      <div class="rpt-hlabel"><span class="rpt-hdot" style="background:${c}"></span>${escHtml(k)}</div>
+      <div class="rpt-hlabel"><span class="rpt-hdot" style="background:${c}"></span>${escHtml(_srcLabel[k]||k)}</div>
       <div class="rpt-hright">
         <div class="rpt-htrack"><div class="rpt-hfill" style="width:${wpct}%;background:${c}"></div></div>
         <span class="rpt-hpct">${v}건</span>
