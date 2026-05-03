@@ -492,10 +492,13 @@ function renderDashboard(d) {
   setText('c-people-sub', s.count ? `1건 평균 ${(s.people/s.count).toFixed(1)}명` : '');
 
   if (d.hasPrices) {
-    setText('c-revenue',     wonFmt(s.revenue));
-    setText('c-revenue-sub', s.count ? '1건 평균 ' + wonFmt(Math.round(s.revenue/s.count)) : '');
-    document.getElementById('c-revenue-sub').innerHTML =
-      document.getElementById('c-revenue-sub').textContent;
+    const net = Math.round(s.revenue / 2);
+    document.getElementById('c-revenue').innerHTML =
+      wonFmt(s.revenue) +
+      `<span style="-webkit-text-fill-color:#4ade80;color:#4ade80;font-size:22px;font-weight:700;margin-left:10px">(${wonFmt(net)})</span>`;
+    document.getElementById('c-revenue-sub').innerHTML = s.count
+      ? `<span style="color:#fff">1건 평균 ${wonFmt(Math.round(s.revenue/s.count))}</span>`
+      : '';
   } else {
     document.getElementById('c-revenue').textContent = '—';
     document.getElementById('c-revenue-sub').innerHTML =
