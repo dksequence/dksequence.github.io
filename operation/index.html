@@ -619,6 +619,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
       <div class="pay-tab active" onclick="setPayTab(this)">카드</div>
       <div class="pay-tab" onclick="setPayTab(this)">현금</div>
       <div class="pay-tab" onclick="setPayTab(this)">계좌이체</div>
+      <div class="pay-tab" onclick="setPayTab(this)">무료</div>
     </div>
     <div class="field-group" style="margin-bottom:20px;">
       <div class="field-label">결제금액 <span class="opt">선택</span></div>
@@ -1305,6 +1306,9 @@ function regenWalkInCode() {
 function setPayTab(el) {
   document.querySelectorAll('.pay-tab').forEach(function(t){ t.classList.remove('active'); });
   el.classList.add('active');
+  if (el.textContent.trim() === '무료') {
+    document.getElementById('new-amount').value = '';
+  }
 }
 
 function goNewCamera() {
@@ -1546,8 +1550,18 @@ function showNewScreen(type) {
   CURRENT_ADD_TYPE = type;
   show('s-new');
   var title = document.querySelector('#s-new .section-label');
-  if (type === 'V') title.textContent = '체험 고객 추가 (TRIAL/TEST)';
-  else title.textContent = '신규 고객 추가 (WALK-IN)';
+  if (type === 'V') {
+    title.textContent = '체험 고객 추가 (TRIAL/TEST)';
+    document.querySelectorAll('.pay-tab').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.pay-tab').forEach(function(t){
+      if (t.textContent.trim() === '무료') t.classList.add('active');
+    });
+    document.getElementById('new-amount').value = '';
+  } else {
+    title.textContent = '신규 고객 추가 (WALK-IN)';
+    document.querySelectorAll('.pay-tab').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.pay-tab')[0].classList.add('active');
+  }
 }
 
 // ── 체크인 API 래퍼 ───────────────────────────────────────────
