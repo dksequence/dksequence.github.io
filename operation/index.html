@@ -262,7 +262,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 <!-- ════════════════ 대시보드 ════════════════ -->
 <div id="s-dashboard" class="screen active">
   <div class="topbar">
-    <div class="topbar-brand">DKSEQUENCE × 중문별장 RUNS V.4.02</div>
+    <div class="topbar-brand">DKSEQUENCE × 중문별장 RUNS V.4.04</div>
     <div class="topbar-date-row">
       <button class="today-btn" onclick="goToToday()">TODAY</button>
       <button class="date-nav-btn" onclick="changeDate(-1)">◀</button>
@@ -313,12 +313,15 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 <!-- ════════════════ 체크인 ════════════════ -->
 <div id="s-checkin" class="screen">
   <div class="topbar">
-    <button class="back-btn" onclick="show('s-dashboard')">← 목록</button>
+    <div style="display:flex;gap:6px;flex-shrink:0;">
+      <button onclick="confirmDelete()" style="padding:8px 14px;border-radius:2rem;border:1px solid rgba(239,68,68,0.5);background:rgba(239,68,68,0.08);color:#f87171;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">삭제</button>
+      <button onclick="confirmCancel()" style="padding:8px 14px;border-radius:2rem;border:1px solid rgba(139,92,246,0.5);background:rgba(139,92,246,0.08);color:#a78bfa;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">취소</button>
+    </div>
     <div style="text-align:center;">
       <div class="topbar-title" id="ci-topname"></div>
       <div class="topbar-sub">체크인</div>
     </div>
-    <div style="width:60px;"></div>
+    <button class="back-btn" onclick="show('s-dashboard')" style="flex-shrink:0;">목록 →</button>
   </div>
   <div class="checkin-body">
     <div class="info-block">
@@ -1004,6 +1007,7 @@ function confirmCancel() {
     : r.name + ' 고객을 예약 취소 처리하시겠습니까?\n카드는 취소 상태로 표시되며 서버에도 반영됩니다.';
   if (!confirm(msg)) return;
   closeDetail();
+  show('s-dashboard');
   callApi({ action: 'cancelCheckin', resno: r.resno, cancel: !isCancelled }, function(err, res) {
     if (err || (res && !res.ok)) { alert('오류: ' + (err || (res && res.error))); return; }
     loadReservations(SELECTED_TIME);
@@ -1014,6 +1018,7 @@ function confirmDelete() {
   var r = DETAIL_CUR;
   if (!confirm(r.name + ' 고객을 삭제하시겠습니까?\n서버에서도 기록이 완전히 삭제됩니다.')) return;
   closeDetail();
+  show('s-dashboard');
   callApi({ action: 'deleteCheckin', resno: r.resno }, function(err, res) {
     if (err || (res && !res.ok)) { alert('오류: ' + (err || (res && res.error))); return; }
     loadReservations(SELECTED_TIME);
@@ -1022,6 +1027,7 @@ function confirmDelete() {
 
 // ── 체크인 화면 ───────────────────────────────────────
 function goCheckin(r) {
+  DETAIL_CUR = r;
   CUR = { resno: r.resno, maskedName: r.name, product: r.product, people: r.people, time: SELECTED_TIME, isNew: false, source: r.source || 'N' };
   document.getElementById('ci-topname').textContent  = r.name;
   document.getElementById('ci-resno').textContent    = r.resno;
