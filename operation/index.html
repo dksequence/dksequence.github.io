@@ -313,15 +313,15 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 <!-- ════════════════ 체크인 ════════════════ -->
 <div id="s-checkin" class="screen">
   <div class="topbar">
-    <div style="display:flex;gap:6px;flex-shrink:0;">
-      <button onclick="confirmDelete()" style="padding:8px 14px;border-radius:2rem;border:1px solid rgba(239,68,68,0.5);background:rgba(239,68,68,0.08);color:#f87171;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">삭제</button>
-      <button onclick="confirmCancel()" style="padding:8px 14px;border-radius:2rem;border:1px solid rgba(139,92,246,0.5);background:rgba(139,92,246,0.08);color:#a78bfa;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">취소</button>
+    <div style="display:flex;gap:5px;flex-shrink:0;">
+      <button onclick="confirmDelete()" style="padding:5px 10px;border-radius:2rem;border:1px solid rgba(239,68,68,0.5);background:rgba(239,68,68,0.08);color:#f87171;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">삭제</button>
+      <button onclick="confirmCancel()" style="padding:5px 10px;border-radius:2rem;border:1px solid rgba(139,92,246,0.5);background:rgba(139,92,246,0.08);color:#a78bfa;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">취소</button>
     </div>
     <div style="text-align:center;">
       <div class="topbar-title" id="ci-topname"></div>
       <div class="topbar-sub">체크인</div>
     </div>
-    <button class="back-btn" onclick="show('s-dashboard')" style="flex-shrink:0;">목록 →</button>
+    <button onclick="show('s-dashboard')" style="flex-shrink:0;padding:10px 20px;border-radius:2rem;background:rgba(171,199,255,0.12);border:1px solid rgba(171,199,255,0.25);color:var(--primary);font-size:16px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">← 목록</button>
   </div>
   <div class="checkin-body">
     <div class="info-block">
@@ -533,10 +533,10 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
     <div class="detail-row"><span class="detail-key">개인정보동의</span><span class="detail-val" id="dm-privacy"></span></div>
     <div class="detail-row"><span class="detail-key">마케팅동의</span><span class="detail-val" id="dm-sns"></span></div>
     <div class="detail-row"><span class="detail-key">메모</span><span class="detail-val" id="dm-memo"></span></div>
-    <div style="display:flex;gap:8px;margin-top:20px;">
-      <button id="dm-cancel-btn" onclick="confirmCancel()" style="flex:1;padding:14px;border-radius:1rem;border:1px solid rgba(139,92,246,0.6);background:rgba(139,92,246,0.1);color:#a78bfa;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;"></button>
-      <button onclick="confirmDelete()" style="flex:1;padding:14px;border-radius:1rem;border:1px solid rgba(239,68,68,0.5);background:rgba(239,68,68,0.08);color:#f87171;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">삭제</button>
-      <button class="detail-close" onclick="closeDetail()" style="flex:1;">닫기</button>
+    <div style="display:flex;gap:8px;margin-top:20px;justify-content:flex-start;">
+      <button id="dm-cancel-btn" onclick="confirmCancel()" style="padding:8px 18px;border-radius:2rem;border:1px solid rgba(139,92,246,0.6);background:rgba(139,92,246,0.1);color:#a78bfa;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;"></button>
+      <button onclick="confirmDelete()" style="padding:8px 18px;border-radius:2rem;border:1px solid rgba(239,68,68,0.5);background:rgba(239,68,68,0.08);color:#f87171;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">삭제</button>
+      <button onclick="closeDetail()" style="padding:8px 18px;border-radius:2rem;background:var(--surface-highest);border:1px solid var(--outline);color:var(--on-surface-dim);font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">닫기</button>
     </div>
   </div>
 </div>
