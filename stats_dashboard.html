@@ -75,7 +75,7 @@
     .retry-btn:hover { background:var(--s3); }
 
     /* ── CARDS ── */
-    .cards { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:12px; }
+    .cards { display:grid; grid-template-columns:3fr 3fr 5fr 3fr; gap:10px; margin-bottom:12px; }
     @media(max-width:900px){ .cards{ grid-template-columns:repeat(2,1fr); } }
     @media(max-width:500px){ .cards{ grid-template-columns:1fr 1fr; } }
 
@@ -156,6 +156,82 @@
     .pill-link:hover { background:rgba(201,168,76,0.25); }
     .cl-sent-time { font-size:10px; color:var(--muted); margin-top:2px; }
     #customer-section { display:none; }
+
+    /* ── 리포트 툴바 ── */
+    .report-toolbar { display:none; gap:8px; margin-bottom:10px; }
+    .report-toolbar.visible { display:flex; }
+    .rpt-btn { border:none; border-radius:9px; padding:9px 18px; font-size:13px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:opacity .15s; }
+    .rpt-btn:hover { opacity:.85; }
+    .rpt-btn-view  { background:linear-gradient(135deg,#a78bfa,#ec4899); color:#fff; }
+    .rpt-btn-email { background:linear-gradient(135deg,#34d399,#38bdf8); color:#111; }
+
+    /* ── 모달 공통 ── */
+    .modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:800; display:none; }
+    .modal-backdrop.open { display:block; }
+    .modal-box { position:fixed; z-index:801; background:var(--s1); border:1px solid var(--bd2); border-radius:16px; padding:24px; box-shadow:0 8px 40px rgba(0,0,0,0.5); }
+
+    /* ── 이메일 모달 ── */
+    #email-modal { top:50%; left:50%; transform:translate(-50%,-50%); width:min(480px,92vw); max-height:88vh; overflow-y:auto; }
+    .modal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+    .modal-head h3 { font-size:15px; font-weight:800; }
+    .modal-close { background:none; border:none; color:var(--sub); font-size:20px; cursor:pointer; line-height:1; }
+    .modal-close:hover { color:var(--text); }
+    .modal-section { margin-bottom:16px; }
+    .modal-label { font-size:11px; color:var(--sub); margin-bottom:6px; letter-spacing:.04em; }
+    .period-row { display:flex; align-items:center; gap:8px; }
+    .period-row input[type=date] { background:var(--s2); border:1px solid var(--bd2); color:var(--text); border-radius:8px; padding:7px 10px; font-size:13px; flex:1; }
+    .period-row span { color:var(--sub); font-size:13px; }
+    .email-input-row { display:flex; align-items:center; gap:6px; margin-bottom:6px; }
+    .email-input-row input { flex:1; background:var(--s2); border:1px solid var(--bd2); color:var(--text); border-radius:8px; padding:8px 11px; font-size:13px; outline:none; }
+    .email-input-row input:focus { border-color:var(--mc); }
+    .email-remove { background:none; border:none; color:var(--muted); font-size:18px; cursor:pointer; line-height:1; padding:2px; }
+    .email-remove:hover { color:#fb7185; }
+    .email-add-btn { background:var(--s2); border:1px solid var(--bd2); color:var(--sub); border-radius:8px; padding:7px 14px; font-size:12px; font-weight:700; cursor:pointer; width:100%; margin-top:4px; }
+    .email-add-btn:hover { color:var(--text); background:var(--s3); }
+    .modal-defaults { display:flex; gap:8px; margin-top:10px; }
+    .def-btn { flex:1; background:var(--s2); border:1px solid var(--bd2); color:var(--sub); border-radius:8px; padding:7px; font-size:11px; font-weight:700; cursor:pointer; }
+    .def-btn:hover { color:var(--text); background:var(--s3); }
+    .modal-footer { display:flex; gap:8px; margin-top:20px; padding-top:16px; border-top:1px solid var(--border); }
+    .modal-cancel { flex:1; background:var(--s2); border:1px solid var(--bd2); color:var(--sub); border-radius:9px; padding:10px; font-size:13px; font-weight:700; cursor:pointer; }
+    .modal-cancel:hover { color:var(--text); }
+    .modal-send { flex:2; background:linear-gradient(135deg,#34d399,#38bdf8); border:none; color:#111; border-radius:9px; padding:10px; font-size:13px; font-weight:800; cursor:pointer; }
+    .modal-send:hover { opacity:.9; }
+    .modal-send:disabled { opacity:.4; cursor:not-allowed; }
+    .send-status { font-size:12px; color:var(--sub); margin-top:8px; text-align:center; min-height:18px; }
+
+    /* ── 리포트 모달 ── */
+    #report-modal { top:50%; left:50%; transform:translate(-50%,-50%); width:min(900px,96vw); max-height:90vh; overflow-y:auto; padding:0; }
+    .report-modal-head { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--s1); z-index:10; }
+    .report-modal-head h3 { font-size:14px; font-weight:800; }
+    .report-modal-actions { display:flex; gap:8px; align-items:center; }
+    #report-print-area { padding:20px; }
+    .rpt-title { font-size:18px; font-weight:900; margin-bottom:4px; }
+    .rpt-period { font-size:12px; color:var(--sub); margin-bottom:16px; }
+    .rpt-summary { display:flex; gap:24px; margin-bottom:20px; padding:14px 18px; background:var(--s2); border-radius:10px; }
+    .rpt-s-label { font-size:10px; color:var(--sub); margin-bottom:3px; }
+    .rpt-s-val { font-size:22px; font-weight:900; }
+    .rpt-table { width:100%; border-collapse:collapse; font-size:12px; }
+    .rpt-table th { padding:8px 10px; text-align:left; font-size:10px; font-weight:700; color:var(--sub); border-bottom:1px solid var(--border); white-space:nowrap; }
+    .rpt-table td { padding:9px 10px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; white-space:nowrap; }
+    .rpt-table tr:last-child td { border-bottom:none; }
+    .rpt-table tr:hover td { background:rgba(255,255,255,0.02); }
+
+    /* ── 매출/DK 셀 ── */
+    .td-revenue { text-align:right; font-weight:700; color:var(--text); }
+    .td-dk      { text-align:right; font-weight:700; color:#4ade80; }
+
+    /* ── 프린트 ── */
+    @media print {
+      body { background:#fff; color:#000; }
+      .header, .mode-bar, .accent-bar, .report-modal-head, .report-toolbar { display:none !important; }
+      #report-modal { position:static; transform:none; width:100%; max-height:none; border:none; box-shadow:none; }
+      .modal-backdrop { position:static; background:none; }
+      #report-print-area { padding:0; }
+      .rpt-table th, .rpt-table td { color:#000; border-color:#ccc; }
+      .rpt-summary { background:#f4f4f4; }
+      .rpt-period, .rpt-s-label { color:#666; }
+      .td-dk { color:#16a34a; }
+    }
   </style>
 </head>
 <body>
@@ -324,17 +400,24 @@
       </div>
     </div>
 
-    <!-- ⑤ 고객 리스트 (daily 모드 전용) -->
+    <!-- ⑤ 리포트 툴바 -->
+    <div class="report-toolbar" id="report-toolbar">
+      <button class="rpt-btn rpt-btn-view"  onclick="openReportModal()">📋 리포트 보기</button>
+      <button class="rpt-btn rpt-btn-email" onclick="openEmailModal()">📧 이메일 발송</button>
+    </div>
+
+    <!-- ⑥ 고객 현황 (전 모드) -->
     <div id="customer-section">
       <div class="chart-card" style="margin-bottom:10px">
         <div class="chart-header">
-          <span class="chart-title">👤 당일 고객 현황</span>
+          <span class="chart-title" id="customer-section-title">👤 고객 현황</span>
           <span class="chart-badge" id="badge-customers"></span>
         </div>
         <div style="overflow-x:auto">
           <table class="customer-list">
             <thead>
               <tr>
+                <th id="th-date">날짜</th>
                 <th>시간</th>
                 <th>이름</th>
                 <th>상품</th>
@@ -343,6 +426,8 @@
                 <th>발송 상태</th>
                 <th>발송 시각</th>
                 <th>열람</th>
+                <th style="text-align:right">매출</th>
+                <th style="text-align:right;color:#4ade80">DK</th>
               </tr>
             </thead>
             <tbody id="customer-tbody"></tbody>
@@ -355,6 +440,51 @@
     </div>
 
   </div><!-- /#dashboard -->
+</div>
+
+<!-- ── 이메일 모달 배경 ── -->
+<div class="modal-backdrop" id="email-backdrop" onclick="closeEmailModal()"></div>
+<div class="modal-box" id="email-modal" style="display:none">
+  <div class="modal-head">
+    <h3>📧 리포트 이메일 발송</h3>
+    <button class="modal-close" onclick="closeEmailModal()">✕</button>
+  </div>
+  <div class="modal-section">
+    <div class="modal-label">기간</div>
+    <div class="period-row">
+      <input type="date" id="ef-from">
+      <span>~</span>
+      <input type="date" id="ef-to">
+    </div>
+  </div>
+  <div class="modal-section">
+    <div class="modal-label">수신 이메일</div>
+    <div id="email-list-wrap"></div>
+    <button class="email-add-btn" onclick="addEmailInput()">+ 이메일 추가</button>
+    <div class="modal-defaults">
+      <button class="def-btn" onclick="saveEmailDefaults()">💾 기본값 저장</button>
+      <button class="def-btn" onclick="loadEmailDefaults()">↺ 기본값 불러오기</button>
+    </div>
+  </div>
+  <div class="send-status" id="send-status"></div>
+  <div class="modal-footer">
+    <button class="modal-cancel" onclick="closeEmailModal()">취소</button>
+    <button class="modal-send" id="send-btn" onclick="doSendReport()">발송</button>
+  </div>
+</div>
+
+<!-- ── 리포트 모달 배경 ── -->
+<div class="modal-backdrop" id="report-backdrop" onclick="closeReportModal()"></div>
+<div class="modal-box" id="report-modal" style="display:none">
+  <div class="report-modal-head">
+    <h3>📋 매출 리포트</h3>
+    <div class="report-modal-actions">
+      <button class="rpt-btn rpt-btn-email" onclick="closeReportModal();openEmailModal()" style="font-size:12px;padding:7px 14px">📧 이메일 발송</button>
+      <button class="rpt-btn" style="background:var(--s2);color:var(--text);border:1px solid var(--bd2);font-size:12px;padding:7px 14px" onclick="window.print()">🖨 프린트</button>
+      <button class="modal-close" onclick="closeReportModal()">✕</button>
+    </div>
+  </div>
+  <div id="report-print-area"></div>
 </div>
 
 <script>
@@ -370,9 +500,10 @@ const MODE_COLOR = {
 const PALETTE = ['#5b9cf6','#a78bfa','#f59e0b','#34d399','#fb7185','#38bdf8','#fb923c','#a3e635','#e879f9','#67e8f9'];
 
 // ── 상태 ──────────────────────────────────────────────────────
-let mode    = 'daily';
-let target  = todayStr();
-let charts  = {};
+let mode      = 'daily';
+let target    = todayStr();
+let charts    = {};
+let _lastData = null;
 
 // ── 날짜 유틸 ──────────────────────────────────────────────────
 function todayStr() {
@@ -480,6 +611,7 @@ async function loadStats() {
 
 // ── 렌더 ───────────────────────────────────────────────────────
 function renderDashboard(d) {
+  _lastData = d;
   const s   = d.summary;
   const col = MODE_COLOR[mode];
 
@@ -541,21 +673,30 @@ function renderDashboard(d) {
   setText('sns-pct',   s.snsRate + '%');
   charts.sns = makeRateDonut('chart-sns', s.snsRate, '#a78bfa');
 
-  // ⑤ 고객 리스트 (daily 모드에서만 표시)
+  // ⑤ 고객 현황 (전 모드 표시)
   const custSec = document.getElementById('customer-section');
-  if (mode === 'daily' && d.customers && d.customers.length) {
+  const showDate = (mode !== 'daily');
+  document.getElementById('th-date').style.display = showDate ? '' : 'none';
+  const titleMap = { daily:'👤 당일 고객 현황', weekly:'👤 주간 고객 현황', monthly:'👤 월간 고객 현황' };
+  setText('customer-section-title', titleMap[mode]);
+
+  if (d.customers && d.customers.length) {
     custSec.style.display = 'block';
-    const list = d.customers.slice().sort((a,b)=> (a.time||'').localeCompare(b.time||''));
+    const list = d.customers.slice().sort((a,b)=> {
+      const da = (a.date||'') + (a.time||'');
+      const db = (b.date||'') + (b.time||'');
+      return da.localeCompare(db);
+    });
     setText('badge-customers', list.length + '명');
     const tbody = document.getElementById('customer-tbody');
     tbody.innerHTML = list.map(c => {
-      const isSent   = c.delivSt && c.delivSt.indexOf('발송완료') === 0;
-      const isEdit   = c.editSt  && c.editSt.indexOf('완료') !== -1;
+      const isSent    = c.delivSt && c.delivSt.indexOf('발송완료') === 0;
+      const isEdit    = c.editSt  && c.editSt.indexOf('완료') !== -1;
       const isClicked = !!(c.clickedAt);
-      const sentPill = isSent
+      const sentPill  = isSent
         ? `<span class="badge-pill pill-sent">발송완료</span>`
         : `<span class="badge-pill pill-unsent">미발송</span>`;
-      const editPill = isEdit
+      const editPill  = isEdit
         ? `<span class="badge-pill pill-edit-ok">완료</span>`
         : `<span class="badge-pill pill-edit-no">대기</span>`;
       const resultBtn = c.resultUrl
@@ -564,7 +705,11 @@ function renderDashboard(d) {
       const clickPill = isClicked
         ? `<span class="badge-pill pill-sent" title="${escHtml(c.clickedAt)}">열람 ✓<div class="cl-sent-time" style="font-size:9px;margin-top:2px">${c.clickedAt.substring(5,16)}</div></span>`
         : `<span class="badge-pill" style="background:rgba(255,255,255,0.06);color:var(--muted)">미확인</span>`;
+      const revCell = c.revenue > 0 ? `<span style="font-weight:700">${wonFmt(c.revenue)}</span>` : `<span style="color:var(--muted)">—</span>`;
+      const dkCell  = c.dk > 0     ? `<span style="color:#4ade80;font-weight:700">${wonFmt(c.dk)}</span>` : `<span style="color:var(--muted)">—</span>`;
+      const dateCell = showDate ? `<td class="cl-time">${c.date||'—'}</td>` : '';
       return `<tr>
+        ${dateCell}
         <td class="cl-time">${c.time||'—'}</td>
         <td class="cl-name">${escHtml(c.name||'—')}</td>
         <td class="cl-product">${escHtml(c.product||'—')}</td>
@@ -573,11 +718,16 @@ function renderDashboard(d) {
         <td>${sentPill}</td>
         <td class="cl-sent-time">${isSent && c.delivAt ? c.delivAt : '—'}</td>
         <td>${clickPill}</td>
+        <td class="td-revenue">${revCell}</td>
+        <td class="td-dk">${dkCell}</td>
       </tr>`;
     }).join('');
   } else {
     custSec.style.display = 'none';
   }
+
+  // ⑥ 리포트 툴바 (항상 표시)
+  document.getElementById('report-toolbar').classList.toggle('visible', true);
 
   hide('loadingView'); show('dashboard');
 }
@@ -664,6 +814,193 @@ function sortedEntries(obj) { return Object.entries(obj).sort((a,b)=>b[1]-a[1]);
 function pct(v, t) { return t ? Math.round(v/t*100) : 0; }
 function wonFmt(n) { return '₩' + n.toLocaleString('ko-KR'); }
 function destroyCharts() { Object.values(charts).forEach(c=>c&&c.destroy()); charts={}; }
+
+// ── 이메일 모달 ────────────────────────────────────────────────
+function _periodForMode() {
+  // 현재 모드 기준 기본 기간(from/to) 반환
+  if (mode === 'daily') {
+    return { from: target, to: target };
+  }
+  if (mode === 'weekly') {
+    const mon = new Date(target);
+    const sun = new Date(target); sun.setDate(sun.getDate() + 6);
+    return {
+      from: `${mon.getFullYear()}-${pad(mon.getMonth()+1)}-${pad(mon.getDate())}`,
+      to:   `${sun.getFullYear()}-${pad(sun.getMonth()+1)}-${pad(sun.getDate())}`
+    };
+  }
+  // monthly
+  const [y, mo] = target.split('-').map(Number);
+  const last = new Date(y, mo, 0).getDate();
+  return { from: `${y}-${pad(mo)}-01`, to: `${y}-${pad(mo)}-${pad(last)}` };
+}
+
+function openEmailModal() {
+  const p = _periodForMode();
+  document.getElementById('ef-from').value = p.from;
+  document.getElementById('ef-to').value   = p.to;
+  document.getElementById('send-status').textContent = '';
+  document.getElementById('send-btn').disabled = false;
+
+  // 기본값 이메일 불러오기(없으면 빈 1칸)
+  const saved = localStorage.getItem('rpt_emails');
+  const emails = saved ? JSON.parse(saved) : [''];
+  const wrap = document.getElementById('email-list-wrap');
+  wrap.innerHTML = '';
+  emails.forEach(e => _appendEmailRow(e));
+
+  document.getElementById('email-backdrop').classList.add('open');
+  document.getElementById('email-modal').style.display = 'block';
+}
+
+function closeEmailModal() {
+  document.getElementById('email-backdrop').classList.remove('open');
+  document.getElementById('email-modal').style.display = 'none';
+}
+
+function _appendEmailRow(val) {
+  const wrap = document.getElementById('email-list-wrap');
+  const row  = document.createElement('div');
+  row.className = 'email-input-row';
+  const inp = document.createElement('input');
+  inp.type  = 'email';
+  inp.placeholder = 'example@email.com';
+  inp.value = val || '';
+  const rmBtn = document.createElement('button');
+  rmBtn.className = 'email-remove';
+  rmBtn.textContent = '✕';
+  rmBtn.onclick = () => {
+    if (wrap.children.length > 1) row.remove();
+    else inp.value = '';
+  };
+  row.appendChild(inp);
+  row.appendChild(rmBtn);
+  wrap.appendChild(row);
+  inp.focus();
+}
+
+function addEmailInput() { _appendEmailRow(''); }
+
+function saveEmailDefaults() {
+  const inputs = document.querySelectorAll('#email-list-wrap input');
+  const emails = [...inputs].map(i => i.value.trim()).filter(Boolean);
+  localStorage.setItem('rpt_emails', JSON.stringify(emails));
+  document.getElementById('send-status').textContent = '기본값 저장됨';
+  setTimeout(() => { document.getElementById('send-status').textContent = ''; }, 1500);
+}
+
+function loadEmailDefaults() {
+  const saved = localStorage.getItem('rpt_emails');
+  if (!saved) { document.getElementById('send-status').textContent = '저장된 기본값 없음'; return; }
+  const emails = JSON.parse(saved);
+  const wrap = document.getElementById('email-list-wrap');
+  wrap.innerHTML = '';
+  emails.forEach(e => _appendEmailRow(e));
+}
+
+function doSendReport() {
+  const from    = document.getElementById('ef-from').value;
+  const to      = document.getElementById('ef-to').value;
+  const inputs  = document.querySelectorAll('#email-list-wrap input');
+  const emails  = [...inputs].map(i => i.value.trim()).filter(Boolean);
+  if (!from || !to)         { document.getElementById('send-status').textContent = '기간을 입력하세요.'; return; }
+  if (emails.length === 0)  { document.getElementById('send-status').textContent = '이메일을 입력하세요.'; return; }
+
+  const btn = document.getElementById('send-btn');
+  btn.disabled = true;
+  document.getElementById('send-status').textContent = '발송 중...';
+
+  const cb  = 'gasSend_' + Date.now();
+  const tag = document.createElement('script');
+  window[cb] = (res) => {
+    delete window[cb]; tag.remove();
+    if (res && res.ok) {
+      document.getElementById('send-status').textContent = '발송 완료!';
+      setTimeout(closeEmailModal, 1500);
+    } else {
+      document.getElementById('send-status').textContent = '오류: ' + (res && res.error ? res.error : '알 수 없는 오류');
+      btn.disabled = false;
+    }
+  };
+  tag.src    = `${GAS_URL}?action=sendMonthlyReport&dateFrom=${encodeURIComponent(from)}&dateTo=${encodeURIComponent(to)}&emails=${encodeURIComponent(emails.join(','))}&callback=${cb}`;
+  tag.onerror = () => {
+    delete window[cb]; tag.remove();
+    document.getElementById('send-status').textContent = '네트워크 오류';
+    btn.disabled = false;
+  };
+  document.head.appendChild(tag);
+  setTimeout(() => {
+    if (window[cb]) {
+      delete window[cb]; tag.remove();
+      document.getElementById('send-status').textContent = '응답 시간 초과';
+      btn.disabled = false;
+    }
+  }, 30000);
+}
+
+// ── 리포트 모달 ────────────────────────────────────────────────
+function openReportModal() {
+  const area = document.getElementById('report-print-area');
+  area.innerHTML = _lastData ? buildReportHtml(_lastData) : '<p style="padding:20px;color:var(--sub)">데이터 없음</p>';
+  document.getElementById('report-backdrop').classList.add('open');
+  document.getElementById('report-modal').style.display = 'block';
+}
+
+function closeReportModal() {
+  document.getElementById('report-backdrop').classList.remove('open');
+  document.getElementById('report-modal').style.display = 'none';
+}
+
+function buildReportHtml(d) {
+  const s = d.summary;
+  const p = _periodForMode();
+  const periodTxt = `${p.from} ~ ${p.to}`;
+  const modeLabel = { daily:'일간', weekly:'주간', monthly:'월간' }[mode];
+
+  const rows = (d.customers || []).slice().sort((a,b) => ((a.date||'')+(a.time||'')).localeCompare((b.date||'')+(b.time||'')));
+  const showDate = (mode !== 'daily');
+
+  const dateTh   = showDate ? `<th style="text-align:left;padding:8px 10px;border-bottom:1px solid #ddd;white-space:nowrap">날짜</th>` : '';
+  const rowsHtml = rows.map(c => {
+    const dateCell = showDate ? `<td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;white-space:nowrap">${c.date||'—'}</td>` : '';
+    const rev = c.revenue > 0 ? wonFmt(c.revenue) : '—';
+    const dk  = c.dk      > 0 ? wonFmt(c.dk)      : '—';
+    return `<tr>
+      ${dateCell}
+      <td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;white-space:nowrap">${c.time||'—'}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;font-weight:700">${escHtml(c.name||'—')}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;color:#555;font-size:11px">${escHtml(c.product||'—')}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;text-align:right;font-weight:700">${rev}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;text-align:right;font-weight:700;color:#16a34a">${dk}</td>
+    </tr>`;
+  }).join('');
+
+  const totalRev = rows.reduce((a,c) => a + (c.revenue||0), 0);
+  const totalDk  = rows.reduce((a,c) => a + (c.dk||0),      0);
+
+  return `
+  <div class="rpt-title">DKsequence × 중문별장 매출 리포트</div>
+  <div class="rpt-period">${modeLabel} | ${periodTxt}</div>
+  <div class="rpt-summary">
+    <div><div class="rpt-s-label">예약 건수</div><div class="rpt-s-val" style="color:#5b9cf6">${s.count}건</div></div>
+    <div><div class="rpt-s-label">총 인원</div><div class="rpt-s-val" style="color:#34d399">${s.people}명</div></div>
+    <div><div class="rpt-s-label">매출</div><div class="rpt-s-val" style="color:#f59e0b">${wonFmt(totalRev)}</div></div>
+    <div><div class="rpt-s-label">DK</div><div class="rpt-s-val" style="color:#4ade80">${wonFmt(totalDk)}</div></div>
+  </div>
+  <table class="rpt-table">
+    <thead>
+      <tr>
+        ${dateTh}
+        <th style="text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap">시간</th>
+        <th style="text-align:left;padding:8px 10px;border-bottom:1px solid var(--border)">이름</th>
+        <th style="text-align:left;padding:8px 10px;border-bottom:1px solid var(--border)">상품</th>
+        <th style="text-align:right;padding:8px 10px;border-bottom:1px solid var(--border)">매출</th>
+        <th style="text-align:right;padding:8px 10px;border-bottom:1px solid var(--border);color:#4ade80">DK</th>
+      </tr>
+    </thead>
+    <tbody>${rowsHtml}</tbody>
+  </table>`;
+}
 
 // ── 초기화 ─────────────────────────────────────────────────────
 updateModeUI();
