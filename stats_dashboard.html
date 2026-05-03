@@ -220,6 +220,38 @@
     .td-revenue { text-align:right; font-weight:700; color:var(--text); }
     .td-dk      { text-align:right; font-weight:700; color:#4ade80; }
 
+    /* ── 리포트 헤더 메타 ── */
+    .rpt-header-row { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:4px; }
+    .rpt-meta { font-size:11px; color:var(--sub); text-align:right; line-height:1.9; }
+
+    /* ── 리포트 분석 섹션 ── */
+    .rpt-analytics { margin-top:20px; padding-top:16px; border-top:1px solid var(--border); }
+    .rpt-analytics-head { font-size:12px; font-weight:700; color:var(--sub); margin-bottom:12px; }
+    .rpt-analytics-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    @media(max-width:600px){ .rpt-analytics-grid{ grid-template-columns:1fr; } }
+    .rpt-a-card { background:var(--s2); border-radius:10px; padding:14px; }
+    .rpt-a-title { font-size:11px; font-weight:700; margin-bottom:10px; }
+
+    .rpt-bchart { display:flex; flex-direction:column; gap:3px; max-height:240px; overflow-y:auto; }
+    .rpt-brow { display:flex; align-items:center; gap:6px; }
+    .rpt-blbl { width:38px; font-size:9px; color:var(--sub); text-align:right; flex-shrink:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .rpt-btrack { flex:1; background:rgba(255,255,255,0.07); border-radius:3px; height:11px; overflow:hidden; }
+    .rpt-bval { width:20px; font-size:9px; color:var(--sub); flex-shrink:0; }
+
+    .rpt-hrow { margin-bottom:6px; }
+    .rpt-hlabel { display:flex; align-items:center; gap:5px; font-size:10px; color:var(--sub); margin-bottom:2px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+    .rpt-hdot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+    .rpt-hright { display:flex; align-items:center; gap:6px; }
+    .rpt-htrack { flex:1; background:rgba(255,255,255,0.07); border-radius:3px; height:6px; overflow:hidden; }
+    .rpt-hfill { height:100%; border-radius:3px; }
+    .rpt-hpct { font-size:9px; color:var(--sub); white-space:nowrap; flex-shrink:0; min-width:28px; text-align:right; }
+
+    .rpt-rates-row { display:flex; justify-content:space-around; padding:8px 0; }
+    .rpt-rate-item { text-align:center; }
+    .rpt-rate-ring { width:72px; height:72px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; }
+    .rpt-rate-core { width:52px; height:52px; border-radius:50%; background:var(--s1); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:900; }
+    .rpt-rate-lbl { font-size:10px; color:var(--sub); margin-top:6px; }
+
     /* ── 프린트 ── */
     @media print {
       body { background:#fff; color:#000; }
@@ -231,6 +263,11 @@
       .rpt-summary { background:#f4f4f4; }
       .rpt-period, .rpt-s-label { color:#666; }
       .td-dk { color:#16a34a; }
+      .rpt-a-card { background:#f0f0f0 !important; }
+      .rpt-analytics-head,.rpt-a-title { color:#333 !important; }
+      .rpt-blbl,.rpt-bval,.rpt-hlabel,.rpt-hpct,.rpt-rate-lbl,.rpt-meta { color:#666 !important; }
+      .rpt-btrack,.rpt-htrack { background:#ddd !important; }
+      .rpt-rate-core { background:#f0f0f0 !important; }
     }
   </style>
 </head>
@@ -815,6 +852,94 @@ function pct(v, t) { return t ? Math.round(v/t*100) : 0; }
 function wonFmt(n) { return '₩' + n.toLocaleString('ko-KR'); }
 function destroyCharts() { Object.values(charts).forEach(c=>c&&c.destroy()); charts={}; }
 
+function buildAnalyticsHtml(d) {
+  const s = d.summary;
+  const ACOLS = ['#5b9cf6','#a78bfa','#f59e0b','#34d399','#fb7185','#38bdf8','#fb923c','#a3e635'];
+
+  // ── 예약 분포 바차트 ──
+  const barMax = Math.max(...d.barChart.data, 1);
+  const barTitle = { daily:'⏰ 시간대별 예약', weekly:'📅 요일별 예약', monthly:'📆 일별 예약' }[mode];
+  const barHtml = d.barChart.labels.map((lbl, i) => {
+    const val = d.barChart.data[i] || 0;
+    const wpct = Math.round(val / barMax * 100);
+    return `<div class="rpt-brow">
+      <div class="rpt-blbl">${lbl}</div>
+      <div class="rpt-btrack"><div style="width:${wpct}%;height:100%;background:#5b9cf6;border-radius:3px"></div></div>
+      <div class="rpt-bval">${val}</div>
+    </div>`;
+  }).join('');
+
+  // ── 상품별 ──
+  const prodE = Object.entries(d.products).sort((a,b) => b[1]-a[1]);
+  const prodTotal = prodE.reduce((a,[,v]) => a+v, 0);
+  const prodHtml = prodE.map(([k,v], i) => {
+    const wpct = prodTotal ? Math.round(v/prodTotal*100) : 0;
+    const c = ACOLS[i % ACOLS.length];
+    return `<div class="rpt-hrow">
+      <div class="rpt-hlabel"><span class="rpt-hdot" style="background:${c}"></span>${escHtml(k)}</div>
+      <div class="rpt-hright">
+        <div class="rpt-htrack"><div class="rpt-hfill" style="width:${wpct}%;background:${c}"></div></div>
+        <span class="rpt-hpct">${v}건</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // ── 유입경로 ──
+  const srcE = Object.entries(d.sources).sort((a,b) => b[1]-a[1]);
+  const srcTotal = srcE.reduce((a,[,v]) => a+v, 0);
+  const srcHtml = srcE.map(([k,v], i) => {
+    const wpct = srcTotal ? Math.round(v/srcTotal*100) : 0;
+    const c = PALETTE[i % PALETTE.length];
+    return `<div class="rpt-hrow">
+      <div class="rpt-hlabel"><span class="rpt-hdot" style="background:${c}"></span>${escHtml(k)}</div>
+      <div class="rpt-hright">
+        <div class="rpt-htrack"><div class="rpt-hfill" style="width:${wpct}%;background:${c}"></div></div>
+        <span class="rpt-hpct">${v}건</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // ── 완료율 원형 ──
+  function rateRing(pct, color, label) {
+    const deg = Math.round(pct * 3.6);
+    return `<div class="rpt-rate-item">
+      <div class="rpt-rate-ring" style="background:conic-gradient(${color} ${deg}deg,rgba(255,255,255,0.07) 0deg)">
+        <div class="rpt-rate-core" style="color:${color}">${pct}%</div>
+      </div>
+      <div class="rpt-rate-lbl">${label}</div>
+    </div>`;
+  }
+
+  return `
+  <div class="rpt-analytics">
+    <div class="rpt-analytics-head">📊 통계 분석</div>
+    <div class="rpt-analytics-grid">
+      <div class="rpt-a-card">
+        <div class="rpt-a-title">${barTitle}</div>
+        <div class="rpt-bchart">${barHtml}</div>
+      </div>
+      <div>
+        <div class="rpt-a-card" style="margin-bottom:10px">
+          <div class="rpt-a-title">📦 상품별 예약</div>
+          ${prodHtml || '<span style="font-size:11px;color:var(--muted)">데이터 없음</span>'}
+        </div>
+        <div class="rpt-a-card">
+          <div class="rpt-a-title">📡 유입 경로</div>
+          ${srcHtml || '<span style="font-size:11px;color:var(--muted)">데이터 없음</span>'}
+        </div>
+      </div>
+    </div>
+    <div class="rpt-a-card" style="margin-top:10px">
+      <div class="rpt-a-title">완료율</div>
+      <div class="rpt-rates-row">
+        ${rateRing(s.editRate,     '#5b9cf6', '✏️ 편집 완료율')}
+        ${rateRing(s.deliveryRate, '#34d399', '📨 발송 완료율')}
+        ${rateRing(s.snsRate,      '#a78bfa', '📸 SNS 동의율')}
+      </div>
+    </div>
+  </div>`;
+}
+
 // ── 이메일 모달 ────────────────────────────────────────────────
 function _periodForMode() {
   // 현재 모드 기준 기본 기간(from/to) 반환
@@ -979,8 +1104,16 @@ function buildReportHtml(d) {
   const totalDk  = rows.reduce((a,c) => a + (c.dk||0),      0);
 
   return `
-  <div class="rpt-title">DKsequence × 중문별장 매출 리포트</div>
-  <div class="rpt-period">${modeLabel} | ${periodTxt}</div>
+  <div class="rpt-header-row">
+    <div>
+      <div class="rpt-title">DKsequence × 중문별장 매출 리포트</div>
+      <div class="rpt-period">${modeLabel} | ${periodTxt}</div>
+    </div>
+    <div class="rpt-meta">
+      <div>발송일: ${todayStr()}</div>
+      <div>발송처: DKsequence</div>
+    </div>
+  </div>
   <div class="rpt-summary">
     <div><div class="rpt-s-label">예약 건수</div><div class="rpt-s-val" style="color:#5b9cf6">${s.count}건</div></div>
     <div><div class="rpt-s-label">총 인원</div><div class="rpt-s-val" style="color:#34d399">${s.people}명</div></div>
@@ -999,7 +1132,8 @@ function buildReportHtml(d) {
       </tr>
     </thead>
     <tbody>${rowsHtml}</tbody>
-  </table>`;
+  </table>
+  ${buildAnalyticsHtml(d)}`;
 }
 
 // ── 초기화 ─────────────────────────────────────────────────────
