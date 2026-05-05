@@ -742,8 +742,12 @@ let curIndex = 0;
 let curVer = 'original';
 
 // ── Gallery Render ───────────────────────────────────────────────────
+function splitCats(cat) {
+  return (cat || '').split(',').map(c => c.trim()).filter(Boolean);
+}
+
 function renderGallery(cat) {
-  filtered = cat === 'all' ? allItems : allItems.filter(i => i.cat === cat);
+  filtered = cat === 'all' ? allItems : allItems.filter(i => splitCats(i.cat).includes(cat));
   const el = document.getElementById('gallery');
   if (!filtered.length) {
     el.innerHTML = '<div class="state-msg">사진이 없습니다.</div>';
@@ -751,9 +755,10 @@ function renderGallery(cat) {
   }
   el.innerHTML = filtered.map((item, idx) => {
     const thumbSrc = item.watermark || item.original;
+    const catLabel = splitCats(item.cat).join(' · ');
     return `<div class="gallery-item" data-idx="${idx}">
       <img src="${thumbSrc}" alt="${item.name}">
-      <div class="overlay"><span class="overlay-tag">${item.cat}</span></div>
+      <div class="overlay"><span class="overlay-tag">${catLabel}</span></div>
     </div>`;
   }).join('');
   el.querySelectorAll('.gallery-item').forEach(el => {
@@ -1238,7 +1243,8 @@ async function loadGallery() {
 }
 
 function renderCategories() {
-  const cats = [...new Set(allItems.map(i => i.cat).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ko'));
+  const allCats = allItems.flatMap(i => splitCats(i.cat));
+  const cats = [...new Set(allCats)].sort((a, b) => a.localeCompare(b, 'ko'));
   const filter = document.getElementById('filter');
   filter.innerHTML = '<button class="filter-btn active" data-cat="all">ALL</button>'
     + cats.map(c => `<button class="filter-btn" data-cat="${c}">${c}</button>`).join('');
