@@ -360,7 +360,11 @@
       <div class="upload-row">
         <div class="upload-col">
           <input type="file" id="upload-file-input" accept="image/jpeg,image/jpg,image/png,image/webp" style="display:none;">
-          <label class="upload-file-label" for="upload-file-input">파일 선택</label>
+          <input type="file" id="upload-folder-input" accept="image/jpeg,image/jpg,image/png,image/webp" webkitdirectory multiple style="display:none;">
+          <div style="display:flex;gap:8px;">
+            <label class="upload-file-label" for="upload-file-input">파일 선택</label>
+            <label class="upload-file-label" for="upload-folder-input">폴더 선택</label>
+          </div>
           <div class="upload-filename" id="upload-filename">선택된 파일 없음</div>
         </div>
         <div class="upload-col">
@@ -1023,7 +1027,7 @@ const Upload = {
     document.getElementById('upload-progress-msg').textContent = msg;
   },
 
-  async upload() {
+  async upload(silent = false) {
     if (!this.file || !this.originalImg) return;
     const btn = document.getElementById('upload-btn');
     btn.disabled = true;
@@ -1074,11 +1078,13 @@ const Upload = {
 
       // 4. 완료
       this._setProgress(100, '완료!');
-      setStatus(`업로드 완료 — ${origRes.data.displayName}`, 'ok');
-      const list = await gasGet('admin');
-      items = list.data;
-      renderList();
-      this._reset();
+      if (!silent) {
+        setStatus(`업로드 완료 — ${origRes.data.displayName}`, 'ok');
+        const list = await gasGet('admin');
+        items = list.data;
+        renderList();
+        this._reset();
+      }
 
     } catch (e) {
       setStatus('업로드 오류: ' + e.message, 'err');
@@ -1088,7 +1094,9 @@ const Upload = {
 
   _reset() {
     this.file = null; this.dataUrl = null; this.originalImg = null;
+    this.folderFiles = [];
     document.getElementById('upload-file-input').value = '';
+    document.getElementById('upload-folder-input').value = '';
     document.getElementById('upload-filename').textContent = '선택된 파일 없음';
     document.getElementById('upload-previews').style.display = 'none';
     document.getElementById('upload-progress-wrap').style.display = 'none';
@@ -1137,10 +1145,23 @@ document.getElementById('upload-toggle-btn').addEventListener('click', () => {
   if (!open) Upload.initPanel();
 });
 
-// 파일 선택
+// 파일 선택 (단일)
 document.getElementById('upload-file-input').addEventListener('change', e => {
   const file = e.target.files[0];
-  if (file) Upload.onFileChange(file);
+  if (file) { Upload.folderFiles = []; Upload.onFileChange(file); }
+});
+
+// 폴더 선택 (다중)
+document.getElementById('upload-folder-input').addEventListener('change', e => {
+  const files = Array.from(e.target.files).filter(f => f.type.startsWith('image/'));
+  if (!files.length) return;
+  files.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
+  Upload.folderFiles = files;
+  document.getElementById('upload-filename').textContent = `폴더: ${files.length}개 이미지 선택됨`;
+  document.getElementById('upload-previews').style.display = 'none';
+  document.getElementById('upload-btn').disabled = false;
+  // 첫 번째 파일로 프리뷰
+  Upload.onFileChange(files[0]);
 });
 
 // 레터링 선택 변경
@@ -1149,7 +1170,29 @@ document.getElementById('upload-letter-select').addEventListener('change', () =>
 });
 
 // 업로드 실행
-document.getElementById('upload-btn').addEventListener('click', () => Upload.upload());
+document.getElementById('upload-btn').addEventListener('click', async () => {
+  if (Upload.folderFiles && Upload.folderFiles.length > 1) {
+    // 폴더 일괄 업로드
+    const files = Upload.folderFiles;
+    const btn = document.getElementById('upload-btn');
+    btn.disabled = true;
+    for (let i = 0; i < files.length; i++) {
+      setStatus(`업로드 중 ${i + 1} / ${files.length} — ${files[i].name}`);
+      Upload.dataUrl     = await Upload._readDataUrl(files[i]);
+      Upload.originalImg = await Upload._imgFromSrc(Upload.dataUrl);
+      Upload.file        = files[i];
+      Upload._setProgress(Math.round((i / files.length) * 100), `${i + 1}/${files.length} 처리 중...`);
+      await Upload.upload(true);  // silent=true: 완료 후 reset 스킵
+    }
+    const list = await gasGet('admin');
+    items = list.data;
+    renderList();
+    Upload._reset();
+    setStatus(`폴더 업로드 완료 — ${files.length}개 등록됨`, 'ok');
+  } else {
+    Upload.upload();
+  }
+});
 </script>
 </body>
 </html>
