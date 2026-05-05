@@ -299,6 +299,7 @@
     <span class="topbar-title">DK Gallery 관리</span>
     <div class="topbar-actions">
       <button class="btn" id="btn-scan">Drive 스캔</button>
+      <button class="btn danger" id="btn-clean-shot">SHOT 정리</button>
       <button class="btn primary" id="btn-save">저장</button>
     </div>
   </div>
@@ -600,6 +601,33 @@ async function gasPost(body) {
     return { ok: true };
   }
 }
+
+// ── SHOT 카테고리 일괄 제거 ──────────────────────────────────────────
+document.getElementById('btn-clean-shot').addEventListener('click', async () => {
+  const affected = items.filter(i => (i.category || '').split(',').some(c => /^shot\d*$/i.test(c.trim())));
+  if (!affected.length) { setStatus('SHOT 카테고리 항목 없음', 'ok'); return; }
+  if (!confirm(`SHOT 카테고리가 포함된 항목 ${affected.length}개를 정리할까요?\n(SHOT 값만 제거, 다른 카테고리는 유지됩니다)`)) return;
+
+  affected.forEach(item => {
+    const cats = item.category.split(',').map(c => c.trim()).filter(c => !/^shot\d*$/i.test(c));
+    item.category = cats.join(',');
+  });
+
+  setStatus('저장 중...');
+  try {
+    const saveRes = await gasPost({ action: 'save', items: items.map(i => ({
+      photoId:  i.photoId,
+      category: i.category,
+      active:   i.active,
+      ssSource: i.ssSource || 'original',
+    }))});
+    if (!saveRes.ok) throw new Error(saveRes.error);
+    renderList();
+    setStatus(`SHOT 정리 완료 — ${affected.length}개 항목 업데이트됨`, 'ok');
+  } catch (e) {
+    setStatus('저장 실패: ' + e.message, 'err');
+  }
+});
 
 // ── Drive 스캔 ───────────────────────────────────────────────────────
 document.getElementById('btn-scan').addEventListener('click', async () => {
