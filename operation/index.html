@@ -262,7 +262,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 <!-- ════════════════ 대시보드 ════════════════ -->
 <div id="s-dashboard" class="screen active">
   <div class="topbar">
-    <div class="topbar-brand">DKSEQUENCE × 중문별장 RUNS V.4.05</div>
+    <div class="topbar-brand">DKSEQUENCE × 중문별장 RUNS V.4.06</div>
     <div class="topbar-date-row">
       <button class="today-btn" onclick="goToToday()">TODAY</button>
       <button class="date-nav-btn" onclick="changeDate(-1)">◀</button>
@@ -1013,7 +1013,8 @@ function confirmCancel() {
   show('s-dashboard');
   callApi({ action: 'cancelCheckin', resno: r.resno, cancel: !isCancelled }, function(err, res) {
     if (err || (res && !res.ok)) { alert('오류: ' + (err || (res && res.error))); return; }
-    loadReservations(SELECTED_TIME);
+    FULL_DATA = null;
+    loadReservations(SELECTED_TIME, true);
   });
 }
 function confirmDelete() {
