@@ -56,11 +56,11 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
   background:transparent;border:none;white-space:nowrap;font-family:'Inter',sans-serif;letter-spacing:.04em;}
 .tab.active{background:var(--surface-highest);color:#fff;font-weight:700;}
 
-.stat-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:16px 20px;}
+.stat-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:16px 20px;}
 .stat-card{background:var(--surface-low);border-radius:1rem;padding:20px 18px;}
 .stat-label{font-size:22px;color:rgba(255,255,255,0.6);letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px;}
 .stat-val{font-size:56px;font-weight:700;letter-spacing:-0.02em;}
-.stat-val.all{color:var(--on-surface);}.stat-val.done{color:var(--success);}.stat-val.wait{color:var(--warn);}
+.stat-val.all{color:var(--on-surface);}.stat-val.done{color:var(--success);}.stat-val.wait{color:var(--warn);}.stat-val.cancel{color:#a78bfa;}
 
 .section-label{padding:10px 20px 14px;font-size:22px;color:rgba(255,255,255,0.6);letter-spacing:.06em;text-transform:uppercase;}
 .list{padding:0 20px 16px;display:flex;flex-direction:column;gap:8px;}
@@ -262,7 +262,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 <!-- ════════════════ 대시보드 ════════════════ -->
 <div id="s-dashboard" class="screen active">
   <div class="topbar">
-    <div class="topbar-brand">DKSEQUENCE × 중문별장 RUNS V.4.04</div>
+    <div class="topbar-brand">DKSEQUENCE × 중문별장 RUNS V.4.05</div>
     <div class="topbar-date-row">
       <button class="today-btn" onclick="goToToday()">TODAY</button>
       <button class="date-nav-btn" onclick="changeDate(-1)">◀</button>
@@ -283,6 +283,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
       <div class="stat-card"><div class="stat-label">전체</div><div class="stat-val all" id="stat-total">—</div></div>
       <div class="stat-card"><div class="stat-label">완료</div><div class="stat-val done" id="stat-done">—</div></div>
       <div class="stat-card"><div class="stat-label">대기</div><div class="stat-val wait" id="stat-wait">—</div></div>
+      <div class="stat-card"><div class="stat-label">취소</div><div class="stat-val cancel" id="stat-cancel">—</div></div>
     </div>
     <div class="section-label" id="list-label">예약 목록</div>
     <div class="list" id="reservation-list">
@@ -888,9 +889,10 @@ function loadReservations(time, forceRefresh) {
     LAST_DATA_HASH = res.dataHash || ""; // 데이터 변경 감지용 해시 저장
     
     if (res.dailyStats) {
-      document.getElementById('stat-total').textContent = res.dailyStats.total;
-      document.getElementById('stat-done').textContent  = res.dailyStats.done;
-      document.getElementById('stat-wait').textContent  = res.dailyStats.wait;
+      document.getElementById('stat-total').textContent  = res.dailyStats.total;
+      document.getElementById('stat-done').textContent   = res.dailyStats.done;
+      document.getElementById('stat-wait').textContent   = res.dailyStats.wait;
+      document.getElementById('stat-cancel').textContent = res.dailyStats.cancel || 0;
     }
     
     renderList(filterDataByTime(FULL_DATA, time));
