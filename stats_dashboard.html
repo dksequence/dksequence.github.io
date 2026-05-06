@@ -728,6 +728,18 @@ function renderDashboard(d) {
     setText('badge-customers', (s.people || list.length) + '명');
     const tbody = document.getElementById('customer-tbody');
     tbody.innerHTML = list.map(c => {
+      if (c.cancelled) {
+        const dateCell = showDate ? `<td class="cl-time">${c.date||'—'}</td>` : '';
+        return `<tr style="opacity:0.45">
+          ${dateCell}
+          <td class="cl-time">${c.time||'—'}</td>
+          <td class="cl-name" style="text-decoration:line-through">${escHtml(c.name||'—')}</td>
+          <td class="cl-product">${escHtml(c.product||'—')}</td>
+          <td colspan="6"><span class="badge-pill" style="background:rgba(139,92,246,0.15);color:#a78bfa;border:1px solid rgba(139,92,246,0.4)">취소</span></td>
+          <td class="td-revenue"><span style="color:var(--muted)">—</span></td>
+          <td class="td-dk"><span style="color:var(--muted)">—</span></td>
+        </tr>`;
+      }
       const isSent    = c.delivSt && c.delivSt.indexOf('발송완료') === 0;
       const isEdit    = c.editSt  && c.editSt.indexOf('완료') !== -1;
       const isClicked = !!(c.clickedAt);
