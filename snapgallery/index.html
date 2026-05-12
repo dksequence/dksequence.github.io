@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DK Gallery</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;300;400&family=Noto+Sans+KR:wght@300;400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -598,6 +602,69 @@
       .gallery { columns: 2 130px; column-gap: 4px; padding: 0 4px 40px; }
       .gallery-item { margin-bottom: 4px; }
     }
+
+    /* ── Reservation Popup (Inside ss-canvas) ── */
+    .res-popup {
+      position: absolute;
+      top: 40px;
+      right: -400px;
+      width: 340px;
+      background: rgba(15, 15, 15, 0.85);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 218, 112, 0.3);
+      border-radius: 12px;
+      padding: 20px 24px;
+      color: #fff;
+      z-index: 9000;
+      transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+      pointer-events: none;
+    }
+    .res-popup.show {
+      right: 40px;
+    }
+    .res-title {
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+      color: #ffda70;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      padding-bottom: 10px;
+      text-align: center;
+    }
+    .res-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .res-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .res-time {
+      font-size: 1.1rem;
+      letter-spacing: 0.05em;
+      color: #ddd;
+    }
+    .res-name {
+      font-size: 1.1rem;
+      font-weight: 400;
+    }
+    .res-check {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.1);
+      color: #999;
+      letter-spacing: 0.1em;
+    }
+    .res-check.confirmed {
+      background: rgba(76, 175, 80, 0.2);
+      color: #81c784;
+      border: 1px solid rgba(76, 175, 80, 0.4);
+    }
   </style>
 </head>
 <body>
@@ -655,6 +722,14 @@
     </div>
 
     <div id="ss-hint" style="position:absolute;top:16px;right:20px;font-size:0.65rem;letter-spacing:0.2em;color:rgba(255,255,255,0.2);z-index:5;pointer-events:none;">ESC — 종료</div>
+    
+    <!-- Reservation Popup -->
+    <div class="res-popup" id="res-popup">
+      <div class="res-title">Today's Shoot</div>
+      <div class="res-list" id="res-list">
+        <div style="text-align:center;color:#888;font-size:0.9rem;">불러오는 중...</div>
+      </div>
+    </div>
   </div>
 
   <!-- Show Texts 오버레이 (ss-canvas 밖, slideshow 기준 좌표) -->
@@ -954,6 +1029,7 @@ const SS = {
     this._kenBurns(this.layerA);
     this._go();
     ShowText.load().then(() => ShowText.start());
+    ResPopup.startPolling();
   },
 
   _go() {
@@ -1022,6 +1098,7 @@ const SS = {
     document.getElementById('ss-canvas').style.cssText = '';
     if (document.fullscreenElement) document.exitFullscreen();
     ShowText.stop();
+    ResPopup.stop();
   }
 };
 
@@ -1185,6 +1262,88 @@ const ShowText = {
     const interval = parseInt(localStorage.getItem('ss_text_interval') || '15000');
     this._timer = setTimeout(() => this._tick(), interval);
   },
+};
+
+// ── Reservation Popup Module ──────────────────────────────────────────
+const ResPopup = {
+  data: [],
+  pollTimer: null,
+  showTimer: null,
+  
+  // 이름 마스킹 (홍길동 -> 홍*동)
+  maskName(name) {
+    if(!name) return "";
+    if(name.length <= 1) return name;
+    if(name.length === 2) return name[0] + '*';
+    return name[0] + '*'.repeat(name.length - 2) + name[name.length - 1];
+  },
+
+  async fetchReservations() {
+    try {
+      const res = await fetch(GAS_URL + '?action=getScheduleStatus');
+      const json = await res.json();
+      if(json.ok && Array.isArray(json.items)) {
+        let flatData = [];
+        json.items.forEach(slot => {
+          slot.customers.forEach(c => {
+            flatData.push({
+              time: slot.time,
+              name: c.name,
+              photographerCheck: slot.confirmedAt ? 'O' : 'X'
+            });
+          });
+        });
+        this.data = flatData;
+      }
+    } catch(e) { console.error('Res fetch error', e); }
+  },
+
+  render() {
+    const listEl = document.getElementById('res-list');
+    if(!this.data || this.data.length === 0) {
+      listEl.innerHTML = '<div style="text-align:center;color:#888;font-size:0.9rem;">지금 예약해 주세요</div>';
+      return;
+    }
+
+    listEl.innerHTML = this.data.map(item => {
+      // 확정 조건: '확인', 'O', '완료' 등
+      const isConfirmed = item.photographerCheck === 'O' || item.photographerCheck === '확인' || item.photographerCheck === '완료';
+      const checkClass = isConfirmed ? 'confirmed' : '';
+      const checkText = isConfirmed ? '작가확인완료' : '대기중';
+      
+      return `
+        <div class="res-item">
+          <span class="res-time">${item.time || ''}</span>
+          <span class="res-name">${this.maskName(item.name)}</span>
+          <span class="res-check ${checkClass}">${checkText}</span>
+        </div>
+      `;
+    }).join('');
+  },
+
+  startPolling() {
+    this.stop();
+    this.fetchReservations();
+    // 5분마다 데이터 갱신
+    this.pollTimer = setInterval(() => this.fetchReservations(), 5 * 60 * 1000);
+    
+    // 1분마다 10초씩 팝업 띄우기
+    this.showTimer = setInterval(() => {
+      if(!SS.timer) return; // 슬라이드쇼 동작 중일 때만
+      this.render();
+      document.getElementById('res-popup').classList.add('show');
+      
+      setTimeout(() => {
+        document.getElementById('res-popup').classList.remove('show');
+      }, 10000); // 10초 후 닫힘
+    }, 60000); // 1분 주기
+  },
+
+  stop() {
+    clearInterval(this.pollTimer);
+    clearInterval(this.showTimer);
+    document.getElementById('res-popup').classList.remove('show');
+  }
 };
 
 document.getElementById('ss-start-btn').addEventListener('click', () => SS.start(false));

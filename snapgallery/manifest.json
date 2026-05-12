@@ -1,0 +1,16 @@
+{
+  "name": "DK Gallery Kiosk",
+  "short_name": "DK Kiosk",
+  "start_url": "./index.html?kiosk=1",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://dksequence.github.io/snapgallery/favicon.ico",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
