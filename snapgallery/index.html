@@ -636,18 +636,18 @@
       opacity: 0;
       background: linear-gradient(135deg, rgba(255, 218, 112, 0.95), rgba(255, 160, 60, 0.95));
       color: #111;
-      padding: 20px 40px;
-      border-radius: 50px;
-      font-weight: 700;
-      font-size: 1.3rem;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 1rem;
       letter-spacing: 0.05em;
-      box-shadow: 0 20px 50px rgba(255, 160, 60, 0.5);
+      box-shadow: 0 10px 30px rgba(255, 160, 60, 0.4);
       z-index: 9500;
       transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       pointer-events: none;
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 10px;
     }
     .new-res-toast.show {
       opacity: 1;
@@ -726,9 +726,6 @@
     <!-- Top-Left Hidden Button (Schedule Popup) -->
     <div id="hidden-res-btn" style="position:absolute;top:0;left:0;width:150px;height:150px;z-index:9999;cursor:pointer;"></div>
 
-    <!-- Top-Right Hidden Button (New Reservation Toast) -->
-    <div id="hidden-toast-btn" style="position:absolute;top:0;right:0;width:150px;height:150px;z-index:9999;cursor:pointer;"></div>
-
     <!-- 정보 바 (가로모드: 하단 / 세로모드: 좌상단 절대위치) -->
     <div class="ss-info-bar" id="ss-info-bar">
       <!-- Kiosk 전용 QR 그룹 -->
@@ -770,7 +767,7 @@
 
     <!-- New Reservation Toast -->
     <div class="new-res-toast" id="new-res-toast">
-      <span style="font-size:1.4rem;">🎉</span>
+      <span style="font-size:1.2rem;">🎉</span>
       <span>방금 전 <b>인생화보</b> 예약이 접수되었습니다!</span>
     </div>
   </div>
@@ -1073,6 +1070,7 @@ const SS = {
     this._go();
     ShowText.load().then(() => ShowText.start());
     ResPopup.startPolling();
+    MarketingToast.start();
   },
 
   _go() {
@@ -1400,6 +1398,23 @@ const ResPopup = {
 const MarketingToast = {
   timer: null,
   
+  start() {
+    this.stop();
+    this.scheduleNext();
+  },
+
+  scheduleNext() {
+    // 15분 ~ 30분 사이 랜덤한 시간에 알림 등장
+    const minMs = 15 * 60 * 1000;
+    const maxMs = 30 * 60 * 1000;
+    const delay = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
+    
+    this.timer = setTimeout(() => {
+      this.showToast();
+      this.scheduleNext(); // 다음 알림 예약
+    }, delay);
+  },
+
   showToast() {
     if(!SS.timer) return; // 슬라이드쇼 동작 중일 때만
     const toast = document.getElementById('new-res-toast');
@@ -1423,10 +1438,6 @@ document.getElementById('ss-kiosk-btn').addEventListener('click', () => SS.start
 
 document.getElementById('hidden-res-btn').addEventListener('click', () => {
   if (SS.timer) ResPopup.triggerPopup();
-});
-
-document.getElementById('hidden-toast-btn').addEventListener('click', () => {
-  if (SS.timer) MarketingToast.showToast();
 });
 
 document.getElementById('ss-tap-prev').addEventListener('click', () => SS.prev());
