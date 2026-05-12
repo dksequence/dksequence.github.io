@@ -95,6 +95,22 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
   border:1px dashed rgba(255,255,255,.3);background:transparent;color:rgba(255,255,255,0.6);
   font-size:26px;cursor:pointer;font-family:'Inter',sans-serif;}
 
+/* ── 납품 이메일 선택 모달 ── */
+#delivery-email-modal{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9000;display:flex;align-items:center;justify-content:center;}
+#delivery-email-modal .dem-box{background:#1e2535;border-radius:1.2rem;padding:28px 24px;width:90%;max-width:420px;}
+#delivery-email-modal .dem-title{font-size:20px;font-weight:700;color:#fff;margin-bottom:18px;}
+#delivery-email-modal .dem-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.07);}
+#delivery-email-modal .dem-row:last-of-type{border-bottom:none;}
+#delivery-email-modal .dem-check{width:22px;height:22px;accent-color:#4ade80;cursor:pointer;flex-shrink:0;}
+#delivery-email-modal .dem-info{flex:1;min-width:0;}
+#delivery-email-modal .dem-label{font-size:13px;color:rgba(255,255,255,.45);margin-bottom:2px;}
+#delivery-email-modal .dem-email{font-size:15px;color:#fff;word-break:break-all;}
+#delivery-email-modal .dem-actions{display:flex;gap:10px;margin-top:22px;}
+#delivery-email-modal .dem-cancel{flex:1;padding:14px;border-radius:.75rem;background:rgba(255,255,255,.07);color:rgba(255,255,255,.6);font-size:17px;font-weight:600;border:none;cursor:pointer;}
+#delivery-email-modal .dem-send{flex:2;padding:14px;border-radius:.75rem;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-size:17px;font-weight:700;border:none;cursor:pointer;}
+.email-del-label{display:flex;align-items:center;gap:5px;font-size:13px;color:rgba(255,255,255,.5);cursor:pointer;white-space:nowrap;}
+.email-del-label input[type=checkbox]{width:16px;height:16px;accent-color:#4ade80;cursor:pointer;}
+
 /* ── 체크인 폼 ── */
 .checkin-body{padding:20px 20px 100px;}
 .info-block{background:var(--surface-low);border-radius:1rem;padding:16px 18px;margin-bottom:18px;}
@@ -341,8 +357,11 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
     </div>
     <div class="field-row">
       <div>
-        <div class="field-label">이메일 <span class="opt">선택</span></div>
-        <input class="field-input" type="email" id="ci-email" placeholder="example@email.com"/>
+        <div class="field-label" style="display:flex;justify-content:space-between;align-items:center;">
+          <span>이메일 1 <span class="opt">선택</span></span>
+          <label class="email-del-label"><input type="checkbox" id="ci-email-del1"/> 납품</label>
+        </div>
+        <input class="field-input" type="email" id="ci-email" placeholder="example@email.com" oninput="syncEmailCheck(this,'ci-email-del1')"/>
       </div>
       <div>
         <div class="field-label">전화번호 <span class="opt">선택</span></div>
@@ -351,12 +370,18 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
     </div>
     <div class="field-row">
       <div>
-        <div class="field-label">추가 이메일 2 <span class="opt">선택</span></div>
-        <input class="field-input" type="email" id="ci-email2" placeholder="추가 이메일 (선택)"/>
+        <div class="field-label" style="display:flex;justify-content:space-between;align-items:center;">
+          <span>이메일 2 <span class="opt">선택</span></span>
+          <label class="email-del-label"><input type="checkbox" id="ci-email-del2"/> 납품</label>
+        </div>
+        <input class="field-input" type="email" id="ci-email2" placeholder="추가 이메일 (선택)" oninput="syncEmailCheck(this,'ci-email-del2')"/>
       </div>
       <div>
-        <div class="field-label">추가 이메일 3 <span class="opt">선택</span></div>
-        <input class="field-input" type="email" id="ci-email3" placeholder="추가 이메일 (선택)"/>
+        <div class="field-label" style="display:flex;justify-content:space-between;align-items:center;">
+          <span>이메일 3 <span class="opt">선택</span></span>
+          <label class="email-del-label"><input type="checkbox" id="ci-email-del3"/> 납품</label>
+        </div>
+        <input class="field-input" type="email" id="ci-email3" placeholder="추가 이메일 (선택)" oninput="syncEmailCheck(this,'ci-email-del3')"/>
       </div>
     </div>
 
@@ -1045,6 +1070,12 @@ function confirmDelete() {
   });
 }
 
+// 이메일 입력 시 납품 체크박스 자동 연동
+function syncEmailCheck(inputEl, checkboxId) {
+  var cb = document.getElementById(checkboxId);
+  if (cb) cb.checked = inputEl.value.trim() !== '';
+}
+
 // ── 체크인 화면 ───────────────────────────────────────
 function goCheckin(r) {
   DETAIL_CUR = r;
@@ -1071,6 +1102,10 @@ function goCheckin(r) {
   document.getElementById('ci-email2').value   = '';
   document.getElementById('ci-email3').value   = '';
   document.getElementById('ci-memo').value     = '';
+  // 납품 체크박스 초기화 (이메일 값에 맞춰 동기화)
+  document.getElementById('ci-email-del1').checked = !!(document.getElementById('ci-email').value.trim());
+  document.getElementById('ci-email-del2').checked = false;
+  document.getElementById('ci-email-del3').checked = false;
   document.getElementById('toggle-privacy').classList.add('on');
   document.getElementById('toggle-sns').classList.remove('on');
   show('s-checkin');
@@ -1097,6 +1132,12 @@ function goCamera() {
   CUR.email2        = document.getElementById('ci-email2').value.trim();
   CUR.email3        = document.getElementById('ci-email3').value.trim();
   CUR.memo          = document.getElementById('ci-memo').value.trim();
+  // 납품 수신 이메일 목록 수집 (체크된 이메일만)
+  var delTargets = [];
+  if (document.getElementById('ci-email-del1').checked && CUR.email)  delTargets.push(CUR.email);
+  if (document.getElementById('ci-email-del2').checked && CUR.email2) delTargets.push(CUR.email2);
+  if (document.getElementById('ci-email-del3').checked && CUR.email3) delTargets.push(CUR.email3);
+  CUR.deliveryTarget = delTargets.join(',');
   CUR.privacyConsent = document.getElementById('toggle-privacy').classList.contains('on');
   CUR.snsConsent    = document.getElementById('toggle-sns').classList.contains('on');
 
@@ -1244,6 +1285,7 @@ function startSaving() {
       phone:          CUR.phone,
       email2:         CUR.email2 || '',
       email3:         CUR.email3 || '',
+      deliveryTarget: CUR.deliveryTarget || '',
       spVerified:     !!(DETAIL_CUR && DETAIL_CUR.spVerified),
       privacyConsent: CUR.privacyConsent,
       snsConsent:     CUR.snsConsent,
@@ -1452,6 +1494,8 @@ window.onload = function() { initTabs(); };
 
 // ══════════════════════════════════════════════════════
 // 3차: 납품 관리 시스템
+var DELIVERY_ITEMS = [];
+var DEM_RESNO = null; // 현재 납품 모달에 열린 예약번호
 // ══════════════════════════════════════════════════════
 
 var CURRENT_MODE = 'checkin';
@@ -1478,6 +1522,7 @@ function loadDeliveryList() {
       list.innerHTML = '<div style="padding:20px;text-align:center;color:var(--danger);font-size:13px;">불러오기 실패</div>';
       return;
     }
+    DELIVERY_ITEMS = res.items;
     renderDeliveryList(res.items);
   });
 }
@@ -1504,7 +1549,7 @@ function renderDeliveryList(items) {
     
     var isEditDone = item.editStatus === '보정완료';
     var isSent = item.deliveryStatus.indexOf('발송완료') === 0;
-    var hasEmail = !!item.email;
+    var hasEmail = !!(item.email || item.email2 || item.email3);
     
     // 소스별 아바타 로직 강화
     var src = (item.source || 'A').toUpperCase();
@@ -1527,9 +1572,9 @@ function renderDeliveryList(items) {
     } else if (!hasEmail) {
       btnHtml = '<button class="delivery-btn no-email" disabled>이메일 없음 — 수동 납품 필요</button>';
     } else if (!isSent) {
-      btnHtml = '<button class="delivery-btn send" onclick="sendDelivery(\'' + item.resno + '\', this)">📬 납품 전송</button>';
+      btnHtml = '<button class="delivery-btn send" onclick="sendDelivery(\'' + item.resno + '\')">📬 납품 전송</button>';
     } else {
-      btnHtml = '<button class="delivery-btn resend" onclick="sendDelivery(\'' + item.resno + '\', this)">재발송</button>';
+      btnHtml = '<button class="delivery-btn resend" onclick="sendDelivery(\'' + item.resno + '\')">재발송</button>';
     }
     
     card.innerHTML =
@@ -1539,7 +1584,9 @@ function renderDeliveryList(items) {
           '<div class="delivery-card-name">' + (item.realName || item.maskedName) + '</div>' +
           '<div class="delivery-card-meta">' + item.product + ' · ' + item.people + '인 · ' + item.time + '</div>' +
           '<div class="delivery-card-resno">' + item.resno + (item.checkinAt ? ' (체크인: ' + item.checkinAt + ')' : ' [미입실]') + '</div>' +
-          (hasEmail ? '<div style="font-size:14px;color:rgba(255,255,255,0.4);margin-top:2px;">' + item.email + '</div>' : '') +
+          (item.email  ? '<div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:2px;">✉ ' + item.email  + '</div>' : '') +
+          (item.email2 ? '<div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:1px;">✉ ' + item.email2 + '</div>' : '') +
+          (item.email3 ? '<div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:1px;">✉ ' + item.email3 + '</div>' : '') +
         '</div>' +
       '</div>' +
       '<div class="delivery-status-row">' + editBadge + sentBadge + '</div>' +
@@ -1563,20 +1610,71 @@ function markDone(resno) {
   });
 }
 
-function sendDelivery(resno, btnEl) {
-  if (!confirm(resno + ' 고객에게 납품 이메일을 발송할까요?')) return;
-  
-  btnEl.disabled = true;
-  btnEl.textContent = '발송 중...';
-  
-  callApi({ action: 'sendDeliveryEmail', resno: resno }, function(err, res) {
+function sendDelivery(resno) {
+  var item = null;
+  for (var i = 0; i < DELIVERY_ITEMS.length; i++) {
+    if (DELIVERY_ITEMS[i].resno === resno) { item = DELIVERY_ITEMS[i]; break; }
+  }
+  if (!item) { showToast('데이터를 찾을 수 없습니다'); return; }
+
+  DEM_RESNO = resno;
+
+  // 납품 대상 이메일 목록 구성
+  var allEmails = [
+    { label: '이메일 1', addr: item.email  },
+    { label: '이메일 2', addr: item.email2 },
+    { label: '이메일 3', addr: item.email3 }
+  ].filter(function(e){ return e.addr && e.addr.trim(); });
+
+  if (!allEmails.length) { showToast('등록된 이메일이 없습니다'); return; }
+
+  // 체크인 시 선택된 납품 대상 (deliveryTarget)
+  var targetSet = {};
+  if (item.deliveryTarget) {
+    item.deliveryTarget.split(',').forEach(function(e){ targetSet[e.trim()] = true; });
+  } else if (item.email) {
+    targetSet[item.email] = true; // fallback
+  }
+
+  var listHtml = allEmails.map(function(e, idx) {
+    var isChecked = targetSet[e.addr] ? 'checked' : '';
+    return '<div class="dem-row">' +
+      '<input type="checkbox" class="dem-check" id="dem-cb-' + idx + '" value="' + e.addr + '" ' + isChecked + '/>' +
+      '<div class="dem-info">' +
+        '<div class="dem-label">' + e.label + '</div>' +
+        '<div class="dem-email">' + e.addr + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+
+  document.getElementById('dem-list').innerHTML = listHtml;
+  document.getElementById('delivery-email-modal').style.display = 'flex';
+}
+
+function closeDEM() {
+  document.getElementById('delivery-email-modal').style.display = 'none';
+  DEM_RESNO = null;
+}
+
+function confirmDEM() {
+  var checkboxes = document.querySelectorAll('#dem-list .dem-check:checked');
+  var selected = [];
+  checkboxes.forEach(function(cb){ if (cb.value) selected.push(cb.value); });
+  if (!selected.length) { showToast('발송할 이메일을 1개 이상 선택하세요'); return; }
+
+  var sendBtn = document.querySelector('#delivery-email-modal .dem-send');
+  sendBtn.disabled = true;
+  sendBtn.textContent = '발송 중...';
+
+  callApi({ action: 'sendDeliveryEmail', resno: DEM_RESNO, deliveryEmails: selected.join(',') }, function(err, res) {
+    sendBtn.disabled = false;
+    sendBtn.textContent = '발송';
     if (err || !res.ok) {
       showToast('발송 실패: ' + (err ? err.message : res.error));
-      btnEl.disabled = false;
-      btnEl.textContent = '재시도';
       return;
     }
-    showToast('✅ 이메일 발송 완료!');
+    showToast('✅ 이메일 발송 완료! (' + selected.length + '개)');
+    closeDEM();
     loadDeliveryList();
   });
 }
@@ -1637,5 +1735,17 @@ function submitCheckin() {
 }
 
 </script>
+
+<!-- 납품 이메일 선택 모달 -->
+<div id="delivery-email-modal" style="display:none;">
+  <div class="dem-box">
+    <div class="dem-title">📬 납품 이메일 선택</div>
+    <div id="dem-list"><!-- JS로 동적 생성 --></div>
+    <div class="dem-actions">
+      <button class="dem-cancel" onclick="closeDEM()">취소</button>
+      <button class="dem-send" onclick="confirmDEM()">발송</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
