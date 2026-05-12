@@ -723,8 +723,11 @@
       <img class="ss-layer" id="ss-layer-b" src="" alt="">
     </div>
 
-    <!-- Top-Left Hidden Button -->
+    <!-- Top-Left Hidden Button (Schedule Popup) -->
     <div id="hidden-res-btn" style="position:absolute;top:0;left:0;width:150px;height:150px;z-index:9999;cursor:pointer;"></div>
+
+    <!-- Top-Right Hidden Button (New Reservation Toast) -->
+    <div id="hidden-toast-btn" style="position:absolute;top:0;right:0;width:150px;height:150px;z-index:9999;cursor:pointer;"></div>
 
     <!-- 정보 바 (가로모드: 하단 / 세로모드: 좌상단 절대위치) -->
     <div class="ss-info-bar" id="ss-info-bar">
@@ -1070,7 +1073,6 @@ const SS = {
     this._go();
     ShowText.load().then(() => ShowText.start());
     ResPopup.startPolling();
-    MarketingToast.start();
   },
 
   _go() {
@@ -1398,30 +1400,14 @@ const ResPopup = {
 const MarketingToast = {
   timer: null,
   
-  start() {
-    this.stop();
-    this.scheduleNext();
-  },
-
-  scheduleNext() {
-    // 15분 ~ 30분 사이 랜덤한 시간에 알림 등장
-    const minMs = 15 * 60 * 1000;
-    const maxMs = 30 * 60 * 1000;
-    const delay = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
-    
-    this.timer = setTimeout(() => {
-      this.showToast();
-      this.scheduleNext(); // 다음 알림 예약
-    }, delay);
-  },
-
   showToast() {
     if(!SS.timer) return; // 슬라이드쇼 동작 중일 때만
     const toast = document.getElementById('new-res-toast');
     toast.classList.add('show');
     
+    if(this.timer) clearTimeout(this.timer);
     // 8초 후 사라짐
-    setTimeout(() => {
+    this.timer = setTimeout(() => {
       toast.classList.remove('show');
     }, 8000);
   },
@@ -1437,6 +1423,10 @@ document.getElementById('ss-kiosk-btn').addEventListener('click', () => SS.start
 
 document.getElementById('hidden-res-btn').addEventListener('click', () => {
   if (SS.timer) ResPopup.triggerPopup();
+});
+
+document.getElementById('hidden-toast-btn').addEventListener('click', () => {
+  if (SS.timer) MarketingToast.showToast();
 });
 
 document.getElementById('ss-tap-prev').addEventListener('click', () => SS.prev());
