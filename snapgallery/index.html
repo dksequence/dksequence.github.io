@@ -606,23 +606,54 @@
     /* ── Reservation Popup (Inside ss-canvas) ── */
     .res-popup {
       position: absolute;
-      top: 40px;
-      right: -400px;
-      width: 340px;
-      background: rgba(15, 15, 15, 0.85);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 218, 112, 0.3);
-      border-radius: 12px;
-      padding: 20px 24px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      opacity: 0;
+      width: 380px;
+      background: rgba(15, 15, 15, 0.9);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 218, 112, 0.4);
+      border-radius: 16px;
+      padding: 30px 24px;
       color: #fff;
       z-index: 9000;
-      transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
       pointer-events: none;
     }
     .res-popup.show {
-      right: 40px;
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
     }
+
+    /* ── New Reservation Toast (Inside ss-canvas) ── */
+    .new-res-toast {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      opacity: 0;
+      background: linear-gradient(135deg, rgba(255, 218, 112, 0.95), rgba(255, 160, 60, 0.95));
+      color: #111;
+      padding: 20px 40px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 1.3rem;
+      letter-spacing: 0.05em;
+      box-shadow: 0 20px 50px rgba(255, 160, 60, 0.5);
+      z-index: 9500;
+      transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .new-res-toast.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
     .res-title {
       font-size: 0.85rem;
       letter-spacing: 0.15em;
@@ -729,6 +760,12 @@
       <div class="res-list" id="res-list">
         <div style="text-align:center;color:#888;font-size:0.9rem;">불러오는 중...</div>
       </div>
+    </div>
+
+    <!-- New Reservation Toast -->
+    <div class="new-res-toast" id="new-res-toast">
+      <span style="font-size:1.4rem;">🎉</span>
+      <span>방금 전 <b>인생화보</b> 예약이 접수되었습니다!</span>
     </div>
   </div>
 
@@ -1030,6 +1067,7 @@ const SS = {
     this._go();
     ShowText.load().then(() => ShowText.start());
     ResPopup.startPolling();
+    MarketingToast.start();
   },
 
   _go() {
@@ -1099,6 +1137,7 @@ const SS = {
     if (document.fullscreenElement) document.exitFullscreen();
     ShowText.stop();
     ResPopup.stop();
+    MarketingToast.stop();
   }
 };
 
@@ -1343,6 +1382,44 @@ const ResPopup = {
     clearInterval(this.pollTimer);
     clearInterval(this.showTimer);
     document.getElementById('res-popup').classList.remove('show');
+  }
+};
+
+// ── Marketing Toast Module ──────────────────────────────────────────
+const MarketingToast = {
+  timer: null,
+  
+  start() {
+    this.stop();
+    this.scheduleNext();
+  },
+
+  scheduleNext() {
+    // 15분 ~ 30분 사이 랜덤한 시간에 알림 등장
+    const minMs = 15 * 60 * 1000;
+    const maxMs = 30 * 60 * 1000;
+    const delay = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
+    
+    this.timer = setTimeout(() => {
+      this.showToast();
+      this.scheduleNext(); // 다음 알림 예약
+    }, delay);
+  },
+
+  showToast() {
+    if(!SS.timer) return; // 슬라이드쇼 동작 중일 때만
+    const toast = document.getElementById('new-res-toast');
+    toast.classList.add('show');
+    
+    // 8초 후 사라짐
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 8000);
+  },
+
+  stop() {
+    clearTimeout(this.timer);
+    document.getElementById('new-res-toast').classList.remove('show');
   }
 };
 
