@@ -1456,29 +1456,8 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && SS.el.classList.contains('open')) SS.stop();
 });
 
-// ?kiosk=1 파라미터 → 페이지 로드 시 세로 디스플레이 자동 시작
-if (new URLSearchParams(location.search).get('kiosk') === '1') {
-  function startKiosk() {
-    if (SS.timer) return; // 이미 시작됨
-    SS.start(true);
-    const hint = document.getElementById('kiosk-hint');
-    if (hint) hint.remove();
-    window.removeEventListener('click', startKiosk);
-  }
-
-  // 사용자 터치 시 즉시 시작
-  window.addEventListener('click', startKiosk, { once: true });
-  
-  // 화면에 안내 표시
-  document.body.insertAdjacentHTML('beforeend',
-    '<div id="kiosk-hint" style="position:fixed;inset:0;display:flex;align-items:center;' +
-    'justify-content:center;background:#000;color:#555;font-size:0.8rem;' +
-    'letter-spacing:0.2em;z-index:9999;cursor:pointer;">화면을 터치하거나 10초 대기 시 자동 시작됩니다</div>'
-  );
-
-  // 10초 후 자동 시작
-  setTimeout(startKiosk, 10000);
-}
+// ?kiosk=1 파라미터 → 페이지 로드 시 가로 디스플레이 자동 시작
+let isKioskAuto = new URLSearchParams(location.search).get('kiosk') === '1';
 
 // ── Init — GAS에서 데이터 로드 ──────────────────────────────────────
 async function loadGallery() {
@@ -1491,6 +1470,23 @@ async function loadGallery() {
     allItems = json.data.map(toItem);
     renderCategories();
     renderGallery('all');
+
+    if (isKioskAuto) {
+      document.body.insertAdjacentHTML('beforeend',
+        '<div id="kiosk-hint" style="position:fixed;inset:0;display:flex;align-items:center;' +
+        'justify-content:center;background:#000;color:#555;font-size:0.8rem;' +
+        'letter-spacing:0.2em;z-index:9999;cursor:pointer;">데이터 로드 완료. 터치 시 즉시, 또는 5초 후 슬라이드쇼가 자동 시작됩니다.</div>'
+      );
+      function startAuto() {
+        if (SS.timer) return;
+        SS.start(false); // 가로 모드
+        const hint = document.getElementById('kiosk-hint');
+        if (hint) hint.remove();
+        window.removeEventListener('click', startAuto);
+      }
+      window.addEventListener('click', startAuto, { once: true });
+      setTimeout(startAuto, 5000);
+    }
   } catch (e) {
     document.getElementById('gallery').innerHTML =
       '<div class="state-msg">갤러리를 불러오지 못했습니다.<br>' + e.message + '</div>';
