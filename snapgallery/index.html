@@ -1479,7 +1479,7 @@ async function loadGallery() {
       );
       function startAuto() {
         if (SS.timer) return;
-        SS.start(false); // 가로 모드
+        SS.start(true); // 세로(Kiosk) 모드
         const hint = document.getElementById('kiosk-hint');
         if (hint) hint.remove();
         window.removeEventListener('click', startAuto);
