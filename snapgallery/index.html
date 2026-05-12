@@ -723,6 +723,9 @@
       <img class="ss-layer" id="ss-layer-b" src="" alt="">
     </div>
 
+    <!-- Top-Left Hidden Button -->
+    <div id="hidden-res-btn" style="position:absolute;top:0;left:0;width:150px;height:150px;z-index:9999;cursor:pointer;"></div>
+
     <!-- 정보 바 (가로모드: 하단 / 세로모드: 좌상단 절대위치) -->
     <div class="ss-info-bar" id="ss-info-bar">
       <!-- Kiosk 전용 QR 그룹 -->
@@ -1369,18 +1372,24 @@ const ResPopup = {
     // 1분마다 10초씩 팝업 띄우기
     this.showTimer = setInterval(() => {
       if(!SS.timer) return; // 슬라이드쇼 동작 중일 때만
-      this.render();
-      document.getElementById('res-popup').classList.add('show');
-      
-      setTimeout(() => {
-        document.getElementById('res-popup').classList.remove('show');
-      }, 10000); // 10초 후 닫힘
+      this.triggerPopup();
     }, 60000); // 1분 주기
+  },
+
+  triggerPopup() {
+    this.render();
+    document.getElementById('res-popup').classList.add('show');
+    
+    if(this.hideTimer) clearTimeout(this.hideTimer);
+    this.hideTimer = setTimeout(() => {
+      document.getElementById('res-popup').classList.remove('show');
+    }, 10000); // 10초 후 닫힘
   },
 
   stop() {
     clearInterval(this.pollTimer);
     clearInterval(this.showTimer);
+    if(this.hideTimer) clearTimeout(this.hideTimer);
     document.getElementById('res-popup').classList.remove('show');
   }
 };
@@ -1425,6 +1434,10 @@ const MarketingToast = {
 
 document.getElementById('ss-start-btn').addEventListener('click', () => SS.start(false));
 document.getElementById('ss-kiosk-btn').addEventListener('click', () => SS.start(true));
+
+document.getElementById('hidden-res-btn').addEventListener('click', () => {
+  if (SS.timer) ResPopup.triggerPopup();
+});
 
 document.getElementById('ss-tap-prev').addEventListener('click', () => SS.prev());
 document.getElementById('ss-tap-next').addEventListener('click', () => SS.next());
