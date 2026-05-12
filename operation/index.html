@@ -334,7 +334,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
       <div class="info-row"><span class="info-key">인원</span><span class="info-val" id="ci-people"></span></div>
       <div class="info-row"><span class="info-key">시간</span><span class="info-val" id="ci-time"></span></div>
     </div>
-    <div class="realname-notice">실명을 현장에서 직접 확인 후 입력해주세요</div>
+    <div class="realname-notice" id="realname-notice">실명을 현장에서 직접 확인 후 입력해주세요</div>
     <div class="field-group">
       <div class="field-label">실명 <span class="req">*</span></div>
       <input class="field-input" type="text" id="ci-realname" placeholder="현장 확인 후 입력" autocomplete="off"/>
@@ -347,6 +347,16 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
       <div>
         <div class="field-label">전화번호 <span class="opt">선택</span></div>
         <input class="field-input" type="tel" id="ci-phone" placeholder="010-0000-0000"/>
+      </div>
+    </div>
+    <div class="field-row">
+      <div>
+        <div class="field-label">추가 이메일 2 <span class="opt">선택</span></div>
+        <input class="field-input" type="email" id="ci-email2" placeholder="추가 이메일 (선택)"/>
+      </div>
+      <div>
+        <div class="field-label">추가 이메일 3 <span class="opt">선택</span></div>
+        <input class="field-input" type="email" id="ci-email3" placeholder="추가 이메일 (선택)"/>
       </div>
     </div>
 
@@ -1044,9 +1054,22 @@ function goCheckin(r) {
   document.getElementById('ci-product').textContent  = r.product;
   document.getElementById('ci-people').textContent   = r.people + '인';
   document.getElementById('ci-time').textContent     = SELECTED_TIME;
-  document.getElementById('ci-realname').value = '';
-  document.getElementById('ci-email').value    = '';
-  document.getElementById('ci-phone').value    = '';
+  var notice = document.getElementById('realname-notice');
+  if (r.spVerified) {
+    document.getElementById('ci-realname').value = r.spName  || '';
+    document.getElementById('ci-email').value    = r.spEmail || '';
+    document.getElementById('ci-phone').value    = r.spPhone || '';
+    notice.textContent = 'SP 검증 고객 — 정보가 자동 입력되었습니다 (수정 가능)';
+    notice.style.color = '#4ade80';
+  } else {
+    document.getElementById('ci-realname').value = '';
+    document.getElementById('ci-email').value    = '';
+    document.getElementById('ci-phone').value    = '';
+    notice.textContent = '실명을 현장에서 직접 확인 후 입력해주세요';
+    notice.style.color = '';
+  }
+  document.getElementById('ci-email2').value   = '';
+  document.getElementById('ci-email3').value   = '';
   document.getElementById('ci-memo').value     = '';
   document.getElementById('toggle-privacy').classList.add('on');
   document.getElementById('toggle-sns').classList.remove('on');
@@ -1071,6 +1094,8 @@ function goCamera() {
   CUR.realname      = realname;
   CUR.email         = document.getElementById('ci-email').value.trim();
   CUR.phone         = document.getElementById('ci-phone').value.trim();
+  CUR.email2        = document.getElementById('ci-email2').value.trim();
+  CUR.email3        = document.getElementById('ci-email3').value.trim();
   CUR.memo          = document.getElementById('ci-memo').value.trim();
   CUR.privacyConsent = document.getElementById('toggle-privacy').classList.contains('on');
   CUR.snsConsent    = document.getElementById('toggle-sns').classList.contains('on');
@@ -1217,6 +1242,9 @@ function startSaving() {
       people:         CUR.people,
       email:          CUR.email,
       phone:          CUR.phone,
+      email2:         CUR.email2 || '',
+      email3:         CUR.email3 || '',
+      spVerified:     !!(DETAIL_CUR && DETAIL_CUR.spVerified),
       privacyConsent: CUR.privacyConsent,
       snsConsent:     CUR.snsConsent,
       memo:           CUR.memo,
