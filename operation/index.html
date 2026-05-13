@@ -881,11 +881,12 @@ function initTabs() {
   allBtn.style.cssText = 'background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);font-weight:700;';
   allBtn.onclick = function() {
     playSound('EFFECT003');
-    document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); b.style.cssText=''; });
+    document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); });
     allBtn.classList.add('active');
     allBtn.style.cssText = 'background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);font-weight:700;';
     SELECTED_TIME = 'ALL';
     loadReservations('ALL');
+    updateTabColors();
   };
   container.appendChild(allBtn);
   TIMES.forEach(function(t) {
@@ -950,27 +951,23 @@ function loadReservations(time, forceRefresh) {
 // ── 탭 예약 수 컬러 갱신 ──────────────────────────────────
 function updateTabColors() {
   if (!FULL_DATA) return;
-  // 시간대별 예약 수 집계 (취소 제외)
+  // 숫자만 추출한 키로 집계 (r.time 포맷 무관하게 매칭)
   var countByTime = {};
   FULL_DATA.forEach(function(r) {
     if ((r.status || '') === '취소') return;
-    var t = (r.time || '').trim();
-    if (t) countByTime[t] = (countByTime[t] || 0) + 1;
+    var raw = (r.time || '').replace(/[^0-9]/g, '');
+    if (raw) countByTime[raw] = (countByTime[raw] || 0) + 1;
   });
 
   var container = document.getElementById('time-tabs');
   if (!container) return;
-  container.querySelectorAll('button.tab[data-time]').forEach(function(btn) {
-    var t = btn.getAttribute('data-time');
-    var count = countByTime[t] || 0;
-    var isActive = btn.classList.contains('active');
-    if (isActive) return; // 선택된 탭은 active 스타일 유지
-    var clr;
-    if      (count >= 4) clr = '#ef4444';
-    else if (count >= 3) clr = '#f97316';
-    else if (count >= 1) clr = '#fbbf24';
-    else                 clr = '';
-    btn.style.color = clr;
+  container.querySelectorAll('button[data-time]').forEach(function(btn) {
+    var raw = btn.getAttribute('data-time').replace(/[^0-9]/g, '');
+    var count = countByTime[raw] || 0;
+    if      (count >= 4) btn.style.setProperty('color', '#ef4444', 'important');
+    else if (count >= 3) btn.style.setProperty('color', '#f97316', 'important');
+    else if (count >= 1) btn.style.setProperty('color', '#fbbf24', 'important');
+    else                 btn.style.removeProperty('color');
   });
 }
 
