@@ -280,7 +280,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 <!-- ════════════════ 대시보드 ════════════════ -->
 <div id="s-dashboard" class="screen active">
   <div class="topbar">
-    <div class="topbar-brand">DKSEQUENCE × 중문별장 RUNS V.4.09</div>
+    <div class="topbar-brand">DKSEQUENCE × 중문별장 RUNS V.4.10</div>
     <div class="topbar-date-row">
       <button class="today-btn" onclick="goToToday()">TODAY</button>
       <button class="date-nav-btn" onclick="changeDate(-1)">◀</button>
@@ -1385,18 +1385,38 @@ function initNewScreen() {
 function renderTimeGrid(selectedTime) {
   var grid = document.getElementById('time-grid');
   grid.innerHTML = '';
+
+  // 시간대별 예약 수 집계 (취소 제외)
+  var countByTime = {};
+  if (FULL_DATA) {
+    FULL_DATA.forEach(function(r) {
+      if ((r.status || '') === '취소') return;
+      var t = (r.time || '').trim();
+      if (t) countByTime[t] = (countByTime[t] || 0) + 1;
+    });
+  }
+
   // :00 먼저, :30 나중 — 같은 열에 시간쌍이 묶이도록
   var onTheHour = TIMES.filter(function(t){ return t.slice(-2) === '00'; });
   var halfHour  = TIMES.filter(function(t){ return t.slice(-2) === '30'; });
   onTheHour.concat(halfHour).forEach(function(t) {
     var isSelected = t === selectedTime;
+    var count = countByTime[t] || 0;
+
+    // 예약 수에 따른 컬러 (0개: 기본, 1~2: 노란, 3: 주황, 4+: 빨간)
+    var clr, bdr;
+    if      (count >= 4) { clr = '#ef4444'; bdr = 'rgba(239,68,68,0.45)'; }
+    else if (count >= 3) { clr = '#f97316'; bdr = 'rgba(249,115,22,0.45)'; }
+    else if (count >= 1) { clr = '#fbbf24'; bdr = 'rgba(251,191,36,0.45)'; }
+    else                 { clr = 'rgba(255,255,255,0.55)'; bdr = 'rgba(255,255,255,0.12)'; }
+
     var btn = document.createElement('button');
     btn.type = 'button';
     btn.textContent = t;
     btn.style.cssText = 'padding:14px 4px;border-radius:.6rem;font-size:20px;font-weight:700;font-family:"Inter",sans-serif;cursor:pointer;transition:all .15s;'
       + (isSelected
         ? 'background:var(--primary-container);color:#fff;border:2px solid var(--primary);'
-        : 'background:#1a1a1a;color:rgba(255,255,255,0.55);border:1px solid rgba(255,255,255,0.12);');
+        : 'background:#1a1a1a;color:' + clr + ';border:1px solid ' + bdr + ';');
     btn.onclick = function() {
       document.getElementById('new-time').value = t;
       renderTimeGrid(t);
