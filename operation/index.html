@@ -891,13 +891,15 @@ function initTabs() {
   TIMES.forEach(function(t) {
     var btn = document.createElement('button');
     btn.className = 'tab' + (t === SELECTED_TIME ? ' active' : '');
+    btn.setAttribute('data-time', t);
     btn.textContent = t;
     btn.onclick = function() {
       playSound('EFFECT003');
-      document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); b.style.cssText=''; });
+      document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
       SELECTED_TIME = t;
       loadReservations(t);
+      updateTabColors();
     };
     container.appendChild(btn);
   });
@@ -932,15 +934,43 @@ function loadReservations(time, forceRefresh) {
     
     FULL_DATA = res.reservations; // 전체 데이터 저장
     LAST_DATA_HASH = res.dataHash || ""; // 데이터 변경 감지용 해시 저장
-    
+
     if (res.dailyStats) {
       document.getElementById('stat-total').textContent  = res.dailyStats.total;
       document.getElementById('stat-done').textContent   = res.dailyStats.done;
       document.getElementById('stat-wait').textContent   = res.dailyStats.wait;
       document.getElementById('stat-cancel').textContent = res.dailyStats.cancel || 0;
     }
-    
+
     renderList(filterDataByTime(FULL_DATA, time));
+    updateTabColors(); // 탭 컬러 갱신
+  });
+}
+
+// ── 탭 예약 수 컬러 갱신 ──────────────────────────────────
+function updateTabColors() {
+  if (!FULL_DATA) return;
+  // 시간대별 예약 수 집계 (취소 제외)
+  var countByTime = {};
+  FULL_DATA.forEach(function(r) {
+    if ((r.status || '') === '취소') return;
+    var t = (r.time || '').trim();
+    if (t) countByTime[t] = (countByTime[t] || 0) + 1;
+  });
+
+  var container = document.getElementById('time-tabs');
+  if (!container) return;
+  container.querySelectorAll('button.tab[data-time]').forEach(function(btn) {
+    var t = btn.getAttribute('data-time');
+    var count = countByTime[t] || 0;
+    var isActive = btn.classList.contains('active');
+    if (isActive) return; // 선택된 탭은 active 스타일 유지
+    var clr;
+    if      (count >= 4) clr = '#ef4444';
+    else if (count >= 3) clr = '#f97316';
+    else if (count >= 1) clr = '#fbbf24';
+    else                 clr = '';
+    btn.style.color = clr;
   });
 }
 
