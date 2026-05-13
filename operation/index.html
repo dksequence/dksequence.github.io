@@ -280,7 +280,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 <!-- ════════════════ 대시보드 ════════════════ -->
 <div id="s-dashboard" class="screen active">
   <div class="topbar">
-    <div class="topbar-brand">DKSEQUENCE × 중문별장 RUNS V.4.08</div>
+    <div class="topbar-brand">DKSEQUENCE × 중문별장 RUNS V.4.09</div>
     <div class="topbar-date-row">
       <button class="today-btn" onclick="goToToday()">TODAY</button>
       <button class="date-nav-btn" onclick="changeDate(-1)">◀</button>
@@ -331,16 +331,16 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 
 <!-- ════════════════ 체크인 ════════════════ -->
 <div id="s-checkin" class="screen">
-  <div class="topbar">
-    <div style="display:flex;gap:5px;flex-shrink:0;">
-      <button onclick="confirmDelete()" style="padding:5px 10px;border-radius:2rem;border:1px solid rgba(239,68,68,0.5);background:rgba(239,68,68,0.08);color:#f87171;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">삭제</button>
-      <button onclick="confirmCancel()" style="padding:5px 10px;border-radius:2rem;border:1px solid rgba(139,92,246,0.5);background:rgba(139,92,246,0.08);color:#a78bfa;font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">취소</button>
+  <div class="topbar" style="flex-direction:row;justify-content:space-between;align-items:center;padding:20px 20px;">
+    <div style="display:flex;gap:10px;flex-shrink:0;">
+      <button onclick="confirmDelete()" style="padding:14px 22px;border-radius:1rem;border:1px solid rgba(239,68,68,0.5);background:rgba(239,68,68,0.12);color:#f87171;font-size:22px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">삭제</button>
+      <button onclick="confirmCancel()" style="padding:14px 22px;border-radius:1rem;border:1px solid rgba(139,92,246,0.5);background:rgba(139,92,246,0.12);color:#a78bfa;font-size:22px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">취소</button>
     </div>
     <div style="text-align:center;">
       <div class="topbar-title" id="ci-topname"></div>
       <div class="topbar-sub">체크인</div>
     </div>
-    <button onclick="show('s-dashboard')" style="flex-shrink:0;padding:10px 20px;border-radius:2rem;background:rgba(171,199,255,0.12);border:1px solid rgba(171,199,255,0.25);color:var(--primary);font-size:16px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">← 목록</button>
+    <button onclick="show('s-dashboard')" style="flex-shrink:0;padding:14px 28px;border-radius:1rem;background:rgba(171,199,255,0.15);border:1px solid rgba(171,199,255,0.35);color:var(--primary);font-size:22px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;">← 목록</button>
   </div>
   <div class="checkin-body">
     <div class="info-block">
@@ -625,14 +625,8 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
     <div class="field-row">
       <div>
         <div class="field-label">시간 <span class="req">*</span></div>
-        <select class="field-input" id="new-time" style="cursor:pointer;">
-          <option>13:00</option>
-          <option>14:00</option>
-          <option>15:00</option>
-          <option>16:00</option>
-          <option>17:00</option>
-          <option>18:00</option>
-        </select>
+        <input type="hidden" id="new-time" value="10:00">
+        <div id="time-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;"></div>
       </div>
       <div>
         <div class="field-label">인원 <span class="req">*</span></div>
@@ -742,8 +736,8 @@ var GAS_URL = 'https://script.google.com/macros/s/AKfycbzJhFhrORZVILdIIHA_9vY5eo
 var CUR = {};
 var STREAM = null;
 var FACING = 'environment'; // 후면 카메라 기본
-var TIMES = ['13:00','14:00','15:00','16:00','17:00','18:00'];
-var SELECTED_TIME = '14:00';
+var TIMES = ['10:00','10:30','11:00','11:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'];
+var SELECTED_TIME = '10:00';
 var isSubmitting = false;
 
 var FULL_DATA = null;
@@ -880,13 +874,27 @@ function initTabs() {
   updateDateUI();
   var container = document.getElementById('time-tabs');
   container.innerHTML = '';
+  // 모든시간 보기 탭
+  var allBtn = document.createElement('button');
+  allBtn.className = 'tab' + (SELECTED_TIME === 'ALL' ? ' active' : '');
+  allBtn.textContent = '모든시간';
+  allBtn.style.cssText = 'background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);font-weight:700;';
+  allBtn.onclick = function() {
+    playSound('EFFECT003');
+    document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); b.style.cssText=''; });
+    allBtn.classList.add('active');
+    allBtn.style.cssText = 'background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);font-weight:700;';
+    SELECTED_TIME = 'ALL';
+    loadReservations('ALL');
+  };
+  container.appendChild(allBtn);
   TIMES.forEach(function(t) {
     var btn = document.createElement('button');
     btn.className = 'tab' + (t === SELECTED_TIME ? ' active' : '');
     btn.textContent = t;
     btn.onclick = function() {
       playSound('EFFECT003');
-      document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); });
+      document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); b.style.cssText=''; });
       btn.classList.add('active');
       SELECTED_TIME = t;
       loadReservations(t);
@@ -899,7 +907,7 @@ function initTabs() {
 // ── 예약 목록 로드 (개선된 Batch Loading) ──────────────────
 function loadReservations(time, forceRefresh) {
   SELECTED_TIME = time;
-  document.getElementById('list-label').textContent = time + ' 타임';
+  document.getElementById('list-label').textContent = time === 'ALL' ? '모든 타임' : time + ' 타임';
   var list = document.getElementById('reservation-list');
 
   // 이미 메모리에 데이터가 있고 강제 새로고침이 아니면 즉시 렌더링
@@ -937,10 +945,11 @@ function loadReservations(time, forceRefresh) {
 }
 
 function filterDataByTime(data, time) {
-  var target = (time || '').replace(/[^0-9]/g, ''); // '13:00' -> '1300'
-  return data.filter(function(r) { 
-    var raw = (r.time || '').replace(/[^0-9]/g, ''); // '13:00' -> '1300'
-    return raw === target; 
+  if (time === 'ALL') return data;
+  var target = (time || '').replace(/[^0-9]/g, '');
+  return data.filter(function(r) {
+    var raw = (r.time || '').replace(/[^0-9]/g, '');
+    return raw === target;
   });
 }
 
@@ -1367,12 +1376,34 @@ function showDone() {
 
 // ── 신규 고객 관련 ─────────────────────────────────
 function initNewScreen() {
-  // 즉시 날짜 기반 기본값 설정 (API 응답 전에 빈 화면 방지)
   document.getElementById('new-code').textContent = getToday() + '-R?';
   regenWalkInCode();
-  // 현재 선택된 타임 기본값으로
-  var sel = document.getElementById('new-time');
-  if (sel) sel.value = SELECTED_TIME;
+  var defaultTime = (SELECTED_TIME !== 'ALL' && SELECTED_TIME) ? SELECTED_TIME : TIMES[0];
+  renderTimeGrid(defaultTime);
+}
+
+function renderTimeGrid(selectedTime) {
+  var grid = document.getElementById('time-grid');
+  grid.innerHTML = '';
+  // :00 먼저, :30 나중 — 같은 열에 시간쌍이 묶이도록
+  var onTheHour = TIMES.filter(function(t){ return t.slice(-2) === '00'; });
+  var halfHour  = TIMES.filter(function(t){ return t.slice(-2) === '30'; });
+  onTheHour.concat(halfHour).forEach(function(t) {
+    var isSelected = t === selectedTime;
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = t;
+    btn.style.cssText = 'padding:14px 4px;border-radius:.6rem;font-size:20px;font-weight:700;font-family:"Inter",sans-serif;cursor:pointer;transition:all .15s;'
+      + (isSelected
+        ? 'background:var(--primary-container);color:#fff;border:2px solid var(--primary);'
+        : 'background:#1a1a1a;color:rgba(255,255,255,0.55);border:1px solid rgba(255,255,255,0.12);');
+    btn.onclick = function() {
+      document.getElementById('new-time').value = t;
+      renderTimeGrid(t);
+    };
+    grid.appendChild(btn);
+  });
+  document.getElementById('new-time').value = selectedTime;
 }
 
 function regenWalkInCode() {
