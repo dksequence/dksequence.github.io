@@ -280,7 +280,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 <!-- ════════════════ 대시보드 ════════════════ -->
 <div id="s-dashboard" class="screen active">
   <div class="topbar">
-    <div class="topbar-brand">DKSEQUENCE × 중문별장 RUNS V.4.10</div>
+    <div class="topbar-brand">DKSEQUENCE 제주 중문별장 RUNS V.4.11</div>
     <div class="topbar-date-row">
       <button class="today-btn" onclick="goToToday()">TODAY</button>
       <button class="date-nav-btn" onclick="changeDate(-1)">◀</button>
@@ -1029,7 +1029,7 @@ function renderList(reservations) {
     card.innerHTML =
       '<div class="avatar ' + sourceClass + '">' + avatarText + '</div>' +
       '<div class="card-info">' +
-        '<div class="card-name">' + r.name + '</div>' +
+        '<div class="card-name">' + (r.spName || r.name) + '</div>' +
         '<div class="card-meta">' + r.product + ' · ' + r.people + '인 · ' + r.time + '</div>' +
         '<div class="card-resno">' + r.resno + '</div>' +
       '</div>' +
