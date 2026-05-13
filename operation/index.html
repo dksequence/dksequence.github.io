@@ -1115,7 +1115,7 @@ function syncEmailCheck(inputEl, checkboxId) {
 // ── 체크인 화면 ───────────────────────────────────────
 function goCheckin(r) {
   DETAIL_CUR = r;
-  CUR = { resno: r.resno, maskedName: r.name, product: r.product, people: r.people, time: SELECTED_TIME, isNew: false, source: r.source || 'N' };
+  CUR = { resno: r.resno, maskedName: r.name, product: r.product, people: r.people, time: r.time, isNew: false, source: r.source || 'N' };
   document.getElementById('ci-topname').textContent  = r.name;
   document.getElementById('ci-resno').textContent    = r.resno;
   document.getElementById('ci-product').textContent  = r.product;
