@@ -280,7 +280,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 <!-- ════════════════ 대시보드 ════════════════ -->
 <div id="s-dashboard" class="screen active">
   <div class="topbar">
-    <div class="topbar-brand">DKSEQUENCE 제주 중문별장 RUNS V.4.11</div>
+    <div class="topbar-brand">DKSEQUENCE 제주 중문별장 RUNS V.4.12</div>
     <div class="topbar-date-row">
       <button class="today-btn" onclick="goToToday()">TODAY</button>
       <button class="date-nav-btn" onclick="changeDate(-1)">◀</button>
@@ -1120,7 +1120,7 @@ function goCheckin(r) {
   document.getElementById('ci-resno').textContent    = r.resno;
   document.getElementById('ci-product').textContent  = r.product;
   document.getElementById('ci-people').textContent   = r.people + '인';
-  document.getElementById('ci-time').textContent     = SELECTED_TIME;
+  document.getElementById('ci-time').textContent     = r.time;
   var notice = document.getElementById('realname-notice');
   if (r.spVerified) {
     document.getElementById('ci-realname').value = r.spName  || '';
