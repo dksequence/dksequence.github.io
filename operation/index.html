@@ -475,8 +475,9 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
     <div style="font-size:12px;color:rgba(255,255,255,.15);letter-spacing:.1em;text-transform:uppercase;margin-top:6px;">DKsequence × 중문별장</div>
   </div>
   <!-- 카메라 영역 -->
-  <div id="camera-wrap" style="position:relative;background:#000;width:100%;overflow:hidden;">
-    <video id="videoEl" autoplay playsinline webkit-playsinline muted style="width:100%;display:block;min-height:360px;max-height:45vh;object-fit:cover;background:#06070a;opacity:.01;transform:translateZ(0);-webkit-transform:translateZ(0);backface-visibility:hidden;-webkit-backface-visibility:hidden;transition:opacity .18s ease;"></video>
+  <div id="camera-wrap" style="position:relative;background:#000;width:100%;overflow:hidden;min-height:360px;max-height:45vh;">
+    <video id="videoEl" autoplay playsinline webkit-playsinline muted style="position:absolute;width:1px;height:1px;opacity:1;pointer-events:none;z-index:-1;"></video>
+    <canvas id="previewCanvas" style="width:100%;height:100%;display:block;object-fit:cover;position:relative;z-index:1;"></canvas>
     <canvas id="canvasEl" style="display:none;"></canvas>
     <!-- 전/후면 버튼 -->
     <button id="btn-flip" onclick="flipCamera()" style="display:none;position:absolute;top:14px;left:14px;padding:10px 18px;border-radius:2rem;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:16px;cursor:pointer;">전/후면 FLIP</button>
@@ -1250,17 +1251,22 @@ function goCamera() {
 }
 
 // ── 카메라 제어 ───────────────────────────────────────
-function revealCameraPreview() {
+var ANIMATION_ID = null;
+
+function drawFrame() {
   var v = document.getElementById('videoEl');
-  if (!v) return;
-  var playPromise = v.play();
-  if (playPromise && playPromise.catch) playPromise.catch(function(){});
-  requestAnimationFrame(function() {
-    v.style.display = 'none';
-    v.offsetHeight;
-    v.style.display = 'block';
-    v.style.opacity = '1';
-  });
+  var canvas = document.getElementById('previewCanvas');
+  if (!v || !canvas) return;
+  
+  if (v.paused || v.ended) return;
+  
+  var ctx = canvas.getContext('2d');
+  if (v.videoWidth && v.videoHeight) {
+    canvas.width = v.videoWidth;
+    canvas.height = v.videoHeight;
+    ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
+  }
+  ANIMATION_ID = requestAnimationFrame(drawFrame);
 }
 
 function attachCameraStream(stream) {
@@ -1270,17 +1276,21 @@ function attachCameraStream(stream) {
   v.setAttribute('webkit-playsinline', '');
   v.muted = true;
   v.autoplay = true;
-  v.style.opacity = '.01';
   v.srcObject = stream;
-  v.onloadedmetadata = revealCameraPreview;
-  v.onloadeddata = revealCameraPreview;
-  setTimeout(revealCameraPreview, 450);
+  
+  v.onloadedmetadata = function() {
+    v.play().then(function() {
+      if (ANIMATION_ID) cancelAnimationFrame(ANIMATION_ID);
+      ANIMATION_ID = requestAnimationFrame(drawFrame);
+    }).catch(function(e){ console.warn('Play failed:', e); });
+  };
 }
 
 function refreshCameraPreview() {
   var status = document.getElementById('cam-status');
   if (status) status.textContent = '화면 갱신 중';
-  revealCameraPreview();
+  var v = document.getElementById('videoEl');
+  if (v) v.play().catch(function(){});
   setTimeout(function(){
     if (status) status.textContent = '준비 완료';
   }, 350);
@@ -1302,13 +1312,17 @@ function userStartCamera() {
 
   // 스트림 시작
   stopCamera();
+  var status = document.getElementById('cam-status');
+  if (status) status.textContent = '카메라 켜는 중';
+  
   navigator.mediaDevices.getUserMedia({ video: { facingMode: FACING }, audio: false })
   .then(function(stream) {
     attachCameraStream(stream);
-    document.getElementById('cam-status').textContent = '준비 완료';
+    if (status) status.textContent = '준비 완료';
   })
   .catch(function(err) { 
     showToast('카메라 에러: ' + err.name); 
+    if (status) status.textContent = '오류 발생';
   });
 }
 
@@ -1317,12 +1331,20 @@ function startCamera() {
 }
 
 function stopCamera() {
+  if (ANIMATION_ID) {
+    cancelAnimationFrame(ANIMATION_ID);
+    ANIMATION_ID = null;
+  }
   if (STREAM) {
     STREAM.getTracks().forEach(function(t){ t.stop(); });
     STREAM = null;
   }
-  var video = document.getElementById('videoEl');
-  if (video) video.style.opacity = '.01';
+  // Clear canvas
+  var canvas = document.getElementById('previewCanvas');
+  if (canvas) {
+    var ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
 }
 
 function flipCamera() {
