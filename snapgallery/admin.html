@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DK Gallery — 관리</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,300;1,400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #111; color: #ddd; font-family: 'Helvetica Neue', Arial, sans-serif; min-height: 100vh; }
+
+    /* ── Login ── */
+    .login-wrap {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh;
+    }
+    .login-box {
+      background: #1a1a1a; border: 1px solid #2a2a2a;
+      padding: 40px 48px; width: 320px; text-align: center;
+    }
+    .login-box h2 { font-size: 1rem; letter-spacing: 0.3em; font-weight: 400; margin-bottom: 28px; color: #fff; text-transform: uppercase; }
+    .login-box input {
+      width: 100%; background: #111; border: 1px solid #2e2e2e; color: #ddd;
+      padding: 10px 14px; font-size: 0.9rem; margin-bottom: 12px; outline: none;
+    }
+    .login-box input:focus { border-color: #555; }
+    .login-box button {
+      width: 100%; background: #fff; color: #111; border: none;
+      padding: 11px; font-size: 0.85rem; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer;
+    }
+    .login-box button:hover { background: #ddd; }
+    .login-err { color: #c44; font-size: 0.8rem; margin-top: 10px; }
+
+    /* ── App Shell ── */
+    #app { display: none; }
+
+    .topbar {
+      background: #1a1a1a; border-bottom: 1px solid #222;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 24px; position: sticky; top: 0; z-index: 100;
+    }
+    .topbar-title { font-size: 0.95rem; letter-spacing: 0.25em; color: #fff; text-transform: uppercase; font-weight: 600; }
+    .topbar-actions { display: flex; gap: 8px; }
+
+    .btn {
+      background: none; border: 1px solid #444; color: #bbb;
+      padding: 7px 18px; font-size: 0.78rem; letter-spacing: 0.15em;
+      text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+    }
+    .btn:hover { border-color: #aaa; color: #fff; }
+    .btn.primary { background: #fff; color: #111; border-color: #fff; }
+    .btn.primary:hover { background: #ddd; }
+    .btn.danger { border-color: #633; color: #c66; }
+    .btn.danger:hover { background: #c66; color: #fff; border-color: #c66; }
+
+    /* ── Status bar ── */
+    .statusbar {
+      padding: 10px 24px; font-size: 0.78rem; letter-spacing: 0.1em;
+      color: #aaa; border-bottom: 1px solid #1e1e1e; min-height: 36px;
+    }
+    .statusbar.ok  { color: #4a4; }
+    .statusbar.err { color: #c44; }
+
+    /* ── Settings bar ── */
+    .settings-bar {
+      padding: 12px 24px; background: #161616; border-bottom: 1px solid #222;
+      display: flex; flex-wrap: wrap; align-items: center; gap: 16px;
+    }
+    .settings-label {
+      font-size: 0.82rem; letter-spacing: 0.15em; color: #fff;
+      text-transform: uppercase; white-space: nowrap; font-weight: 500;
+    }
+
+    /* ── Photo List ── */
+    .photo-list { padding: 20px 24px; max-width: 1200px; margin: 0 auto; }
+
+    .photo-item {
+      display: grid;
+      grid-template-columns: 28px 80px 1fr 150px 70px 230px 70px 50px;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      background: #161616;
+      border: 1px solid #1e1e1e;
+      margin-bottom: 6px;
+      cursor: grab;
+      transition: background 0.15s;
+    }
+    .photo-item:hover { background: #1d1d1d; }
+    .photo-item.dragging { opacity: 0.4; border-color: #555; }
+    .photo-item.drag-over { border-color: #888; background: #222; }
+
+    .drag-handle { color: #444; font-size: 1rem; cursor: grab; user-select: none; text-align: center; }
+    .drag-handle:hover { color: #aaa; }
+
+    /* 썸네일: 세로 비율 유지, 잘리지 않도록 */
+    .thumb-wrap {
+      width: 80px; height: 108px;
+      overflow: hidden; background: #0a0a0a; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .thumb-wrap img {
+      width: 100%; height: 100%;
+      object-fit: contain; display: block;
+    }
+    .thumb-wrap .thumb-err {
+      width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem; color: #444; text-align: center; padding: 4px;
+    }
+
+    .item-name { font-size: 0.78rem; color: #bbb; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* 카테고리 버튼 셀 */
+    .item-cat { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
+    .cat-btn {
+      font-size: 0.65rem; padding: 3px 7px;
+      border: 1px solid #333; background: transparent; color: #555;
+      border-radius: 3px; cursor: pointer; white-space: nowrap;
+      transition: all 0.1s; font-family: inherit;
+    }
+    .cat-btn:hover { border-color: #666; color: #aaa; }
+    .cat-btn.active { border-color: #4a8cff; color: #4a8cff; background: rgba(74,140,255,0.12); }
+
+    /* 카테고리 관리 바 */
+    .cat-manager {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+      padding: 10px 24px; background: #141414; border-bottom: 1px solid #222;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .cat-mgr-label { font-size: 0.7rem; letter-spacing: 0.12em; color: #555; text-transform: uppercase; flex-shrink: 0; }
+    .cat-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 8px; border: 1px solid #2a8cff; border-radius: 3px;
+      font-size: 0.72rem; color: #4a8cff; background: rgba(74,140,255,0.08);
+    }
+    .cat-tag-del {
+      background: none; border: none; color: #4a8cff; cursor: pointer;
+      font-size: 0.75rem; padding: 0; line-height: 1; opacity: 0.6;
+    }
+    .cat-tag-del:hover { opacity: 1; }
+    .cat-add-wrap { display: flex; gap: 5px; align-items: center; margin-left: 4px; }
+    .cat-add-input {
+      background: #111; border: 1px solid #2a2a2a; color: #ccc;
+      padding: 3px 9px; font-size: 0.72rem; border-radius: 3px; outline: none; width: 110px;
+      font-family: inherit;
+    }
+    .cat-add-input:focus { border-color: #555; }
+    .cat-add-btn {
+      padding: 3px 10px; background: #222; border: 1px solid #444; color: #aaa;
+      border-radius: 3px; cursor: pointer; font-size: 0.72rem; font-family: inherit;
+    }
+    .cat-add-btn:hover { background: #2a2a2a; color: #fff; }
+
+    .item-versions { display: flex; flex-direction: column; gap: 3px; }
+    .ver-badge {
+      font-size: 0.62rem; padding: 3px 7px; border: 1px solid;
+      letter-spacing: 0.05em; text-transform: uppercase; border-radius: 2px;
+      text-align: center;
+    }
+    .ver-badge.on  { border-color: #4a8cff; color: #4a8cff; }
+    .ver-badge.off { border-color: #2a2a2a; color: #333; }
+
+    /* active toggle */
+    .toggle { position: relative; width: 36px; height: 20px; cursor: pointer; margin: 0 auto; }
+    .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-track {
+      position: absolute; inset: 0; background: #2a2a2a;
+      border-radius: 20px; transition: background 0.2s;
+    }
+    .toggle input:checked + .toggle-track { background: #4a8; }
+    .toggle-thumb {
+      position: absolute; top: 2px; left: 2px;
+      width: 16px; height: 16px; background: #666; border-radius: 50%;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .toggle input:checked ~ .toggle-thumb { transform: translateX(16px); background: #fff; }
+
+    .delete-btn {
+      background: none; border: none; color: #444; font-size: 1rem;
+      cursor: pointer; padding: 4px 8px; transition: color 0.2s; text-align: center;
+    }
+    .delete-btn:hover { color: #c44; }
+
+    /* ── SS source buttons — 3개, 가로로 넓게 ── */
+    .ss-src-btns { display: flex; gap: 4px; }
+    .ss-src-btn {
+      flex: 1;
+      font-size: 0.68rem; padding: 5px 8px;
+      border: 1px solid #2a2a2a; background: none; color: #666;
+      letter-spacing: 0.04em; cursor: pointer; transition: all 0.15s;
+      border-radius: 3px; text-align: center; white-space: nowrap;
+    }
+    .ss-src-btn:hover { border-color: #666; color: #bbb; }
+    .ss-src-btn.on { background: #4a8; border-color: #4a8; color: #fff; }
+    .ss-src-btn.disabled { opacity: 0.25; cursor: default; }
+    .ss-src-btn.disabled:hover { border-color: #2a2a2a; color: #666; }
+
+    /* ── Show Texts section ── */
+    .texts-section {
+      padding: 16px 24px; background: #161616; border-bottom: 1px solid #222;
+    }
+    .texts-section-header {
+      display: flex; align-items: center; gap: 16px; margin-bottom: 14px;
+    }
+    .texts-grid {
+      max-height: 420px; overflow-y: auto; border: 1px solid #1e1e1e;
+      display: none;  /* 기본 접힘 */
+    }
+    .texts-grid.open { display: block; }
+    .texts-toggle-btn {
+      background: none; border: 1px solid #333; color: #888;
+      padding: 5px 14px; font-size: 0.75rem; letter-spacing: 0.12em;
+      text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .texts-toggle-btn:hover { border-color: #888; color: #fff; }
+    .texts-toggle-arrow { display: inline-block; transition: transform 0.2s; font-size: 0.6rem; }
+    .texts-toggle-btn.open .texts-toggle-arrow { transform: rotate(180deg); }
+    .texts-row {
+      display: grid;
+      grid-template-columns: 28px 1fr 1fr 36px;
+      align-items: center; gap: 8px;
+      padding: 5px 10px; border-bottom: 1px solid #1a1a1a;
+    }
+    .texts-row:last-child { border-bottom: none; }
+    .texts-row:hover { background: #1a1a1a; }
+    .texts-row-num { font-size: 0.68rem; color: #444; text-align: center; }
+    .texts-row input {
+      width: 100%; background: #111; border: 1px solid #222; color: #ccc;
+      padding: 5px 8px; font-size: 0.78rem; outline: none;
+      font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic;
+    }
+    .texts-row input:focus { border-color: #555; }
+    .texts-row input::placeholder { color: #383838; font-style: italic; }
+
+    /* ── Upload Panel ── */
+    .upload-panel {
+      padding: 16px 24px; background: #161616; border-bottom: 1px solid #222;
+    }
+    .upload-panel-header {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .upload-body { margin-top: 14px; }
+    .upload-row {
+      display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end;
+    }
+    .upload-col { display: flex; flex-direction: column; gap: 6px; }
+    .upload-file-label {
+      display: inline-block; background: none; border: 1px dashed #444; color: #888;
+      padding: 10px 24px; font-size: 0.78rem; letter-spacing: 0.15em;
+      text-transform: uppercase; cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    }
+    .upload-file-label:hover { border-color: #aaa; color: #fff; }
+    .upload-filename { font-size: 0.72rem; color: #555; letter-spacing: 0.06em; margin-top: 2px; }
+    .upload-select-label { font-size: 0.68rem; letter-spacing: 0.15em; color: #888; text-transform: uppercase; }
+    .upload-select {
+      background: #111; border: 1px solid #2e2e2e; color: #ccc;
+      padding: 8px 12px; font-size: 0.8rem; outline: none; min-width: 220px; cursor: pointer;
+    }
+    .upload-select:focus { border-color: #555; }
+    .upload-previews { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+    .upload-preview-box { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    .upload-preview-box canvas { display: block; background: #0a0a0a; border: 1px solid #2a2a2a; }
+    .upload-preview-lbl { font-size: 0.62rem; color: #555; letter-spacing: 0.12em; text-transform: uppercase; }
+    .upload-progress-wrap { margin-top: 12px; display: none; }
+    .upload-progress-bar { height: 2px; background: #2a2a2a; border-radius: 2px; overflow: hidden; }
+    .upload-progress-fill { height: 100%; background: #4a8cff; width: 0%; transition: width 0.4s; }
+    .upload-progress-msg { font-size: 0.72rem; color: #666; letter-spacing: 0.08em; margin-top: 6px; }
+
+    /* ── Empty ── */
+    .empty { text-align: center; padding: 80px; color: #444; font-size: 0.85rem; letter-spacing: 0.2em; }
+
+    /* ── List header ── */
+    .list-header {
+      display: grid;
+      grid-template-columns: 28px 80px 1fr 150px 70px 230px 70px 50px;
+      gap: 12px;
+      padding: 8px 12px;
+      font-size: 0.72rem; letter-spacing: 0.15em; color: #fff; text-transform: uppercase;
+      border-bottom: 1px solid #2a2a2a; margin-bottom: 8px; font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Login -->
+<div class="login-wrap" id="login-wrap">
+  <div class="login-box">
+    <h2>Gallery Admin</h2>
+    <input type="password" id="pw-input" placeholder="비밀번호" autocomplete="current-password">
+    <button id="pw-btn">로그인</button>
+    <div class="login-err" id="login-err"></div>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app">
+  <div class="topbar">
+    <span class="topbar-title">DK Gallery 관리</span>
+    <div class="topbar-actions">
+      <button class="btn" id="btn-scan">Drive 스캔</button>
+      <button class="btn danger" id="btn-clean-shot">SHOT 정리</button>
+      <button class="btn primary" id="btn-save">저장</button>
+    </div>
+  </div>
+  <div class="statusbar" id="statusbar">항목을 로딩 중...</div>
+
+  <!-- 슬라이드쇼 설정 -->
+  <div class="settings-bar">
+    <span class="settings-label">슬라이드쇼 전환 시간</span>
+    <div style="display:flex;gap:6px;" id="ss-interval-btns">
+      <button class="btn ss-iv-btn" data-val="3000">3초</button>
+      <button class="btn ss-iv-btn" data-val="4000">4초</button>
+      <button class="btn ss-iv-btn" data-val="5000">5초</button>
+      <button class="btn ss-iv-btn" data-val="6000">6초</button>
+    </div>
+  </div>
+  <div class="settings-bar">
+    <span class="settings-label">슬라이드쇼 텍스트</span>
+    <div style="display:flex;gap:8px;flex:1;min-width:280px;">
+      <input id="ss-line1-input" type="text" placeholder="Line 1 (영문)"
+        style="flex:1;background:#111;border:1px solid #2e2e2e;color:#ccc;padding:6px 10px;font-size:0.82rem;outline:none;">
+      <input id="ss-line2-input" type="text" placeholder="Line 2 (영문)"
+        style="flex:1;background:#111;border:1px solid #2e2e2e;color:#ccc;padding:6px 10px;font-size:0.82rem;outline:none;">
+      <button class="btn primary" id="ss-text-save-btn">저장</button>
+    </div>
+  </div>
+
+  <!-- Show Texts 섹션 -->
+  <div class="texts-section">
+    <div class="texts-section-header">
+      <span class="settings-label">Show Texts</span>
+      <div style="display:flex;gap:6px;" id="ss-text-interval-btns">
+        <button class="btn ss-ti-btn" data-val="8000">8초</button>
+        <button class="btn ss-ti-btn" data-val="12000">12초</button>
+        <button class="btn ss-ti-btn" data-val="18000">18초</button>
+        <button class="btn ss-ti-btn" data-val="25000">25초</button>
+        <button class="btn ss-ti-btn" data-val="30000">30초</button>
+      </div>
+      <button class="texts-toggle-btn" id="texts-toggle-btn">
+        목록 펼치기 <span class="texts-toggle-arrow">▼</span>
+      </button>
+      <button class="btn primary" id="texts-save-btn" style="margin-left:auto">텍스트 저장</button>
+    </div>
+    <div id="texts-expandable" style="display:none;">
+      <div style="display:grid;grid-template-columns:28px 1fr 1fr 36px;gap:8px;padding:4px 10px 6px;font-size:0.68rem;letter-spacing:0.12em;color:#666;text-transform:uppercase;border-bottom:1px solid #222;">
+        <span></span><span>Line 1</span><span>Line 2</span><span style="text-align:center">ON</span>
+      </div>
+      <div class="texts-grid open" id="texts-grid"></div>
+    </div>
+  </div>
+
+  <!-- 새 사진 업로드 -->
+  <div class="upload-panel">
+    <div class="upload-panel-header">
+      <span class="settings-label">새 사진 추가</span>
+      <button class="btn" id="upload-toggle-btn">펼치기 ▼</button>
+    </div>
+    <div class="upload-body" id="upload-body" style="display:none;">
+      <div class="upload-row">
+        <div class="upload-col">
+          <input type="file" id="upload-file-input" accept="image/jpeg,image/jpg,image/png,image/webp" style="display:none;">
+          <input type="file" id="upload-folder-input" accept="image/jpeg,image/jpg,image/png,image/webp" webkitdirectory multiple style="display:none;">
+          <div style="display:flex;gap:8px;">
+            <label class="upload-file-label" for="upload-file-input">파일 선택</label>
+            <label class="upload-file-label" for="upload-folder-input">폴더 선택</label>
+          </div>
+          <div class="upload-filename" id="upload-filename">선택된 파일 없음</div>
+        </div>
+        <div class="upload-col">
+          <span class="upload-select-label">레터링 디자인</span>
+          <select class="upload-select" id="upload-letter-select">
+            <option value="">-- 선택 없음 --</option>
+          </select>
+        </div>
+        <div class="upload-col">
+          <button class="btn primary" id="upload-btn" disabled>업로드 및 등록</button>
+        </div>
+      </div>
+      <div class="upload-previews" id="upload-previews" style="display:none;">
+        <div class="upload-preview-box">
+          <canvas id="preview-original" width="200" height="134"></canvas>
+          <span class="upload-preview-lbl">원본</span>
+        </div>
+        <div class="upload-preview-box">
+          <canvas id="preview-watermark" width="200" height="134"></canvas>
+          <span class="upload-preview-lbl">워터마크</span>
+        </div>
+        <div class="upload-preview-box">
+          <canvas id="preview-letter" width="200" height="134"></canvas>
+          <span class="upload-preview-lbl">레터링</span>
+        </div>
+      </div>
+      <div class="upload-progress-wrap" id="upload-progress-wrap">
+        <div class="upload-progress-bar">
+          <div class="upload-progress-fill" id="upload-progress-fill"></div>
+        </div>
+        <div class="upload-progress-msg" id="upload-progress-msg"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 카테고리 관리 -->
+  <div class="cat-manager" id="cat-manager">
+    <span class="cat-mgr-label">카테고리</span>
+    <div id="cat-tags-container" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+    <div class="cat-add-wrap">
+      <input type="text" class="cat-add-input" id="cat-new-input" placeholder="새 카테고리">
+      <button class="cat-add-btn" onclick="addCategory()">+ 추가</button>
+    </div>
+  </div>
+
+  <div class="photo-list" id="photo-list">
+    <div class="list-header">
+      <span></span>
+      <span>썸네일</span>
+      <span>파일명</span>
+      <span>카테고리</span>
+      <span>버전</span>
+      <span>SS 소스</span>
+      <span style="text-align:center">표시</span>
+      <span style="text-align:center">삭제</span>
+    </div>
+    <div id="items-container"></div>
+  </div>
+</div>
+
+<script>
+// ── 설정 ─────────────────────────────────────────────────────────────
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbziLckrxH4NqUCJ5RJdxaIO1Arf4_SgjHuAyiupKlQsgmPSu68ex68XZobwxfwWRsAtpw/exec';
+const ADMIN_PW = '8888';  // 클라이언트 비밀번호 (GAS gallery.gs와 동일하게 유지)
+
+let pw = '';
+let items = [];
+let texts = [];   // Show Texts 데이터
+let CATEGORIES = JSON.parse(localStorage.getItem('dk_categories') || '["두컷화보","네컷화보","스냅화보"]');
+
+function saveCategoriesLocal() {
+  localStorage.setItem('dk_categories', JSON.stringify(CATEGORIES));
+}
+
+function renderCatManager() {
+  const container = document.getElementById('cat-tags-container');
+  container.innerHTML = CATEGORIES.map(cat => `
+    <span class="cat-tag">${cat}
+      <button class="cat-tag-del" onclick="removeCategory('${cat}')" title="삭제">✕</button>
+    </span>`).join('');
+}
+
+function addCategory() {
+  const input = document.getElementById('cat-new-input');
+  const name = input.value.trim();
+  if (!name || CATEGORIES.includes(name)) { input.value = ''; return; }
+  CATEGORIES.push(name);
+  saveCategoriesLocal();
+  renderCatManager();
+  renderList();
+  input.value = '';
+}
+
+function removeCategory(name) {
+  if (!confirm(`"${name}" 카테고리를 삭제할까요?`)) return;
+  CATEGORIES = CATEGORIES.filter(c => c !== name);
+  saveCategoriesLocal();
+  renderCatManager();
+  renderList();
+}
+
+// ── Show Texts 기본 문장 (50개) ───────────────────────────────────────
+const DEFAULT_TEXTS = [
+  // Travel 여행
+  { line1: 'Every road leads somewhere new',          line2: 'every step whispers of dreams' },
+  { line1: 'We left without a map',                   line2: 'and found beauty along the way' },
+  { line1: 'The world is soft with light',            line2: 'we just pass through its grace' },
+  { line1: 'To travel is to fall in love',            line2: 'with places yet unimagined' },
+  { line1: 'Some journeys have no destination',       line2: 'only a desire to keep moving' },
+  // Memory 추억
+  { line1: 'What we remember glows softly',           line2: 'like lanterns lit in the fog' },
+  { line1: 'The sweetest memories',                   line2: 'are ones we did not know we made' },
+  { line1: 'We carry our days like flowers',          line2: 'pressed between who we are' },
+  { line1: 'Time passes, but warmth remains',         line2: 'folded into corners of our hearts' },
+  { line1: 'Memory is a room we return to',           line2: 'long after the door has closed' },
+  // Remembrance 기억
+  { line1: 'I remember how the light fell',           line2: 'through leaves, onto your hands' },
+  { line1: 'Some things stay with you',               line2: 'not as images but as feelings' },
+  { line1: 'To remember is to hold someone',          line2: 'across the distance of years' },
+  { line1: 'The mind forgets, but the heart',         line2: 'keeps everything safe and still' },
+  { line1: 'Even forgetting is a keeping',            line2: 'the shape of what once moved us' },
+  // Record 기록
+  { line1: 'We write not only to remember',           line2: 'but to prove that we were here' },
+  { line1: 'Every photograph is a letter',            line2: 'sealed with light and silence' },
+  { line1: 'A record is not just what',               line2: 'but how it felt to be alive' },
+  { line1: 'We document the days we love',            line2: 'so they do not dissolve in time' },
+  { line1: 'The camera does not capture',             line2: 'it gives moments a place to rest' },
+  // Moment 순간
+  { line1: 'A moment is all we ever have',            line2: 'and all we ever need' },
+  { line1: 'The smallest moments hold most',          line2: 'they are the ones that stay' },
+  { line1: 'Between one breath and the next',         line2: 'something beautiful passes by' },
+  { line1: 'Time is not lost, transformed',           line2: 'into moments that define us' },
+  { line1: 'Some moments ask nothing of you',         line2: 'only that you be present' },
+  // Friendship 우정
+  { line1: 'A friend walks in',                       line2: 'when the whole world walks out' },
+  { line1: 'We laughed without reason',               line2: 'and that was reason enough' },
+  { line1: 'The best conversations happen',           line2: 'when no one tries to be anyone' },
+  { line1: 'Side by side or miles apart',             line2: 'good friends are always near' },
+  { line1: 'With you, ordinary days become',          line2: 'the ones I will always remember' },
+  // Love 사랑
+  { line1: 'Love is not what you say',                line2: 'but what you do unseen' },
+  { line1: 'You were a season I loved',               line2: 'a warmth I still carry with me' },
+  { line1: 'To love is to truly see',                 line2: 'not as they are but could be' },
+  { line1: 'Some loves are quiet and steady',         line2: 'like a river never stopping' },
+  { line1: 'In your presence I learned',              line2: 'what it means to feel at home' },
+  // Meeting 만남
+  { line1: 'Every meeting is a small miracle',        line2: 'disguised as chance' },
+  { line1: 'Some people arrive and rearrange',        line2: 'the whole world you once knew' },
+  { line1: 'I did not know I was waiting',            line2: 'until you appeared' },
+  { line1: 'The best encounters begin',               line2: 'with a look that says I see you' },
+  { line1: 'To meet someone truly',                   line2: 'is to find a new country' },
+  // Photo 사진
+  { line1: 'A photograph holds a secret',             line2: 'the more it tells, the less known' },
+  { line1: 'Light falls once, never the same',        line2: 'what time forgets, cameras hold' },
+  { line1: 'We take pictures because we know',        line2: 'beauty is borrowed, not owned' },
+  { line1: 'Every photograph holds a story',          line2: 'that words alone cannot hold' },
+  { line1: 'The best portraits are not posed',        line2: 'they are simply witnessed' },
+  // Joyful Heart 즐거운 마음
+  { line1: 'Joy is not a destination',                line2: 'it is the way you choose to walk' },
+  { line1: 'Let yourself be light today',             line2: 'the world will carry its weight' },
+  { line1: 'There is a quiet happiness',              line2: 'in doing nothing but being here' },
+  { line1: 'Smile not for perfection',                line2: 'but because you are in it' },
+  { line1: 'The heart that plays is never old',       line2: 'never truly far from home' },
+];
+
+// ── 인증 ─────────────────────────────────────────────────────────────
+function thumbUrl(fileId) {
+  return `https://drive.google.com/thumbnail?id=${fileId}&sz=w200`;
+}
+
+document.getElementById('pw-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('pw-btn').click();
+});
+
+document.getElementById('pw-btn').addEventListener('click', async () => {
+  const entered = document.getElementById('pw-input').value.trim();
+  if (!entered) return;
+
+  const errEl = document.getElementById('login-err');
+  errEl.textContent = '';
+
+  // 클라이언트 사이드 비밀번호 체크 (GAS POST CORS 이슈 우회)
+  if (entered !== ADMIN_PW) {
+    errEl.textContent = '비밀번호가 올바르지 않습니다';
+    return;
+  }
+
+  pw = entered;
+  setStatus('목록 로딩 중...');
+  try {
+    const [galleryRes, textsRes] = await Promise.all([
+      gasGet('admin'),
+      gasGet('texts'),
+    ]);
+    if (!galleryRes.ok) throw new Error(galleryRes.error);
+    items = galleryRes.data;
+    const loaded = Array.isArray(textsRes.data) ? textsRes.data.filter(t => t.line1 || t.line2) : [];
+    if (loaded.length === 0) {
+      // GAS에 데이터 없으면 기본 문장으로 초기화
+      texts = DEFAULT_TEXTS.map((t, i) => ({ id: '', line1: t.line1, line2: t.line2, active: true, order: i + 1 }));
+    } else {
+      texts = loaded;
+      while (texts.length < 50) texts.push({ id: '', line1: '', line2: '', active: true, order: texts.length + 1 });
+    }
+    document.getElementById('login-wrap').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    renderCatManager();
+    renderList();
+    renderTexts();
+    setStatus(`총 ${items.length}개 항목 로드됨`, 'ok');
+  } catch (e) {
+    pw = '';
+    errEl.textContent = '데이터 로드 오류: ' + e.message;
+    setStatus('');
+  }
+});
+
+// ── API ──────────────────────────────────────────────────────────────
+async function gasGet(action, params = {}) {
+  const qs = new URLSearchParams({ action, ...params });
+  const res = await fetch(`${GAS_URL}?${qs}`);
+  return res.json();
+}
+
+// POST (인증 후 사용, no-cors fallback 포함)
+async function gasPost(body) {
+  body.password = pw;
+  const init = {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(body),
+  };
+  try {
+    const res = await fetch(GAS_URL, { ...init, redirect: 'follow' });
+    return res.json();
+  } catch (e) {
+    const res2 = await fetch(GAS_URL, { ...init, mode: 'no-cors', redirect: 'follow' });
+    return { ok: true };
+  }
+}
+
+// ── SHOT 카테고리 일괄 제거 ──────────────────────────────────────────
+document.getElementById('btn-clean-shot').addEventListener('click', async () => {
+  const affected = items.filter(i => (i.category || '').split(',').some(c => /^shot\d*$/i.test(c.trim())));
+  if (!affected.length) { setStatus('SHOT 카테고리 항목 없음', 'ok'); return; }
+  if (!confirm(`SHOT 카테고리가 포함된 항목 ${affected.length}개를 정리할까요?\n(SHOT 값만 제거, 다른 카테고리는 유지됩니다)`)) return;
+
+  affected.forEach(item => {
+    const cats = item.category.split(',').map(c => c.trim()).filter(c => !/^shot\d*$/i.test(c));
+    item.category = cats.join(',');
+  });
+
+  setStatus('저장 중...');
+  try {
+    const saveRes = await gasPost({ action: 'save', items: items.map(i => ({
+      photoId:  i.photoId,
+      category: i.category,
+      active:   i.active,
+      ssSource: i.ssSource || 'original',
+    }))});
+    if (!saveRes.ok) throw new Error(saveRes.error);
+    renderList();
+    setStatus(`SHOT 정리 완료 — ${affected.length}개 항목 업데이트됨`, 'ok');
+  } catch (e) {
+    setStatus('저장 실패: ' + e.message, 'err');
+  }
+});
+
+// ── Drive 스캔 ───────────────────────────────────────────────────────
+document.getElementById('btn-scan').addEventListener('click', async () => {
+  setStatus('Drive 스캔 중...');
+  try {
+    const res = await gasPost({ action: 'scan' });
+    if (!res.ok) throw new Error(res.error);
+    const { added, total } = res.data;
+    const list = await gasGet('admin');
+    items = list.data;
+    renderList();
+    setStatus(`스캔 완료 — 전체 ${total}개, 신규 ${added}개 추가됨`, 'ok');
+  } catch (e) {
+    setStatus('스캔 실패: ' + e.message, 'err');
+  }
+});
+
+// ── 저장 ─────────────────────────────────────────────────────────────
+document.getElementById('btn-save').addEventListener('click', async () => {
+  setStatus('저장 중...');
+  try {
+    const saveRes = await gasPost({ action: 'save', items: items.map(i => ({
+      photoId:  i.photoId,
+      category: i.category,
+      active:   i.active,
+      ssSource: i.ssSource || 'original',
+    }))});
+    if (!saveRes.ok) throw new Error(saveRes.error);
+
+    const orderRes = await gasPost({ action: 'reorder', orders: items.map((i, idx) => ({
+      photoId: i.photoId,
+      order:   idx + 1,
+    }))});
+    if (!orderRes.ok) throw new Error(orderRes.error);
+
+    setStatus('저장 완료', 'ok');
+  } catch (e) {
+    setStatus('저장 실패: ' + e.message, 'err');
+  }
+});
+
+// ── 렌더링 ───────────────────────────────────────────────────────────
+function renderList() {
+  const container = document.getElementById('items-container');
+  if (!items.length) {
+    container.innerHTML = '<div class="empty">항목이 없습니다. Drive 스캔을 실행하세요.</div>';
+    return;
+  }
+
+  container.innerHTML = items.map((item, idx) => {
+    // 썸네일: watermark → original → poster 순 우선
+    const thumbId = item.fileId_watermark || item.fileId_original || item.fileId_poster;
+    const thumb = thumbId
+      ? `<img src="${thumbUrl(thumbId)}" alt="" onerror="this.style.display='none';this.nextSibling.style.display='flex';">
+         <div class="thumb-err" style="display:none;">이미지<br>없음</div>`
+      : `<div class="thumb-err">파일<br>없음</div>`;
+
+    const hasOri = !!item.fileId_original;
+    const hasWm  = !!item.fileId_watermark;
+    const hasPos = !!item.fileId_poster;
+    const ss = item.ssSource || 'original';
+
+    return `
+    <div class="photo-item" draggable="true" data-idx="${idx}" data-id="${item.photoId}">
+      <span class="drag-handle">⠇</span>
+      <div class="thumb-wrap">${thumb}</div>
+      <span class="item-name" title="${item.displayName}">${item.displayName}</span>
+      <div class="item-cat">
+        ${(() => { const cats = (item.category||'').split(',').map(c=>c.trim()).filter(Boolean); return CATEGORIES.map(cat=>`<button class="cat-btn${cats.includes(cat)?' active':''}" data-id="${item.photoId}" data-cat="${cat}">${cat}</button>`).join(''); })()}
+      </div>
+      <div class="item-versions">
+        <span class="ver-badge ${hasOri ? 'on':'off'}">Original</span>
+        <span class="ver-badge ${hasWm  ? 'on':'off'}">WM</span>
+        <span class="ver-badge ${hasPos ? 'on':'off'}">Design</span>
+      </div>
+      <div class="ss-src-btns">
+        <button class="ss-src-btn ${ss==='original'?'on':''} ${!hasOri?'disabled':''}"
+          data-id="${item.photoId}" data-src="original">Original</button>
+        <button class="ss-src-btn ${ss==='watermark'?'on':''} ${!hasWm?'disabled':''}"
+          data-id="${item.photoId}" data-src="watermark">WM</button>
+        <button class="ss-src-btn ${ss==='poster'?'on':''} ${!hasPos?'disabled':''}"
+          data-id="${item.photoId}" data-src="poster">Design</button>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" ${item.active === true || item.active === 'TRUE' ? 'checked' : ''}
+          data-id="${item.photoId}" class="active-toggle">
+        <div class="toggle-track"></div>
+        <div class="toggle-thumb"></div>
+      </label>
+      <button class="delete-btn" data-id="${item.photoId}" title="삭제">✕</button>
+    </div>`;
+  }).join('');
+
+  // 카테고리 버튼 (다중 선택)
+  container.querySelectorAll('.cat-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const id  = e.currentTarget.dataset.id;
+      const cat = e.currentTarget.dataset.cat;
+      const item = items.find(i => i.photoId === id);
+      if (!item) return;
+      const cats = (item.category || '').split(',').map(c => c.trim()).filter(Boolean);
+      const idx = cats.indexOf(cat);
+      if (idx >= 0) cats.splice(idx, 1); else cats.push(cat);
+      item.category = cats.join(',');
+      e.currentTarget.closest('.item-cat').querySelectorAll('.cat-btn').forEach(b => {
+        b.classList.toggle('active', cats.includes(b.dataset.cat));
+      });
+    });
+  });
+
+  // active 토글
+  container.querySelectorAll('.active-toggle').forEach(chk => {
+    chk.addEventListener('change', e => {
+      const item = items.find(i => i.photoId === e.target.dataset.id);
+      if (item) item.active = e.target.checked;
+    });
+  });
+
+  // SS 소스 선택 (단일 선택, disabled 버튼 제외)
+  container.querySelectorAll('.ss-src-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      if (btn.classList.contains('disabled')) return;
+      const id  = e.target.dataset.id;
+      const src = e.target.dataset.src;
+      const item = items.find(i => i.photoId === id);
+      if (!item) return;
+      item.ssSource = src;
+
+      // 해당 행 버튼 UI 업데이트
+      const row = e.target.closest('.photo-item');
+      row.querySelectorAll('.ss-src-btn').forEach(b => {
+        b.classList.toggle('on', b.dataset.src === src);
+      });
+    });
+  });
+
+  // 삭제
+  container.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', async e => {
+      const id = e.currentTarget.dataset.id;
+      const item = items.find(i => i.photoId === id);
+      if (!confirm(`"${item?.displayName}" 을(를) 목록에서 삭제할까요?\n(Drive 파일은 삭제되지 않습니다)`)) return;
+      setStatus('삭제 중...');
+      try {
+        const res = await gasPost({ action: 'delete', photoId: id });
+        if (!res.ok) throw new Error(res.error);
+        items = items.filter(i => i.photoId !== id);
+        renderList();
+        setStatus('삭제 완료', 'ok');
+      } catch (e) {
+        setStatus('삭제 실패: ' + e.message, 'err');
+      }
+    });
+  });
+
+  initDragDrop();
+}
+
+// ── 드래그앤드롭 ─────────────────────────────────────────────────────
+function initDragDrop() {
+  const container = document.getElementById('items-container');
+  let dragSrc = null;
+
+  container.querySelectorAll('.photo-item').forEach(el => {
+    el.addEventListener('dragstart', e => {
+      dragSrc = el;
+      el.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    el.addEventListener('dragend', () => {
+      el.classList.remove('dragging');
+      container.querySelectorAll('.photo-item').forEach(i => i.classList.remove('drag-over'));
+      const newOrder = [...container.querySelectorAll('.photo-item')]
+        .map(el => items.find(i => i.photoId === el.dataset.id))
+        .filter(Boolean);
+      items = newOrder;
+    });
+    el.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      if (el !== dragSrc) {
+        container.querySelectorAll('.photo-item').forEach(i => i.classList.remove('drag-over'));
+        el.classList.add('drag-over');
+      }
+    });
+    el.addEventListener('drop', e => {
+      e.preventDefault();
+      if (dragSrc && dragSrc !== el) {
+        const allItems = [...container.querySelectorAll('.photo-item')];
+        const srcIdx = allItems.indexOf(dragSrc);
+        const tgtIdx = allItems.indexOf(el);
+        if (srcIdx < tgtIdx) el.after(dragSrc);
+        else el.before(dragSrc);
+      }
+    });
+  });
+}
+
+// ── Show Texts 렌더링 ────────────────────────────────────────────────
+function renderTexts() {
+  const grid = document.getElementById('texts-grid');
+  grid.innerHTML = texts.map((t, i) => `
+    <div class="texts-row">
+      <span class="texts-row-num">${String(i+1).padStart(2,'0')}</span>
+      <input type="text" placeholder="Line 1 — e.g. Every frame holds a story"
+        value="${(t.line1||'').replace(/"/g,'&quot;')}" data-idx="${i}" data-field="line1">
+      <input type="text" placeholder="Line 2 — e.g. A moment of light and shadow"
+        value="${(t.line2||'').replace(/"/g,'&quot;')}" data-idx="${i}" data-field="line2">
+      <label class="toggle">
+        <input type="checkbox" ${t.active !== false && t.active !== 'FALSE' ? 'checked' : ''}
+          data-idx="${i}" class="txt-active-toggle">
+        <div class="toggle-track"></div>
+        <div class="toggle-thumb"></div>
+      </label>
+    </div>`).join('');
+
+  grid.querySelectorAll('input[data-field]').forEach(inp => {
+    inp.addEventListener('input', e => {
+      texts[+e.target.dataset.idx][e.target.dataset.field] = e.target.value;
+    });
+  });
+  grid.querySelectorAll('.txt-active-toggle').forEach(chk => {
+    chk.addEventListener('change', e => {
+      texts[+e.target.dataset.idx].active = e.target.checked;
+    });
+  });
+}
+
+// 펼침/접힘 토글
+document.getElementById('texts-toggle-btn').addEventListener('click', () => {
+  const btn  = document.getElementById('texts-toggle-btn');
+  const wrap = document.getElementById('texts-expandable');
+  const open = wrap.style.display !== 'none';
+  wrap.style.display = open ? 'none' : 'block';
+  btn.classList.toggle('open', !open);
+  btn.childNodes[0].textContent = open ? '목록 펼치기 ' : '목록 접기 ';
+});
+
+document.getElementById('texts-save-btn').addEventListener('click', async () => {
+  setStatus('텍스트 저장 중...');
+  try {
+    const payload = texts
+      .filter(t => t.line1 || t.line2)  // 빈 행은 제외
+      .map((t, i) => ({ id: t.id || '', line1: t.line1, line2: t.line2, active: t.active !== false, order: i + 1 }));
+    const res = await gasPost({ action: 'saveTexts', texts: payload });
+    if (!res.ok) throw new Error(res.error);
+    setStatus('텍스트 저장 완료', 'ok');
+  } catch (e) {
+    setStatus('텍스트 저장 실패: ' + e.message, 'err');
+  }
+});
+
+// ── Show Texts 인터벌 ────────────────────────────────────────────────
+function initTextIntervalBtns() {
+  const current = localStorage.getItem('ss_text_interval') || '15000';
+  document.querySelectorAll('.ss-ti-btn').forEach(btn => {
+    btn.classList.toggle('primary', btn.dataset.val === current);
+    btn.addEventListener('click', () => {
+      localStorage.setItem('ss_text_interval', btn.dataset.val);
+      document.querySelectorAll('.ss-ti-btn').forEach(b => b.classList.remove('primary'));
+      btn.classList.add('primary');
+    });
+  });
+}
+initTextIntervalBtns();
+
+// ── 슬라이드쇼 인터벌 ────────────────────────────────────────────────
+function initIntervalBtns() {
+  const current = localStorage.getItem('ss_interval') || '3000';
+  document.querySelectorAll('.ss-iv-btn').forEach(btn => {
+    btn.classList.toggle('primary', btn.dataset.val === current);
+    btn.addEventListener('click', () => {
+      localStorage.setItem('ss_interval', btn.dataset.val);
+      document.querySelectorAll('.ss-iv-btn').forEach(b => b.classList.remove('primary'));
+      btn.classList.add('primary');
+    });
+  });
+}
+initIntervalBtns();
+
+// ── 슬라이드쇼 텍스트 ────────────────────────────────────────────────
+function initTextInputs() {
+  document.getElementById('ss-line1-input').value = localStorage.getItem('ss_line1') || '';
+  document.getElementById('ss-line2-input').value = localStorage.getItem('ss_line2') || '';
+  document.getElementById('ss-text-save-btn').addEventListener('click', () => {
+    localStorage.setItem('ss_line1', document.getElementById('ss-line1-input').value.trim());
+    localStorage.setItem('ss_line2', document.getElementById('ss-line2-input').value.trim());
+    setStatus('텍스트 저장 완료', 'ok');
+  });
+}
+initTextInputs();
+
+// ── 상태 표시 ────────────────────────────────────────────────────────
+function setStatus(msg, type = '') {
+  const el = document.getElementById('statusbar');
+  el.textContent = msg;
+  el.className = 'statusbar' + (type ? ' ' + type : '');
+}
+
+// ── 업로드 모듈 ──────────────────────────────────────────────────────
+const Upload = {
+  file:            null,
+  dataUrl:         null,
+  originalImg:     null,
+  wmImg:           null,
+  letterImgCache:  {},
+  overlayData:     null,
+
+  async initPanel() {
+    if (this.overlayData) return;
+    setStatus('오버레이 파일 로딩 중...');
+    try {
+      const res = await gasGet('getOverlays');
+      if (!res.ok) throw new Error(res.error);
+      this.overlayData = res.data;
+
+      if (this.overlayData.watermark) {
+        this.wmImg = await this._fetchImg(this.overlayData.watermark.fileId);
+      }
+
+      const sel = document.getElementById('upload-letter-select');
+      const letters = this.overlayData.letters || [];
+      sel.innerHTML = '<option value="">-- 선택 없음 --</option>'
+        + letters.map(l => `<option value="${l.fileId}">${l.name}</option>`).join('');
+
+      setStatus('');
+    } catch (e) {
+      setStatus('오버레이 로드 실패: ' + e.message, 'err');
+    }
+  },
+
+  async onFileChange(file) {
+    this.file = file;
+    document.getElementById('upload-filename').textContent =
+      `${file.name}  (${(file.size / 1024 / 1024).toFixed(1)} MB)`;
+
+    this.dataUrl     = await this._readDataUrl(file);
+    this.originalImg = await this._imgFromSrc(this.dataUrl);
+
+    await this._renderPreviews();
+    document.getElementById('upload-previews').style.display = 'flex';
+    document.getElementById('upload-btn').disabled = false;
+  },
+
+  async onLetterChange() {
+    if (!this.originalImg) return;
+    await this._renderPreviews();
+  },
+
+  async _renderPreviews() {
+    const letterFileId = document.getElementById('upload-letter-select').value;
+    let letterImg = null;
+    if (letterFileId) {
+      if (!this.letterImgCache[letterFileId]) {
+        this.letterImgCache[letterFileId] = await this._fetchImg(letterFileId);
+      }
+      letterImg = this.letterImgCache[letterFileId];
+    }
+    this._drawPreview('preview-original',  this.originalImg, null);
+    this._drawPreview('preview-watermark', this.originalImg, this.wmImg);
+    this._drawPreview('preview-letter',    this.originalImg, letterImg);
+  },
+
+  _drawPreview(canvasId, baseImg, overlayImg) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas || !baseImg) return;
+    const W = canvas.width, H = canvas.height;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#0a0a0a';
+    ctx.fillRect(0, 0, W, H);
+    const scale = Math.min(W / baseImg.naturalWidth, H / baseImg.naturalHeight);
+    const dw = baseImg.naturalWidth * scale;
+    const dh = baseImg.naturalHeight * scale;
+    const dx = (W - dw) / 2, dy = (H - dh) / 2;
+    ctx.drawImage(baseImg, dx, dy, dw, dh);
+    if (overlayImg) ctx.drawImage(overlayImg, dx, dy, dw, dh);
+  },
+
+  _composite(baseImg, overlayImg) {
+    const c   = document.createElement('canvas');
+    c.width   = baseImg.naturalWidth;
+    c.height  = baseImg.naturalHeight;
+    const ctx = c.getContext('2d');
+    ctx.drawImage(baseImg, 0, 0);
+    if (overlayImg) ctx.drawImage(overlayImg, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', 0.88).split(',')[1];
+  },
+
+  _setProgress(pct, msg) {
+    const wrap = document.getElementById('upload-progress-wrap');
+    wrap.style.display = 'block';
+    document.getElementById('upload-progress-fill').style.width = pct + '%';
+    document.getElementById('upload-progress-msg').textContent = msg;
+  },
+
+  async upload(silent = false) {
+    if (!this.file || !this.originalImg) return;
+    const btn = document.getElementById('upload-btn');
+    btn.disabled = true;
+
+    try {
+      // 1. 원본 업로드 (raw 파일 그대로 전송)
+      this._setProgress(10, '원본 업로드 중...');
+      const origBase64 = this.dataUrl.split(',')[1];
+      const origMime   = this.dataUrl.split(';')[0].split(':')[1];
+      const origRes = await gasPost({
+        action: 'uploadOriginal',
+        filename: this.file.name,
+        base64:   origBase64,
+        mimeType: origMime,
+      });
+      if (!origRes.ok) throw new Error('원본 업로드 실패: ' + origRes.error);
+      const { photoId } = origRes.data;
+
+      // 2. 워터마크 합성 & 업로드
+      if (this.wmImg) {
+        this._setProgress(40, '워터마크 합성 & 업로드 중...');
+        const wmB64 = this._composite(this.originalImg, this.wmImg);
+        const wmRes = await gasPost({
+          action: 'uploadVariant',
+          photoId,
+          variantType: 'watermark',
+          base64:   wmB64,
+          mimeType: 'image/jpeg',
+        });
+        if (!wmRes.ok) throw new Error('워터마크 업로드 실패: ' + wmRes.error);
+      }
+
+      // 3. 레터링 합성 & 업로드
+      const letterFileId = document.getElementById('upload-letter-select').value;
+      const letterImg    = letterFileId ? this.letterImgCache[letterFileId] : null;
+      if (letterImg) {
+        this._setProgress(70, '레터링 합성 & 업로드 중...');
+        const letterB64 = this._composite(this.originalImg, letterImg);
+        const letterRes = await gasPost({
+          action: 'uploadVariant',
+          photoId,
+          variantType: 'poster',
+          base64:   letterB64,
+          mimeType: 'image/jpeg',
+        });
+        if (!letterRes.ok) throw new Error('레터링 업로드 실패: ' + letterRes.error);
+      }
+
+      // 4. 완료
+      this._setProgress(100, '완료!');
+      if (!silent) {
+        setStatus(`업로드 완료 — ${origRes.data.displayName}`, 'ok');
+        const list = await gasGet('admin');
+        items = list.data;
+        renderList();
+        this._reset();
+      }
+
+    } catch (e) {
+      setStatus('업로드 오류: ' + e.message, 'err');
+      btn.disabled = false;
+    }
+  },
+
+  _reset() {
+    this.file = null; this.dataUrl = null; this.originalImg = null;
+    this.folderFiles = [];
+    document.getElementById('upload-file-input').value = '';
+    document.getElementById('upload-folder-input').value = '';
+    document.getElementById('upload-filename').textContent = '선택된 파일 없음';
+    document.getElementById('upload-previews').style.display = 'none';
+    document.getElementById('upload-progress-wrap').style.display = 'none';
+    document.getElementById('upload-btn').disabled = true;
+    ['original', 'watermark', 'letter'].forEach(t => {
+      const c = document.getElementById(`preview-${t}`);
+      if (!c) return;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#0a0a0a';
+      ctx.fillRect(0, 0, c.width, c.height);
+    });
+  },
+
+  _readDataUrl(file) {
+    return new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload  = e => res(e.target.result);
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+  },
+
+  _imgFromSrc(src) {
+    return new Promise((res, rej) => {
+      const img = new Image();
+      img.onload  = () => res(img);
+      img.onerror = rej;
+      img.src = src;
+    });
+  },
+
+  async _fetchImg(fileId) {
+    const res = await gasGet('getFileBase64', { fileId });
+    if (!res.ok) return null;
+    return this._imgFromSrc(`data:${res.data.mimeType};base64,${res.data.base64}`);
+  },
+};
+
+// 패널 토글
+document.getElementById('upload-toggle-btn').addEventListener('click', () => {
+  const body = document.getElementById('upload-body');
+  const btn  = document.getElementById('upload-toggle-btn');
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  btn.textContent    = open ? '펼치기 ▼' : '접기 ▲';
+  if (!open) Upload.initPanel();
+});
+
+// 파일 선택 (단일)
+document.getElementById('upload-file-input').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (file) { Upload.folderFiles = []; Upload.onFileChange(file); }
+});
+
+// 폴더 선택 (다중)
+document.getElementById('upload-folder-input').addEventListener('change', e => {
+  const files = Array.from(e.target.files).filter(f => f.type.startsWith('image/'));
+  if (!files.length) return;
+  files.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
+  Upload.folderFiles = files;
+  document.getElementById('upload-filename').textContent = `폴더: ${files.length}개 이미지 선택됨`;
+  document.getElementById('upload-previews').style.display = 'none';
+  document.getElementById('upload-btn').disabled = false;
+  // 첫 번째 파일로 프리뷰
+  Upload.onFileChange(files[0]);
+});
+
+// 레터링 선택 변경
+document.getElementById('upload-letter-select').addEventListener('change', () => {
+  Upload.onLetterChange();
+});
+
+// 업로드 실행
+document.getElementById('upload-btn').addEventListener('click', async () => {
+  if (Upload.folderFiles && Upload.folderFiles.length > 1) {
+    // 폴더 일괄 업로드
+    const files = Upload.folderFiles;
+    const btn = document.getElementById('upload-btn');
+    btn.disabled = true;
+    for (let i = 0; i < files.length; i++) {
+      setStatus(`업로드 중 ${i + 1} / ${files.length} — ${files[i].name}`);
+      Upload.dataUrl     = await Upload._readDataUrl(files[i]);
+      Upload.originalImg = await Upload._imgFromSrc(Upload.dataUrl);
+      Upload.file        = files[i];
+      Upload._setProgress(Math.round((i / files.length) * 100), `${i + 1}/${files.length} 처리 중...`);
+      await Upload.upload(true);  // silent=true: 완료 후 reset 스킵
+    }
+    const list = await gasGet('admin');
+    items = list.data;
+    renderList();
+    Upload._reset();
+    setStatus(`폴더 업로드 완료 — ${files.length}개 등록됨`, 'ok');
+  } else {
+    Upload.upload();
+  }
+});
+</script>
+</body>
+</html>

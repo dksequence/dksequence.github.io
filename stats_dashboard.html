@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>DK 운영 통계</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #090909;
+      --s1:     #111;
+      --s2:     #181818;
+      --s3:     #222;
+      --border: rgba(255,255,255,0.07);
+      --bd2:    rgba(255,255,255,0.13);
+      --text:   #f0f0f0;
+      --sub:    rgba(255,255,255,0.45);
+      --muted:  rgba(255,255,255,0.2);
+      /* mode colors */
+      --mc: #5b9cf6;   /* daily  – blue   */
+    }
+    html, body {
+      width:100%; min-height:100%;
+      background:var(--bg); color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    /* ── ACCENT ── */
+    .accent-bar { height:3px; background:linear-gradient(90deg,var(--mc),#a78bfa 50%,#3ecf72); transition:background .4s; }
+
+    /* ── HEADER ── */
+    .header { background:var(--s1); border-bottom:1px solid var(--border); padding:12px 18px; position:sticky; top:0; z-index:200; }
+    .header-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+    .header-left  { display:flex; align-items:center; gap:11px; }
+    .logo { width:36px; height:36px; border-radius:10px; background:linear-gradient(145deg,#1d1d1d,#0a0a0a); border:1px solid var(--bd2); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:900; flex-shrink:0; }
+    .header-title { font-size:15px; font-weight:800; }
+    .header-sub   { font-size:11px; color:var(--sub); margin-top:1px; }
+    .header-right { display:flex; align-items:center; gap:7px; }
+    .updated-txt  { font-size:11px; color:var(--text); white-space:nowrap; }
+    .hdr-btn { border:1px solid var(--bd2); background:var(--s2); color:var(--sub); border-radius:8px; padding:6px 12px; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; text-decoration:none; display:inline-flex; align-items:center; gap:4px; transition:background .15s,color .15s; }
+    .hdr-btn:hover { background:var(--s3); color:var(--text); }
+
+    /* ── MODE TABS ── */
+    .mode-bar { background:var(--s1); border-bottom:1px solid var(--border); }
+    .mode-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:0 18px; gap:10px; }
+    .mode-tabs  { display:flex; }
+    .mode-tab {
+      padding:11px 18px; font-size:13px; font-weight:700; cursor:pointer; color:var(--sub);
+      background:transparent; border:none; position:relative; transition:color .15s; white-space:nowrap;
+    }
+    .mode-tab::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; border-radius:2px 2px 0 0; background:transparent; transition:background .2s; }
+    .mode-tab.active { color:var(--text); }
+    .mode-tab.active::after { background:var(--mc); }
+
+    /* ── DATE NAV ── */
+    .date-nav { display:flex; align-items:center; gap:6px; padding:8px 0; }
+    .nav-btn { width:30px; height:30px; border:1px solid var(--bd2); background:var(--s2); color:var(--sub); border-radius:8px; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; transition:background .12s,color .12s; flex-shrink:0; }
+    .nav-btn:hover { background:var(--s3); color:var(--text); }
+    .period-label { font-size:13px; font-weight:700; min-width:200px; text-align:center; }
+    .today-btn { border:1px solid var(--bd2); background:var(--s2); color:var(--sub); border-radius:8px; padding:5px 11px; font-size:12px; font-weight:600; cursor:pointer; transition:background .12s,color .12s; white-space:nowrap; }
+    .today-btn:hover { background:var(--s3); color:var(--text); }
+
+    /* ── CONTENT ── */
+    .content { max-width:1200px; margin:0 auto; padding:16px 16px 60px; }
+
+    /* ── LOADING / ERROR ── */
+    .state-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:50vh; gap:14px; color:var(--sub); }
+    .spinner { width:34px; height:34px; border-radius:50%; border:3px solid var(--border); border-top-color:var(--mc); animation:spin .8s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .state-txt { font-size:14px; }
+    .retry-btn { border:1px solid var(--bd2); background:var(--s2); color:var(--text); border-radius:10px; padding:9px 20px; font-size:13px; font-weight:700; cursor:pointer; }
+    .retry-btn:hover { background:var(--s3); }
+
+    /* ── CARDS ── */
+    .cards { display:grid; grid-template-columns:3fr 3fr 5fr 3fr; gap:10px; margin-bottom:12px; }
+    @media(max-width:900px){ .cards{ grid-template-columns:repeat(2,1fr); } }
+    @media(max-width:500px){ .cards{ grid-template-columns:1fr 1fr; } }
+
+    .card {
+      background:var(--s1); border:1px solid var(--border);
+      border-radius:15px; padding:16px 18px; position:relative; overflow:hidden;
+      transition:border-color .15s;
+    }
+    .card:hover { border-color:var(--bd2); }
+    .card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--cc, #5b9cf6); }
+    .card-label { font-size:11px; color:var(--sub); margin-bottom:9px; letter-spacing:.02em; }
+    .card-value {
+      font-size:30px; font-weight:900; line-height:1;
+      background:var(--cc, #5b9cf6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .card-unit  { font-size:13px; font-weight:700; margin-left:2px; }
+    .card-sub   { font-size:11px; color:var(--muted); margin-top:5px; }
+    .card-icon  { position:absolute; right:14px; top:14px; font-size:26px; opacity:.1; }
+
+    /* ── CHART GRID ── */
+    .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
+    .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:10px; }
+    @media(max-width:900px){ .grid-2,.grid-3{ grid-template-columns:1fr; } }
+
+    /* ── CHART CARD ── */
+    .chart-card { background:var(--s1); border:1px solid var(--border); border-radius:15px; padding:16px 18px; margin-bottom:10px; transition:border-color .15s; }
+    .chart-card:hover { border-color:var(--bd2); }
+
+    .chart-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+    .chart-title  { font-size:13px; font-weight:700; }
+    .chart-badge  { font-size:10px; color:var(--sub); background:rgba(255,255,255,0.06); border-radius:20px; padding:2px 8px; }
+
+    .chart-wrap { position:relative; }
+    .chart-wrap canvas { display:block; }
+
+    /* ── DONUT ── */
+    .donut-wrap { position:relative; display:flex; flex-direction:column; align-items:center; }
+    .donut-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-56%); text-align:center; pointer-events:none; }
+    .donut-pct { font-size:24px; font-weight:900; line-height:1; }
+    .donut-lbl { font-size:10px; color:var(--sub); margin-top:2px; }
+
+    /* ── LEGEND ── */
+    .legend { display:flex; flex-wrap:wrap; gap:5px 12px; margin-top:10px; justify-content:center; }
+    .legend-item { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--sub); }
+    .legend-dot  { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+
+    /* ── 수익 없음 안내 ── */
+    .no-price {
+      display:flex; align-items:center; justify-content:center; gap:6px;
+      font-size:11px; color:var(--muted); margin-top:4px;
+    }
+
+    /* ── 고객 리스트 ── */
+    .customer-list { width:100%; border-collapse:collapse; font-size:12px; }
+    .customer-list th {
+      padding:8px 12px; text-align:left; font-size:10px; font-weight:700;
+      color:var(--sub); letter-spacing:.06em; text-transform:uppercase;
+      border-bottom:1px solid var(--border); white-space:nowrap;
+    }
+    .customer-list td {
+      padding:10px 12px; border-bottom:1px solid rgba(255,255,255,0.04);
+      vertical-align:middle; white-space:nowrap;
+    }
+    .customer-list tr:last-child td { border-bottom:none; }
+    .customer-list tr:hover td { background:rgba(255,255,255,0.02); }
+    .cl-name { font-weight:700; color:var(--text); }
+    .cl-product { color:var(--sub); font-size:11px; max-width:160px; overflow:hidden; text-overflow:ellipsis; }
+    .cl-time { color:var(--muted); font-size:11px; }
+    .badge-pill {
+      display:inline-block; padding:2px 8px; border-radius:20px;
+      font-size:10px; font-weight:700; white-space:nowrap;
+    }
+    .pill-sent    { background:rgba(52,211,153,0.12); color:#34d399; border:1px solid rgba(52,211,153,0.25); }
+    .pill-unsent  { background:rgba(255,255,255,0.05); color:var(--muted); border:1px solid var(--border); }
+    .pill-edit-ok { background:rgba(91,156,246,0.12); color:#5b9cf6; border:1px solid rgba(91,156,246,0.25); }
+    .pill-edit-no { background:rgba(255,255,255,0.05); color:var(--muted); border:1px solid var(--border); }
+    .pill-link    { background:rgba(201,168,76,0.12); color:#c9a84c; border:1px solid rgba(201,168,76,0.25); text-decoration:none; }
+    .pill-link:hover { background:rgba(201,168,76,0.25); }
+    .cl-sent-time { font-size:10px; color:var(--muted); margin-top:2px; }
+    #customer-section { display:none; }
+
+    /* ── 리포트 툴바 ── */
+    .report-toolbar { display:none; gap:8px; margin-bottom:10px; }
+    .report-toolbar.visible { display:flex; }
+    .rpt-btn { border:none; border-radius:9px; padding:9px 18px; font-size:13px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:opacity .15s; }
+    .rpt-btn:hover { opacity:.85; }
+    .rpt-btn-view  { background:linear-gradient(135deg,#a78bfa,#ec4899); color:#fff; }
+    .rpt-btn-email { background:linear-gradient(135deg,#34d399,#38bdf8); color:#111; }
+
+    /* ── 모달 공통 ── */
+    .modal-backdrop { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:800; display:none; }
+    .modal-backdrop.open { display:block; }
+    .modal-box { position:fixed; z-index:801; background:var(--s1); border:1px solid var(--bd2); border-radius:16px; padding:24px; box-shadow:0 8px 40px rgba(0,0,0,0.5); }
+
+    /* ── 이메일 모달 ── */
+    #email-modal { top:50%; left:50%; transform:translate(-50%,-50%); width:min(480px,92vw); max-height:88vh; overflow-y:auto; }
+    .modal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+    .modal-head h3 { font-size:15px; font-weight:800; }
+    .modal-close { background:none; border:none; color:var(--sub); font-size:20px; cursor:pointer; line-height:1; }
+    .modal-close:hover { color:var(--text); }
+    .modal-section { margin-bottom:16px; }
+    .modal-label { font-size:11px; color:var(--sub); margin-bottom:6px; letter-spacing:.04em; }
+    .period-row { display:flex; align-items:center; gap:8px; }
+    .period-row input[type=date] { background:var(--s2); border:1px solid var(--bd2); color:var(--text); border-radius:8px; padding:7px 10px; font-size:13px; flex:1; }
+    .period-row span { color:var(--sub); font-size:13px; }
+    .email-input-row { display:flex; align-items:center; gap:6px; margin-bottom:6px; }
+    .email-input-row input { flex:1; background:var(--s2); border:1px solid var(--bd2); color:var(--text); border-radius:8px; padding:8px 11px; font-size:13px; outline:none; }
+    .email-input-row input:focus { border-color:var(--mc); }
+    .email-remove { background:none; border:none; color:var(--muted); font-size:18px; cursor:pointer; line-height:1; padding:2px; }
+    .email-remove:hover { color:#fb7185; }
+    .email-add-btn { background:var(--s2); border:1px solid var(--bd2); color:var(--sub); border-radius:8px; padding:7px 14px; font-size:12px; font-weight:700; cursor:pointer; width:100%; margin-top:4px; }
+    .email-add-btn:hover { color:var(--text); background:var(--s3); }
+    .modal-defaults { display:flex; gap:8px; margin-top:10px; }
+    .def-btn { flex:1; background:var(--s2); border:1px solid var(--bd2); color:var(--sub); border-radius:8px; padding:7px; font-size:11px; font-weight:700; cursor:pointer; }
+    .def-btn:hover { color:var(--text); background:var(--s3); }
+    .modal-footer { display:flex; gap:8px; margin-top:20px; padding-top:16px; border-top:1px solid var(--border); }
+    .modal-cancel { flex:1; background:var(--s2); border:1px solid var(--bd2); color:var(--sub); border-radius:9px; padding:10px; font-size:13px; font-weight:700; cursor:pointer; }
+    .modal-cancel:hover { color:var(--text); }
+    .modal-send { flex:2; background:linear-gradient(135deg,#34d399,#38bdf8); border:none; color:#111; border-radius:9px; padding:10px; font-size:13px; font-weight:800; cursor:pointer; }
+    .modal-send:hover { opacity:.9; }
+    .modal-send:disabled { opacity:.4; cursor:not-allowed; }
+    .send-status { font-size:12px; color:var(--sub); margin-top:8px; text-align:center; min-height:18px; }
+
+    /* ── 리포트 모달 ── */
+    #report-modal { top:50%; left:50%; transform:translate(-50%,-50%); width:min(900px,96vw); max-height:90vh; overflow-y:auto; padding:0; }
+    .report-modal-head { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--s1); z-index:10; }
+    .report-modal-head h3 { font-size:14px; font-weight:800; }
+    .report-modal-actions { display:flex; gap:8px; align-items:center; }
+    #report-print-area { padding:20px; }
+    .rpt-title { font-size:18px; font-weight:900; margin-bottom:4px; }
+    .rpt-period { font-size:12px; color:var(--sub); margin-bottom:16px; }
+    .rpt-summary { display:flex; gap:24px; margin-bottom:20px; padding:14px 18px; background:var(--s2); border-radius:10px; }
+    .rpt-s-label { font-size:10px; color:var(--sub); margin-bottom:3px; }
+    .rpt-s-val { font-size:22px; font-weight:900; }
+    .rpt-table { width:100%; border-collapse:collapse; font-size:12px; }
+    .rpt-table th { padding:8px 10px; text-align:left; font-size:10px; font-weight:700; color:var(--sub); border-bottom:1px solid var(--border); white-space:nowrap; }
+    .rpt-table td { padding:9px 10px; border-bottom:1px solid rgba(255,255,255,0.04); vertical-align:middle; white-space:nowrap; }
+    .rpt-table tr:last-child td { border-bottom:none; }
+    .rpt-table tr:hover td { background:rgba(255,255,255,0.02); }
+
+    /* ── 매출/DK 셀 ── */
+    .td-revenue { text-align:right; font-weight:700; color:var(--text); }
+    .td-dk      { text-align:right; font-weight:700; color:#4ade80; }
+
+    /* ── 리포트 헤더 메타 ── */
+    .rpt-header-row { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:4px; }
+    .rpt-meta { font-size:11px; color:var(--sub); text-align:right; line-height:1.9; }
+
+    /* ── 리포트 분석 섹션 ── */
+    .rpt-analytics { margin-top:20px; padding-top:16px; border-top:1px solid var(--border); }
+    .rpt-analytics-head { font-size:12px; font-weight:700; color:var(--sub); margin-bottom:12px; }
+    .rpt-analytics-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    @media(max-width:600px){ .rpt-analytics-grid{ grid-template-columns:1fr; } }
+    .rpt-a-card { background:var(--s2); border-radius:10px; padding:14px; }
+    .rpt-a-title { font-size:11px; font-weight:700; margin-bottom:10px; }
+
+    .rpt-bchart { display:flex; flex-direction:column; gap:3px; max-height:240px; overflow-y:auto; }
+    .rpt-brow { display:flex; align-items:center; gap:6px; }
+    .rpt-blbl { width:38px; font-size:9px; color:var(--sub); text-align:right; flex-shrink:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .rpt-btrack { flex:1; background:rgba(255,255,255,0.07); border-radius:3px; height:11px; overflow:hidden; }
+    .rpt-bval { width:20px; font-size:9px; color:var(--sub); flex-shrink:0; }
+
+    .rpt-hrow { margin-bottom:6px; }
+    .rpt-hlabel { display:flex; align-items:center; gap:5px; font-size:10px; color:var(--sub); margin-bottom:2px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+    .rpt-hdot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+    .rpt-hright { display:flex; align-items:center; gap:6px; }
+    .rpt-htrack { flex:1; background:rgba(255,255,255,0.07); border-radius:3px; height:6px; overflow:hidden; }
+    .rpt-hfill { height:100%; border-radius:3px; }
+    .rpt-hpct { font-size:9px; color:var(--sub); white-space:nowrap; flex-shrink:0; min-width:28px; text-align:right; }
+
+    .rpt-rates-row { display:flex; justify-content:space-around; padding:8px 0; }
+    .rpt-rate-item { text-align:center; }
+    .rpt-rate-ring { width:72px; height:72px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; }
+    .rpt-rate-core { width:52px; height:52px; border-radius:50%; background:var(--s1); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:900; }
+    .rpt-rate-lbl { font-size:10px; color:var(--sub); margin-top:6px; }
+
+    /* ── 프린트 ── */
+    @media print {
+      body { background:#fff; color:#000; }
+      .header, .mode-bar, .accent-bar, .report-modal-head, .report-toolbar { display:none !important; }
+      #report-modal { position:static; transform:none; width:100%; max-height:none; border:none; box-shadow:none; }
+      .modal-backdrop { position:static; background:none; }
+      #report-print-area { padding:0; }
+      .rpt-table th, .rpt-table td { color:#000; border-color:#ccc; }
+      .rpt-summary { background:#f4f4f4; }
+      .rpt-period, .rpt-s-label { color:#666; }
+      .td-dk { color:#16a34a; }
+      .rpt-a-card { background:#f0f0f0 !important; }
+      .rpt-analytics-head,.rpt-a-title { color:#333 !important; }
+      .rpt-blbl,.rpt-bval,.rpt-hlabel,.rpt-hpct,.rpt-rate-lbl,.rpt-meta { color:#666 !important; }
+      .rpt-btrack,.rpt-htrack { background:#ddd !important; }
+      .rpt-rate-core { background:#f0f0f0 !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="accent-bar" id="accentBar"></div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="logo">DK</div>
+      <div>
+        <div class="header-title">DK 운영 통계 <span style="font-size:12px; color:var(--sub); font-weight:normal; margin-left:4px;">v1.01</span></div>
+        <div class="header-sub">통합마스터로그 실시간 분석</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="updated-txt" id="updatedAt"></span>
+      <button class="hdr-btn" onclick="loadStats()">↺</button>
+      <a class="hdr-btn" href="https://docs.google.com/spreadsheets/d/1TVzwgFW5oaqL2e0LjCZl0ZPc_gxcr7cFESZ-sqOIjeU/edit" target="_blank" rel="noopener">↗ 원본</a>
+    </div>
+  </div>
+</header>
+
+<!-- MODE BAR -->
+<div class="mode-bar">
+  <div class="mode-inner">
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-mode="daily"   onclick="switchMode('daily')">📅 일간</button>
+      <button class="mode-tab"        data-mode="weekly"  onclick="switchMode('weekly')">📈 주간</button>
+      <button class="mode-tab"        data-mode="monthly" onclick="switchMode('monthly')">📊 월간</button>
+    </div>
+    <div class="date-nav">
+      <button class="nav-btn" onclick="navigate(-1)">‹</button>
+      <span class="period-label" id="periodLabel">—</span>
+      <button class="nav-btn" onclick="navigate(1)">›</button>
+      <button class="today-btn" onclick="goToday()">오늘</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <div class="state-screen" id="loadingView">
+    <div class="spinner"></div>
+    <div class="state-txt" id="loadingTxt">데이터 불러오는 중...</div>
+  </div>
+
+  <div class="state-screen" id="errorView" style="display:none">
+    <div style="font-size:36px">⚠️</div>
+    <div class="state-txt" id="errorMsg">데이터를 불러오지 못했습니다.</div>
+    <button class="retry-btn" onclick="loadStats()">다시 시도</button>
+  </div>
+
+  <div id="dashboard" style="display:none">
+
+    <!-- ① 요약 카드 -->
+    <div class="cards">
+      <div class="card" style="--cc:linear-gradient(135deg,#5b9cf6,#818cf8)">
+        <div class="card-icon">📋</div>
+        <div class="card-label">예약 건수</div>
+        <div class="card-value" id="c-count">—</div>
+        <div class="card-sub" id="c-count-sub"></div>
+      </div>
+      <div class="card" style="--cc:linear-gradient(135deg,#38bdf8,#34d399)">
+        <div class="card-icon">👥</div>
+        <div class="card-label">총 인원</div>
+        <div class="card-value" id="c-people">—<span class="card-unit" style="font-size:16px">명</span></div>
+        <div class="card-sub" id="c-people-sub"></div>
+      </div>
+      <div class="card" style="--cc:linear-gradient(135deg,#f59e0b,#fb923c)">
+        <div class="card-icon">💰</div>
+        <div class="card-label">예상 수익</div>
+        <div class="card-value" id="c-revenue">—</div>
+        <div class="card-sub" id="c-revenue-sub"></div>
+      </div>
+      <div class="card" style="--cc:linear-gradient(135deg,#a78bfa,#ec4899)">
+        <div class="card-icon">✅</div>
+        <div class="card-label">체크인율</div>
+        <div class="card-value" id="c-checkin">—</div>
+        <div class="card-sub" id="c-checkin-sub"></div>
+      </div>
+    </div>
+
+    <!-- ② 기간 분포 바 차트 -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <span class="chart-title" id="barChartTitle">📈 예약 분포</span>
+        <span class="chart-badge" id="badge-bar"></span>
+      </div>
+      <div class="chart-wrap" style="height:170px">
+        <canvas id="chart-bar"></canvas>
+      </div>
+    </div>
+
+    <!-- ③ 상품별 + 유입경로 -->
+    <div class="grid-2">
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">📦 상품별 예약</span>
+          <span class="chart-badge" id="badge-prod"></span>
+        </div>
+        <div class="donut-wrap" style="height:190px">
+          <canvas id="chart-product"></canvas>
+          <div class="donut-center">
+            <div class="donut-pct" id="prod-center" style="color:#f59e0b">—</div>
+            <div class="donut-lbl">종류</div>
+          </div>
+        </div>
+        <div class="legend" id="legend-product"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">📡 유입 경로</span>
+          <span class="chart-badge" id="badge-src"></span>
+        </div>
+        <div class="chart-wrap" style="height:190px">
+          <canvas id="chart-source"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- ④ 편집 / 발송 / SNS -->
+    <div class="grid-3">
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">✏️ 편집 완료율</span>
+          <span class="chart-badge" id="badge-edit"></span>
+        </div>
+        <div class="donut-wrap" style="height:150px">
+          <canvas id="chart-edit"></canvas>
+          <div class="donut-center">
+            <div class="donut-pct" id="edit-pct" style="color:#5b9cf6">—</div>
+            <div class="donut-lbl">완료</div>
+          </div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">📨 발송 완료율</span>
+          <span class="chart-badge" id="badge-deliv"></span>
+        </div>
+        <div class="donut-wrap" style="height:150px">
+          <canvas id="chart-delivery"></canvas>
+          <div class="donut-center">
+            <div class="donut-pct" id="deliv-pct" style="color:#34d399">—</div>
+            <div class="donut-lbl">발송</div>
+          </div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">📸 SNS 동의율</span>
+          <span class="chart-badge" id="badge-sns"></span>
+          <a href="https://docs.google.com/spreadsheets/d/1TVzwgFW5oaqL2e0LjCZl0ZPc_gxcr7cFESZ-sqOIjeU" target="_blank" class="hdr-btn" style="margin-left:auto;font-size:11px;padding:4px 9px">시트 ↗</a>
+        </div>
+        <div class="donut-wrap" style="height:150px">
+          <canvas id="chart-sns"></canvas>
+          <div class="donut-center">
+            <div class="donut-pct" id="sns-pct" style="color:#a78bfa">—</div>
+            <div class="donut-lbl">동의</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ⑤ 리포트 툴바 -->
+    <div class="report-toolbar" id="report-toolbar">
+      <button class="rpt-btn rpt-btn-view"  onclick="openReportModal()">📋 리포트 보기</button>
+      <button class="rpt-btn rpt-btn-email" onclick="openEmailModal()">📧 이메일 발송</button>
+    </div>
+
+    <!-- ⑥ 고객 현황 (전 모드) -->
+    <div id="customer-section">
+      <div class="chart-card" style="margin-bottom:10px">
+        <div class="chart-header">
+          <span class="chart-title" id="customer-section-title">👤 고객 현황</span>
+          <span class="chart-badge" id="badge-customers"></span>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="customer-list">
+            <thead>
+              <tr>
+                <th id="th-date">날짜</th>
+                <th>시간</th>
+                <th>이름</th>
+                <th>상품</th>
+                <th>편집</th>
+                <th>결과물</th>
+                <th>발송 상태</th>
+                <th>발송 시각</th>
+                <th>열람</th>
+                <th style="text-align:right">매출</th>
+                <th style="text-align:right;color:#4ade80">DK</th>
+              </tr>
+            </thead>
+            <tbody id="customer-tbody"></tbody>
+          </table>
+        </div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:10px;color:var(--muted)">
+          ※ 열람: 고객이 메일 내 결과물 링크를 클릭한 시각 기준으로 기록됩니다
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /#dashboard -->
+</div>
+
+<!-- ── 이메일 모달 배경 ── -->
+<div class="modal-backdrop" id="email-backdrop" onclick="closeEmailModal()"></div>
+<div class="modal-box" id="email-modal" style="display:none">
+  <div class="modal-head">
+    <h3>📧 리포트 이메일 발송</h3>
+    <button class="modal-close" onclick="closeEmailModal()">✕</button>
+  </div>
+  <div class="modal-section">
+    <div class="modal-label">기간</div>
+    <div class="period-row">
+      <input type="date" id="ef-from">
+      <span>~</span>
+      <input type="date" id="ef-to">
+    </div>
+  </div>
+  <div class="modal-section">
+    <div class="modal-label">수신 이메일</div>
+    <div id="email-list-wrap"></div>
+    <button class="email-add-btn" onclick="addEmailInput()">+ 이메일 추가</button>
+    <div class="modal-defaults">
+      <button class="def-btn" onclick="saveEmailDefaults()">💾 기본값 저장</button>
+      <button class="def-btn" onclick="loadEmailDefaults()">↺ 기본값 불러오기</button>
+    </div>
+  </div>
+  <div class="send-status" id="send-status"></div>
+  <div class="modal-footer">
+    <button class="modal-cancel" onclick="closeEmailModal()">취소</button>
+    <button class="modal-send" id="send-btn" onclick="doSendReport()">발송</button>
+  </div>
+</div>
+
+<!-- ── 리포트 모달 배경 ── -->
+<div class="modal-backdrop" id="report-backdrop" onclick="closeReportModal()"></div>
+<div class="modal-box" id="report-modal" style="display:none">
+  <div class="report-modal-head">
+    <h3>📋 매출 리포트</h3>
+    <div class="report-modal-actions">
+      <button class="rpt-btn rpt-btn-email" onclick="closeReportModal();openEmailModal()" style="font-size:12px;padding:7px 14px">📧 이메일 발송</button>
+      <button class="rpt-btn" style="background:var(--s2);color:var(--text);border:1px solid var(--bd2);font-size:12px;padding:7px 14px" onclick="window.print()">🖨 프린트</button>
+      <button class="modal-close" onclick="closeReportModal()">✕</button>
+    </div>
+  </div>
+  <div id="report-print-area"></div>
+</div>
+
+<script>
+// ── 설정 ─────────────────────────────────────────────────────
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzJhFhrORZVILdIIHA_9vY5eoaML7iNzKBnD_3RqyRvu88BTCvdAifJOzBik8Y1e5CEfw/exec';
+
+const MODE_COLOR = {
+  daily:   { mc: '#5b9cf6', grad: 'linear-gradient(90deg,#5b9cf6,#818cf8 50%,#3ecf72)' },
+  weekly:  { mc: '#34d399', grad: 'linear-gradient(90deg,#34d399,#38bdf8 50%,#5b9cf6)' },
+  monthly: { mc: '#a78bfa', grad: 'linear-gradient(90deg,#a78bfa,#ec4899 50%,#fb923c)' }
+};
+
+const PALETTE = ['#5b9cf6','#a78bfa','#f59e0b','#34d399','#fb7185','#38bdf8','#fb923c','#a3e635','#e879f9','#67e8f9'];
+
+// ── 상태 ──────────────────────────────────────────────────────
+let mode      = 'daily';
+let target    = todayStr();
+let charts    = {};
+let _lastData = null;
+
+// ── 날짜 유틸 ──────────────────────────────────────────────────
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+function thisMonthStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}`;
+}
+function mondayStr(dateStr) {
+  const d = new Date(dateStr);
+  const day = d.getDay();
+  d.setDate(d.getDate() - (day === 0 ? 6 : day - 1));
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+function pad(n) { return String(n).padStart(2,'0'); }
+
+function periodDisplay(m, t) {
+  const KO_DAY = ['일','월','화','수','목','금','토'];
+  if (m === 'daily') {
+    const d = new Date(t);
+    return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${KO_DAY[d.getDay()]})`;
+  }
+  if (m === 'weekly') {
+    const mon = new Date(t);
+    const sun = new Date(t); sun.setDate(sun.getDate()+6);
+    const wk  = Math.ceil(mon.getDate()/7);
+    return `${mon.getFullYear()}년 ${mon.getMonth()+1}월 ${wk}주 · ${pad(mon.getMonth()+1)}/${pad(mon.getDate())}~${pad(sun.getMonth()+1)}/${pad(sun.getDate())}`;
+  }
+  // monthly
+  const [y,mo] = t.split('-');
+  return `${y}년 ${parseInt(mo)}월`;
+}
+
+// ── 모드 / 날짜 전환 ───────────────────────────────────────────
+function switchMode(m) {
+  mode = m;
+  target = m === 'daily'   ? todayStr()    :
+           m === 'weekly'  ? mondayStr(todayStr()) :
+                             thisMonthStr();
+  updateModeUI();
+  loadStats();
+}
+
+function navigate(dir) {
+  if (mode === 'daily') {
+    const d = new Date(target); d.setDate(d.getDate()+dir);
+    target = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  } else if (mode === 'weekly') {
+    const d = new Date(target); d.setDate(d.getDate()+dir*7);
+    target = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  } else {
+    const [y,mo] = target.split('-').map(Number);
+    const d = new Date(y, mo-1+dir, 1);
+    target = `${d.getFullYear()}-${pad(d.getMonth()+1)}`;
+  }
+  document.getElementById('periodLabel').textContent = periodDisplay(mode, target);
+  loadStats();
+}
+
+function goToday() {
+  target = mode === 'daily'  ? todayStr()    :
+           mode === 'weekly' ? mondayStr(todayStr()) :
+                               thisMonthStr();
+  document.getElementById('periodLabel').textContent = periodDisplay(mode, target);
+  loadStats();
+}
+
+function updateModeUI() {
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+  const col = MODE_COLOR[mode];
+  document.documentElement.style.setProperty('--mc', col.mc);
+  document.getElementById('accentBar').style.background = col.grad;
+  document.getElementById('periodLabel').textContent = periodDisplay(mode, target);
+  document.getElementById('loadingTxt').textContent = '데이터 불러오는 중...';
+}
+
+// ── JSONP fetch ────────────────────────────────────────────────
+function fetchStats(m, t) {
+  return new Promise((resolve, reject) => {
+    const cb  = 'gasStats_' + Date.now();
+    const tag = document.createElement('script');
+    window[cb] = (data) => { resolve(data); delete window[cb]; tag.remove(); };
+    tag.src    = `${GAS_URL}?action=getStats&mode=${m}&target=${encodeURIComponent(t)}&callback=${cb}`;
+    tag.onerror = () => reject(new Error('네트워크 오류'));
+    document.head.appendChild(tag);
+    setTimeout(() => { reject(new Error('응답 시간 초과 (20s)')); }, 20000);
+  });
+}
+
+// ── 메인 로드 ──────────────────────────────────────────────────
+async function loadStats() {
+  show('loadingView'); hide('errorView'); hide('dashboard');
+  destroyCharts();
+  try {
+    const res = await fetchStats(mode, target);
+    if (!res.ok) throw new Error(res.error || '알 수 없는 오류');
+    renderDashboard(res);
+  } catch(e) {
+    document.getElementById('errorMsg').textContent = '오류: ' + e.message;
+    show('errorView'); hide('loadingView');
+  }
+}
+
+// ── 렌더 ───────────────────────────────────────────────────────
+function renderDashboard(d) {
+  _lastData = d;
+  const s   = d.summary;
+  const col = MODE_COLOR[mode];
+
+  document.getElementById('updatedAt').textContent = d.updatedAt + ' 기준';
+
+  // ① 카드
+  setText('c-count',      s.count);
+  setText('c-count-sub',  d.periodLabel);
+  setText('c-people',     s.people);
+  setText('c-people-sub', s.count ? `1건 평균 ${(s.people/s.count).toFixed(1)}명` : '');
+
+  if (d.hasPrices) {
+    const net = Math.round(s.revenue / 2);
+    document.getElementById('c-revenue').innerHTML =
+      wonFmt(s.revenue) +
+      `<span style="-webkit-text-fill-color:#4ade80;color:#4ade80;font-size:22px;font-weight:700;margin-left:10px">(${wonFmt(net)})</span>`;
+    document.getElementById('c-revenue-sub').innerHTML = s.count
+      ? `<span style="color:#fff">1건 평균 ${wonFmt(Math.round(s.revenue/s.count))}</span>`
+      : '';
+  } else {
+    document.getElementById('c-revenue').textContent = '—';
+    document.getElementById('c-revenue-sub').innerHTML =
+      '<span style="font-size:10px;color:var(--muted)">⚙ 예약 시트에 결제금액 컬럼 필요</span>';
+  }
+
+  setText('c-checkin',     s.checkinRate + '%');
+  setText('c-checkin-sub', `완료 ${d.checkin.done} / 미완료 ${d.checkin.pending}`);
+
+  // ② 바 차트 (시간대/요일/일별)
+  const barTitle = { daily:'⏰ 시간대별 예약', weekly:'📅 요일별 예약', monthly:'📆 일별 예약' };
+  setText('barChartTitle', barTitle[mode]);
+  setText('badge-bar', `합계 ${d.summary.count}건`);
+  charts.bar = makeBarChart('chart-bar', d.barChart.labels, d.barChart.data, col.mc);
+
+  // ③ 상품별
+  const prodE = sortedEntries(d.products);
+  setText('badge-prod', prodE.length + '종');
+  setText('prod-center', prodE.length);
+  charts.product = makeDonutChart('chart-product', prodE.map(e=>e[0]), prodE.map(e=>e[1]), PALETTE);
+  renderLegend('legend-product', prodE, PALETTE);
+
+  // ③ 유입경로
+  const SRC_LABEL = { N:'네이버', A:'현장', V:'무료' };
+  const srcE = sortedEntries(d.sources);
+  setText('badge-src', srcE.length + '경로');
+  charts.source = makeHBarChart('chart-source', srcE.map(e=>SRC_LABEL[e[0]]||e[0]), srcE.map(e=>e[1]));
+
+  // ④ 편집
+  setText('badge-edit', `${d.editStatus.done}/${d.editStatus.done+d.editStatus.pending}`);
+  setText('edit-pct',   s.editRate + '%');
+  charts.edit = makeRateDonut('chart-edit', s.editRate, '#5b9cf6');
+
+  // ④ 발송
+  setText('badge-deliv', `${d.delivery.done}/${d.delivery.done+d.delivery.pending}`);
+  setText('deliv-pct',   s.deliveryRate + '%');
+  charts.delivery = makeRateDonut('chart-delivery', s.deliveryRate, '#34d399');
+
+  // ④ SNS
+  setText('badge-sns', `${d.sns.yes}/${d.sns.yes+d.sns.no}`);
+  setText('sns-pct',   s.snsRate + '%');
+  charts.sns = makeRateDonut('chart-sns', s.snsRate, '#a78bfa');
+
+  // ⑤ 고객 현황 (전 모드 표시)
+  const custSec = document.getElementById('customer-section');
+  const showDate = (mode !== 'daily');
+  document.getElementById('th-date').style.display = showDate ? '' : 'none';
+  const titleMap = { daily:'👤 당일 고객 현황', weekly:'👤 주간 고객 현황', monthly:'👤 월간 고객 현황' };
+  setText('customer-section-title', titleMap[mode]);
+
+  if (d.customers && d.customers.length) {
+    custSec.style.display = 'block';
+    const list = d.customers.slice().sort((a,b)=> {
+      const da = (a.date||'') + (a.time||'');
+      const db = (b.date||'') + (b.time||'');
+      return da.localeCompare(db);
+    });
+    setText('badge-customers', (s.people || list.length) + '명');
+    const tbody = document.getElementById('customer-tbody');
+    tbody.innerHTML = list.map(c => {
+      if (c.cancelled) {
+        const dateCell = showDate ? `<td class="cl-time">${c.date||'—'}</td>` : '';
+        return `<tr style="opacity:0.45">
+          ${dateCell}
+          <td class="cl-time">${c.time||'—'}</td>
+          <td class="cl-name" style="text-decoration:line-through">${escHtml(c.name||'—')}</td>
+          <td class="cl-product">${escHtml(c.product||'—')}</td>
+          <td colspan="6"><span class="badge-pill" style="background:rgba(139,92,246,0.15);color:#a78bfa;border:1px solid rgba(139,92,246,0.4)">취소</span></td>
+          <td class="td-revenue"><span style="color:var(--muted)">—</span></td>
+          <td class="td-dk"><span style="color:var(--muted)">—</span></td>
+        </tr>`;
+      }
+      const isSent    = c.delivSt && c.delivSt.indexOf('발송완료') === 0;
+      const isEdit    = c.editSt  && c.editSt.indexOf('완료') !== -1;
+      const isClicked = !!(c.clickedAt);
+      const sentPill  = isSent
+        ? `<span class="badge-pill pill-sent">발송완료</span>`
+        : `<span class="badge-pill pill-unsent">미발송</span>`;
+      const editPill  = isEdit
+        ? `<span class="badge-pill pill-edit-ok">완료</span>`
+        : `<span class="badge-pill pill-edit-no">대기</span>`;
+      const resultBtn = c.resultUrl
+        ? `<a class="badge-pill pill-link" href="${c.resultUrl}" target="_blank">링크 ↗</a>`
+        : `<span style="color:var(--muted);font-size:11px">—</span>`;
+      const clickPill = isClicked
+        ? `<span class="badge-pill pill-sent" title="${escHtml(c.clickedAt)}">열람 ✓<div class="cl-sent-time" style="font-size:9px;margin-top:2px">${c.clickedAt.substring(5,16)}</div></span>`
+        : `<span class="badge-pill" style="background:rgba(255,255,255,0.06);color:var(--muted)">미확인</span>`;
+      const revCell = c.revenue > 0 ? `<span style="font-weight:700">${wonFmt(c.revenue)}</span>` : `<span style="color:var(--muted)">—</span>`;
+      const dkCell  = c.dk > 0     ? `<span style="color:#4ade80;font-weight:700">${wonFmt(c.dk)}</span>` : `<span style="color:var(--muted)">—</span>`;
+      const dateCell = showDate ? `<td class="cl-time">${c.date||'—'}</td>` : '';
+      return `<tr>
+        ${dateCell}
+        <td class="cl-time">${c.time||'—'}</td>
+        <td class="cl-name">${escHtml(c.name||'—')}</td>
+        <td class="cl-product">${escHtml(c.product||'—')}</td>
+        <td>${editPill}</td>
+        <td>${resultBtn}</td>
+        <td>${sentPill}</td>
+        <td class="cl-sent-time">${isSent && c.delivAt ? c.delivAt : '—'}</td>
+        <td>${clickPill}</td>
+        <td class="td-revenue">${revCell}</td>
+        <td class="td-dk">${dkCell}</td>
+      </tr>`;
+    }).join('');
+  } else {
+    custSec.style.display = 'none';
+  }
+
+  // ⑥ 리포트 툴바 (항상 표시)
+  document.getElementById('report-toolbar').classList.toggle('visible', true);
+
+  hide('loadingView'); show('dashboard');
+}
+
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── 차트 팩토리 ────────────────────────────────────────────────
+const BASE_OPT = {
+  responsive:true, maintainAspectRatio:false,
+  animation:{ duration:500 },
+  plugins:{ legend:{ display:false } }
+};
+
+function makeBarChart(id, labels, data, mc) {
+  const ctx  = getCtx(id);
+  const grad = ctx.createLinearGradient(0,0,0,170);
+  grad.addColorStop(0, mc + 'dd');
+  grad.addColorStop(1, mc + '44');
+  return new Chart(ctx, {
+    type:'bar',
+    data:{ labels, datasets:[{ data, backgroundColor:grad, borderRadius:5, borderSkipped:false }] },
+    options:{ ...BASE_OPT, scales:{ x:xScale(), y:yScale() } }
+  });
+}
+
+function makeDonutChart(id, labels, data, colors) {
+  return new Chart(getCtx(id), {
+    type:'doughnut',
+    data:{ labels, datasets:[{ data, backgroundColor:colors.slice(0,data.length), borderWidth:2, borderColor:'#111', hoverOffset:5 }] },
+    options:{ ...BASE_OPT, cutout:'67%',
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{
+        label:(ctx) => ` ${ctx.label}: ${ctx.raw}건 (${pct(ctx.raw, ctx.dataset.data.reduce((a,b)=>a+b,0))}%)`
+      }}}
+    }
+  });
+}
+
+function makeHBarChart(id, labels, data) {
+  const colors = labels.map((_,i) => PALETTE[i%PALETTE.length] + 'bb');
+  return new Chart(getCtx(id), {
+    type:'bar',
+    data:{ labels, datasets:[{ data, backgroundColor:colors, borderRadius:4, borderSkipped:false }] },
+    options:{ ...BASE_OPT, indexAxis:'y',
+      scales:{
+        x:{ grid:{ color:'rgba(255,255,255,0.05)' }, border:{ display:false }, ticks:{ color:'rgba(255,255,255,0.35)', font:{ size:11 } } },
+        y:{ grid:{ display:false }, border:{ display:false }, ticks:{ color:'rgba(255,255,255,0.6)', font:{ size:11 } } }
+      }
+    }
+  });
+}
+
+function makeRateDonut(id, rate, color) {
+  return new Chart(getCtx(id), {
+    type:'doughnut',
+    data:{ datasets:[{ data:[rate, 100-rate], backgroundColor:[color,'rgba(255,255,255,0.05)'], borderWidth:0 }] },
+    options:{ ...BASE_OPT, cutout:'72%', plugins:{ legend:{ display:false }, tooltip:{ enabled:false } } }
+  });
+}
+
+function xScale() {
+  return { grid:{ color:'rgba(255,255,255,0.05)' }, border:{ display:false }, ticks:{ color:'rgba(255,255,255,0.3)', font:{ size:10 }, maxRotation:0 } };
+}
+function yScale() {
+  return { grid:{ color:'rgba(255,255,255,0.05)' }, border:{ display:false }, ticks:{ color:'rgba(255,255,255,0.3)', font:{ size:10 } } };
+}
+
+// ── 레전드 ─────────────────────────────────────────────────────
+function renderLegend(id, entries, colors) {
+  const total = entries.reduce((a,e)=>a+e[1],0);
+  document.getElementById(id).innerHTML = entries.map(([k,v],i) =>
+    `<div class="legend-item">
+       <span class="legend-dot" style="background:${colors[i%colors.length]}"></span>
+       <span>${k} <span style="opacity:.45">${v}건</span></span>
+     </div>`
+  ).join('');
+}
+
+// ── 유틸 ───────────────────────────────────────────────────────
+function getCtx(id) { return document.getElementById(id).getContext('2d'); }
+function setText(id, v) { const el=document.getElementById(id); if(el) el.textContent=v; }
+function show(id) { document.getElementById(id).style.display=''; }
+function hide(id) { document.getElementById(id).style.display='none'; }
+function sortedEntries(obj) { return Object.entries(obj).sort((a,b)=>b[1]-a[1]); }
+function pct(v, t) { return t ? Math.round(v/t*100) : 0; }
+function wonFmt(n) { return '₩' + n.toLocaleString('ko-KR'); }
+function destroyCharts() { Object.values(charts).forEach(c=>c&&c.destroy()); charts={}; }
+
+function buildAnalyticsHtml(d) {
+  const s = d.summary;
+  const ACOLS = ['#5b9cf6','#a78bfa','#f59e0b','#34d399','#fb7185','#38bdf8','#fb923c','#a3e635'];
+
+  // ── 예약 분포 바차트 ──
+  const barMax = Math.max(...d.barChart.data, 1);
+  const barTitle = { daily:'⏰ 시간대별 예약', weekly:'📅 요일별 예약', monthly:'📆 일별 예약' }[mode];
+  const barHtml = d.barChart.labels.map((lbl, i) => {
+    const val = d.barChart.data[i] || 0;
+    const wpct = Math.round(val / barMax * 100);
+    return `<div class="rpt-brow">
+      <div class="rpt-blbl">${lbl}</div>
+      <div class="rpt-btrack"><div style="width:${wpct}%;height:100%;background:#5b9cf6;border-radius:3px"></div></div>
+      <div class="rpt-bval">${val}</div>
+    </div>`;
+  }).join('');
+
+  // ── 상품별 ──
+  const prodE = Object.entries(d.products).sort((a,b) => b[1]-a[1]);
+  const prodTotal = prodE.reduce((a,[,v]) => a+v, 0);
+  const prodHtml = prodE.map(([k,v], i) => {
+    const wpct = prodTotal ? Math.round(v/prodTotal*100) : 0;
+    const c = ACOLS[i % ACOLS.length];
+    return `<div class="rpt-hrow">
+      <div class="rpt-hlabel"><span class="rpt-hdot" style="background:${c}"></span>${escHtml(k)}</div>
+      <div class="rpt-hright">
+        <div class="rpt-htrack"><div class="rpt-hfill" style="width:${wpct}%;background:${c}"></div></div>
+        <span class="rpt-hpct">${v}건</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // ── 유입경로 ──
+  const _srcLabel = { N:'네이버', A:'현장', V:'무료' };
+  const srcE = Object.entries(d.sources).sort((a,b) => b[1]-a[1]);
+  const srcTotal = srcE.reduce((a,[,v]) => a+v, 0);
+  const srcHtml = srcE.map(([k,v], i) => {
+    const wpct = srcTotal ? Math.round(v/srcTotal*100) : 0;
+    const c = PALETTE[i % PALETTE.length];
+    return `<div class="rpt-hrow">
+      <div class="rpt-hlabel"><span class="rpt-hdot" style="background:${c}"></span>${escHtml(_srcLabel[k]||k)}</div>
+      <div class="rpt-hright">
+        <div class="rpt-htrack"><div class="rpt-hfill" style="width:${wpct}%;background:${c}"></div></div>
+        <span class="rpt-hpct">${v}건</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // ── 완료율 원형 ──
+  function rateRing(pct, color, label) {
+    const deg = Math.round(pct * 3.6);
+    return `<div class="rpt-rate-item">
+      <div class="rpt-rate-ring" style="background:conic-gradient(${color} ${deg}deg,rgba(255,255,255,0.07) 0deg)">
+        <div class="rpt-rate-core" style="color:${color}">${pct}%</div>
+      </div>
+      <div class="rpt-rate-lbl">${label}</div>
+    </div>`;
+  }
+
+  return `
+  <div class="rpt-analytics">
+    <div class="rpt-analytics-head">📊 통계 분석</div>
+    <div class="rpt-analytics-grid">
+      <div class="rpt-a-card">
+        <div class="rpt-a-title">${barTitle}</div>
+        <div class="rpt-bchart">${barHtml}</div>
+      </div>
+      <div>
+        <div class="rpt-a-card" style="margin-bottom:10px">
+          <div class="rpt-a-title">📦 상품별 예약</div>
+          ${prodHtml || '<span style="font-size:11px;color:var(--muted)">데이터 없음</span>'}
+        </div>
+        <div class="rpt-a-card">
+          <div class="rpt-a-title">📡 유입 경로</div>
+          ${srcHtml || '<span style="font-size:11px;color:var(--muted)">데이터 없음</span>'}
+        </div>
+      </div>
+    </div>
+    <div class="rpt-a-card" style="margin-top:10px">
+      <div class="rpt-a-title">완료율</div>
+      <div class="rpt-rates-row">
+        ${rateRing(s.editRate,     '#5b9cf6', '✏️ 편집 완료율')}
+        ${rateRing(s.deliveryRate, '#34d399', '📨 발송 완료율')}
+        ${rateRing(s.snsRate,      '#a78bfa', '📸 SNS 동의율')}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── 이메일 모달 ────────────────────────────────────────────────
+function _periodForMode() {
+  // 현재 모드 기준 기본 기간(from/to) 반환
+  if (mode === 'daily') {
+    return { from: target, to: target };
+  }
+  if (mode === 'weekly') {
+    const mon = new Date(target);
+    const sun = new Date(target); sun.setDate(sun.getDate() + 6);
+    return {
+      from: `${mon.getFullYear()}-${pad(mon.getMonth()+1)}-${pad(mon.getDate())}`,
+      to:   `${sun.getFullYear()}-${pad(sun.getMonth()+1)}-${pad(sun.getDate())}`
+    };
+  }
+  // monthly
+  const [y, mo] = target.split('-').map(Number);
+  const last = new Date(y, mo, 0).getDate();
+  return { from: `${y}-${pad(mo)}-01`, to: `${y}-${pad(mo)}-${pad(last)}` };
+}
+
+function openEmailModal() {
+  const p = _periodForMode();
+  document.getElementById('ef-from').value = p.from;
+  document.getElementById('ef-to').value   = p.to;
+  document.getElementById('send-status').textContent = '';
+  document.getElementById('send-btn').disabled = false;
+
+  // 기본값 이메일 불러오기(없으면 빈 1칸)
+  const saved = localStorage.getItem('rpt_emails');
+  const emails = saved ? JSON.parse(saved) : [''];
+  const wrap = document.getElementById('email-list-wrap');
+  wrap.innerHTML = '';
+  emails.forEach(e => _appendEmailRow(e));
+
+  document.getElementById('email-backdrop').classList.add('open');
+  document.getElementById('email-modal').style.display = 'block';
+}
+
+function closeEmailModal() {
+  document.getElementById('email-backdrop').classList.remove('open');
+  document.getElementById('email-modal').style.display = 'none';
+}
+
+function _appendEmailRow(val) {
+  const wrap = document.getElementById('email-list-wrap');
+  const row  = document.createElement('div');
+  row.className = 'email-input-row';
+  const inp = document.createElement('input');
+  inp.type  = 'email';
+  inp.placeholder = 'example@email.com';
+  inp.value = val || '';
+  const rmBtn = document.createElement('button');
+  rmBtn.className = 'email-remove';
+  rmBtn.textContent = '✕';
+  rmBtn.onclick = () => {
+    if (wrap.children.length > 1) row.remove();
+    else inp.value = '';
+  };
+  row.appendChild(inp);
+  row.appendChild(rmBtn);
+  wrap.appendChild(row);
+  inp.focus();
+}
+
+function addEmailInput() { _appendEmailRow(''); }
+
+function saveEmailDefaults() {
+  const inputs = document.querySelectorAll('#email-list-wrap input');
+  const emails = [...inputs].map(i => i.value.trim()).filter(Boolean);
+  localStorage.setItem('rpt_emails', JSON.stringify(emails));
+  document.getElementById('send-status').textContent = '기본값 저장됨';
+  setTimeout(() => { document.getElementById('send-status').textContent = ''; }, 1500);
+}
+
+function loadEmailDefaults() {
+  const saved = localStorage.getItem('rpt_emails');
+  if (!saved) { document.getElementById('send-status').textContent = '저장된 기본값 없음'; return; }
+  const emails = JSON.parse(saved);
+  const wrap = document.getElementById('email-list-wrap');
+  wrap.innerHTML = '';
+  emails.forEach(e => _appendEmailRow(e));
+}
+
+function doSendReport() {
+  const from    = document.getElementById('ef-from').value;
+  const to      = document.getElementById('ef-to').value;
+  const inputs  = document.querySelectorAll('#email-list-wrap input');
+  const emails  = [...inputs].map(i => i.value.trim()).filter(Boolean);
+  if (!from || !to)         { document.getElementById('send-status').textContent = '기간을 입력하세요.'; return; }
+  if (emails.length === 0)  { document.getElementById('send-status').textContent = '이메일을 입력하세요.'; return; }
+
+  const btn = document.getElementById('send-btn');
+  btn.disabled = true;
+  document.getElementById('send-status').textContent = '발송 중...';
+
+  const cb  = 'gasSend_' + Date.now();
+  const tag = document.createElement('script');
+  window[cb] = (res) => {
+    delete window[cb]; tag.remove();
+    if (res && res.ok) {
+      document.getElementById('send-status').textContent = '발송 완료!';
+      setTimeout(closeEmailModal, 1500);
+    } else {
+      document.getElementById('send-status').textContent = '오류: ' + (res && res.error ? res.error : '알 수 없는 오류');
+      btn.disabled = false;
+    }
+  };
+  tag.src    = `${GAS_URL}?action=sendMonthlyReport&dateFrom=${encodeURIComponent(from)}&dateTo=${encodeURIComponent(to)}&emails=${encodeURIComponent(emails.join(','))}&callback=${cb}`;
+  tag.onerror = () => {
+    delete window[cb]; tag.remove();
+    document.getElementById('send-status').textContent = '네트워크 오류';
+    btn.disabled = false;
+  };
+  document.head.appendChild(tag);
+  setTimeout(() => {
+    if (window[cb]) {
+      delete window[cb]; tag.remove();
+      document.getElementById('send-status').textContent = '응답 시간 초과';
+      btn.disabled = false;
+    }
+  }, 30000);
+}
+
+// ── 리포트 모달 ────────────────────────────────────────────────
+function openReportModal() {
+  const area = document.getElementById('report-print-area');
+  area.innerHTML = _lastData ? buildReportHtml(_lastData) : '<p style="padding:20px;color:var(--sub)">데이터 없음</p>';
+  document.getElementById('report-backdrop').classList.add('open');
+  document.getElementById('report-modal').style.display = 'block';
+}
+
+function closeReportModal() {
+  document.getElementById('report-backdrop').classList.remove('open');
+  document.getElementById('report-modal').style.display = 'none';
+}
+
+function buildReportHtml(d) {
+  const s = d.summary;
+  const p = _periodForMode();
+  const periodTxt = `${p.from} ~ ${p.to}`;
+  const modeLabel = { daily:'일간', weekly:'주간', monthly:'월간' }[mode];
+
+  const rows = (d.customers || []).slice().sort((a,b) => ((a.date||'')+(a.time||'')).localeCompare((b.date||'')+(b.time||'')));
+  const showDate = (mode !== 'daily');
+
+  const dateTh   = showDate ? `<th style="text-align:left;padding:8px 10px;border-bottom:1px solid #ddd;white-space:nowrap">날짜</th>` : '';
+  const rowsHtml = rows.map(c => {
+    const dateCell = showDate ? `<td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;white-space:nowrap">${c.date||'—'}</td>` : '';
+    const rev = c.revenue > 0 ? wonFmt(c.revenue) : '—';
+    const dk  = c.dk      > 0 ? wonFmt(c.dk)      : '—';
+    return `<tr>
+      ${dateCell}
+      <td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;white-space:nowrap">${c.time||'—'}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;font-weight:700">${escHtml(c.name||'—')}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;color:#555;font-size:11px">${escHtml(c.product||'—')}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;text-align:right;font-weight:700">${rev}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;text-align:right;font-weight:700;color:#16a34a">${dk}</td>
+    </tr>`;
+  }).join('');
+
+  const totalRev = rows.reduce((a,c) => a + (c.revenue||0), 0);
+  const totalDk  = rows.reduce((a,c) => a + (c.dk||0),      0);
+
+  return `
+  <div class="rpt-header-row">
+    <div>
+      <div class="rpt-title">DKsequence × 중문별장 매출 리포트</div>
+      <div class="rpt-period">${modeLabel} | ${periodTxt}</div>
+    </div>
+    <div class="rpt-meta">
+      <div>발송일: ${todayStr()}</div>
+      <div>발송처: DKsequence</div>
+    </div>
+  </div>
+  <div class="rpt-summary">
+    <div><div class="rpt-s-label">예약 건수</div><div class="rpt-s-val" style="color:#5b9cf6">${s.count}건</div></div>
+    <div><div class="rpt-s-label">총 인원</div><div class="rpt-s-val" style="color:#34d399">${s.people}명</div></div>
+    <div><div class="rpt-s-label">매출</div><div class="rpt-s-val" style="color:#f59e0b">${wonFmt(totalRev)}</div></div>
+    <div><div class="rpt-s-label">DK</div><div class="rpt-s-val" style="color:#4ade80">${wonFmt(totalDk)}</div></div>
+  </div>
+  <table class="rpt-table">
+    <thead>
+      <tr>
+        ${dateTh}
+        <th style="text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap">시간</th>
+        <th style="text-align:left;padding:8px 10px;border-bottom:1px solid var(--border)">이름</th>
+        <th style="text-align:left;padding:8px 10px;border-bottom:1px solid var(--border)">상품</th>
+        <th style="text-align:right;padding:8px 10px;border-bottom:1px solid var(--border)">매출</th>
+        <th style="text-align:right;padding:8px 10px;border-bottom:1px solid var(--border);color:#4ade80">DK</th>
+      </tr>
+    </thead>
+    <tbody>${rowsHtml}</tbody>
+  </table>
+  ${buildAnalyticsHtml(d)}`;
+}
+
+// ── 초기화 ─────────────────────────────────────────────────────
+updateModeUI();
+loadStats();
+</script>
+</body>
+</html>

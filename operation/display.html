@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<title>DKsequence 스케줄</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:#060d1a;
+    color:#fff;
+    font-family:'Noto Sans KR','Apple SD Gothic Neo',sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* ── 헤더 ── */
+  .header{
+    padding:28px 24px 16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    border-bottom:1px solid rgba(255,255,255,.07);
+  }
+  .brand{font-size:18px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:.1em;}
+  .clock{text-align:right;}
+  .clock-time{font-size:48px;font-weight:700;color:#fff;letter-spacing:-.02em;line-height:1;}
+  .clock-date{font-size:16px;color:rgba(255,255,255,.4);margin-top:4px;}
+
+  /* ── 슬롯 목록 ── */
+  .list{flex:1;padding:16px 18px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;}
+
+  /* ── 슬롯 카드 ── */
+  .slot{
+    border-radius:16px;
+    padding:20px 22px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    border:1px solid rgba(255,255,255,.06);
+  }
+  .slot.past{background:rgba(255,255,255,.03);opacity:.45;}
+  .slot.normal{background:#0e1f3a;}
+  .slot.soon{
+    background:#1a1400;
+    border-color:rgba(251,191,36,.3);
+    animation:pulse-border 2s ease-in-out infinite;
+  }
+  .slot.urgent{
+    background:#1a0a00;
+    border-color:rgba(251,113,36,.6);
+    animation:pulse-border 1s ease-in-out infinite;
+  }
+  .slot.confirmed{background:#051a10;border-color:rgba(74,222,128,.25);}
+
+  @keyframes pulse-border{
+    0%,100%{box-shadow:0 0 0 0 rgba(251,191,36,0);}
+    50%{box-shadow:0 0 0 6px rgba(251,191,36,.12);}
+  }
+
+  /* 슬롯 헤더 행 */
+  .slot-head{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .slot-time{font-size:40px;font-weight:800;color:#fff;letter-spacing:-.02em;line-height:1;}
+  .slot-time.past{color:rgba(255,255,255,.3);}
+
+  /* 상태 뱃지 */
+  .badge{font-size:15px;font-weight:700;padding:6px 16px;border-radius:2rem;white-space:nowrap;}
+  .badge-confirmed{background:rgba(74,222,128,.15);color:#4ade80;border:1px solid rgba(74,222,128,.4);}
+  .badge-urgent{background:rgba(251,113,36,.15);color:#fb7224;border:1px solid rgba(251,113,36,.5);}
+  .badge-soon{background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.35);}
+  .badge-wait{background:rgba(255,255,255,.07);color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.1);}
+  .badge-past{background:transparent;color:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.08);}
+
+  /* 고객 행 */
+  .slot-customers{display:flex;flex-direction:column;gap:4px;margin-top:2px;}
+  .customer-row{font-size:19px;color:rgba(255,255,255,.75);}
+  .customer-row .cname{font-weight:700;color:#fff;}
+  .customer-row .cmeta{color:rgba(255,255,255,.45);font-size:16px;margin-left:6px;}
+
+  /* 확인 시각 */
+  .confirmed-at{font-size:15px;color:#4ade80;margin-top:2px;}
+  .unconfirmed-hint{font-size:14px;color:rgba(251,191,36,.7);margin-top:2px;}
+
+  /* ── 푸터 ── */
+  .footer{
+    padding:14px 24px;
+    text-align:center;
+    font-size:13px;
+    color:rgba(255,255,255,.2);
+    border-top:1px solid rgba(255,255,255,.05);
+  }
+
+  /* ── 빈 상태 ── */
+  .empty{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:12px;color:rgba(255,255,255,.2);
+  }
+  .empty-icon{font-size:56px;}
+  .empty-text{font-size:20px;}
+
+  /* ── 에러 ── */
+  .error-bar{
+    margin:12px 18px;padding:12px 16px;border-radius:10px;
+    background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);
+    color:#f87171;font-size:14px;text-align:center;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">DKSEQUENCE</div>
+  <div class="clock">
+    <div class="clock-time" id="clock-time">--:--</div>
+    <div class="clock-date" id="clock-date"></div>
+  </div>
+</div>
+
+<div id="error-bar" class="error-bar" style="display:none;"></div>
+
+<div class="list" id="slot-list">
+  <div class="empty">
+    <div class="empty-icon">📅</div>
+    <div class="empty-text">불러오는 중...</div>
+  </div>
+</div>
+
+<div class="footer" id="footer">마지막 갱신 --:--</div>
+
+<script>
+var GAS_URL = 'https://script.google.com/macros/s/AKfycby85mMvihHsSClT73x4rECt3DG4_sH_oNWJqifVclmfauh2eqsVUPgrTdzMaF6LJFMqcw/exec';
+var DAY_NAMES = ['일','월','화','수','목','금','토'];
+
+// ── 시계 ──────────────────────────────────────────────────
+function updateClock() {
+  var now = new Date();
+  var h = String(now.getHours()).padStart(2,'0');
+  var m = String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('clock-time').textContent = h + ':' + m;
+
+  var y = now.getFullYear();
+  var mo = String(now.getMonth()+1).padStart(2,'0');
+  var d = String(now.getDate()).padStart(2,'0');
+  var day = DAY_NAMES[now.getDay()];
+  document.getElementById('clock-date').textContent = y + '.' + mo + '.' + d + ' (' + day + ')';
+}
+
+// ── 날짜 문자열 ─────────────────────────────────────────────
+function getToday() {
+  var now = new Date();
+  return '' + now.getFullYear()
+    + String(now.getMonth()+1).padStart(2,'0')
+    + String(now.getDate()).padStart(2,'0');
+}
+
+// ── 스케줄 렌더링 ─────────────────────────────────────────
+function renderSchedule(data) {
+  var list = document.getElementById('slot-list');
+  var now = new Date();
+
+  if (!data.items || data.items.length === 0) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">🎉</div><div class="empty-text">오늘 예약 없음</div></div>';
+    return;
+  }
+
+  list.innerHTML = data.items.map(function(slot) {
+    var diffMin = slot.diffMin;
+    var isConfirmed = !!slot.confirmedAt;
+    var isPast = diffMin < -60;        // 1시간 이상 지난 슬롯
+    var isUrgent = !isConfirmed && diffMin >= 0 && diffMin <= 15;   // 15분 이내 미확인
+    var isSoon   = !isConfirmed && diffMin > 15 && diffMin <= 30;   // 16~30분 이내 미확인
+
+    // 카드 클래스
+    var cardCls = 'slot';
+    if (isPast)        cardCls += ' past';
+    else if (isConfirmed) cardCls += ' confirmed';
+    else if (isUrgent) cardCls += ' urgent';
+    else if (isSoon)   cardCls += ' soon';
+    else               cardCls += ' normal';
+
+    // 뱃지
+    var badge = '';
+    if (isPast) {
+      badge = '<span class="badge badge-past">완료</span>';
+    } else if (isConfirmed) {
+      badge = '<span class="badge badge-confirmed">✅ 확인완료</span>';
+    } else if (isUrgent) {
+      badge = '<span class="badge badge-urgent">⚠️ ' + diffMin + '분 후</span>';
+    } else if (isSoon) {
+      badge = '<span class="badge badge-soon">🔔 ' + diffMin + '분 후</span>';
+    } else {
+      var label = diffMin >= 0 ? (diffMin + '분 후') : (Math.abs(diffMin) + '분 전');
+      badge = '<span class="badge badge-wait">' + label + '</span>';
+    }
+
+    // 고객 목록
+    var custHtml = (slot.customers || []).map(function(c) {
+      return '<div class="customer-row"><span class="cname">' + (c.name || '?') + '</span>'
+        + '<span class="cmeta">' + (c.product || '') + (c.people ? ' · ' + c.people + '인' : '') + '</span></div>';
+    }).join('');
+
+    // 확인 정보
+    var confirmHtml = '';
+    if (isConfirmed) {
+      var ct = slot.confirmedAt.substring(11, 16);
+      confirmHtml = '<div class="confirmed-at">작가 확인 ' + ct + '</div>';
+    } else if (!isPast && (isUrgent || isSoon)) {
+      confirmHtml = '<div class="unconfirmed-hint">캘린더에서 확인 링크를 눌러주세요</div>';
+    }
+
+    return '<div class="' + cardCls + '">'
+      + '<div class="slot-head">'
+      + '<div class="slot-time' + (isPast ? ' past' : '') + '">' + slot.time + '</div>'
+      + badge
+      + '</div>'
+      + '<div class="slot-customers">' + custHtml + '</div>'
+      + confirmHtml
+      + '</div>';
+  }).join('');
+}
+
+// ── GAS 조회 ─────────────────────────────────────────────
+var lastHash = '';
+function fetchSchedule() {
+  var today = getToday();
+  var url = GAS_URL + '?action=getScheduleStatus&date=' + today
+    + '&callback=onSchedule&_=' + Date.now();
+
+  var s = document.createElement('script');
+  s.src = url;
+  s.onerror = function() {
+    document.getElementById('error-bar').style.display = 'block';
+    document.getElementById('error-bar').textContent = '네트워크 오류 — 재시도 중...';
+  };
+  document.head.appendChild(s);
+  setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 10000);
+}
+
+window.onSchedule = function(data) {
+  document.getElementById('error-bar').style.display = 'none';
+  if (data && data.ok) {
+    renderSchedule(data);
+    var now = new Date();
+    document.getElementById('footer').textContent =
+      '마지막 갱신 ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
+  } else {
+    document.getElementById('error-bar').style.display = 'block';
+    document.getElementById('error-bar').textContent = '오류: ' + (data && data.error ? data.error : '알 수 없음');
+  }
+};
+
+// ── 초기화 ──────────────────────────────────────────────
+updateClock();
+setInterval(updateClock, 1000);   // 시계 1초 갱신
+fetchSchedule();
+setInterval(fetchSchedule, 60000); // 스케줄 1분 갱신
+</script>
+</body>
+</html>
