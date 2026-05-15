@@ -523,7 +523,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
     <div style="background:var(--surface-low);border-radius:1rem;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;">
       <div>
         <div style="font-size:16px;font-weight:500;color:var(--primary);font-family:monospace;letter-spacing:.04em;" id="new-code">로딩 중...</div>
-        <div style="font-size:11px;color:var(--on-surface-dim);margin-top:3px;">날짜-W순번 형식</div>
+        <div style="font-size:11px;color:var(--on-surface-dim);margin-top:3px;">날짜-R순번 형식</div>
       </div>
       <button onclick="regenWalkInCode()" style="font-size:12px;color:var(--on-surface-dim);cursor:pointer;padding:7px 14px;border-radius:2rem;border:1px solid var(--outline);background:transparent;font-family:'Inter',sans-serif;">다음 번호</button>
     </div>
@@ -655,10 +655,13 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 <script>
 // ── 상태 ──────────────────────────────────────────────
 // 앱스 스크립트 백엔드 URL
-var GAS_URL = 'https://script.google.com/macros/s/AKfycbxnCnebOE_yY2duvsUua4EM1GihVqUUGICvl-gzQd3X5jIZGaYKdyc8P6byI3XokeXCNA/exec';
+var GAS_URL = 'https://script.google.com/macros/s/AKfycby85mMvihHsSClT73x4rECt3DG4_sH_oNWJqifVclmfauh2eqsVUPgrTdzMaF6LJFMqcw/exec';
 var CUR = {};
 var STREAM = null;
 var FACING = 'environment'; // 후면 카메라 기본
+var CAMERA_URL = 'https://dksequence.github.io/operation/camera.html';
+var CAMERA_POPUP = null;
+var CAMERA_WAITING = false;
 var TIMES = ['13:00','14:00','15:00','16:00','17:00'];
 var SELECTED_TIME = '14:00';
 var isSubmitting = false;
@@ -666,6 +669,17 @@ var isSubmitting = false;
 var FULL_DATA = null;
 var LAST_DATA_HASH = "";
 var NEXT_WALKIN_CODE = null; // 신규고객 체크인 완료 후 미리 가져온 다음 일련번호 캐시
+
+window.addEventListener('message', function(e) {
+  if (!e.data || e.data.type !== 'PHOTO_TAKEN') return;
+  if (!CAMERA_WAITING) return;
+  CAMERA_WAITING = false;
+  CAMERA_POPUP = null;
+  CUR.base64 = e.data.base64;
+  if (e.data.filename) CUR.filename = e.data.filename;
+  stopCamera();
+  startSaving();
+});
 
 function refresh() { refreshData(); }
 
@@ -1051,31 +1065,46 @@ function refreshCameraPreview() {
 }
 
 function userStartCamera() {
+  CUR.filename = getToday() + '_' + CUR.resno + '_' + CUR.realname + '.jpg';
+  CAMERA_WAITING = true;
+  CAMERA_POPUP = window.open(
+    CAMERA_URL + '?v=' + Date.now(),
+    'dksequence_camera',
+    'width=980,height=1400,menubar=no,toolbar=no,location=no,status=no,scrollbars=no,resizable=yes'
+  );
+
+  if (!CAMERA_POPUP) {
+    CAMERA_WAITING = false;
+    showToast('팝업이 차단되었습니다. Safari 팝업 허용 후 다시 눌러주세요.');
+    var blockedStatus = document.getElementById('cam-status');
+    if (blockedStatus) blockedStatus.textContent = '팝업 차단';
+    return;
+  }
+
   playSound('EFFECT005'); // 카메라 활성화 사운드
-  
-  // Hide overlay and show shutter (Inline mode)
-  var overlay = document.getElementById('cam-start-overlay');
-  var shutter = document.getElementById('shutter-wrap');
-  var btnFlip = document.getElementById('btn-flip');
-  var btnRefresh = document.getElementById('btn-refresh');
-  
-  if (overlay) overlay.style.display = 'none';
-  if (shutter) shutter.style.display = 'block';
-  if (btnFlip) btnFlip.style.display = 'block';
-  if (btnRefresh) btnRefresh.style.display = 'block';
-  
   var status = document.getElementById('cam-status');
-  if (status) status.textContent = '카메라 켜는 중';
-  
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: FACING }, audio: false })
-  .then(function(stream) {
-    attachCameraStream(stream);
-    if (status) status.textContent = '준비 완료';
-  })
-  .catch(function(err) { 
-    showToast(err.name + ': ' + err.message); 
-    if (status) status.textContent = '오류 발생';
-  });
+  if (status) status.textContent = '촬영 팝업 여는 중';
+
+  var payload = {
+    type: 'INIT_CAMERA',
+    time: CUR.time || '',
+    resno: CUR.resno || '',
+    realname: CUR.realname || '',
+    product: CUR.product || '',
+    people: CUR.people || '',
+    filename: CUR.filename
+  };
+  var tries = 0;
+  var initTimer = setInterval(function() {
+    tries++;
+    if (!CAMERA_POPUP || CAMERA_POPUP.closed || !CAMERA_WAITING || tries > 30) {
+      clearInterval(initTimer);
+      return;
+    }
+    CAMERA_POPUP.postMessage(payload, '*');
+  }, 300);
+
+  if (status) status.textContent = '팝업에서 촬영 진행';
 }
 
 function startCamera() {
@@ -1083,6 +1112,7 @@ function startCamera() {
 }
 
 function stopCamera() {
+  CAMERA_WAITING = false;
   if (ANIMATION_ID) {
     cancelAnimationFrame(ANIMATION_ID);
     ANIMATION_ID = null;
@@ -1171,6 +1201,7 @@ function startSaving() {
       privacyConsent: CUR.privacyConsent,
       snsConsent:     CUR.snsConsent,
       memo:           CUR.memo,
+      source:         CUR.source || 'A',
       isNew:          CUR.isNew || false,
       folderId:       CUR.folderId,
       fileUrl:        CUR.fileUrl,
@@ -1269,7 +1300,7 @@ function regenWalkInCode() {
     var el = document.getElementById('new-code');
     if (!el) return;
     if (err || !res.ok) {
-      // API 실패 시 W1 하드코딩 대신 재시도 (최대 3회)
+      // API 실패 시 R 코드가 확정될 때까지 재시도 (최대 3회)
       var retryCount = (regenWalkInCode._retry || 0) + 1;
       regenWalkInCode._retry = retryCount;
       if (retryCount <= 3) {
@@ -1319,6 +1350,7 @@ function goNewCamera() {
     memo           : document.getElementById('new-memo').value.trim(),
     privacyConsent : privacyOn,
     snsConsent     : document.getElementById('toggle-sns2').classList.contains('on'),
+    source         : CURRENT_ADD_TYPE,
     isNew          : true,
   };
 
@@ -1526,9 +1558,15 @@ function showNewScreen(type) {
   playSound('EFFECT004'); // 신규/체험 고객 추가 버튼음
   CURRENT_ADD_TYPE = type;
   show('s-new');
-  var title = document.querySelector('#s-new .section-label');
-  if (type === 'V') title.textContent = '체험 고객 추가 (TRIAL/TEST)';
-  else title.textContent = '신규 고객 추가 (WALK-IN)';
+  var title = document.querySelector('#s-new .topbar-title');
+  var sub = document.querySelector('#s-new .topbar-sub');
+  if (type === 'V') {
+    if (title) title.textContent = '체험 고객 추가';
+    if (sub) sub.textContent = 'TRIAL / TEST';
+  } else {
+    if (title) title.textContent = '신규 고객 추가';
+    if (sub) sub.textContent = '현장 결제';
+  }
 }
 
 // ── 체크인 API 래퍼 ───────────────────────────────────────────

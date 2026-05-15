@@ -12,7 +12,7 @@ var MASTER_SHEET_NAME = '통합마스터로그';
 var ROOT_FOLDER_ID = '1MJlGEFWKN4ipSQp5e-cEmPSFJ7gyGvMN';
 var CALENDAR_ID = 'b80af7602c3b8adf0a6f46b7befc29a0d87c0fce22bf3d826982a470cfa8449c@group.calendar.google.com';
 var DELIVERY_FROM_EMAIL = 'dkseq4@gmail.com';
-var GAS_EXEC_URL = 'https://script.google.com/macros/s/AKfycbzJhFhrORZVILdIIHA_9vY5eoaML7iNzKBnD_3RqyRvu88BTCvdAifJOzBik8Y1e5CEfw/exec';
+var GAS_EXEC_URL = 'https://script.google.com/macros/s/AKfycby85mMvihHsSClT73x4rECt3DG4_sH_oNWJqifVclmfauh2eqsVUPgrTdzMaF6LJFMqcw/exec';
 var CLICK_LOG_SHEET = '링크클릭로그';
 
 // ── 필드 정의 (순서 고정) ──────────────────────────────────────
@@ -107,6 +107,10 @@ function processRequest(jsonString) {
       return getHubData();
     } else if (action === 'setHubData') {
       return setHubData(req.data);
+    } else if (action === 'cancelCheckin') {
+      return cancelCheckin(req.resno, req.cancel);
+    } else if (action === 'deleteCheckin') {
+      return deleteCheckin(req.resno);
     } else {
       return { ok: false, error: 'Unknown action: ' + action };
     }
@@ -198,6 +202,7 @@ function getReservations(dateStr, timeReq) {
         combined[resno].privacyConsent = String(row[17] || '').trim();
         combined[resno].snsConsent     = String(row[18] || '').trim();
         combined[resno].type           = String(row[19] || '').trim();
+        combined[resno].cancelled      = (String(row[13] || '').trim() === '취소');
 
         // 중요: 마스터 시트에 시간이 비어있다면 네이버에서 가져온 원래 시간을 보존함
         var masterTime = "";
@@ -232,6 +237,7 @@ function getReservations(dateStr, timeReq) {
           privacyConsent: String(row[17] || '').trim(),
           snsConsent:     String(row[18] || '').trim(),
           type:           String(row[19] || '').trim(),
+          cancelled:      (String(row[13] || '').trim() === '취소'),
         };
       }
 
@@ -301,15 +307,13 @@ function checkUpdate(dateStr, lastHash) {
   }
 }
 
-
-
 // ── 워크인 코드 생성 ────────────────────────────────────────
 function getWalkInCode(dateStr) {
   try {
     var masterSS = SpreadsheetApp.openById(MASTER_SS_ID);
     var masterSheet = masterSS.getSheetByName(MASTER_SHEET_NAME);
     if (!masterSheet) {
-      return { ok: true, code: dateStr + '-W1' };
+      return { ok: true, code: dateStr + '-R1' };
     }
 
     var data = masterSheet.getDataRange().getValues();
@@ -317,16 +321,60 @@ function getWalkInCode(dateStr) {
     var pattern = dateStr.replace(/[^0-9]/g, '') ;
     for (var i = 1; i < data.length; i++) {
       var resno = String(data[i][2] || ''); // reservation_no는 Col C (index 2)
-      var wPattern = pattern + '-W';
-      if (resno.indexOf(wPattern) === 0) {
-        var num = parseInt(resno.replace(wPattern, ''));
+      var rPattern = pattern + '-R';
+      if (resno.indexOf(rPattern) === 0) {
+        var num = parseInt(resno.replace(rPattern, ''));
         if (!isNaN(num) && num > maxNum) maxNum = num;
       }
     }
 
-    return { ok: true, code: pattern + '-W' + (maxNum + 1) };
+    return { ok: true, code: pattern + '-R' + (maxNum + 1) };
   } catch (err) {
     return { ok: false, error: err.toString() };
+  }
+}
+
+// ── 체크인 취소 처리 ──────────────────────────────────────────
+function cancelCheckin(resno, cancel) {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+  try {
+    var ss = SpreadsheetApp.openById(MASTER_SS_ID);
+    var sheet = ss.getSheetByName(MASTER_SHEET_NAME);
+    if (!sheet) return { ok: false, error: 'Master sheet not found' };
+    
+    var rowIndex = findRowInMasterByResno(sheet, resno);
+    if (rowIndex === -1) return { ok: false, error: 'Row not found in Master' };
+    
+    sheet.getRange(rowIndex, 14).setValue(cancel ? '취소' : '미완료'); // edit_status (Column N)
+    
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err.toString() };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+// ── 체크인 삭제 처리 ──────────────────────────────────────────
+function deleteCheckin(resno) {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(15000);
+  try {
+    var ss = SpreadsheetApp.openById(MASTER_SS_ID);
+    var sheet = ss.getSheetByName(MASTER_SHEET_NAME);
+    if (!sheet) return { ok: false, error: 'Master sheet not found' };
+    
+    var rowIndex = findRowInMasterByResno(sheet, resno);
+    if (rowIndex === -1) return { ok: false, error: 'Row not found in Master' };
+    
+    sheet.deleteRow(rowIndex);
+    
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err.toString() };
+  } finally {
+    lock.releaseLock();
   }
 }
 
@@ -349,7 +397,7 @@ function checkin(req) {
       var data = sheet2.getDataRange().getValues();
       var maxNum = 0;
       var collision = false;
-      var pattern = req.date + '-W'; // e.g. 20260412-W
+      var pattern = req.date + '-R'; // e.g. 20260412-R
       
       for (var i = 1; i < data.length; i++) {
         var existing = String(data[i][3] || '');
@@ -885,7 +933,6 @@ function buildDeliveryEmailHtml(name, product, people, date, resultUrl, trackUrl
     return '안녕하세요 ' + name + ' 님, 촬영 결과물 링크입니다: ' + resultUrl;
   }
 }
-
 
 // ════════════════════════════════════════════════════════════
 // 통합 마스터 시스템: 데이터 마이그레이션 및 초기화
