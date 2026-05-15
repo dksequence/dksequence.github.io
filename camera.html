@@ -30,16 +30,19 @@ body{display:flex;flex-direction:column;height:100vh;}
 }
 video{
   position:absolute;
-  width:1px;
-  height:1px;
+  top:0; left:0;
+  width:100%; height:100%;
+  object-fit:cover;
   opacity:1;
-  pointer-events:none;
+  z-index:-1;
 }
 #previewCanvas{
   width:100%;
   height:100%;
   object-fit:cover;
   display:block;
+  position:relative;
+  z-index:1;
 }
 #video-wrap::before{
   content:'카메라 프리뷰 준비 중';
