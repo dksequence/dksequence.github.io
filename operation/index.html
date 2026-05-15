@@ -1346,7 +1346,9 @@ function userStartCameraPopup() {
     realname: CUR.realname || '',
     product: CUR.product || '',
     people: CUR.people || '',
-    filename: CUR.filename
+    filename: CUR.filename,
+    gasUrl: GAS_URL,
+    date: getToday()
   };
   
   var tries = 0;
@@ -1362,17 +1364,36 @@ function userStartCameraPopup() {
   if (status) status.textContent = '팝업에서 촬영 진행';
 }
 
-// 팝업으로부터 사진 데이터를 받는 리스너
+// 팝업으로부터 메시지 수신
 window.addEventListener('message', function(e) {
-  if (e.data && e.data.type === 'PHOTO_TAKEN') {
-    CUR.base64 = e.data.base64;
-    CUR.filename = e.data.filename;
-    
-    if (CAMERA_POPUP) CAMERA_POPUP.close();
-    CAMERA_WAITING = false;
-    
-    // 저장 프로세스 시작
+  if (!e.data) return;
+
+  if (e.data.type === 'PHOTO_SAVED') {
+    // 현행: 촬영 팝업이 드라이브 업로드까지 완료하고 결과만 전달
+    if (CAMERA_POPUP) { try { CAMERA_POPUP.close(); } catch (_e) {} }
+    CAMERA_WAITING    = false;
+    CUR.filename      = e.data.filename || CUR.filename;
+    CUR.folderId      = e.data.folderId;
+    CUR.fileUrl       = e.data.fileUrl;
+    CUR.rowNum        = null;
+    CUR.photoUploaded = true;
     startSaving();
+
+  } else if (e.data.type === 'PHOTO_TAKEN') {
+    // 폴백(구버전/캐시 팝업): base64만 전달 → 부모가 업로드
+    CUR.base64        = e.data.base64;
+    CUR.filename      = e.data.filename;
+    CUR.photoUploaded = false;
+    if (CAMERA_POPUP) { try { CAMERA_POPUP.close(); } catch (_e) {} }
+    CAMERA_WAITING = false;
+    startSaving();
+
+  } else if (e.data.type === 'PHOTO_ERROR') {
+    // 팝업 업로드 실패 → 체크인 화면으로 복귀 후 재촬영 유도
+    if (CAMERA_POPUP) { try { CAMERA_POPUP.close(); } catch (_e) {} }
+    CAMERA_WAITING = false;
+    showToast('사진 저장 실패: ' + (e.data.error || '알 수 없는 오류') + ' — 다시 촬영해주세요');
+    show('s-checkin');
   }
 });
 
@@ -1449,7 +1470,14 @@ function startSaving() {
   resetSteps();
   show('s-saving');
 
-  // Step 1: 사진 → 드라이브
+  if (CUR.photoUploaded) {
+    // 사진은 촬영 팝업에서 드라이브 업로드까지 완료됨 — Step 1 생략
+    setStep(1, 'ok', CUR.filename);
+    doSheetStep();
+    return;
+  }
+
+  // Step 1: 사진 → 드라이브 (google.script.run / 구버전 팝업 폴백 경로)
   setStep(1, 'loading', '구글 드라이브 업로드 중...');
   postPhoto(CUR.base64, CUR.filename, function(err, photoRes) {
     if (err || !photoRes.ok) {
@@ -1462,7 +1490,11 @@ function startSaving() {
     CUR.fileUrl  = photoRes.fileUrl;
     CUR.rowNum   = null;
     setStep(1, 'ok', CUR.filename);
+    doSheetStep();
+  });
+}
 
+function doSheetStep() {
     // Step 2: 체크인 데이터 → 시트
     setStep(2, 'loading', '스프레드시트 기록 중...');
     callApi({
@@ -1507,7 +1539,6 @@ function startSaving() {
         setTimeout(showDone, 400);
       }, 500);
     });
-  });
 }
 
 function resetSteps() {

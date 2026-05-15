@@ -80,6 +80,32 @@ video{
 }
 #btn-shutter span.ko{font-size:26px;font-weight:800;display:block;}
 #btn-shutter span.en{font-size:17px;font-weight:500;opacity:.85;display:block;margin-top:2px;}
+
+@keyframes sv-spin{to{transform:rotate(360deg);}}
+#saving-overlay{
+  display:none;position:fixed;inset:0;z-index:50;
+  background:#0a0a18;
+  flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:40px;
+}
+#sv-icon{font-size:64px;line-height:1;margin-bottom:18px;}
+#sv-spinner{
+  width:72px;height:72px;border:7px solid rgba(171,199,255,.18);
+  border-top:7px solid #abc7ff;border-radius:50%;
+  animation:sv-spin .8s linear infinite;margin-bottom:28px;
+}
+#sv-text{
+  font-size:30px;font-weight:700;color:#fff;
+  white-space:pre-line;line-height:1.4;letter-spacing:-0.01em;
+}
+#sv-sub{font-size:16px;color:rgba(171,199,255,.55);margin-top:14px;letter-spacing:.05em;}
+#sv-actions{display:none;margin-top:34px;gap:14px;flex-direction:column;width:100%;max-width:420px;}
+#sv-actions button{
+  width:100%;padding:20px;border-radius:1rem;border:none;cursor:pointer;
+  font-size:20px;font-weight:700;
+}
+#sv-retry{background:linear-gradient(135deg,#abc7ff,#0071e3);color:#fff;}
+#sv-close{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.25);}
 </style>
 </head>
 <body>
@@ -111,10 +137,23 @@ video{
   <span class="en">TAKE PHOTO</span>
 </button>
 
+<div id="saving-overlay">
+  <div id="sv-icon"></div>
+  <div id="sv-spinner"></div>
+  <div id="sv-text">사진을 저장하고 있습니다…
+잠시만 기다려 주세요</div>
+  <div id="sv-sub">SAVING TO DRIVE · 창을 닫지 마세요</div>
+  <div id="sv-actions">
+    <button id="sv-retry" onclick="retryUpload()">다시 시도</button>
+    <button id="sv-close" onclick="closeWithError()">닫고 다시 촬영</button>
+  </div>
+</div>
+
 <script>
 var STREAM = null;
 var FACING = 'environment';
 var DATA = {};
+var LAST_BASE64 = null;
 
 function setCameraReady(isReady) {
   document.getElementById('video-wrap').classList.toggle('camera-ready', !!isReady);
@@ -213,7 +252,7 @@ function shoot() {
   var vh = video.videoHeight || 960;
   var MAX_WIDTH = 1280;
   var MAX_HEIGHT = 960;
-  
+
   if (vw > MAX_WIDTH) { vh = Math.floor(vh * (MAX_WIDTH / vw)); vw = MAX_WIDTH; }
   if (vh > MAX_HEIGHT) { vw = Math.floor(vw * (MAX_HEIGHT / vh)); vh = MAX_HEIGHT; }
 
@@ -222,14 +261,97 @@ function shoot() {
   canvas.getContext('2d').drawImage(video, 0, 0, vw, vh);
   var base64 = canvas.toDataURL('image/jpeg', 0.6).split(',')[1];
 
-  if (window.opener) {
-    window.opener.postMessage({
-      type    : 'PHOTO_TAKEN',
-      base64  : base64,
-      filename: DATA.filename || 'photo.jpg'
-    }, '*');
-    window.close();
+  LAST_BASE64 = base64;
+  stopStream();           // 카메라 해제
+  uploadPhoto(base64);    // 팝업(전면 창)이 직접 드라이브 업로드 — 부모 흰 화면 방지
+}
+
+// 저장 상태 오버레이 표시
+function showSaving(state, msg) {
+  document.getElementById('nameboard').style.display    = 'none';
+  document.getElementById('video-wrap').style.display   = 'none';
+  document.getElementById('btn-start').style.display    = 'none';
+  document.getElementById('btn-shutter').style.display  = 'none';
+  var ov = document.getElementById('saving-overlay');
+  ov.style.display = 'flex';
+  document.getElementById('sv-text').textContent    = msg;
+  document.getElementById('sv-spinner').style.display = (state === 'loading') ? 'block' : 'none';
+  document.getElementById('sv-actions').style.display = (state === 'error')   ? 'flex'  : 'none';
+  document.getElementById('sv-icon').textContent =
+      state === 'done' ? '✅' : (state === 'error' ? '⚠️' : '');
+  document.getElementById('sv-sub').textContent =
+      state === 'error' ? 'UPLOAD FAILED'
+    : state === 'done'  ? 'SAVED'
+    : 'SAVING TO DRIVE · 창을 닫지 마세요';
+}
+
+// 팝업에서 직접 드라이브 업로드 (savePhotoPost)
+function uploadPhoto(base64) {
+  showSaving('loading', '사진을 저장하고 있습니다…\n잠시만 기다려 주세요');
+
+  var url = DATA.gasUrl;
+  if (!url) {
+    // gasUrl 미전달(구버전 부모) → 폴백: base64만 부모로 전달
+    if (window.opener) {
+      window.opener.postMessage({
+        type: 'PHOTO_TAKEN',
+        base64: base64,
+        filename: DATA.filename || 'photo.jpg'
+      }, '*');
+    }
+    try { window.close(); } catch (e) {}
+    return;
   }
+
+  fetch(url, {
+    method: 'POST',
+    redirect: 'follow',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({
+      action  : 'savePhotoPost',
+      filename: DATA.filename || 'photo.jpg',
+      mimeType: 'image/jpeg',
+      date    : DATA.date || '',
+      time    : DATA.time || '',
+      resno   : DATA.resno || '',
+      realName: DATA.realname || '',
+      base64  : base64
+    })
+  })
+  .then(function(r) { return r.text(); })
+  .then(function(text) {
+    var res;
+    try { res = JSON.parse(text); }
+    catch (e) { throw new Error('응답 파싱 오류'); }
+    if (!res || !res.ok) throw new Error((res && res.error) || '저장 실패');
+
+    showSaving('done', '저장 완료!');
+    if (window.opener) {
+      window.opener.postMessage({
+        type    : 'PHOTO_SAVED',
+        folderId: res.folderId,
+        fileUrl : res.fileUrl,
+        filename: DATA.filename || 'photo.jpg'
+      }, '*');
+    }
+    setTimeout(function() { try { window.close(); } catch (e) {} }, 600);
+  })
+  .catch(function(err) {
+    showSaving('error',
+      '저장 실패: ' + ((err && err.message) ? err.message : '네트워크 오류') +
+      '\n다시 시도하거나 닫고 재촬영하세요.');
+  });
+}
+
+function retryUpload() {
+  if (LAST_BASE64) uploadPhoto(LAST_BASE64);
+}
+
+function closeWithError() {
+  if (window.opener) {
+    window.opener.postMessage({ type: 'PHOTO_ERROR', error: '촬영 팝업 저장 실패' }, '*');
+  }
+  try { window.close(); } catch (e) {}
 }
 </script>
 </body>
