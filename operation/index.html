@@ -1348,7 +1348,32 @@ function userStartCameraPopup() {
     people: CUR.people || '',
     filename: CUR.filename,
     gasUrl: GAS_URL,
-    date: getToday()
+    date: getToday(),
+    shutterSound: (SFX['EFFECT006'] && SFX['EFFECT006'].src) || '',
+    // 팝업이 사진 업로드 + 시트 기록까지 한 창에서 처리 (부모 정지 회피)
+    checkin: {
+      action:         'checkin',
+      date:           getToday(),
+      time:           CUR.time,
+      resno:          CUR.resno,
+      maskedName:     CUR.maskedName || '',
+      realName:       CUR.realname,
+      product:        CUR.product,
+      people:         CUR.people,
+      email:          CUR.email,
+      phone:          CUR.phone,
+      email2:         CUR.email2 || '',
+      email3:         CUR.email3 || '',
+      deliveryTarget: CUR.deliveryTarget || '',
+      spVerified:     !!(DETAIL_CUR && DETAIL_CUR.spVerified),
+      privacyConsent: CUR.privacyConsent,
+      snsConsent:     CUR.snsConsent,
+      memo:           CUR.memo,
+      isNew:          CUR.isNew || false,
+      source:         CUR.source || 'A',
+      paymentMethod:  CUR.paymentMethod || '',
+      paymentAmount:  CUR.paymentAmount || 0
+    }
   };
   
   var tries = 0;
@@ -1367,6 +1392,19 @@ function userStartCameraPopup() {
 // 팝업으로부터 메시지 수신
 window.addEventListener('message', function(e) {
   if (!e.data) return;
+
+  if (e.data.type === 'PIPELINE_DONE') {
+    // 현행: 팝업이 사진 업로드 + 시트 기록까지 완료 — 부모는 완료화면만
+    if (CAMERA_POPUP) { try { CAMERA_POPUP.close(); } catch (_e) {} }
+    CAMERA_WAITING = false;
+    CUR.filename = e.data.filename || CUR.filename;
+    CUR.folderId = e.data.folderId;
+    CUR.fileUrl  = e.data.fileUrl;
+    playSound('EFFECT007'); // 저장 완료 성공음
+    FULL_DATA = null; _lsClear();
+    showDone();
+    return;
+  }
 
   if (e.data.type === 'PHOTO_SAVED') {
     // 현행: 촬영 팝업이 드라이브 업로드까지 완료하고 결과만 전달

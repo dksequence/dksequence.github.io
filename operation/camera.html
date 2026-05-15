@@ -154,6 +154,9 @@ var STREAM = null;
 var FACING = 'environment';
 var DATA = {};
 var LAST_BASE64 = null;
+var PHOTO_RESULT = null;     // savePhotoPost 결과 (folderId/fileUrl)
+var FAILED_PHASE = null;     // 'photo' | 'checkin' — 재시도 재개 지점
+var PIPELINE_STARTED = false;
 
 function setCameraReady(isReady) {
   document.getElementById('video-wrap').classList.toggle('camera-ready', !!isReady);
@@ -204,6 +207,7 @@ function refreshPreview() {
 
 window.addEventListener('message', function(e) {
   if (e.data && e.data.type === 'INIT_CAMERA') {
+    if (PIPELINE_STARTED) return;   // 저장 진행 중 재전송된 INIT 무시
     DATA = e.data;
     document.getElementById('nb-time').textContent    = DATA.time || '';
     document.getElementById('nb-resno').textContent   = DATA.resno || '';
@@ -261,9 +265,14 @@ function shoot() {
   canvas.getContext('2d').drawImage(video, 0, 0, vw, vh);
   var base64 = canvas.toDataURL('image/jpeg', 0.6).split(',')[1];
 
+  // 셔터음은 팝업(전면 창)에서 재생 — 부모는 정지 상태라 늦게 울림
+  if (DATA.shutterSound) {
+    try { var sfx = new Audio(DATA.shutterSound); sfx.play().catch(function(){}); } catch (e) {}
+  }
+
   LAST_BASE64 = base64;
   stopStream();           // 카메라 해제
-  uploadPhoto(base64);    // 팝업(전면 창)이 직접 드라이브 업로드 — 부모 흰 화면 방지
+  runPipeline(base64);    // 팝업이 사진 업로드 + 시트 기록까지 한 창에서 처리
 }
 
 // 저장 상태 오버레이 표시
@@ -285,13 +294,13 @@ function showSaving(state, msg) {
     : 'SAVING TO DRIVE · 창을 닫지 마세요';
 }
 
-// 팝업에서 직접 드라이브 업로드 (savePhotoPost)
-function uploadPhoto(base64) {
-  showSaving('loading', '사진을 저장하고 있습니다…\n잠시만 기다려 주세요');
+// ── 저장 파이프라인: 사진 업로드 → 시트 기록 (모두 전면 팝업에서) ──
+function runPipeline(base64) {
+  PIPELINE_STARTED = true;
 
-  var url = DATA.gasUrl;
-  if (!url) {
+  if (!DATA.gasUrl) {
     // gasUrl 미전달(구버전 부모) → 폴백: base64만 부모로 전달
+    showSaving('loading', '사진을 전송하고 있습니다…\n잠시만 기다려 주세요');
     if (window.opener) {
       window.opener.postMessage({
         type: 'PHOTO_TAKEN',
@@ -302,8 +311,15 @@ function uploadPhoto(base64) {
     try { window.close(); } catch (e) {}
     return;
   }
+  uploadPhase(base64);
+}
 
-  fetch(url, {
+// 1단계: 사진 → 드라이브 (savePhotoPost, 부모 postPhoto와 동일 포맷)
+function uploadPhase(base64) {
+  FAILED_PHASE = null;
+  showSaving('loading', '① 사진을 저장하고 있습니다…\n잠시만 기다려 주세요');
+
+  fetch(DATA.gasUrl, {
     method: 'POST',
     redirect: 'follow',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -322,29 +338,66 @@ function uploadPhoto(base64) {
   .then(function(text) {
     var res;
     try { res = JSON.parse(text); }
-    catch (e) { throw new Error('응답 파싱 오류'); }
-    if (!res || !res.ok) throw new Error((res && res.error) || '저장 실패');
+    catch (e) { throw new Error('사진 응답 파싱 오류'); }
+    if (!res || !res.ok) throw new Error((res && res.error) || '사진 저장 실패');
+    PHOTO_RESULT = { folderId: res.folderId, fileUrl: res.fileUrl };
+    checkinPhase();
+  })
+  .catch(function(err) {
+    FAILED_PHASE = 'photo';
+    showSaving('error',
+      '사진 저장 실패: ' + ((err && err.message) ? err.message : '네트워크 오류') +
+      '\n[다시 시도] 누르거나 닫고 재촬영하세요.');
+  });
+}
+
+// 2단계: 예약/체크인 정보 → 시트 (부모 callApi와 동일한 GET payload 방식)
+function checkinPhase() {
+  showSaving('loading', '② 예약정보를 기록하고 있습니다…\n잠시만 기다려 주세요');
+
+  var p = DATA.checkin || {};
+  var payload = {};
+  for (var k in p) { if (p.hasOwnProperty(k)) payload[k] = p[k]; }
+  payload.action   = 'checkin';
+  payload.folderId = PHOTO_RESULT ? PHOTO_RESULT.folderId : '';
+  payload.fileUrl  = PHOTO_RESULT ? PHOTO_RESULT.fileUrl  : '';
+
+  var url = DATA.gasUrl + '?action=checkin&payload=' +
+            encodeURIComponent(JSON.stringify(payload));
+
+  fetch(url, { redirect: 'follow' })
+  .then(function(r) { return r.text(); })
+  .then(function(text) {
+    var res;
+    try { res = JSON.parse(text); }
+    catch (e) { throw new Error('시트 응답 파싱 오류'); }
+    if (!res || !res.ok) throw new Error((res && res.error) || '시트 기록 실패');
 
     showSaving('done', '저장 완료!');
     if (window.opener) {
       window.opener.postMessage({
-        type    : 'PHOTO_SAVED',
-        folderId: res.folderId,
-        fileUrl : res.fileUrl,
+        type    : 'PIPELINE_DONE',
+        folderId: PHOTO_RESULT ? PHOTO_RESULT.folderId : '',
+        fileUrl : PHOTO_RESULT ? PHOTO_RESULT.fileUrl  : '',
         filename: DATA.filename || 'photo.jpg'
       }, '*');
     }
-    setTimeout(function() { try { window.close(); } catch (e) {} }, 600);
+    setTimeout(function() { try { window.close(); } catch (e) {} }, 700);
   })
   .catch(function(err) {
+    FAILED_PHASE = 'checkin';
     showSaving('error',
-      '저장 실패: ' + ((err && err.message) ? err.message : '네트워크 오류') +
-      '\n다시 시도하거나 닫고 재촬영하세요.');
+      '예약정보 기록 실패: ' + ((err && err.message) ? err.message : '네트워크 오류') +
+      '\n사진은 저장됨 · [다시 시도]를 눌러주세요.');
   });
 }
 
 function retryUpload() {
-  if (LAST_BASE64) uploadPhoto(LAST_BASE64);
+  if (FAILED_PHASE === 'checkin' && PHOTO_RESULT) {
+    checkinPhase();              // 사진은 이미 업로드됨 — 시트 기록만 재시도
+  } else if (LAST_BASE64) {
+    uploadPhase(LAST_BASE64);    // 처음부터(사진) 재시도
+  }
 }
 
 function closeWithError() {
