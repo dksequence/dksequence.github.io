@@ -33,6 +33,11 @@ video{
   height:100%;
   object-fit:cover;
   display:block;
+  transform:translateZ(0);
+  -webkit-backface-visibility:hidden;
+  backface-visibility:hidden;
+  opacity:.01;
+  transition:opacity 0.18s ease-in;
 }
 #btn-flip{
   position:absolute;top:12px;left:12px;
@@ -77,7 +82,7 @@ video{
 </div>
 
 <div id="video-wrap">
-  <video id="videoEl" autoplay playsinline muted></video>
+  <video id="videoEl" autoplay playsinline webkit-playsinline muted></video>
   <button id="btn-flip" onclick="flip()">전/후면 FLIP</button>
   <div id="cam-status">대기 중 WAITING</div>
 </div>
@@ -119,7 +124,21 @@ function startCam() {
   .then(function(stream) {
     STREAM = stream;
     var v = document.getElementById('videoEl');
+    v.setAttribute('playsinline', '');
+    v.setAttribute('webkit-playsinline', '');
     v.srcObject = stream;
+    
+    function reveal() {
+      v.style.display = 'none';
+      v.offsetHeight; // reflow
+      v.style.display = 'block';
+      v.style.opacity = '1';
+    }
+    
+    v.onloadedmetadata = reveal;
+    v.onloadeddata = reveal;
+    setTimeout(reveal, 450);
+    
     v.play();
     document.getElementById('cam-status').textContent = '준비 완료 READY';
   })
