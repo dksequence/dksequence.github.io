@@ -737,12 +737,26 @@ var GAS_URL = 'https://script.google.com/macros/s/AKfycby85mMvihHsSClT73x4rECt3D
 var CUR = {};
 var STREAM = null;
 var FACING = 'environment'; // 후면 카메라 기본
+var CAMERA_URL = 'https://dksequence.github.io/operation/camera.html';
+var CAMERA_POPUP = null;
+var CAMERA_WAITING = false;
 var TIMES = ['10:00','10:30','11:00','11:30','13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'];
 var SELECTED_TIME = '10:00';
 var isSubmitting = false;
 
 var FULL_DATA = null;
 var LAST_DATA_HASH = "";
+
+window.addEventListener('message', function(e) {
+  if (!e.data || e.data.type !== 'PHOTO_TAKEN') return;
+  if (!CAMERA_WAITING) return;
+  CAMERA_WAITING = false;
+  CAMERA_POPUP = null;
+  CUR.base64 = e.data.base64;
+  if (e.data.filename) CUR.filename = e.data.filename;
+  stopCamera();
+  startSaving();
+});
 
 // ── localStorage 캐시 유틸 ─────────────────────────────────
 var LS_VER = 'r2'; // 캐시 스키마 변경 시 올릴 것
@@ -1287,29 +1301,46 @@ function refreshCameraPreview() {
 }
 
 function userStartCamera() {
-  playSound('EFFECT005'); // 카메라 활성화 사운드
-  
-  // 팝업 없이 인라인 직접 실행
-  var overlay = document.getElementById('cam-start-overlay');
-  var shutter = document.getElementById('shutter-wrap');
-  var flipBtn = document.getElementById('btn-flip');
-  var refreshBtn = document.getElementById('btn-refresh');
-  
-  if (overlay) overlay.style.display = 'none';
-  if (shutter) shutter.style.display = 'block';
-  if (flipBtn) flipBtn.style.display = 'block';
-  if (refreshBtn) refreshBtn.style.display = 'block';
+  CUR.filename = getToday() + '_' + CUR.resno + '_' + CUR.realname + '.jpg';
+  CAMERA_WAITING = true;
+  CAMERA_POPUP = window.open(
+    CAMERA_URL + '?v=' + Date.now(),
+    'dksequence_camera',
+    'width=980,height=1400,menubar=no,toolbar=no,location=no,status=no,scrollbars=no,resizable=yes'
+  );
 
-  // 스트림 시작
-  stopCamera();
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: FACING }, audio: false })
-  .then(function(stream) {
-    attachCameraStream(stream);
-    document.getElementById('cam-status').textContent = '준비 완료';
-  })
-  .catch(function(err) { 
-    showToast('카메라 에러: ' + err.name); 
-  });
+  if (!CAMERA_POPUP) {
+    CAMERA_WAITING = false;
+    showToast('팝업이 차단되었습니다. Safari 팝업 허용 후 다시 눌러주세요.');
+    var blockedStatus = document.getElementById('cam-status');
+    if (blockedStatus) blockedStatus.textContent = '팝업 차단';
+    return;
+  }
+
+  playSound('EFFECT005'); // 카메라 활성화 사운드
+  var status = document.getElementById('cam-status');
+  if (status) status.textContent = '촬영 팝업 여는 중';
+
+  var payload = {
+    type: 'INIT_CAMERA',
+    time: CUR.time || '',
+    resno: CUR.resno || '',
+    realname: CUR.realname || '',
+    product: CUR.product || '',
+    people: CUR.people || '',
+    filename: CUR.filename
+  };
+  var tries = 0;
+  var initTimer = setInterval(function() {
+    tries++;
+    if (!CAMERA_POPUP || CAMERA_POPUP.closed || !CAMERA_WAITING || tries > 30) {
+      clearInterval(initTimer);
+      return;
+    }
+    CAMERA_POPUP.postMessage(payload, '*');
+  }, 300);
+
+  if (status) status.textContent = '팝업에서 촬영 진행';
 }
 
 function startCamera() {
@@ -1317,6 +1348,7 @@ function startCamera() {
 }
 
 function stopCamera() {
+  CAMERA_WAITING = false;
   if (STREAM) {
     STREAM.getTracks().forEach(function(t){ t.stop(); });
     STREAM = null;
