@@ -28,12 +28,6 @@ body{display:flex;flex-direction:column;height:100vh;}
   overflow:hidden;
   min-height:0;
 }
-video{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
 #btn-flip{
   position:absolute;top:12px;left:12px;
   padding:10px 18px;border-radius:2rem;
@@ -77,9 +71,10 @@ video{
 </div>
 
 <div id="video-wrap">
-  <video id="videoEl" autoplay playsinline muted></video>
-  <button id="btn-flip" onclick="flip()">전/후면 FLIP</button>
-  <div id="cam-status">대기 중 WAITING</div>
+  <video id="videoEl" autoplay playsinline muted style="position:absolute;width:1px;height:1px;opacity:1;pointer-events:none;z-index:-1;"></video>
+  <canvas id="previewCanvas" style="width:100%;height:100%;display:block;object-fit:cover;position:relative;z-index:1;"></canvas>
+  <button id="btn-flip" onclick="flip()" style="z-index:2;">전/후면 FLIP</button>
+  <div id="cam-status" style="z-index:2;">대기 중 WAITING</div>
 </div>
 
 <canvas id="canvasEl" style="display:none;"></canvas>
@@ -98,6 +93,7 @@ video{
 var STREAM = null;
 var FACING = 'environment';
 var DATA = {};
+var ANIMATION_ID = null;
 
 window.addEventListener('message', function(e) {
   if (e.data && e.data.type === 'INIT_CAMERA') {
@@ -108,6 +104,20 @@ window.addEventListener('message', function(e) {
     document.getElementById('nb-product').textContent = (DATA.product||'') + ' · ' + (DATA.people||'') + '인';
   }
 });
+
+function drawFrame() {
+  var v = document.getElementById('videoEl');
+  var canvas = document.getElementById('previewCanvas');
+  if (!v || !canvas) return;
+  if (v.paused || v.ended) return;
+  var ctx = canvas.getContext('2d');
+  if (v.videoWidth && v.videoHeight) {
+    canvas.width = v.videoWidth;
+    canvas.height = v.videoHeight;
+    ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
+  }
+  ANIMATION_ID = requestAnimationFrame(drawFrame);
+}
 
 function startCam() {
   document.getElementById('btn-start').style.display   = 'none';
@@ -120,7 +130,12 @@ function startCam() {
     STREAM = stream;
     var v = document.getElementById('videoEl');
     v.srcObject = stream;
-    v.play();
+    v.onloadedmetadata = function() {
+      v.play().then(function() {
+        if (ANIMATION_ID) cancelAnimationFrame(ANIMATION_ID);
+        ANIMATION_ID = requestAnimationFrame(drawFrame);
+      }).catch(function(e){ console.warn('Play failed:', e); });
+    };
     document.getElementById('cam-status').textContent = '준비 완료 READY';
   })
   .catch(function(err) {
@@ -133,13 +148,18 @@ function startCam() {
 
 function flip() {
   FACING = FACING === 'environment' ? 'user' : 'environment';
+  if (ANIMATION_ID) { cancelAnimationFrame(ANIMATION_ID); ANIMATION_ID = null; }
   if (STREAM) { STREAM.getTracks().forEach(function(t){ t.stop(); }); STREAM = null; }
   navigator.mediaDevices.getUserMedia({ video:{ facingMode: FACING }, audio: false })
   .then(function(stream) {
     STREAM = stream;
     var v = document.getElementById('videoEl');
     v.srcObject = stream;
-    v.play();
+    v.onloadedmetadata = function() {
+      v.play().then(function() {
+        ANIMATION_ID = requestAnimationFrame(drawFrame);
+      }).catch(function(e){ console.warn('Play failed:', e); });
+    };
   });
 }
 

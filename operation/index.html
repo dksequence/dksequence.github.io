@@ -1310,21 +1310,71 @@ function userStartCamera() {
   if (flipBtn) flipBtn.style.display = 'block';
   if (refreshBtn) refreshBtn.style.display = 'block';
 
-  // 스트림 시작
-  stopCamera();
-  var status = document.getElementById('cam-status');
-  if (status) status.textContent = '카메라 켜는 중';
-  
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: FACING }, audio: false })
-  .then(function(stream) {
-    attachCameraStream(stream);
-    if (status) status.textContent = '준비 완료';
-  })
-  .catch(function(err) { 
-    showToast('카메라 에러: ' + err.name); 
-    if (status) status.textContent = '오류 발생';
-  });
+  // 팝업 열기
+  userStartCameraPopup();
 }
+
+var CAMERA_WAITING = false;
+var CAMERA_POPUP = null;
+
+function userStartCameraPopup() {
+  CUR.filename = getToday() + '_' + CUR.resno + '_' + CUR.realname + '.jpg';
+  CAMERA_WAITING = true;
+  var cameraUrl = 'camera.html';
+  CAMERA_POPUP = window.open(
+    cameraUrl + '?v=' + Date.now(),
+    'dksequence_camera',
+    'width=980,height=1400,menubar=no,toolbar=no,location=no,status=no,scrollbars=no,resizable=yes'
+  );
+
+  if (!CAMERA_POPUP) {
+    CAMERA_WAITING = false;
+    showToast('팝업이 차단되었습니다. Safari 팝업 허용 후 다시 눌러주세요.');
+    var status = document.getElementById('cam-status');
+    if (status) status.textContent = '팝업 차단';
+    return;
+  }
+
+  playSound('EFFECT005'); // 카메라 활성화 사운드
+  var status = document.getElementById('cam-status');
+  if (status) status.textContent = '촬영 팝업 여는 중';
+
+  var payload = {
+    type: 'INIT_CAMERA',
+    time: CUR.time || '',
+    resno: CUR.resno || '',
+    realname: CUR.realname || '',
+    product: CUR.product || '',
+    people: CUR.people || '',
+    filename: CUR.filename
+  };
+  
+  var tries = 0;
+  var initTimer = setInterval(function() {
+    tries++;
+    if (!CAMERA_POPUP || CAMERA_POPUP.closed || !CAMERA_WAITING || tries > 30) {
+      clearInterval(initTimer);
+      return;
+    }
+    CAMERA_POPUP.postMessage(payload, '*');
+  }, 300);
+
+  if (status) status.textContent = '팝업에서 촬영 진행';
+}
+
+// 팝업으로부터 사진 데이터를 받는 리스너
+window.addEventListener('message', function(e) {
+  if (e.data && e.data.type === 'PHOTO_TAKEN') {
+    CUR.base64 = e.data.base64;
+    CUR.filename = e.data.filename;
+    
+    if (CAMERA_POPUP) CAMERA_POPUP.close();
+    CAMERA_WAITING = false;
+    
+    // 저장 프로세스 시작
+    startSaving();
+  }
+});
 
 function startCamera() {
   userStartCamera();
