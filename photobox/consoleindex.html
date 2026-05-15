@@ -1,0 +1,4456 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1920, initial-scale=1" />
+  <title>DKphotobox Console - First Page Concept</title>
+  <style>
+    :root {
+      --bg: #10100f;
+      --panel: #1c1c1a;
+      --panel-2: #262522;
+      --panel-3: #34332f;
+      --line: #45423b;
+      --text: #eee8dc;
+      --muted: #9a9488;
+      --dim: #676159;
+      --orange: #f26b2b;
+      --orange-dark: #9c3e18;
+      --green: #5f8f61;
+      --yellow: #d2b34a;
+      --red: #be3f32;
+      --shadow: 0 22px 60px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08);
+      --inset: inset 0 4px 14px rgba(0,0,0,.55), inset 0 -1px 0 rgba(255,255,255,.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(255,255,255,.08), transparent 26%),
+        radial-gradient(circle at 75% 15%, rgba(242,107,43,.09), transparent 28%),
+        linear-gradient(145deg, #171615, #0b0b0a 60%, #191714);
+      color: var(--text);
+      font-family: Inter, "Noto Sans KR", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    .shell {
+      width: calc(100vw - 12px);
+      max-width: 1920px;
+      min-height: calc(100vh - 12px);
+      margin: 6px auto;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 24px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.055), transparent 18%),
+        linear-gradient(180deg, #20201e, #121211);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .topbar {
+      height: 76px;
+      display: grid;
+      grid-template-columns: 270px 1fr 280px;
+      align-items: center;
+      gap: 18px;
+      padding: 0 22px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: linear-gradient(180deg, rgba(255,255,255,.055), rgba(0,0,0,.08));
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 70% 25%, #f89956 0 5px, transparent 6px),
+        linear-gradient(145deg, #33312d, #121211);
+      box-shadow: var(--inset), 0 10px 22px rgba(0,0,0,.45);
+      border: 1px solid rgba(255,255,255,.09);
+    }
+
+    .brand-title {
+      font-size: 20px;
+      font-weight: 760;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .brand-sub {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .menubar {
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 5px;
+      border-radius: 18px;
+      background: #131312;
+      box-shadow: var(--inset);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .menu-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .menu-group.menu-left {
+      padding-right: 10px;
+      border-right: 1px solid rgba(255,255,255,.08);
+      margin-right: 6px;
+    }
+
+    .menu-item {
+      border: 0;
+      height: 34px;
+      padding: 0 16px;
+      border-radius: 12px;
+      color: var(--muted);
+      background: transparent;
+      font-size: 12px;
+      font-weight: 760;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    .menu-item:hover {
+      color: var(--text);
+    }
+
+    .menu-item.menu-external {
+      color: rgba(255, 224, 180, 0.82);
+    }
+
+    .menu-item.menu-external::after {
+      content: "↗";
+      margin-left: 6px;
+      font-size: 11px;
+      opacity: 0.7;
+    }
+
+    .menu-item.menu-external:hover {
+      color: #fff4e8;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .menu-item.active {
+      color: #fff4e8;
+      background: linear-gradient(180deg, #b84d22, #67250f);
+      box-shadow: 0 8px 18px rgba(242,107,43,.24), inset 0 1px 0 rgba(255,255,255,.22);
+    }
+
+    .system-status {
+      justify-self: end;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+    }
+
+    .clock {
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      font-weight: 700;
+    }
+
+    .led {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 12px rgba(95,143,97,.95), inset 0 1px 0 rgba(255,255,255,.45);
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 280px 1fr 330px;
+      min-height: calc(100vh - 116px);
+    }
+
+    .sidebar,
+    .inspector {
+      padding: 20px;
+      background: rgba(0,0,0,.16);
+    }
+
+    .sidebar {
+      border-right: 1px solid rgba(255,255,255,.07);
+    }
+
+    .inspector {
+      border-left: 1px solid rgba(255,255,255,.07);
+    }
+
+    .main {
+      padding: 20px;
+    }
+
+    .section-label {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .module-stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .module-button {
+      width: 100%;
+      min-height: 86px;
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 13px;
+      padding: 12px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.075);
+      color: var(--text);
+      background: linear-gradient(145deg, #2a2926, #171716);
+      box-shadow: 0 12px 24px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.08);
+      text-align: left;
+    }
+
+    .module-text {
+      min-width: 0;
+    }
+
+    .module-button.primary {
+      border-color: rgba(242,107,43,.6);
+      box-shadow: 0 14px 28px rgba(242,107,43,.15), inset 0 1px 0 rgba(255,255,255,.12);
+    }
+
+    .module-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, #77736b, #2c2b29);
+      box-shadow: var(--inset);
+    }
+
+    .module-button.primary .module-icon {
+      background: linear-gradient(145deg, #f27a34, #7e2c12);
+    }
+
+    .module-name {
+      font-size: 14px;
+      font-weight: 820;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    .module-desc {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .module-side {
+      align-self: stretch;
+      display: grid;
+      justify-items: end;
+      align-content: space-between;
+      gap: 10px;
+      min-width: 58px;
+    }
+
+    .module-count {
+      min-width: 34px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      color: var(--text);
+      background: #111;
+      box-shadow: var(--inset);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .module-signal {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+      min-height: 20px;
+      padding: 0 7px;
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(0,0,0,.32);
+      box-shadow: var(--inset);
+      font-size: 9px;
+      font-weight: 850;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .module-signal .mini-led {
+      width: 7px;
+      height: 7px;
+      flex: 0 0 auto;
+    }
+
+    .module-button,
+    .hardware-btn,
+    .chip,
+    .send-btn {
+      cursor: pointer;
+    }
+
+    .hero-panel {
+      position: relative;
+      min-height: 230px;
+      padding: 28px;
+      border-radius: 28px;
+      border: 1px solid rgba(255,255,255,.08);
+      background:
+        radial-gradient(circle at 87% 16%, rgba(242,107,43,.24), transparent 28%),
+        linear-gradient(145deg, #2b2a27, #151514);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-panel:after {
+      content: "";
+      position: absolute;
+      inset: auto 24px 20px;
+      height: 88px;
+      border-radius: 22px;
+      background:
+        repeating-linear-gradient(90deg, rgba(255,255,255,.08) 0 4px, transparent 4px 12px);
+      opacity: .16;
+      pointer-events: none;
+    }
+
+    .hero-kicker {
+      color: var(--orange);
+      font-size: 12px;
+      font-weight: 850;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    .hero-title {
+      margin: 12px 0 10px;
+      max-width: 720px;
+      font-size: 42px;
+      line-height: 1.08;
+      letter-spacing: -.01em;
+    }
+
+    .hero-copy {
+      max-width: 660px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .console-header {
+      display: grid;
+      grid-template-columns: 140px 1fr auto auto;
+      align-items: center;
+      gap: 24px;
+      min-height: 170px;
+      padding: 22px 30px;
+    }
+
+    .console-header-alarm {
+      padding: 12px 18px;
+      border-radius: 14px;
+      text-align: center;
+      min-width: 200px;
+      max-width: 280px;
+      transition: background .25s ease, border-color .25s ease, box-shadow .25s ease, color .25s ease;
+    }
+
+    .console-header-alarm.is-idle {
+      border: 1px solid rgba(255,255,255,0.12);
+      background: linear-gradient(145deg, rgba(255,255,255,0.04), rgba(0,0,0,0.18));
+      color: rgba(255,255,255,0.78);
+      box-shadow: inset 0 0 12px rgba(255,255,255,0.04);
+      animation: none;
+    }
+
+    .console-header-alarm.is-info {
+      border: 1px solid rgba(120,180,255,0.4);
+      background: linear-gradient(145deg, rgba(60,130,220,0.16), rgba(20,40,80,0.22));
+      color: #d6e6ff;
+      box-shadow: 0 0 16px rgba(60,130,220,0.18), inset 0 0 14px rgba(60,130,220,0.08);
+    }
+
+    .console-header-alarm.is-success {
+      border: 1px solid rgba(120,220,140,0.4);
+      background: linear-gradient(145deg, rgba(60,180,90,0.16), rgba(20,60,30,0.22));
+      color: #d6ffe0;
+      box-shadow: 0 0 16px rgba(60,180,90,0.18), inset 0 0 14px rgba(60,180,90,0.08);
+    }
+
+    .console-header-alarm.is-alarm {
+      border: 1px solid rgba(255,180,90,0.45);
+      background: linear-gradient(145deg, rgba(245,160,60,0.18), rgba(120,55,18,0.22));
+      color: #ffd9a3;
+      box-shadow: 0 0 18px rgba(245,160,60,0.18), inset 0 0 18px rgba(245,160,60,0.08);
+      animation: alarm-pulse 2.6s ease-in-out infinite;
+    }
+
+    .console-header-alarm.is-warning {
+      border: 1px solid rgba(255,210,80,0.5);
+      background: linear-gradient(145deg, rgba(245,200,60,0.18), rgba(110,80,18,0.22));
+      color: #ffeeae;
+      box-shadow: 0 0 16px rgba(245,200,60,0.22), inset 0 0 14px rgba(245,200,60,0.1);
+    }
+
+    .console-header-alarm.is-danger {
+      border: 1px solid rgba(255,110,90,0.55);
+      background: linear-gradient(145deg, rgba(220,80,60,0.2), rgba(100,30,20,0.25));
+      color: #ffd0c4;
+      box-shadow: 0 0 16px rgba(220,80,60,0.25), inset 0 0 14px rgba(220,80,60,0.1);
+      animation: alarm-pulse 2.2s ease-in-out infinite;
+    }
+
+    .alarm-headline {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      color: inherit;
+    }
+
+    .alarm-sub {
+      margin-top: 4px;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      opacity: 0.78;
+      text-transform: uppercase;
+    }
+
+    @keyframes alarm-pulse {
+      0%, 100% { filter: brightness(1); }
+      50%      { filter: brightness(1.18); }
+    }
+
+    .console-header:after {
+      inset: auto 24px 18px;
+      opacity: .12;
+    }
+
+    .console-header-photo {
+      width: 140px;
+      height: 140px;
+      border-radius: 18px;
+      background-color: rgba(255,255,255,0.04);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      -webkit-mask-image: radial-gradient(ellipse at 42% 50%, black 56%, transparent 100%);
+      mask-image: radial-gradient(ellipse at 42% 50%, black 56%, transparent 100%);
+      filter: brightness(0.95) contrast(1.04);
+    }
+
+    .console-header-photo:empty {
+      background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0 8px, transparent 8px 16px);
+    }
+
+    .console-header-body {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .console-header-kicker {
+      color: rgba(255,255,255,0.78);
+      font-size: 13px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .console-header-title {
+      margin: 6px 0 6px;
+      font-family: "Times New Roman", "Noto Serif KR", "Nanum Myeongjo", serif;
+      font-size: 36px;
+      line-height: 1.05;
+      letter-spacing: -.005em;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .console-header-tag {
+      margin: 0;
+      font-family: "Times New Roman", "Noto Serif KR", "Nanum Myeongjo", serif;
+      font-style: italic;
+      color: var(--orange);
+      font-size: 16px;
+      letter-spacing: 0.02em;
+    }
+
+    .console-header-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+    }
+
+    .console-header-version {
+      font-family: "Times New Roman", "Noto Serif KR", "Nanum Myeongjo", serif;
+      font-size: 18px;
+      letter-spacing: 0.04em;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .console-header-edit {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.04);
+      color: rgba(255,255,255,0.85);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .console-header-edit:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.34);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.62);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9000;
+      padding: 24px;
+    }
+
+    .modal-backdrop[hidden] {
+      display: none;
+    }
+
+    .modal-card {
+      background: linear-gradient(145deg, #2b2a27, #161614);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 18px;
+      width: min(520px, 100%);
+      max-height: 86vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .modal-title {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.92);
+      text-transform: uppercase;
+    }
+
+    .modal-close {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      font-size: 22px;
+      cursor: pointer;
+      padding: 0 4px;
+      line-height: 1;
+    }
+
+    .modal-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+    }
+
+    .modal-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .modal-field label {
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .modal-field input {
+      appearance: none;
+      background: rgba(0,0,0,0.32);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-family: inherit;
+    }
+
+    .modal-field input:focus {
+      outline: none;
+      border-color: rgba(242,107,43,0.6);
+    }
+
+    .modal-hint {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 14px 20px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .welcome-card {
+      width: min(440px, 100%);
+      background:
+        radial-gradient(circle at 80% 14%, rgba(242,107,43,0.22), transparent 40%),
+        linear-gradient(145deg, #2a2925, #131312);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .welcome-body {
+      padding: 28px 26px 18px;
+      text-align: center;
+    }
+
+    .welcome-kicker {
+      color: rgba(255,255,255,0.7);
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .welcome-title {
+      margin: 8px 0 6px;
+      font-family: "Times New Roman", "Noto Serif KR", "Nanum Myeongjo", serif;
+      font-size: 26px;
+      letter-spacing: -.005em;
+      color: var(--text);
+    }
+
+    .welcome-tag {
+      font-family: "Times New Roman", "Noto Serif KR", "Nanum Myeongjo", serif;
+      font-style: italic;
+      color: var(--orange);
+      font-size: 14px;
+      letter-spacing: 0.02em;
+    }
+
+    .welcome-hint {
+      margin-top: 16px;
+      color: rgba(255,255,255,0.6);
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .welcome-actions {
+      justify-content: center;
+      padding: 14px 20px 20px;
+      border-top: 0;
+    }
+
+
+    @media (max-width: 0px) {
+      .console-header {
+        grid-template-columns: 96px 1fr;
+        grid-auto-rows: auto;
+        gap: 14px;
+        padding: 18px 20px;
+      }
+      .console-header-meta {
+        grid-column: 1 / -1;
+        align-items: flex-start;
+        flex-direction: row;
+      }
+      .console-header-alarm {
+        grid-column: 1 / -1;
+        max-width: none;
+      }
+      .console-header-title {
+        font-size: 26px;
+      }
+      .console-header-photo {
+        width: 96px;
+        height: 96px;
+      }
+    }
+
+    .ops-board {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: linear-gradient(145deg, #24231f, #151514);
+      box-shadow: 0 14px 26px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.06);
+    }
+
+    .ops-line {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 14px;
+      align-items: center;
+      min-height: 34px;
+    }
+
+    .ops-label {
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 850;
+      letter-spacing: .05em;
+      white-space: nowrap;
+    }
+
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(76px, 1fr));
+      gap: 6px;
+    }
+
+    .slot-pair {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .slot,
+    .status-pill {
+      min-height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 9px;
+      color: #d8d0c4;
+      background: #111110;
+      box-shadow: var(--inset);
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .slot.has-booking {
+      color: #fff;
+      font-weight: 800;
+      border: 1px solid rgba(255,176,120,.85);
+      background: linear-gradient(145deg, #d35a26, #6a2710);
+      box-shadow: 0 0 14px rgba(242,107,43,.45), inset 0 1px 0 rgba(255,255,255,.12);
+    }
+
+    .slot.has-booking span,
+    .slot.has-booking strong {
+      color: #fff;
+    }
+
+    .slot.has-booking strong {
+      text-shadow: 0 0 8px rgba(255,210,170,.6);
+    }
+
+    .today-line .ops-label,
+    .today-line .slot,
+    .today-line .slot span,
+    .today-line .slot strong {
+      color: var(--orange);
+    }
+
+    .tomorrow-line {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 10px;
+      margin-top: 4px;
+    }
+
+    .tomorrow-line .ops-label,
+    .tomorrow-line .slot,
+    .tomorrow-line .slot span,
+    .tomorrow-line .slot strong {
+      color: rgba(255,255,255,0.92);
+    }
+
+    .today-line .slot.has-booking,
+    .today-line .slot.has-booking span,
+    .today-line .slot.has-booking strong,
+    .tomorrow-line .slot.has-booking,
+    .tomorrow-line .slot.has-booking span,
+    .tomorrow-line .slot.has-booking strong {
+      color: #fff;
+    }
+
+    .status-row {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(110px, 1fr));
+      gap: 6px;
+    }
+
+    .status-pill strong {
+      color: #fff4e8;
+      font-size: 14px;
+    }
+
+    .control-board {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    .deck {
+      padding: 20px;
+      border-radius: 26px;
+      border: 1px solid rgba(255,255,255,.08);
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.05), transparent 22%),
+        #1a1a18;
+      box-shadow: var(--shadow);
+    }
+
+    .module-stage {
+      display: none;
+      margin-top: 18px;
+      border-radius: 26px;
+      border: 1px solid rgba(255,255,255,.08);
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.045), transparent 24%),
+        #151514;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .module-stage.active {
+      display: block;
+    }
+
+    .stage-head {
+      min-height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255,255,255,.075);
+    }
+
+    .stage-title {
+      font-size: 13px;
+      font-weight: 850;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .stage-meta {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .stage-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .stage-btn {
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 11px;
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--text);
+      background: linear-gradient(180deg, #302e2a, #151514);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+      font-size: 11px;
+      font-weight: 760;
+      letter-spacing: .04em;
+      cursor: pointer;
+    }
+
+    .stage-btn.primary {
+      border-color: rgba(242,107,43,.5);
+      background: linear-gradient(180deg, #b84d22, #67250f);
+    }
+
+    .stage-frame {
+      width: 100%;
+      height: min(62vh, 620px);
+      min-height: 420px;
+      border: 0;
+      background: #0b0b0a;
+    }
+
+    body.stage-expanded .sidebar,
+    body.stage-expanded .inspector {
+      display: none;
+    }
+
+    body.stage-expanded .workspace {
+      grid-template-columns: 1fr;
+    }
+
+    body.stage-expanded .module-stage {
+      margin-top: 14px;
+    }
+
+    body.stage-expanded .stage-frame {
+      height: calc(100vh - 220px);
+      min-height: 620px;
+    }
+
+    .stage-btn.expanded-on {
+      background: linear-gradient(180deg, #b84d22, #67250f);
+      color: #fff;
+      border-color: rgba(255,255,255,0.25);
+    }
+
+    #photoactionLogs {
+      display: none;
+    }
+
+    .stage-empty {
+      padding: 28px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .result-list {
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+    }
+
+    .result-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      padding: 13px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.075);
+      background: linear-gradient(145deg, #22211e, #121211);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+    }
+
+    .result-title {
+      min-width: 0;
+      font-size: 14px;
+      font-weight: 850;
+      color: var(--text);
+      overflow-wrap: anywhere;
+    }
+
+    .result-meta {
+      min-width: 0;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .result-badge {
+      align-self: start;
+      padding: 5px 8px;
+      border-radius: 9px;
+      color: #fff4e8;
+      background: rgba(242,107,43,.16);
+      border: 1px solid rgba(242,107,43,.22);
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .result-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .notification-history {
+      display: grid;
+      gap: 8px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+
+    .notification-item {
+      padding: 10px 11px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(255,255,255,.035);
+    }
+
+    .notification-item strong {
+      display: block;
+      color: var(--text);
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .notification-item span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    .mini-action {
+      min-height: 28px;
+      padding: 0 9px;
+      border-radius: 9px;
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--text);
+      background: linear-gradient(180deg, #302e2a, #151514);
+      font-size: 11px;
+      font-weight: 760;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .mini-action.primary {
+      border-color: rgba(242,107,43,.42);
+      background: linear-gradient(180deg, #8c3819, #32170e);
+    }
+
+    .mini-action:disabled {
+      cursor: not-allowed;
+      opacity: .42;
+    }
+
+    .notice {
+      margin: 14px 14px 0;
+      padding: 12px 14px;
+      border-radius: 14px;
+      color: #eadac8;
+      background: rgba(210,179,74,.08);
+      border: 1px solid rgba(210,179,74,.22);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .notice strong {
+      color: #fff4e8;
+    }
+
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(116px, 1fr));
+      gap: 10px;
+    }
+
+    .hardware-btn {
+      min-height: 48px;
+      padding: 8px 10px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      color: var(--text);
+      background: linear-gradient(180deg, #3b3935, #171716);
+      box-shadow: 0 9px 16px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.16);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .hardware-btn.orange {
+      background: linear-gradient(180deg, #f47a33, #8a3214);
+      box-shadow: 0 14px 24px rgba(242,107,43,.2), inset 0 1px 0 rgba(255,255,255,.32);
+    }
+
+    .hardware-btn.green {
+      background: linear-gradient(180deg, #66986b, #2d4d30);
+    }
+
+    .tool-panel {
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+    }
+
+    .tool-panel-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .tool-card {
+      min-height: 112px;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.075);
+      color: var(--text);
+      background: linear-gradient(145deg, #24231f, #151514);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .tool-card strong {
+      display: block;
+      font-size: 13px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .tool-card span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .letter-form {
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.075);
+      background: linear-gradient(145deg, #22211e, #121211);
+    }
+
+    .letter-field {
+      display: grid;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .letter-field label,
+    .letter-task-label {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 820;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .letter-field input[type="text"],
+    .letter-field textarea,
+    .letter-select {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 10px;
+      padding: 8px 10px;
+      color: var(--text);
+      background: #111110;
+      box-shadow: var(--inset);
+      font: inherit;
+      font-size: 12px;
+    }
+
+    .letter-field input[type="text"],
+    .letter-select {
+      min-height: 36px;
+    }
+
+    .letter-action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 6px 0 14px;
+      border-bottom: 1px dashed rgba(255,255,255,.08);
+      margin-bottom: 14px;
+    }
+
+    .mini-action.accent-yellow {
+      background: linear-gradient(180deg, #f5c542, #b88a16);
+      border-color: rgba(255, 220, 110, 0.6);
+      color: #1c1303;
+      font-weight: 800;
+      box-shadow: 0 0 12px rgba(245, 197, 66, 0.28), inset 0 1px 0 rgba(255,255,255,0.25);
+    }
+
+    .mini-action.accent-yellow:hover {
+      background: linear-gradient(180deg, #ffd35a, #c89417);
+      color: #150d00;
+    }
+
+    .letter-row-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    .letter-tasks-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 16px;
+    }
+
+    @media (max-width: 0px) {
+      .letter-tasks-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .letter-task-card {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 12px;
+      background: rgba(255,255,255,.02);
+    }
+
+    .letter-task-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: stretch;
+    }
+
+    .letter-task-check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .letter-task-body {
+      display: grid;
+      gap: 6px;
+    }
+
+    .letter-field-row {
+      display: flex;
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .letter-field-row input[type="text"] {
+      flex: 1;
+    }
+
+    .letter-field-row .mini-action {
+      flex: 0 0 auto;
+    }
+
+    .letter-field textarea {
+      min-height: 72px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
+    .letter-row {
+      display: grid;
+      grid-template-columns: 132px minmax(130px, 180px) minmax(130px, 210px) minmax(0, 1fr);
+      gap: 10px;
+      align-items: end;
+    }
+
+    .letter-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 760;
+    }
+
+    .letter-run-summary {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .signal-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .signal {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 13px;
+      border-radius: 16px;
+      background: #111110;
+      box-shadow: var(--inset);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .signal-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .mini-led {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px rgba(95,143,97,.9);
+    }
+
+    .mini-led.yellow {
+      background: var(--yellow);
+      box-shadow: 0 0 10px rgba(210,179,74,.9);
+    }
+
+    .mini-led.red {
+      background: var(--red);
+      box-shadow: 0 0 10px rgba(190,63,50,.9);
+    }
+
+    .search-box {
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      border-radius: 18px;
+      background: #111110;
+      box-shadow: var(--inset);
+      color: var(--dim);
+      border: 1px solid rgba(255,255,255,.07);
+    }
+
+    .search-box input {
+      min-width: 0;
+      width: 100%;
+      border: 0;
+      outline: none;
+      color: var(--text);
+      background: transparent;
+      font: inherit;
+    }
+
+    .search-box input::placeholder {
+      color: var(--dim);
+    }
+
+    .kbd {
+      padding: 5px 8px;
+      border-radius: 8px;
+      background: #2a2926;
+      color: var(--muted);
+      font-size: 11px;
+      border: 1px solid rgba(255,255,255,.08);
+    }
+
+    .today-list {
+      margin-top: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .dev-panel {
+      margin-top: 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .dev-row {
+      padding: 12px;
+      border-radius: 16px;
+      background: linear-gradient(145deg, #24231f, #151514);
+      border: 1px solid rgba(255,255,255,.075);
+      min-width: 0;
+    }
+
+    .dev-message {
+      color: var(--text);
+      font-size: 12px;
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    .dev-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 9px;
+    }
+
+    .dev-actions button {
+      min-height: 26px;
+      padding: 0 8px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--muted);
+      background: #111110;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .job {
+      padding: 14px;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #24231f, #151514);
+      border: 1px solid rgba(255,255,255,.075);
+      min-width: 0;
+    }
+
+    .job-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 820;
+    }
+
+    .job-meta {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .metric {
+      min-width: 0;
+      padding: 8px;
+      border-radius: 10px;
+      color: var(--muted);
+      background: #111110;
+      box-shadow: var(--inset);
+      font-size: 10px;
+      font-weight: 780;
+      text-transform: uppercase;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 3px;
+      color: var(--text);
+      font-size: 14px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .meter {
+      height: 8px;
+      margin-top: 9px;
+      border-radius: 999px;
+      background: #111110;
+      box-shadow: var(--inset);
+      overflow: hidden;
+    }
+
+    .meter span {
+      display: block;
+      height: 100%;
+      width: var(--value, 0%);
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--orange), var(--yellow));
+    }
+
+    .preview-block {
+      max-height: 62vh;
+      overflow: auto;
+      margin: 0;
+      padding: 14px;
+      border-radius: 14px;
+      color: #eee8dc;
+      background: #0d0d0c;
+      border: 1px solid rgba(255,255,255,.08);
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .preview-line {
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    .preview-line mark {
+      color: #fff4e8;
+      background: rgba(242,107,43,.22);
+      border-radius: 4px;
+    }
+
+    .thumb-strip {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .drive-thumb,
+    .customer-thumb {
+      width: 72px;
+      height: 72px;
+      border-radius: 10px;
+      object-fit: cover;
+      background: #0b0b0a;
+      border: 1px solid rgba(255,255,255,.1);
+    }
+
+    .customer-thumb {
+      float: right;
+      margin-left: 10px;
+      width: 58px;
+      height: 58px;
+    }
+
+    .line-no {
+      color: var(--dim);
+      text-align: right;
+      user-select: none;
+    }
+
+    .prompt-note {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 20px;
+      background: rgba(242,107,43,.08);
+      border: 1px solid rgba(242,107,43,.18);
+      color: #d9c9b7;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .ai-console {
+      margin-top: 18px;
+      border-radius: 24px;
+      border: 1px solid rgba(242,107,43,.22);
+      background:
+        radial-gradient(circle at 85% 0%, rgba(242,107,43,.18), transparent 32%),
+        linear-gradient(145deg, #241811, #111110 72%);
+      box-shadow: 0 18px 34px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.08);
+      overflow: hidden;
+    }
+
+    .ai-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+
+    .ai-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: 850;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .ai-provider {
+      display: flex;
+      gap: 6px;
+      padding: 12px 14px 0;
+    }
+
+    .provider-pill {
+      height: 28px;
+      padding: 0 9px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--muted);
+      background: linear-gradient(180deg, #24221f, #121211);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+      font-size: 10px;
+      font-weight: 820;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+
+    .provider-pill.active {
+      color: #fff4e8;
+      border-color: rgba(242,107,43,.5);
+      background: linear-gradient(180deg, #8c3819, #32170e);
+      box-shadow: 0 8px 16px rgba(242,107,43,.15), inset 0 1px 0 rgba(255,255,255,.18);
+    }
+
+    .ai-orb {
+      width: 25px;
+      height: 25px;
+      border-radius: 9px;
+      background:
+        radial-gradient(circle at 70% 22%, #ffd4a5 0 3px, transparent 4px),
+        linear-gradient(145deg, #f26b2b, #6d2711);
+      box-shadow: 0 0 18px rgba(242,107,43,.35), var(--inset);
+    }
+
+    .ai-mode {
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .ai-body {
+      display: grid;
+      gap: 10px;
+      padding: 14px 14px 12px;
+    }
+
+    .bubble {
+      max-width: 92%;
+      padding: 11px 12px;
+      border-radius: 15px;
+      font-size: 12px;
+      line-height: 1.55;
+      color: #d8d0c4;
+      border: 1px solid rgba(255,255,255,.07);
+    }
+
+    .bubble.user {
+      justify-self: end;
+      color: #f4e9dc;
+      background: linear-gradient(145deg, #3b2b22, #1b1512);
+      border-color: rgba(242,107,43,.2);
+    }
+
+    .bubble.assistant {
+      justify-self: start;
+      background: #121211;
+      box-shadow: var(--inset);
+    }
+
+    .ai-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      padding: 0 14px 12px;
+    }
+
+    .chip {
+      height: 28px;
+      padding: 0 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.08);
+      color: var(--muted);
+      background: linear-gradient(180deg, #282621, #131312);
+      font-size: 11px;
+      font-weight: 720;
+      letter-spacing: .02em;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+    }
+
+    .ai-input {
+      display: grid;
+      grid-template-columns: 1fr 46px;
+      gap: 8px;
+      padding: 12px 14px 14px;
+      border-top: 1px solid rgba(255,255,255,.07);
+    }
+
+    .ai-input input {
+      min-width: 0;
+      height: 42px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      padding: 0 13px;
+      color: var(--text);
+      background: #0d0d0c;
+      box-shadow: var(--inset);
+      outline: none;
+    }
+
+    .ai-input input::placeholder {
+      color: var(--dim);
+    }
+
+    .send-btn {
+      height: 42px;
+      border: 0;
+      border-radius: 14px;
+      color: #fff7ef;
+      background: linear-gradient(180deg, #f26b2b, #8c3213);
+      box-shadow: 0 10px 20px rgba(242,107,43,.16), inset 0 1px 0 rgba(255,255,255,.25);
+      font-weight: 900;
+    }
+
+    @media (max-width: 0px) {
+      .shell {
+        width: 100%;
+        min-height: 100vh;
+        margin: 0;
+        border-radius: 0;
+      }
+      .topbar,
+      .workspace,
+      .control-board {
+        grid-template-columns: 1fr;
+      }
+      .topbar { height: auto; padding: 18px; }
+      .menubar {
+        justify-content: flex-start;
+        overflow-x: auto;
+      }
+      .system-status { justify-self: start; }
+      .ops-line,
+      .schedule-grid,
+      .status-row {
+        grid-template-columns: 1fr;
+      }
+      .main,
+      .sidebar,
+      .inspector {
+        padding: 14px;
+      }
+      .hero-title {
+        font-size: 30px;
+      }
+      .result-card {
+        grid-template-columns: 1fr;
+      }
+      .letter-row {
+        grid-template-columns: 1fr;
+      }
+      .tool-panel-grid {
+        grid-template-columns: 1fr;
+      }
+      .stage-head {
+        align-items: stretch;
+        flex-direction: column;
+      }
+      .stage-actions {
+        width: 100%;
+        flex-wrap: wrap;
+      }
+      .stage-btn {
+        flex: 1;
+      }
+      .sidebar,
+      .inspector { border: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div>
+          <div class="brand-title">DKphotobox</div>
+          <div class="brand-sub">Studio Control Console</div>
+        </div>
+      </div>
+
+      <nav class="menubar" id="primaryMenu" aria-label="Primary modules">
+        <div class="menu-group menu-left">
+          <a class="menu-item menu-external" href="https://dksequence.github.io" target="_blank" rel="noopener">DKsequence</a>
+          <a class="menu-item menu-external" href="https://dksequence.github.io/snapgallery/" target="_blank" rel="noopener">스냅 갤러리</a>
+        </div>
+        <div class="menu-group menu-right" id="primaryMenuRight">
+          <button class="menu-item active" data-home>Home</button>
+        </div>
+      </nav>
+
+      <div class="system-status">
+        <span class="led"></span>
+        <span id="systemStatusText">System Ready</span>
+        <span class="clock">17:42 KST</span>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <aside class="sidebar">
+        <p class="section-label">Module Deck</p>
+        <div class="module-stack" id="moduleStack">
+          <div class="job">
+            <div class="job-meta">모듈 정보를 불러오는 중입니다.</div>
+          </div>
+        </div>
+
+        <div class="prompt-note">
+          Design direction for Stitch: advanced studio automation inside an analog hardware frame.
+          Use tactile panels, physical buttons, knobs, LED status lights, warm graphite metal, rubber, burnt orange accents,
+          and clear professional workflow navigation.
+        </div>
+      </aside>
+
+      <main class="main">
+        <section class="ops-board" aria-label="Operation counters">
+          <div class="ops-line today-line">
+            <div class="ops-label" id="todayLabel">오늘 예약 -건</div>
+            <div class="schedule-grid" id="todaySlots"></div>
+          </div>
+          <div class="ops-line tomorrow-line">
+            <div class="ops-label" id="tomorrowLabel">내일 예약 -건</div>
+            <div class="schedule-grid" id="tomorrowSlots"></div>
+          </div>
+          <div class="ops-line">
+            <div class="ops-label">오늘 진행</div>
+            <div class="status-row">
+              <div class="status-pill"><span>오늘 예약</span><strong id="todayTotal">-</strong></div>
+              <div class="status-pill"><span>체크인 대기</span><strong id="checkinWait">-</strong></div>
+              <div class="status-pill"><span>체크인 완료</span><strong id="checkinDone">-</strong></div>
+              <div class="status-pill"><span>작업 대기</span><strong id="workWaiting">-</strong></div>
+              <div class="status-pill"><span>납품완료</span><strong id="deliveryDone">-</strong></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="hero-panel console-header" id="consoleHeader">
+          <div class="console-header-photo" id="consoleHeaderPhoto"></div>
+          <div class="console-header-body">
+            <div class="console-header-kicker" id="consoleHeaderLine1">DKsequence</div>
+            <h1 class="console-header-title" id="consoleHeaderLine2">PhotoBox Console System</h1>
+            <p class="console-header-tag" id="consoleHeaderLine3">small things can be changes everything</p>
+          </div>
+          <div class="console-header-alarm is-idle" id="consoleHeaderAlarm">
+            <div class="alarm-headline" id="consoleHeaderAlarmHeadline">PhotoBox 운영 중</div>
+            <div class="alarm-sub" id="consoleHeaderAlarmSub">READY</div>
+          </div>
+          <div class="console-header-meta">
+            <div class="console-header-version" id="consoleHeaderVersion">Version Tiger 1.01</div>
+            <button class="console-header-edit" id="consoleHeaderEditBtn" type="button">line</button>
+          </div>
+        </section>
+
+        <div class="modal-backdrop" id="welcomeModal">
+          <div class="modal-card welcome-card" role="dialog" aria-modal="true" aria-labelledby="welcomeModalTitle">
+            <div class="welcome-body">
+              <div class="welcome-kicker">DKsequence</div>
+              <div class="welcome-title" id="welcomeModalTitle">PhotoBox Console System</div>
+              <div class="welcome-tag">small things can be changes everything</div>
+              <div class="welcome-hint">환영합니다</div>
+            </div>
+            <div class="modal-actions welcome-actions">
+              <button class="mini-action primary" id="welcomeModalStart" type="button">확인 — 콘솔 시작</button>
+            </div>
+          </div>
+        </div>
+
+        <section class="tool-panel">
+          <div class="section-heading">
+            <span>Notification Log</span>
+            <strong>LIVE</strong>
+          </div>
+          <div class="notification-history" id="notificationHistory">
+            <div class="job-meta">최근 알림 없음</div>
+          </div>
+          <div class="result-actions">
+            <button class="mini-action" id="bookingSoundTest" type="button">예약 사운드 테스트</button>
+            <button class="mini-action" id="notificationClear" type="button">알림 정리</button>
+          </div>
+        </section>
+
+        <div class="modal-backdrop" id="consoleHeaderModal" hidden>
+          <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="consoleHeaderModalTitle">
+            <div class="modal-head">
+              <div class="modal-title" id="consoleHeaderModalTitle">콘솔 헤더 편집</div>
+              <button class="modal-close" id="consoleHeaderModalClose" type="button" aria-label="닫기">×</button>
+            </div>
+            <div class="modal-body">
+              <div class="modal-field">
+                <label for="consoleHeaderInput1">1번째 줄 (Kicker)</label>
+                <input id="consoleHeaderInput1" type="text" maxlength="120" />
+              </div>
+              <div class="modal-field">
+                <label for="consoleHeaderInput2">2번째 줄 (Title)</label>
+                <input id="consoleHeaderInput2" type="text" maxlength="120" />
+              </div>
+              <div class="modal-field">
+                <label for="consoleHeaderInput3">3번째 줄 (Tagline)</label>
+                <input id="consoleHeaderInput3" type="text" maxlength="160" />
+              </div>
+              <div class="modal-field">
+                <label for="consoleHeaderInputVersion">버전 표시</label>
+                <input id="consoleHeaderInputVersion" type="text" maxlength="60" />
+              </div>
+              <div class="modal-field">
+                <label for="consoleHeaderInputPhoto">사진 파일 경로 (절대 경로, 비워두면 placeholder)</label>
+                <input id="consoleHeaderInputPhoto" type="text" placeholder="예: E:/photos/profile.jpg" />
+                <button class="mini-action" id="consoleHeaderPhotoPick" type="button">사진 선택</button>
+                <div class="modal-hint">JPG/PNG 등 이미지 파일의 전체 경로를 입력하세요. 좌측 가장자리가 자연스럽게 페이드 처리됩니다.</div>
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button class="mini-action" id="consoleHeaderModalCancel" type="button">취소</button>
+              <button class="mini-action primary" id="consoleHeaderModalSave" type="button">확인</button>
+            </div>
+          </div>
+        </div>
+
+        <section class="module-stage" id="moduleStage" aria-label="Module workspace">
+          <div class="stage-head">
+            <div>
+              <div class="stage-title" id="stageTitle">Module</div>
+              <div class="stage-meta" id="stageMeta">모듈을 선택하면 이 영역에서 실행됩니다.</div>
+            </div>
+            <div class="stage-actions">
+              <button class="stage-btn" id="stageExpand" title="좌·우 패널을 접고 작업 영역을 넓힙니다">확장 보기</button>
+              <button class="stage-btn" id="stageOpenFolder">폴더 열기</button>
+              <button class="stage-btn primary" id="stageOpenNew">새 창으로 열기</button>
+              <button class="stage-btn" id="stageClose">닫기</button>
+            </div>
+          </div>
+          <div id="stageBody">
+            <div class="stage-empty">좌측 모듈 또는 Tool Box를 선택하세요.</div>
+          </div>
+        </section>
+
+        <section class="control-board">
+          <div class="deck">
+            <p class="section-label">Tool Box</p>
+            <div class="action-grid">
+              <button class="hardware-btn orange" data-module="runs">오늘 예약 열기</button>
+              <button class="hardware-btn" data-module="photoaction">PhotoAction 실행</button>
+              <button class="hardware-btn green" data-tool-action="photoaction-status">분류 상태 확인</button>
+              <button class="hardware-btn" data-module="letter">Letter 합성</button>
+              <button class="hardware-btn" data-photoaction-action="lightroom">RAW 패키지</button>
+              <button class="hardware-btn" data-module="report">Report</button>
+              <button class="hardware-btn" data-module="runs">납품 관리</button>
+              <button class="hardware-btn" data-ai-query="문서 로그 검색">문서 검색</button>
+              <button class="hardware-btn" data-tool-action="system-status">시스템 점검</button>
+              <button class="hardware-btn" data-tool-action="permission-status">권한 점검</button>
+              <button class="hardware-btn" data-tool-action="write-readiness">쓰기 준비</button>
+              <button class="hardware-btn" data-tool-action="work-summary">작업 요약</button>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <aside class="inspector">
+        <p class="section-label">Command Search</p>
+        <div class="search-box">
+          <input id="commandSearch" type="text" placeholder="명령, 고객, 폴더 검색" />
+          <span class="kbd">Ctrl K</span>
+        </div>
+
+        <div class="today-list">
+          <p class="section-label">Priority Queue</p>
+          <div id="priorityQueue"></div>
+        </div>
+
+        <div class="dev-panel">
+          <p class="section-label">PhotoAction Live</p>
+          <div id="photoactionLive">
+            <div class="job">
+              <div class="job-meta">PhotoAction 상태를 불러오는 중입니다.</div>
+            </div>
+          </div>
+          <div id="photoactionLogs"></div>
+        </div>
+
+        <div class="dev-panel">
+          <p class="section-label">Dev Requests</p>
+          <div class="result-actions">
+            <button class="mini-action" id="exportDevRequests">전달 패키지 생성</button>
+          </div>
+          <div id="devRequests">
+            <div class="job">
+              <div class="job-meta">개발팀 전달 항목이 여기에 표시됩니다.</div>
+            </div>
+          </div>
+        </div>
+
+        <section class="ai-console" aria-label="DKphotobox AI Front Desk">
+          <div class="ai-head">
+            <div class="ai-title"><span class="ai-orb"></span>AI 안내데스크</div>
+            <div class="ai-mode">RUNS MODE</div>
+          </div>
+          <div class="ai-provider" aria-label="AI front desk provider selector">
+            <button class="provider-pill active">Auto</button>
+            <button class="provider-pill">GPT</button>
+            <button class="provider-pill">Claude</button>
+            <button class="provider-pill">Codex</button>
+          </div>
+          <div class="ai-body">
+            <div class="bubble user">오늘 13시 고객 원본 분류 어디까지 됐어?</div>
+            <div class="bubble assistant">
+              13:00 신용 고객은 고객 카드 확인 완료. stand-by에는 JPG 31장, RAW 31장이 있고 아직 고객 매칭 전입니다.
+              PhotoAction 도구를 열어 첫 컷부터 마지막 컷까지 범위 선택하면 됩니다. 수정 요청은 개발팀 전달 항목으로 기록합니다.
+            </div>
+          </div>
+          <div class="ai-suggestions">
+            <button class="chip" data-ai-query="오늘 예약 요약해줘">오늘 예약 요약</button>
+            <button class="chip" data-ai-query="고객 폴더 찾기">고객 폴더 찾기</button>
+            <button class="chip" data-ai-query="미납품 확인">미납품 확인</button>
+            <button class="chip" data-ai-query="PhotoAction 상태 어디까지 됐어?">분류 현황</button>
+            <button class="chip" data-ai-query="시스템 상태 점검해줘">시스템 점검</button>
+            <button class="chip" data-ai-query="권한 상태 점검해줘">권한 점검</button>
+            <button class="chip" data-ai-query="워터마크 상태 점검해줘">Letter 점검</button>
+            <button class="chip" data-ai-query="PhotoAction 선택 UI 수정 요청">개발팀 전달</button>
+          </div>
+          <div class="ai-input">
+            <input id="aiInput" type="text" placeholder="AI 안내데스크에 문의하거나 작업을 요청하세요..." />
+            <button class="send-btn" id="aiSend">↗</button>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+  <script>
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
+    }
+    window.addEventListener("load", () => window.scrollTo(0, 0));
+
+    const state = {
+      modules: [],
+      activeModule: null,
+      searchResults: [],
+      operationsSummary: null,
+      priorityData: null,
+      priorityItems: [],
+      signals: [],
+      driveContext: null,
+      bookingEventsReady: false,
+      bookingEventErrorShown: false,
+      lastBookingEventKey: "",
+      notificationHistory: [],
+      consoleMessageTimer: null,
+      localApiReady: false,
+      permissionStatus: null,
+      permissionsReady: false,
+    };
+
+    const LOCAL_API_BASE = "http://127.0.0.1:8020";
+    const API_BASE = window.location.protocol === "file:" ? "" : LOCAL_API_BASE;
+
+    function apiUrl(path) {
+      if (/^https?:\/\//i.test(path)) return path;
+      if (!API_BASE) return path;
+      return `${API_BASE}${path.startsWith("/") ? path : `/${path}`}`;
+    }
+
+    const primaryMenu = document.getElementById("primaryMenu");
+    const moduleStack = document.getElementById("moduleStack");
+    const stage = document.getElementById("moduleStage");
+    const stageTitle = document.getElementById("stageTitle");
+    const stageMeta = document.getElementById("stageMeta");
+    const stageBody = document.getElementById("stageBody");
+    const stageOpenNew = document.getElementById("stageOpenNew");
+    const stageOpenFolder = document.getElementById("stageOpenFolder");
+    const stageExpand = document.getElementById("stageExpand");
+    const stageClose = document.getElementById("stageClose");
+    const commandSearch = document.getElementById("commandSearch");
+    const aiInput = document.getElementById("aiInput");
+    const aiSend = document.getElementById("aiSend");
+    const clock = document.querySelector(".clock");
+    const systemStatusText = document.getElementById("systemStatusText");
+    const tomorrowLabel = document.getElementById("tomorrowLabel");
+    const tomorrowSlots = document.getElementById("tomorrowSlots");
+    const todayLabel = document.getElementById("todayLabel");
+    const todaySlots = document.getElementById("todaySlots");
+    const todayTotal = document.getElementById("todayTotal");
+    const consoleHeaderAlarm = document.getElementById("consoleHeaderAlarm");
+    const consoleHeaderAlarmHeadline = document.getElementById("consoleHeaderAlarmHeadline");
+    const consoleHeaderAlarmSub = document.getElementById("consoleHeaderAlarmSub");
+    const alarmAudio = new Audio(apiUrl("/sound/message.mp3"));
+    alarmAudio.preload = "auto";
+    const startAudio = new Audio(apiUrl("/sound/start.mp3"));
+    startAudio.preload = "auto";
+    const bookingAudio = new Audio(apiUrl("/sound/booking-01.mp3"));
+    bookingAudio.preload = "auto";
+    let lastAlarmKey = "";
+
+    const CONSOLE_MSG_MODES = ["idle", "info", "success", "alarm", "warning", "danger"];
+    const CONSOLE_MSG_IDLE = { headline: "PhotoBox 운영 중", sub: "READY", mode: "idle" };
+    let consoleMessageOverride = null;
+
+    function applyConsoleMessage({ headline, sub, mode }) {
+      if (!consoleHeaderAlarm) return;
+      consoleHeaderAlarmHeadline.textContent = headline || "";
+      consoleHeaderAlarmSub.textContent = sub || "";
+      const cls = CONSOLE_MSG_MODES.includes(mode) ? mode : "idle";
+      CONSOLE_MSG_MODES.forEach((m) => consoleHeaderAlarm.classList.remove(`is-${m}`));
+      consoleHeaderAlarm.classList.add(`is-${cls}`);
+    }
+
+    window.consoleMessage = {
+      show(headline, sub = "", mode = "info") {
+        consoleMessageOverride = { headline, sub, mode };
+        applyConsoleMessage(consoleMessageOverride);
+      },
+      clear() {
+        consoleMessageOverride = null;
+        updateUpcomingAlarm();
+      },
+    };
+
+    function showTemporaryConsoleMessage(headline, sub = "", mode = "info", timeout = 30000) {
+      if (state.consoleMessageTimer) window.clearTimeout(state.consoleMessageTimer);
+      consoleMessageOverride = { headline, sub, mode };
+      applyConsoleMessage(consoleMessageOverride);
+      state.consoleMessageTimer = window.setTimeout(() => {
+        consoleMessageOverride = null;
+        state.consoleMessageTimer = null;
+        updateUpcomingAlarm();
+      }, timeout);
+    }
+
+    function renderNotificationHistory() {
+      const panel = document.getElementById("notificationHistory");
+      if (!panel) return;
+      if (!state.notificationHistory.length) {
+        panel.innerHTML = '<div class="job-meta">최근 알림 없음</div>';
+        return;
+      }
+      panel.innerHTML = state.notificationHistory.slice(0, 5).map((item) => `
+        <div class="notification-item">
+          <strong>${escapeHtml(item.title)}</strong>
+          <span>${escapeHtml(item.meta || "")}</span>
+        </div>
+      `).join("");
+    }
+
+    function addNotificationHistory(title, meta = "") {
+      const stamp = new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit", hour12: false });
+      state.notificationHistory.unshift({ title, meta: meta ? `${stamp} · ${meta}` : stamp });
+      state.notificationHistory = state.notificationHistory.slice(0, 10);
+      renderNotificationHistory();
+    }
+
+    function playConsoleAudio(audio) {
+      try {
+        audio.currentTime = 0;
+        const p = audio.play();
+        if (p && typeof p.catch === "function") p.catch(() => {});
+      } catch (_) {}
+    }
+    const checkinWait = document.getElementById("checkinWait");
+    const checkinDone = document.getElementById("checkinDone");
+    const workWaiting = document.getElementById("workWaiting");
+    const deliveryDone = document.getElementById("deliveryDone");
+    const priorityQueue = document.getElementById("priorityQueue");
+    const photoactionLive = document.getElementById("photoactionLive");
+    const photoactionLogs = document.getElementById("photoactionLogs");
+    const devRequests = document.getElementById("devRequests");
+    const exportDevRequests = document.getElementById("exportDevRequests");
+
+    async function api(path, options = {}) {
+      const response = await fetch(apiUrl(path), {
+        headers: { "Content-Type": "application/json" },
+        ...options,
+      });
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || response.statusText);
+      }
+      return response.json();
+    }
+
+    function permissionMessage(detail = "") {
+      return `
+        <div class="notice">
+          <strong>권한 확인 필요</strong><br>
+          권한이 없을 때는 표시 안되고 권한 획득을 진행해야 표시됩니다.
+          ${detail ? `<br><span>${escapeHtml(detail)}</span>` : ""}
+        </div>
+      `;
+    }
+
+    function renderLocalApiNotice(error = null) {
+      const detail = error?.message || `로컬 PC에서 DKphotobox API(${LOCAL_API_BASE})를 실행해 주세요.`;
+      if (moduleStack) {
+        moduleStack.innerHTML = `
+          <div class="job">
+            <div class="job-top"><span>Local API</span><span>OFF</span></div>
+            <div class="job-meta">${escapeHtml(detail)}</div>
+          </div>
+        `;
+      }
+      if (priorityQueue) priorityQueue.innerHTML = permissionMessage(detail);
+      if (photoactionLive) photoactionLive.innerHTML = permissionMessage(detail);
+      if (stageBody) {
+        stage.classList.add("active");
+        stageTitle.textContent = "DKphotobox Console";
+        stageMeta.textContent = "GitHub Pages console";
+        stageBody.innerHTML = permissionMessage(detail);
+      }
+      if (systemStatusText) systemStatusText.textContent = "Local API Required";
+    }
+
+    function hasRequiredPermissions() {
+      const status = state.permissionStatus;
+      if (!status || !Array.isArray(status.checks)) return false;
+      const required = ["master_read", "drive_api", "customer_folder_read"];
+      return required.every((id) => status.checks.some((check) => check.id === id && check.ok));
+    }
+
+    function renderPermissionGate(status) {
+      const failed = (status?.checks || []).filter((check) => !check.ok);
+      const detail = failed.length
+        ? failed.map((check) => `${check.label}: ${check.message || check.action || "권한 필요"}`).join(" / ")
+        : "권한 점검을 먼저 진행해 주세요.";
+      if (priorityQueue) priorityQueue.innerHTML = permissionMessage(detail);
+      if (photoactionLive) photoactionLive.innerHTML = permissionMessage(detail);
+      if (stageBody) {
+        stage.classList.add("active");
+        stageTitle.textContent = "권한 점검";
+        stageMeta.textContent = `${status?.readyCount ?? 0}/${status?.totalCount ?? 0} 통과`;
+        stageBody.innerHTML = permissionMessage(detail);
+      }
+      setAssistantMessage("권한이 없을 때는 표시 안되고 권한 획득을 진행해야 표시됩니다.");
+    }
+
+    async function loadPermissionGate() {
+      try {
+        const status = await api("/api/permissions/status");
+        state.localApiReady = true;
+        state.permissionStatus = status;
+        state.permissionsReady = hasRequiredPermissions();
+        if (!state.permissionsReady) renderPermissionGate(status);
+        return state.permissionsReady;
+      } catch (error) {
+        state.localApiReady = false;
+        state.permissionsReady = false;
+        renderLocalApiNotice(error);
+        return false;
+      }
+    }
+
+    function canLoadProtectedData() {
+      return state.localApiReady && state.permissionsReady;
+    }
+
+    function moduleById(id) {
+      return state.modules.find((module) => module.id === id);
+    }
+
+    function shortModuleName(module) {
+      const names = {
+        photoaction: "Photo",
+        publisher: "SNS",
+        "letter": "Letter",
+      };
+      return names[module.id] || module.name || module.id;
+    }
+
+    function moduleDescription(module) {
+      const descriptions = {
+        runs: "예약 · 체크인 · 납품",
+        photoaction: "RAW/JPG 고객별 분류",
+        letter: "워터마크 · Letter 합성",
+        gallery: "갤러리 · 전시",
+        publisher: "AI 캡션 · SNS 업로드",
+        report: "통계 · 매출 · 운영 리포트",
+      };
+      return descriptions[module.id] || module.description || module.category || "";
+    }
+
+    function moduleBadge(module) {
+      if (module.id === "runs") {
+        return String(state.operationsSummary?.today?.stats?.total ?? "RUNS");
+      }
+      if (module.id === "photoaction") {
+        const photo = state.priorityData?.photoaction;
+        if (photo?.ok) return String(photo.jpgCount ?? 0);
+        return "RAW";
+      }
+      if (module.type === "external_url") return "↗";
+      if (module.runtime?.status === "online") return "ON";
+      if (module.runtime?.pathExists) return "OK";
+      return "-";
+    }
+
+    function signalForModule(moduleId) {
+      return state.signals.find((signal) => signal.id === moduleId) || null;
+    }
+
+    function moduleSignalMarkup(module) {
+      const signal = signalForModule(module.id);
+      const level = signal?.level || (module.runtime?.reachable ? "green" : module.runtime?.pathExists ? "yellow" : "red");
+      const stateText = signal?.state || (module.runtime?.reachable ? "ONLINE" : module.runtime?.pathExists ? "READY" : "CHECK");
+      const ledClass = level === "red" ? "mini-led red" : level === "yellow" ? "mini-led yellow" : "mini-led";
+      return `<div class="module-signal"><span class="${ledClass}"></span>${escapeHtml(stateText)}</div>`;
+    }
+
+    function setActiveModuleButtons(moduleId = null) {
+      document.querySelectorAll("[data-module]").forEach((button) => {
+        const isActive = moduleId && button.dataset.module === moduleId;
+        button.classList.toggle("primary", isActive && button.classList.contains("module-button"));
+        button.classList.toggle("active", isActive && button.classList.contains("menu-item"));
+      });
+      const homeButton = primaryMenu?.querySelector("[data-home]");
+      homeButton?.classList.toggle("active", !moduleId);
+    }
+
+    function renderModuleNavigation() {
+      const rightGroup = document.getElementById("primaryMenuRight");
+      if (rightGroup) {
+        rightGroup.innerHTML = `
+          <button class="menu-item ${state.activeModule ? "" : "active"}" data-home>Home</button>
+          ${state.modules.map((module) => `
+            <button class="menu-item ${state.activeModule?.id === module.id ? "active" : ""}" data-module="${escapeHtml(module.id)}">
+              ${escapeHtml(shortModuleName(module))}
+            </button>
+          `).join("")}
+        `;
+      }
+
+      if (moduleStack) {
+        if (!state.modules.length) {
+          moduleStack.innerHTML = `
+            <div class="job">
+              <div class="job-meta">등록된 모듈이 없습니다. config/modules.json을 확인하세요.</div>
+            </div>
+          `;
+        } else {
+          moduleStack.innerHTML = state.modules.map((module) => `
+            <button class="module-button ${state.activeModule?.id === module.id ? "primary" : ""}" data-module="${escapeHtml(module.id)}">
+              <div class="module-icon"></div>
+              <div class="module-text">
+                <div class="module-name">${escapeHtml(module.name || module.id)}</div>
+                <div class="module-desc">${escapeHtml(moduleDescription(module))}</div>
+              </div>
+              <div class="module-side">
+                <div class="module-count">${escapeHtml(moduleBadge(module))}</div>
+                ${moduleSignalMarkup(module)}
+              </div>
+            </button>
+          `).join("");
+        }
+      }
+
+      wireModuleButtons();
+    }
+
+    function setAssistantMessage(message) {
+      const body = document.querySelector(".ai-body");
+      if (!body) return;
+      const bubble = document.createElement("div");
+      bubble.className = "bubble assistant";
+      bubble.textContent = message;
+      body.appendChild(bubble);
+      body.scrollTop = body.scrollHeight;
+    }
+
+    function setUserMessage(message) {
+      const body = document.querySelector(".ai-body");
+      if (!body) return;
+      const bubble = document.createElement("div");
+      bubble.className = "bubble user";
+      bubble.textContent = message;
+      body.appendChild(bubble);
+      body.scrollTop = body.scrollHeight;
+    }
+
+    function setStageLoading(module) {
+      stage.classList.add("active");
+      stageTitle.textContent = module.name;
+      stageMeta.textContent = "모듈을 준비하는 중입니다.";
+      stageBody.innerHTML = '<div class="stage-empty">연결 확인 중...</div>';
+    }
+
+    function setStageMessage(module, message) {
+      stage.classList.add("active");
+      stageTitle.textContent = module.name;
+      stageMeta.textContent = module.openNote || module.description || "";
+      stageBody.innerHTML = `<div class="stage-empty">${message}</div>`;
+    }
+
+    function setStageFrame(module, url) {
+      stage.classList.add("active");
+      stageTitle.textContent = module.name;
+      stageMeta.textContent = module.description || "";
+      stageBody.innerHTML = `<iframe class="stage-frame" title="${module.name}" src="${apiUrl(url)}"></iframe>`;
+    }
+
+    function formatDate(value) {
+      if (!value || value.length < 8) return "-";
+      return `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6, 8)}`;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function renderCustomerSearch(query, results) {
+      state.searchResults = results || [];
+      stage.classList.add("active");
+      stageTitle.textContent = "RUNS 고객 검색";
+      stageMeta.textContent = `"${query}" 검색 결과 ${state.searchResults.length}건`;
+
+      if (!state.searchResults.length) {
+        stageBody.innerHTML = `<div class="stage-empty">"${escapeHtml(query)}" 검색 결과가 없습니다.</div>`;
+        return;
+      }
+
+      stageBody.innerHTML = `
+        <div class="result-list">
+          ${state.searchResults.map((item, index) => `
+            <div class="result-card">
+              <div>
+                ${item.mugshotThumbnail ? `<img class="customer-thumb" src="${escapeHtml(item.mugshotThumbnail)}" alt="">` : ""}
+                <div class="result-title">${escapeHtml(item.name || item.maskedName || "이름없음")} · ${escapeHtml(item.resno || "예약번호 없음")}</div>
+                <div class="result-meta">
+                  ${escapeHtml(formatDate(item.date))} ${escapeHtml(item.time || "")} · ${escapeHtml(item.product || "상품 정보 없음")} · ${escapeHtml(item.people || "1")}명<br>
+                  체크인 ${item.checkinAt ? "완료" : "대기"} · 보정 ${escapeHtml(item.editStatus || "-")} · 납품 ${escapeHtml(item.deliveryStatus || "-")} · SNS ${escapeHtml(item.snsConsent || "-")}
+                </div>
+                <div class="result-actions">
+                  <button class="mini-action primary" data-result-action="open-folder" data-result-index="${index}" ${item.folderUrl ? "" : "disabled"}>고객 폴더 열기</button>
+                  <button class="mini-action primary" data-result-action="drive-files" data-result-index="${index}" ${item.folderUrl ? "" : "disabled"}>Drive 파일 보기</button>
+                  <button class="mini-action primary" data-result-action="send-photoaction" data-result-index="${index}">PhotoAction 전달</button>
+                  <button class="mini-action" data-result-action="copy-resno" data-result-index="${index}">예약번호 복사</button>
+                  <button class="mini-action" data-result-action="open-runs" data-result-index="${index}">RUNS 열기</button>
+                </div>
+              </div>
+              <div class="result-badge">${escapeHtml(item.sourceSheet || "RUNS")}</div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function renderLocalSearch(query, results) {
+      stage.classList.add("active");
+      stageTitle.textContent = "로컬 문서 / 로그 검색";
+      stageMeta.textContent = `"${query}" 검색 결과 ${results.length}건`;
+
+      if (!results.length) {
+        stageBody.innerHTML = `<div class="stage-empty">"${escapeHtml(query)}" 검색 결과가 없습니다.</div>`;
+        return;
+      }
+
+      stageBody.innerHTML = `
+        <div class="result-list">
+          ${results.map((item) => `
+            <div class="result-card">
+              <div>
+                <div class="result-title">${escapeHtml(item.name || item.path)}</div>
+                <div class="result-meta">
+                  ${escapeHtml(item.path)}:${escapeHtml(item.line || 1)}<br>
+                  ${escapeHtml(item.snippet || "")}
+                </div>
+                <div class="result-actions">
+                  <button class="mini-action primary" data-local-preview="${escapeHtml(item.path)}" data-local-line="${escapeHtml(item.line || 1)}">미리보기</button>
+                  <button class="mini-action" data-local-open="${escapeHtml(item.path)}">파일 열기</button>
+                  <button class="mini-action" data-local-parent="${escapeHtml(item.path)}">폴더 열기</button>
+                </div>
+              </div>
+              <div class="result-badge">${escapeHtml(item.kind || "file")}</div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function escapeRegExp(value) {
+      return String(value ?? "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    function highlightPreviewLine(text, target) {
+      const escaped = escapeHtml(text);
+      const term = String(target || "").trim();
+      if (!term) return escaped;
+      const pattern = new RegExp(escapeRegExp(escapeHtml(term)), "ig");
+      return escaped.replace(pattern, (match) => `<mark>${match}</mark>`);
+    }
+
+    function renderLocalFilePreview(data, targetText = "") {
+      stage.classList.add("active");
+      stageTitle.textContent = data.name || "파일 미리보기";
+      stageMeta.textContent = `${data.path}:${data.targetLine} · ${data.startLine}-${data.endLine}/${data.totalLines}`;
+      const body = (data.lines || []).map((line) => `
+        <span class="preview-line">
+          <span class="line-no">${escapeHtml(line.line)}</span>
+          <span>${highlightPreviewLine(line.text || "", targetText)}</span>
+        </span>
+      `).join("");
+      stageBody.innerHTML = `
+        <div class="tool-panel">
+          <div class="result-actions">
+            <button class="mini-action" data-local-open="${escapeHtml(data.path)}">파일 열기</button>
+            <button class="mini-action" data-local-parent="${escapeHtml(data.path)}">폴더 열기</button>
+          </div>
+          <pre class="preview-block">${body}</pre>
+        </div>
+      `;
+    }
+
+    async function previewLocalFile(path, line = 1, targetText = "") {
+      const data = await api("/api/local-file/preview", {
+        method: "POST",
+        body: JSON.stringify({ path, line: Number(line || 1), context: 120 }),
+      });
+      renderLocalFilePreview(data, targetText);
+      setAssistantMessage("검색 결과 파일을 콘솔 안에서 미리보기로 열었습니다.");
+    }
+
+    async function handleResultAction(event) {
+      const previewButton = event.target.closest("[data-local-preview]");
+      if (previewButton) {
+        await previewLocalFile(
+          previewButton.dataset.localPreview,
+          previewButton.dataset.localLine,
+          previewButton.closest(".result-card")?.querySelector(".result-meta")?.textContent || "",
+        );
+        return;
+      }
+
+      const localButton = event.target.closest("[data-local-open]");
+      if (localButton) {
+        await api("/api/local-file/open", {
+          method: "POST",
+          body: JSON.stringify({ path: localButton.dataset.localOpen }),
+        });
+        setAssistantMessage("검색 결과 파일을 열었습니다.");
+        return;
+      }
+
+      const parentButton = event.target.closest("[data-local-parent]");
+      if (parentButton) {
+        await api("/api/local-file/open-parent", {
+          method: "POST",
+          body: JSON.stringify({ path: parentButton.dataset.localParent }),
+        });
+        setAssistantMessage("검색 결과 파일의 상위 폴더를 열었습니다.");
+        return;
+      }
+
+      const button = event.target.closest("[data-result-action]");
+      if (!button) return;
+
+      const item = state.searchResults[Number(button.dataset.resultIndex)];
+      if (!item) return;
+
+      if (button.dataset.resultAction === "open-folder") {
+        if (!item.folderUrl) {
+          setAssistantMessage("이 고객 검색 결과에는 연결된 고객 폴더 URL이 없습니다.");
+          return;
+        }
+        window.open(item.folderUrl, "_blank", "noopener");
+        setAssistantMessage(`${item.name || item.maskedName || "고객"} 고객 폴더를 새 창으로 열었습니다.`);
+        return;
+      }
+
+      if (button.dataset.resultAction === "copy-resno") {
+        const resno = item.resno || "";
+        if (!resno) {
+          setAssistantMessage("복사할 예약번호가 없습니다.");
+          return;
+        }
+        await navigator.clipboard?.writeText(resno);
+        setAssistantMessage(`예약번호 ${resno} 를 클립보드에 복사했습니다.`);
+        return;
+      }
+
+      if (button.dataset.resultAction === "open-runs") {
+        await openModule("runs");
+      }
+
+      if (button.dataset.resultAction === "drive-files") {
+        if (!item.folderUrl) {
+          setAssistantMessage("이 고객 검색 결과에는 연결된 Google Drive 폴더가 없습니다.");
+          return;
+        }
+        await showDriveFolderFiles(item.folderUrl, Number(button.dataset.resultIndex));
+        return;
+      }
+
+      if (button.dataset.resultAction === "send-photoaction") {
+        const payload = {
+          date: item.date || "",
+          time: item.time || "",
+          name: item.name || item.maskedName || "",
+          resno: item.resno || "",
+          sns: item.snsConsent || "N",
+          product: item.product || "",
+          people: item.people || 1,
+          folder_url: item.folderUrl || item.resultUrl || "",
+          mugshot_url: item.mugshotUrl || item.bestMugshotUrl || "",
+        };
+        await api("/api/photoaction/prepare-customer", {
+          method: "POST",
+          body: JSON.stringify(payload),
+        });
+        setAssistantMessage(`${payload.name || "고객"} 정보를 PhotoAction에 전달했습니다.${payload.mugshot_url ? " 머그샷 후보도 함께 전달했습니다." : ""} PhotoAction에서 고객 카드를 확인하고 사진 범위를 선택하면 됩니다.`);
+        await openModule("photoaction");
+      }
+    }
+
+    function renderPermissionNotice(permission) {
+      if (!permission || permission.hasPermission) return "";
+      return `
+        <div class="notice">
+          <strong>통합마스터로그 권한 필요</strong><br>
+          현재 고객 검색은 RUNS API와 reservations 시트 기준으로 동작합니다.
+          마스터 로그까지 검색하려면 Google Sheet 공유에서
+          <strong>${permission.serviceAccountEmail}</strong> 에 보기 권한을 부여하세요.
+        </div>
+      `;
+    }
+
+    async function openModule(moduleId, mode = null) {
+      const module = moduleById(moduleId);
+      if (!module) return;
+      state.activeModule = module;
+      setActiveModuleButtons(module.id);
+
+      if (moduleId === "letter" && mode !== "new_window") {
+        renderLetterControlPanel(module);
+        setAssistantMessage("Letter / Watermark 제어판을 중앙 작업 영역에 열었습니다. 실제 앱 실행 시 검정 콘솔은 숨기도록 처리했습니다.");
+        return;
+      }
+
+      setStageLoading(module);
+
+      try {
+        const result = await api(`/api/modules/${moduleId}/open`, {
+          method: "POST",
+          body: JSON.stringify({ mode }),
+        });
+
+        if (result.mode === "embedded" && result.url) {
+          setStageFrame(result.module, result.url);
+          setAssistantMessage(`${result.module.name} 모듈을 중앙 작업 영역에 열었습니다.`);
+          return;
+        }
+
+        setStageMessage(result.module, `${result.module.name} 모듈을 새 창으로 열었습니다. 이 콘솔에서는 상태와 안내를 계속 확인할 수 있습니다.`);
+        setAssistantMessage(`${result.module.name} 모듈은 새 창으로 분리해서 열었습니다.`);
+      } catch (error) {
+        setStageMessage(module, `실행 중 오류가 발생했습니다: ${error.message}`);
+        setAssistantMessage(`${module.name} 실행 중 오류가 발생했습니다. 설정 또는 원본 경로를 확인해야 합니다.`);
+      }
+    }
+
+    function renderLetterControlPanel(module) {
+      stage.classList.add("active");
+      stageTitle.textContent = module.name;
+      stageMeta.textContent = "워터마크/Letter 합성을 DKphotobox 안에서 바로 실행합니다.";
+      stageBody.innerHTML = `
+        <div class="tool-panel">
+          <div id="letterStatusPanel" class="stage-empty">Letter / Watermark 상태를 불러오는 중입니다...</div>
+        </div>
+      `;
+      loadLetterStatus();
+    }
+
+    function renderLetterStatus(status) {
+      const panel = document.getElementById("letterStatusPanel");
+      if (!panel) return;
+      const stateLabel = status.ready ? "READY" : "CHECK";
+      const inputLabel = status.inputIsFolder ? "입력 폴더" : "입력 파일";
+      const fileInputText = (status.inputPaths?.length ? status.inputPaths : [status.inputPath || ""]).filter(Boolean).join("\n");
+      const overlayOptions = (status.overlayChoices || []).map((name) => `<option value="${escapeHtml(name)}"></option>`).join("");
+      panel.className = "tool-panel";
+      panel.innerHTML = `
+        <div class="letter-form" id="letterRunForm">
+          <datalist id="letterOverlayChoices">${overlayOptions}</datalist>
+          <div class="letter-action-bar">
+            <button class="mini-action accent-yellow" data-letter-pick="input-auto">입력파일 불러오기</button>
+            <button class="mini-action primary" data-letter-action="run-web">합성 시작</button>
+            <button class="mini-action" data-letter-action="add-letter">레터 박스 추가</button>
+            <button class="mini-action" data-letter-action="refresh">설정 불러오기</button>
+          </div>
+          <div class="letter-row letter-row-meta">
+            <div class="letter-field">
+              <label for="letterInputMode">입력 방식</label>
+              <select id="letterInputMode" class="letter-select">
+                <option value="folder" ${status.inputIsFolder ? "selected" : ""}>폴더</option>
+                <option value="file" ${!status.inputIsFolder ? "selected" : ""}>파일</option>
+              </select>
+            </div>
+            <label class="letter-check">
+              <input id="letterSkipFace" type="checkbox" ${status.skipLetterOnFace ? "checked" : ""}>
+              얼굴 겹침 건너뛰기
+            </label>
+            <textarea id="letterInputPath" hidden aria-hidden="true">${escapeHtml(status.inputIsFolder ? (status.inputPath || "") : fileInputText)}</textarea>
+          </div>
+          <div class="letter-tasks-grid">
+            ${(status.tasks || []).map((task) => `
+              <div class="letter-task-card" data-letter-task="${escapeHtml(task.key)}">
+                <div class="letter-task-left">
+                  <label class="letter-task-check">
+                    <input id="letterTask_${escapeHtml(task.key)}" type="checkbox" ${task.enabled ? "checked" : ""}>
+                    <span>${escapeHtml(task.label)}</span>
+                  </label>
+                  <button class="mini-action" data-letter-pick="overlay" data-letter-pick-task="${escapeHtml(task.key)}">PNG 선택</button>
+                  ${task.key !== "wm" && task.key !== "letter1" ? `<button class="mini-action" data-letter-action="remove-letter" data-letter-remove-task="${escapeHtml(task.key)}">삭제</button>` : ""}
+                </div>
+                <div class="letter-task-body">
+                  <div class="letter-field">
+                    <input id="letterPrefix_${escapeHtml(task.key)}" type="text" value="${escapeHtml(task.prefix || "")}" placeholder="파일명 접두어">
+                  </div>
+                  <div class="letter-field">
+                    <div class="letter-field-row">
+                      <input id="letterOverlay_${escapeHtml(task.key)}" type="text" list="letterOverlayChoices" value="${escapeHtml(task.overlay || "")}" placeholder="오버레이 PNG">
+                      <button class="mini-action" data-letter-pick="output" data-letter-pick-task="${escapeHtml(task.key)}">폴더 선택</button>
+                    </div>
+                    <input id="letterOutput_${escapeHtml(task.key)}" type="hidden" value="${escapeHtml(task.output || "")}">
+                  </div>
+                  ${task.ready ? "" : `<div class="job-meta">점검 필요 · ${task.missingReason ? escapeHtml(task.missingReason) : "오버레이 PNG, 접두어, 출력 폴더를 확인하세요."}</div>`}
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+        <div id="letterRunResult"></div>
+        <div class="result-card">
+          <div>
+            <div class="result-title">Letter / Watermark 사전 점검 · ${escapeHtml(stateLabel)}</div>
+            <div class="result-meta">
+              settings ${status.settingsExists ? "OK" : "없음"} · 활성 작업 ${escapeHtml(status.activeTaskCount || 0)}개 · 얼굴 겹침 건너뛰기 ${status.skipLetterOnFace ? "ON" : "OFF"}
+              ${status.settingsError ? `<br>설정 오류: ${escapeHtml(status.settingsError)}` : ""}
+              ${status.missingOverlays?.length ? `<br>누락 오버레이: ${escapeHtml(status.missingOverlays.join(", "))}` : ""}
+            </div>
+            <div class="metric-grid">
+              <div class="metric">settings<strong>${status.settingsExists ? "OK" : "MISS"}</strong></div>
+              <div class="metric">input<strong>${status.inputExists ? "OK" : "CHECK"}</strong></div>
+              <div class="metric">overlay<strong>${status.missingOverlays?.length ? "MISS" : "OK"}</strong></div>
+            </div>
+            <div class="result-actions">
+              <button class="mini-action" data-letter-path="${escapeHtml(status.workdir)}">작업 폴더</button>
+              <button class="mini-action" data-local-open="${escapeHtml(status.settingsPath)}" ${status.settingsExists ? "" : "disabled"}>settings 열기</button>
+              <button class="mini-action" data-letter-path="${escapeHtml(status.inputPath)}" ${status.inputExists ? "" : "disabled"}>${escapeHtml(inputLabel)} 열기</button>
+              <button class="mini-action" data-letter-path="${escapeHtml(status.savedStartPath)}" ${status.savedStartExists ? "" : "disabled"}>초기경로 열기</button>
+            </div>
+          </div>
+          <div class="result-badge">${escapeHtml(stateLabel)}</div>
+        </div>
+        <!-- 히스토리 박스 제거 -->
+      `;
+    }
+
+    function collectLetterRunPayload() {
+      const taskPayload = {};
+      document.querySelectorAll("[data-letter-task]").forEach((row) => {
+        const key = row.dataset.letterTask;
+        taskPayload[key] = {
+          enabled: Boolean(document.getElementById(`letterTask_${key}`)?.checked),
+          prefix: document.getElementById(`letterPrefix_${key}`)?.value || "",
+          overlay: document.getElementById(`letterOverlay_${key}`)?.value || "",
+          output: document.getElementById(`letterOutput_${key}`)?.value || "",
+        };
+      });
+      const inputText = document.getElementById("letterInputPath")?.value || "";
+      const isFolder = (document.getElementById("letterInputMode")?.value || "folder") === "folder";
+      const inputPaths = isFolder ? [] : inputText.split(/\r?\n|;/).map((item) => item.trim()).filter(Boolean);
+      return {
+        input_path: isFolder ? inputText.trim() : (inputPaths[0] || ""),
+        input_paths: inputPaths,
+        is_folder: isFolder,
+        skip_letter_on_face: Boolean(document.getElementById("letterSkipFace")?.checked),
+        tasks: taskPayload,
+        save_settings: true,
+      };
+    }
+
+    function addLetterTaskRow() {
+      const form = document.getElementById("letterRunForm");
+      const grid = form?.querySelector(".letter-tasks-grid");
+      if (!form || !grid) return;
+      const keys = [...form.querySelectorAll("[data-letter-task]")].map((row) => row.dataset.letterTask);
+      const nextNumber = Math.max(0, ...keys.filter((key) => key.startsWith("letter")).map((key) => Number(key.replace("letter", "")) || 0)) + 1;
+      const key = `letter${nextNumber}`;
+      const row = document.createElement("div");
+      row.className = "letter-task-card";
+      row.dataset.letterTask = key;
+      row.innerHTML = `
+        <div class="letter-task-left">
+          <label class="letter-task-check">
+            <input id="letterTask_${key}" type="checkbox" checked>
+            <span>Letter ${nextNumber}</span>
+          </label>
+          <button class="mini-action" data-letter-pick="overlay" data-letter-pick-task="${key}">PNG 선택</button>
+          <button class="mini-action" data-letter-action="remove-letter" data-letter-remove-task="${key}">삭제</button>
+        </div>
+        <div class="letter-task-body">
+          <div class="letter-field">
+            <input id="letterPrefix_${key}" type="text" value="photo_letter${nextNumber}" placeholder="파일명 접두어">
+          </div>
+          <div class="letter-field">
+            <div class="letter-field-row">
+              <input id="letterOverlay_${key}" type="text" list="letterOverlayChoices" value="letter-${String(nextNumber).padStart(3, "0")}.png" placeholder="오버레이 PNG">
+              <button class="mini-action" data-letter-pick="output" data-letter-pick-task="${key}">폴더 선택</button>
+            </div>
+            <input id="letterOutput_${key}" type="hidden" value="">
+          </div>
+          <div class="job-meta">새 작업 · 오버레이 PNG와 출력 폴더를 확인하세요.</div>
+        </div>
+      `;
+      grid.appendChild(row);
+      setAssistantMessage(`Letter ${nextNumber} 작업 박스를 추가했습니다. 오버레이 PNG와 출력 폴더를 확인하세요.`);
+    }
+
+    function removeLetterTaskRow(taskKey) {
+      const row = document.querySelector(`[data-letter-task="${CSS.escape(taskKey)}"]`);
+      if (!row) return;
+      row.remove();
+      setAssistantMessage(`${taskKey} 작업 박스를 삭제했습니다. 합성 시작 시 현재 화면 설정이 저장됩니다.`);
+    }
+
+    function renderLetterRunResult(payload) {
+      const panel = document.getElementById("letterRunResult");
+      if (!panel) return;
+      panel.className = "letter-run-summary";
+      panel.innerHTML = `
+        <div class="result-card">
+          <div>
+            <div class="result-title">합성 완료 · ${escapeHtml(payload.written || 0)}장 저장</div>
+            <div class="result-meta">
+              입력 ${escapeHtml(payload.fileCount || 0)}개 · 작업 ${escapeHtml(payload.taskCount || 0)}개 · 건너뜀 ${escapeHtml(payload.skipped || 0)}개 · 오류 ${(payload.errors || []).length}개
+            </div>
+            ${(payload.results || []).map((item) => `
+              <div class="job-meta">${escapeHtml(item.label)} · 저장 ${escapeHtml(item.written || 0)}장 · ${escapeHtml(item.output || "")}</div>
+            `).join("")}
+            ${(payload.errors || []).map((item) => `<div class="job-meta">오류 · ${escapeHtml(item)}</div>`).join("")}
+          </div>
+          <div class="result-badge">${payload.ok ? "DONE" : "CHECK"}</div>
+        </div>
+      `;
+    }
+
+    async function runLetterWebJob() {
+      const resultPanel = document.getElementById("letterRunResult");
+      if (resultPanel) {
+        resultPanel.className = "stage-empty";
+        resultPanel.textContent = "Letter / Watermark 합성을 실행하는 중입니다...";
+      }
+      const payload = collectLetterRunPayload();
+      const result = await api("/api/letter/run", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+      renderLetterRunResult(result);
+      if (result.status) renderLetterStatus(result.status);
+      renderLetterRunResult(result);
+      setAssistantMessage(`Letter / Watermark 합성 완료. ${result.written || 0}장을 저장했고, 건너뜀 ${result.skipped || 0}장입니다.`);
+    }
+
+    async function pickLetterPath(button) {
+      let kind = button.dataset.letterPick;
+      const taskKey = button.dataset.letterPickTask;
+      const inputMode = document.getElementById("letterInputMode")?.value || "folder";
+      if (kind === "input-auto") {
+        kind = inputMode === "file" ? "input-files" : "input-folder";
+      }
+      const initialPath = taskKey
+        ? (document.getElementById(`letterOutput_${taskKey}`)?.value || document.getElementById("letterInputPath")?.value || "")
+        : (document.getElementById("letterInputPath")?.value || "");
+      const payload = await api("/api/letter/select-path", {
+        method: "POST",
+        body: JSON.stringify({
+          kind: kind === "input-files" ? "input_files" : kind === "input-folder" ? "folder" : kind,
+          initial_path: initialPath.split(/\r?\n|;/)[0] || "",
+        }),
+      });
+      if (kind === "input-files") {
+        const paths = payload.paths || [];
+        if (!paths.length) return;
+        document.getElementById("letterInputMode").value = "file";
+        document.getElementById("letterInputPath").value = paths.join("\n");
+        setAssistantMessage(`입력 파일 ${paths.length}개를 선택했습니다.`);
+        return;
+      }
+      if (kind === "input-folder") {
+        if (!payload.path) return;
+        document.getElementById("letterInputMode").value = "folder";
+        document.getElementById("letterInputPath").value = payload.path;
+        setAssistantMessage("입력 폴더를 선택했습니다.");
+        return;
+      }
+      if (kind === "overlay" && taskKey) {
+        if (!payload.path) return;
+        document.getElementById(`letterOverlay_${taskKey}`).value = payload.path;
+        setAssistantMessage(`${taskKey} 오버레이 PNG를 선택했습니다.`);
+        return;
+      }
+      if (kind === "output" && taskKey) {
+        if (!payload.path) return;
+        document.getElementById(`letterOutput_${taskKey}`).value = payload.path;
+        setAssistantMessage(`${taskKey} 출력 폴더를 선택했습니다.`);
+      }
+    }
+
+    async function loadLetterStatus() {
+      const panel = document.getElementById("letterStatusPanel");
+      try {
+        const status = await api("/api/letter/status");
+        renderLetterStatus(status);
+      } catch (error) {
+        if (panel) panel.innerHTML = `<div class="stage-empty">Letter 상태 확인 실패: ${escapeHtml(error.message)}</div>`;
+      }
+    }
+
+    async function handleLetterAction(event) {
+      const pickButton = event.target.closest("[data-letter-pick]");
+      if (pickButton) {
+        await pickLetterPath(pickButton);
+        return;
+      }
+      const button = event.target.closest("[data-letter-action]");
+      if (!button) return;
+      const action = button.dataset.letterAction;
+      if (action === "run-web") {
+        await runLetterWebJob();
+      } else if (action === "add-letter") {
+        addLetterTaskRow();
+      } else if (action === "remove-letter") {
+        removeLetterTaskRow(button.dataset.letterRemoveTask || "");
+      } else if (action === "launch") {
+        await api("/api/modules/letter/open-new-window", { method: "POST" });
+        setAssistantMessage("워터마크 제너레이터를 실행했습니다. 검정 콘솔 창은 숨김 처리됩니다.");
+      } else if (action === "folder") {
+        await api("/api/modules/letter/open-folder", { method: "POST" });
+        setAssistantMessage("Letter / Watermark 작업 폴더를 열었습니다.");
+      } else if (action === "settings") {
+        await api("/api/local-file/open", {
+          method: "POST",
+          body: JSON.stringify({ path: "E:/중문별장 work/000-Development/10-wmgen/settings.json" }),
+        });
+        setAssistantMessage("워터마크 설정 파일을 열었습니다.");
+      } else if (action === "refresh") {
+        await loadLetterStatus();
+        setAssistantMessage("Letter / Watermark 상태를 새로고침했습니다.");
+      }
+    }
+
+    async function openActiveNewWindow() {
+      if (!state.activeModule) return;
+      try {
+        await api(`/api/modules/${state.activeModule.id}/open-new-window`, { method: "POST" });
+        setAssistantMessage(`${state.activeModule.name} 모듈을 새 창으로 열었습니다.`);
+      } catch (error) {
+        setAssistantMessage(`새 창 열기 실패: ${error.message}`);
+      }
+    }
+
+    async function openActiveFolder() {
+      if (!state.activeModule) return;
+      try {
+        await api(`/api/modules/${state.activeModule.id}/open-folder`, { method: "POST" });
+        setAssistantMessage(`${state.activeModule.name} 작업 폴더를 열었습니다.`);
+      } catch (error) {
+        setAssistantMessage(`작업 폴더 열기 실패: ${error.message}`);
+      }
+    }
+
+    function closeStage() {
+      state.activeModule = null;
+      setActiveModuleButtons(null);
+      stage.classList.remove("active");
+      stageBody.innerHTML = '<div class="stage-empty">좌측 모듈 또는 Tool Box를 선택하세요.</div>';
+    }
+
+    function renderPhotoActionStatusBoard(summary) {
+      const standBy = summary?.standBy || {};
+      stage.classList.add("active");
+      stageTitle.textContent = "PhotoAction 분류 상태";
+      stageMeta.textContent = "현재 세션과 stand-by 폴더를 한 번에 확인합니다.";
+      stageBody.innerHTML = `
+        <div class="tool-panel">
+          <div class="result-card">
+            <div>
+              <div class="result-title">${escapeHtml(summary?.date || "PhotoAction")} · 분류 진행률</div>
+              <div class="result-meta">
+                고객 ${escapeHtml(summary?.activeCustomers ?? 0)}명 · 사진 ${escapeHtml(summary?.photos ?? 0)}장 · 미분류 ${escapeHtml(summary?.unclassified ?? 0)}장 · RAW 누락 ${escapeHtml(summary?.rawMissing ?? 0)}장
+              </div>
+              <div class="meter" title="매칭 진행률"><span style="--value:${Number(summary?.assignedPercent || 0)}%"></span></div>
+              <div class="metric-grid">
+                <div class="metric">매칭<strong>${escapeHtml(summary?.assigned ?? 0)} / ${escapeHtml(summary?.photos ?? 0)}</strong></div>
+                <div class="metric">복사 완료<strong>${escapeHtml(summary?.copied ?? 0)} / ${escapeHtml(summary?.photos ?? 0)}</strong></div>
+                <div class="metric">사진 없는 고객<strong>${escapeHtml(summary?.customersWithoutPhotos ?? 0)}</strong></div>
+                <div class="metric">stand-by JPG<strong>${escapeHtml(standBy.jpgCount ?? "-")}</strong></div>
+                <div class="metric">stand-by RAW<strong>${escapeHtml(standBy.rawCount ?? "-")}</strong></div>
+                <div class="metric">상태<strong>${escapeHtml(standBy.ok ? "READY" : "CHECK")}</strong></div>
+              </div>
+              <div class="result-actions">
+                <button class="mini-action primary" data-photoaction-action="open">PhotoAction 열기</button>
+                <button class="mini-action" data-photoaction-action="lightroom">Lightroom RAW</button>
+              </div>
+            </div>
+            <div class="result-badge">${escapeHtml(summary?.assignedPercent ?? 0)}%</div>
+          </div>
+          ${(summary?.customerPreview || []).slice(0, 8).map((customer) => `
+            <div class="dev-row">
+              ${customer.mugshotUrl ? `<img class="customer-thumb" src="${escapeHtml(customer.mugshotUrl)}" alt="">` : ""}
+              <div class="job-top">
+                <span>${escapeHtml(customer.time || "--:--")} ${escapeHtml(customer.name || "-")}</span>
+                <span>${customer.copied ? "완료" : `${escapeHtml(customer.assigned || 0)}장`}</span>
+              </div>
+              <div class="job-meta">${escapeHtml(customer.resno || "")} · SNS ${escapeHtml(customer.sns || "-")}</div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    async function showPhotoActionStatusBoard() {
+      stage.classList.add("active");
+      stageTitle.textContent = "PhotoAction 분류 상태";
+      stageMeta.textContent = "PhotoAction 상태를 불러오는 중입니다.";
+      stageBody.innerHTML = '<div class="stage-empty">현재 세션과 stand-by 폴더를 확인하는 중입니다...</div>';
+      const data = await api("/api/photoaction/session");
+      renderPhotoActionStatusBoard(data.summary);
+      setAssistantMessage("PhotoAction 분류 상태 보드를 열었습니다.");
+    }
+
+    function renderSystemStatusBoard(status) {
+      const signals = status?.signals || [];
+      const logs = status?.logs || {};
+      stage.classList.add("active");
+      stageTitle.textContent = "시스템 점검";
+      stageMeta.textContent = `${signals.filter((signal) => signal.level === "green").length}/${status?.modules || 0} Modules Ready · ${status?.generatedAt || ""}`;
+      stageBody.innerHTML = `
+        <div class="tool-panel">
+          <div class="result-card">
+            <div>
+              <div class="result-title">DKphotobox Runtime</div>
+              <div class="result-meta">
+                root ${escapeHtml(status?.root || "-")}<br>
+                logs ${escapeHtml(status?.logDir || "-")} · python ${escapeHtml(status?.python || "-")}
+              </div>
+              <div class="metric-grid">
+                <div class="metric">events<strong>${escapeHtml(logs.events ?? 0)}</strong></div>
+                <div class="metric">assistant<strong>${escapeHtml(logs.assistant ?? 0)}</strong></div>
+                <div class="metric">search<strong>${escapeHtml(logs.search ?? 0)}</strong></div>
+                <div class="metric">dev requests<strong>${escapeHtml(logs.devRequests ?? 0)}</strong></div>
+                <div class="metric">modules<strong>${escapeHtml(status?.modules ?? 0)}</strong></div>
+                <div class="metric">ready<strong>${escapeHtml(signals.filter((signal) => signal.level === "green").length)}</strong></div>
+              </div>
+            </div>
+            <div class="result-badge">SYSTEM</div>
+          </div>
+          ${signals.map((signal) => {
+            const ledClass = signal.level === "red" ? "mini-led red" : signal.level === "yellow" ? "mini-led yellow" : "mini-led";
+            return `
+              <div class="result-card">
+                <div>
+                  <div class="result-title"><span class="${ledClass}"></span> ${escapeHtml(signal.name || signal.id)}</div>
+                  <div class="result-meta">
+                    ${escapeHtml(signal.detail?.path || "경로 정보 없음")}<br>
+                    최근 수정 ${escapeHtml(signal.detail?.lastModified || "-")} · 최근 이벤트 ${escapeHtml(signal.lastEventAt || "-")}
+                  </div>
+                  <div class="result-actions">
+                    <button class="mini-action" data-module="${escapeHtml(signal.id)}">열기</button>
+                  </div>
+                </div>
+                <div class="result-badge">${escapeHtml(signal.state || "-")}</div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `;
+    }
+
+    async function showSystemStatusBoard() {
+      stage.classList.add("active");
+      stageTitle.textContent = "시스템 점검";
+      stageMeta.textContent = "모듈 연결 상태를 확인하는 중입니다.";
+      stageBody.innerHTML = '<div class="stage-empty">모듈, 로그, 런타임 상태를 확인하는 중입니다...</div>';
+      const status = await api("/api/system/status");
+      renderSystemStatusBoard(status);
+      setAssistantMessage("시스템 점검 보드를 열었습니다.");
+    }
+
+    function renderPermissionStatusBoard(status) {
+      const checks = status?.checks || [];
+      stage.classList.add("active");
+      stageTitle.textContent = "권한 점검";
+      stageMeta.textContent = `${status?.readyCount || 0}/${status?.totalCount || 0} Checks Ready · ${status?.serviceAccountEmail || ""}`;
+      stageBody.innerHTML = `
+        <div class="tool-panel">
+          <div class="notice">
+            <strong>서비스 계정</strong><br>
+            ${escapeHtml(status?.serviceAccountEmail || "-")}<br>
+            통합마스터로그: ${escapeHtml(status?.masterSheetUrl || "-")}
+          </div>
+          <div class="result-list">
+            ${checks.map((check) => {
+              const ledClass = check.level === "red" ? "mini-led red" : check.level === "yellow" ? "mini-led yellow" : "mini-led";
+              return `
+                <div class="result-card">
+                  <div>
+                    <div class="result-title"><span class="${ledClass}"></span> ${escapeHtml(check.label || check.id)}</div>
+                    <div class="result-meta">${escapeHtml(check.message || "")}</div>
+                    ${check.action ? `<div class="job-meta"><strong>다음 조치</strong> · ${escapeHtml(check.action)}</div>` : ""}
+                    ${check.capabilities ? `
+                      <div class="job-meta">
+                        canEdit ${escapeHtml(String(check.capabilities.canEdit ?? "-"))} ·
+                        canAddChildren ${escapeHtml(String(check.capabilities.canAddChildren ?? "-"))}
+                      </div>
+                    ` : ""}
+                    ${check.folderId ? `
+                      <div class="result-actions">
+                        <button class="mini-action" data-drive-folder="${escapeHtml(check.folderId)}">폴더 파일 보기</button>
+                      </div>
+                    ` : ""}
+                    ${(check.sampleFiles || []).slice(0, 3).map((file) => `
+                      <div class="job-meta">${escapeHtml(file.name || "-")} · ${escapeHtml(file.mimeType || "")}</div>
+                    `).join("")}
+                  </div>
+                  <div class="result-badge">${check.ok ? "OK" : "CHECK"}</div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    async function showPermissionStatusBoard() {
+      stage.classList.add("active");
+      stageTitle.textContent = "권한 점검";
+      stageMeta.textContent = "Google Drive / Sheets 권한을 확인하는 중입니다.";
+      stageBody.innerHTML = '<div class="stage-empty">서비스 계정과 공유 권한을 검사하는 중입니다...</div>';
+      const status = await api("/api/permissions/status");
+      renderPermissionStatusBoard(status);
+      setAssistantMessage(`권한 점검 결과 ${status.readyCount}/${status.totalCount}개 항목이 통과했습니다.`);
+    }
+
+    function renderDriveFolderFiles(payload, sourceIndex = null) {
+      state.driveContext = { payload, sourceIndex };
+      if (sourceIndex !== null && state.searchResults[sourceIndex] && payload.bestMugshot?.webViewLink) {
+        state.searchResults[sourceIndex].bestMugshotUrl = payload.bestMugshot.webViewLink;
+        state.searchResults[sourceIndex].mugshotUrl = payload.bestMugshot.webViewLink;
+        state.searchResults[sourceIndex].mugshotThumbnail = payload.bestMugshot.thumbnailLink || "";
+      }
+      stage.classList.add("active");
+      stageTitle.textContent = "Google Drive 폴더 파일";
+      stageMeta.textContent = `${payload.folderId} · ${payload.count}개 · 머그샷 후보 ${(payload.mugshotCandidates || []).length}개`;
+      stageBody.innerHTML = `
+        <div class="tool-panel">
+          ${(payload.mugshotCandidates || []).length ? `
+            <div class="notice">
+              <strong>머그샷 후보</strong><br>
+              ${(payload.mugshotCandidates || []).slice(0, 3).map((file) => escapeHtml(file.name)).join(" · ")}
+              <div class="thumb-strip">
+                ${(payload.mugshotCandidates || []).slice(0, 6).map((file) => file.thumbnailLink ? `<img class="drive-thumb" src="${escapeHtml(file.thumbnailLink)}" alt="${escapeHtml(file.name || "")}">` : "").join("")}
+              </div>
+            </div>
+          ` : ""}
+        </div>
+        <div class="result-list">
+          ${(payload.files || []).map((file) => `
+            <div class="result-card">
+              <div>
+                ${file.thumbnailLink ? `<img class="customer-thumb" src="${escapeHtml(file.thumbnailLink)}" alt="">` : ""}
+                <div class="result-title">${escapeHtml(file.name || "-")}</div>
+                <div class="result-meta">
+                  ${escapeHtml(file.mimeType || "")}<br>
+                  수정 ${escapeHtml(file.modifiedTime || "-")} · 크기 ${escapeHtml(file.size || "-")}
+                  ${file.mugshotScore ? `<br>머그샷 후보 점수 ${escapeHtml(file.mugshotScore)}` : ""}
+                </div>
+                <div class="result-actions">
+                  <button class="mini-action" data-drive-open-url="${escapeHtml(file.webViewLink || "")}" ${file.webViewLink ? "" : "disabled"}>Drive에서 열기</button>
+                  ${file.isFolder ? `<button class="mini-action" data-drive-folder="${escapeHtml(file.id)}">하위 폴더</button>` : ""}
+                  ${file.isImage ? `<button class="mini-action" data-mugshot-url="${escapeHtml(file.webViewLink || "")}" ${sourceIndex !== null && file.webViewLink ? "" : "disabled"}>머그샷 지정</button>` : ""}
+                </div>
+              </div>
+              <div class="result-badge">${file.isFolder ? "FOLDER" : file.isImage ? "IMAGE" : "FILE"}</div>
+            </div>
+          `).join("") || '<div class="stage-empty">폴더 안에 표시할 파일이 없습니다.</div>'}
+        </div>
+      `;
+    }
+
+    async function showDriveFolderFiles(folderId, sourceIndex = null) {
+      const payload = await api("/api/drive/folder-files", {
+        method: "POST",
+        body: JSON.stringify({ folder_id: folderId, limit: 50 }),
+      });
+      renderDriveFolderFiles(payload, sourceIndex);
+      setAssistantMessage("Google Drive 폴더 파일 목록을 불러왔습니다.");
+    }
+
+    function renderWriteReadinessBoard(status) {
+      stage.classList.add("active");
+      stageTitle.textContent = "쓰기 준비";
+      stageMeta.textContent = "통합마스터로그/Drive 쓰기 작업은 dry-run으로 먼저 확인합니다.";
+      const canReadDrive = (status.checks || []).some((check) => check.id === "customer_folder_read" && check.ok);
+      const driveWriteCheck = (status.checks || []).find((check) => check.id === "drive_write") || {};
+      const defaultDriveFolder = driveWriteCheck.folderId || status.sampleFolderId || status.sampleFolderUrl || "";
+      stageBody.innerHTML = `
+        <div class="tool-panel">
+          <div class="notice">
+            <strong>dry-run 모드</strong><br>
+            아래 버튼은 실제 고객 데이터에 쓰지 않고 대상 행, 충돌 파일, 현재 권한 상태만 확인합니다.
+          </div>
+          <div class="letter-form">
+            <div class="letter-row">
+              <div class="letter-field">
+                <label for="writeDriveFolder">Drive 테스트 폴더 URL/ID</label>
+                <input id="writeDriveFolder" type="text" value="${escapeHtml(defaultDriveFolder)}" placeholder="서비스 계정 편집자 권한을 준 테스트 폴더 URL 또는 ID">
+              </div>
+              <div class="letter-field">
+                <label for="writeTestFilename">검사 파일명</label>
+                <input id="writeTestFilename" type="text" value="DKphotobox_write_test.txt">
+              </div>
+            </div>
+            <div class="notice">
+              <strong>실제 쓰기 보호</strong><br>
+              통합마스터로그 실제 기록은 확인 문구 <code>DKPHOTOBOX_WRITE</code> 없이는 차단됩니다.
+            </div>
+          </div>
+          <div class="tool-panel-grid">
+            <button class="tool-card" data-write-action="master-dry-run">
+              <strong>마스터로그 dry-run</strong>
+              <span>최근 검색 고객의 보정 상태 기록 위치를 확인합니다.</span>
+            </button>
+            <button class="tool-card" data-write-action="photoaction-master-dry-runs">
+              <strong>PhotoAction 완료 기록</strong>
+              <span>복사/매칭된 고객을 마스터로그 dry-run으로 묶어 확인합니다.</span>
+            </button>
+            <button class="tool-card" data-write-action="drive-upload-check">
+              <strong>Drive 업로드 검사</strong>
+              <span>최근 검색 고객 폴더에 같은 파일명이 있는지 확인합니다.</span>
+            </button>
+            <button class="tool-card" data-write-action="drive-capability-check">
+              <strong>Drive 쓰기 권한 확인</strong>
+              <span>입력한 폴더에 파일 추가 권한이 있는지 비파괴로 확인합니다.</span>
+            </button>
+            <button class="tool-card" data-write-action="permission-export">
+              <strong>권한 결과 저장</strong>
+              <span>현재 권한 상태를 Markdown 문서로 남깁니다.</span>
+            </button>
+          </div>
+          <div id="writeReadinessResult" class="stage-empty">최근 고객 검색 결과가 있으면 dry-run을 바로 실행할 수 있습니다.</div>
+        </div>
+      `;
+    }
+
+    async function showWriteReadinessBoard() {
+      stage.classList.add("active");
+      stageTitle.textContent = "쓰기 준비";
+      stageMeta.textContent = "권한 상태를 확인하는 중입니다.";
+      stageBody.innerHTML = '<div class="stage-empty">쓰기 전 점검 보드를 준비하는 중입니다...</div>';
+      const status = await api("/api/permissions/status");
+      renderWriteReadinessBoard(status);
+      setAssistantMessage("쓰기 준비 보드를 열었습니다. 실제 기록은 dry-run 이후 별도 실행으로 분리됩니다.");
+    }
+
+    function latestSearchCustomer() {
+      return (state.searchResults || []).find((item) => item.resno) || null;
+    }
+
+    function writeDriveFolderRef(customer = null) {
+      const manual = document.getElementById("writeDriveFolder")?.value?.trim() || "";
+      return manual || customer?.folderUrl || customer?.resultUrl || "";
+    }
+
+    function writeTestFilename() {
+      return document.getElementById("writeTestFilename")?.value?.trim() || "DKphotobox_write_test.txt";
+    }
+
+    function renderWriteResult(html) {
+      const panel = document.getElementById("writeReadinessResult");
+      if (panel) {
+        panel.className = "result-list";
+        panel.innerHTML = html;
+      }
+    }
+
+    async function runMasterDryRun() {
+      const customer = latestSearchCustomer();
+      if (!customer) {
+        setAssistantMessage("먼저 고객 검색을 실행해야 마스터로그 dry-run을 만들 수 있습니다.");
+        return;
+      }
+      const payload = await api("/api/runs/master-status-update", {
+        method: "POST",
+        body: JSON.stringify({
+          resno: customer.resno,
+          edit_status: "PhotoAction 분류 확인(dry-run)",
+          dry_run: true,
+          execute: false,
+        }),
+      });
+      renderWriteResult(`
+        <div class="result-card">
+          <div>
+            <div class="result-title">통합마스터로그 dry-run · ${escapeHtml(payload.resno)}</div>
+            <div class="result-meta">대상 행 ${escapeHtml(payload.rowNumber)} · ${escapeHtml(payload.message)}</div>
+            ${(payload.updates || []).map((item) => `<div class="job-meta">${escapeHtml(item.range)} = ${escapeHtml(item.value)}</div>`).join("")}
+          </div>
+          <div class="result-badge">DRY</div>
+        </div>
+      `);
+      setAssistantMessage("통합마스터로그 업데이트 dry-run을 만들었습니다. 실제 기록은 실행하지 않았습니다.");
+    }
+
+    async function runDriveUploadCheck() {
+      const customer = latestSearchCustomer();
+      const folderUrl = writeDriveFolderRef(customer);
+      if (!folderUrl) {
+        setAssistantMessage("Drive 테스트 폴더 URL/ID를 입력하거나, 먼저 고객 검색을 실행해야 합니다.");
+        return;
+      }
+      const filename = writeTestFilename();
+      const payload = await api("/api/drive/upload-check", {
+        method: "POST",
+        body: JSON.stringify({
+          url: folderUrl,
+          filename,
+          mime_type: "text/plain",
+          dry_run: true,
+        }),
+      });
+      renderWriteResult(`
+        <div class="result-card">
+          <div>
+            <div class="result-title">Drive 업로드 dry-run · ${escapeHtml(payload.filename)}</div>
+            <div class="result-meta">${escapeHtml(payload.message)} · 충돌 ${escapeHtml(payload.conflictCount)}개</div>
+            ${(payload.conflicts || []).map((file) => `<div class="job-meta">${escapeHtml(file.name)} · ${escapeHtml(file.webViewLink || "")}</div>`).join("")}
+          </div>
+          <div class="result-badge">${payload.canUpload ? "CLEAR" : "CONFLICT"}</div>
+        </div>
+      `);
+      setAssistantMessage("Drive 업로드 충돌 검사를 dry-run으로 완료했습니다.");
+    }
+
+    async function runDriveCapabilityCheck() {
+      const customer = latestSearchCustomer();
+      const folderUrl = writeDriveFolderRef(customer);
+      if (!folderUrl) {
+        setAssistantMessage("Drive 테스트 폴더 URL/ID를 입력하면 쓰기 권한을 바로 확인할 수 있습니다.");
+        return;
+      }
+      const payload = await api("/api/drive/write-capability", {
+        method: "POST",
+        body: JSON.stringify({ url: folderUrl }),
+      });
+      const capabilityRows = Object.entries(payload.capabilities || {})
+        .filter(([key]) => ["canEdit", "canAddChildren", "canShare", "canDelete"].includes(key))
+        .map(([key, value]) => `<div class="job-meta">${escapeHtml(key)} = ${escapeHtml(value)}</div>`)
+        .join("");
+      renderWriteResult(`
+        <div class="result-card">
+          <div>
+            <div class="result-title">Drive 쓰기 권한 확인 · ${escapeHtml(payload.folderName || payload.folderId)}</div>
+            <div class="result-meta">${escapeHtml(payload.message)} · ${escapeHtml(payload.folderId)}</div>
+            ${capabilityRows}
+            ${payload.webViewLink ? `<div class="result-actions"><button class="mini-action" data-drive-open-url="${escapeHtml(payload.webViewLink)}">폴더 열기</button></div>` : ""}
+          </div>
+          <div class="result-badge">${payload.canAddChildren ? "WRITE OK" : "CHECK"}</div>
+        </div>
+      `);
+      setAssistantMessage(payload.canAddChildren ? "Drive 쓰기 권한이 확인되었습니다." : "Drive 쓰기 권한은 아직 확인되지 않았습니다. 서비스 계정을 편집자로 추가한 뒤 다시 확인해 주세요.");
+    }
+
+    async function runPhotoActionMasterDryRuns() {
+      const payload = await api("/api/photoaction/master-dry-runs", { method: "POST", body: "{}" });
+      renderWriteResult(`
+        ${(payload.plans || []).map((item) => `
+          <div class="result-card">
+            <div>
+              <div class="result-title">${escapeHtml(item.customer?.time || "--:--")} ${escapeHtml(item.customer?.name || "-")}</div>
+              <div class="result-meta">
+                ${item.ok ? `대상 행 ${escapeHtml(item.plan?.rowNumber || "-")} · ${escapeHtml(item.plan?.message || "")}` : escapeHtml(item.error || "dry-run 실패")}
+              </div>
+              ${(item.plan?.updates || []).map((update) => `<div class="job-meta">${escapeHtml(update.range)} = ${escapeHtml(update.value)}</div>`).join("")}
+            </div>
+            <div class="result-badge">${item.ok ? "DRY" : "CHECK"}</div>
+          </div>
+        `).join("") || '<div class="stage-empty">마스터로그 dry-run 대상 고객이 없습니다.</div>'}
+      `);
+      setAssistantMessage(`PhotoAction 고객 ${payload.count || 0}건의 마스터로그 dry-run을 만들었습니다.`);
+    }
+
+    async function exportPermissionStatus() {
+      const payload = await api("/api/permissions/export", { method: "POST", body: "{}" });
+      renderWriteResult(`
+        <div class="result-card">
+          <div>
+            <div class="result-title">권한 점검 결과 저장</div>
+            <div class="result-meta">${escapeHtml(payload.path || "")}</div>
+            <div class="result-actions">
+              <button class="mini-action" data-local-open="${escapeHtml(payload.path || "")}">문서 열기</button>
+            </div>
+          </div>
+          <div class="result-badge">MD</div>
+        </div>
+      `);
+      setAssistantMessage("권한 점검 결과를 Markdown으로 저장했습니다.");
+    }
+
+    function wireModuleButtons() {
+      document.querySelectorAll("[data-module]").forEach((button) => {
+        if (button.dataset.wired === "true") return;
+        button.dataset.wired = "true";
+        button.addEventListener("click", () => openModule(button.dataset.module));
+      });
+      document.querySelectorAll("[data-home]").forEach((button) => {
+        if (button.dataset.wired === "true") return;
+        button.dataset.wired = "true";
+        button.addEventListener("click", closeStage);
+      });
+    }
+
+    function handleCommandSearch(event) {
+      if (event.key !== "Enter") return;
+      const rawQuery = commandSearch.value.trim();
+      const query = rawQuery.toLowerCase();
+      if (!query) return;
+
+      const module = state.modules.find((item) => {
+        const text = `${item.id} ${item.name} ${item.category} ${item.description}`.toLowerCase();
+        return text.includes(query);
+      });
+
+      if (module) {
+        openModule(module.id);
+        commandSearch.value = "";
+        return;
+      }
+
+      if (/(문서|로그|기술|로드맵|설정|파일|오류|에러)/.test(rawQuery)) {
+        searchLocal(rawQuery, true);
+        commandSearch.value = "";
+        return;
+      }
+
+      searchCustomers(rawQuery, true);
+      commandSearch.value = "";
+    }
+
+    async function searchLocal(query, announce = false) {
+      try {
+        stage.classList.add("active");
+        stageTitle.textContent = "로컬 문서 / 로그 검색";
+        stageMeta.textContent = `"${query}" 검색 중`;
+        stageBody.innerHTML = '<div class="stage-empty">로컬 문서와 로그를 검색하는 중입니다...</div>';
+
+        const result = await api(`/api/local-search?q=${encodeURIComponent(query)}&limit=30`);
+        renderLocalSearch(result.query, result.results || []);
+        if (announce) {
+          setAssistantMessage(`로컬 문서/로그 검색 결과 ${result.count}건을 찾았습니다.`);
+        }
+        return result;
+      } catch (error) {
+        stageBody.innerHTML = `<div class="stage-empty">검색 실패: ${error.message}</div>`;
+        setAssistantMessage(`로컬 검색 실패: ${error.message}`);
+        return null;
+      }
+    }
+
+    async function searchCustomers(query, announce = false) {
+      try {
+        stage.classList.add("active");
+        stageTitle.textContent = "RUNS 고객 검색";
+        stageMeta.textContent = `"${query}" 검색 중`;
+        stageBody.innerHTML = '<div class="stage-empty">RUNS 시트를 검색하는 중입니다...</div>';
+
+        const result = await api(`/api/runs/customers/search?q=${encodeURIComponent(query)}&limit=30`);
+        renderCustomerSearch(result.query, result.results || []);
+        if (result.warnings?.length) {
+          const permission = await api("/api/runs/master-permission");
+          stageBody.insertAdjacentHTML("afterbegin", renderPermissionNotice(permission));
+        }
+        if (announce) {
+          setAssistantMessage(`RUNS 고객 검색 결과 ${result.count}건을 찾았습니다.`);
+        }
+        return result;
+      } catch (error) {
+        stageBody.innerHTML = `<div class="stage-empty">검색 실패: ${error.message}</div>`;
+        setAssistantMessage(`고객 검색 실패: ${error.message}`);
+        return null;
+      }
+    }
+
+    async function askAssistant(rawMessage = null) {
+      const message = (rawMessage ?? aiInput.value).trim();
+      if (!message) return;
+
+      setUserMessage(message);
+      if (!rawMessage) aiInput.value = "";
+
+      try {
+        const result = await api("/api/assistant/query", {
+          method: "POST",
+          body: JSON.stringify({ message }),
+        });
+        setAssistantMessage(result.message);
+        if (result.type === "open_module" && result.moduleId) {
+          await openModule(result.moduleId);
+        } else if (result.type === "customer_search") {
+          renderCustomerSearch(result.query, result.results || []);
+          if (result.warnings?.length) {
+            const permission = await api("/api/runs/master-permission");
+            stageBody.insertAdjacentHTML("afterbegin", renderPermissionNotice(permission));
+          }
+        } else if (result.type === "local_search") {
+          renderLocalSearch(result.query, result.results || []);
+        } else if (result.type === "photoaction_status") {
+          renderPhotoActionStatusBoard(result.summary);
+        } else if (result.type === "system_status") {
+          renderSystemStatusBoard(result.status);
+        } else if (result.type === "permission_status") {
+          renderPermissionStatusBoard(result.status);
+        } else if (result.type === "letter_status") {
+          const module = moduleById("letter") || { name: "Letter / Watermark" };
+          renderLetterControlPanel(module);
+        } else if (result.type === "dev_request") {
+          await loadDevRequests();
+        }
+      } catch (error) {
+        setAssistantMessage(`안내데스크 처리 실패: ${error.message}`);
+      }
+    }
+
+    async function loadModules() {
+      try {
+        const data = await api("/api/modules");
+        state.modules = data.modules || [];
+        renderModuleNavigation();
+        setAssistantMessage(`DKphotobox 운영 본부가 준비되었습니다. 등록 모듈 ${state.modules.length}개를 확인했습니다.`);
+      } catch (error) {
+        if (moduleStack) {
+          moduleStack.innerHTML = `
+            <div class="job">
+              <div class="job-top"><span>Module Deck</span><span>ERROR</span></div>
+              <div class="job-meta">${escapeHtml(error.message)}</div>
+            </div>
+          `;
+        }
+        setAssistantMessage(`모듈 정보를 불러오지 못했습니다: ${error.message}`);
+      }
+    }
+
+    function updateClock() {
+      if (!clock) return;
+      const formatter = new Intl.DateTimeFormat("ko-KR", {
+        timeZone: "Asia/Seoul",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      });
+      clock.textContent = `${formatter.format(new Date())} KST`;
+    }
+
+    function pairSlots(slots) {
+      const pairs = [];
+      for (let index = 0; index < slots.length; index += 2) {
+        pairs.push(slots.slice(index, index + 2));
+      }
+      return pairs;
+    }
+
+    function renderOperationsSummary(summary) {
+      state.operationsSummary = summary;
+      const today = summary.today?.stats || {};
+      const tomorrow = summary.tomorrow || {};
+
+      todayTotal.textContent = today.total ?? 0;
+      checkinWait.textContent = today.checkinWait ?? 0;
+      checkinDone.textContent = today.checkinDone ?? 0;
+      workWaiting.textContent = today.workWaiting ?? 0;
+      deliveryDone.textContent = today.deliveryDone ?? 0;
+      const todayDay = summary.today || {};
+      todayLabel.textContent = `오늘 예약 ${today.total ?? 0}건`;
+      tomorrowLabel.textContent = `내일 예약 ${tomorrow.total ?? 0}건`;
+
+      const renderSlotPairs = (slots) => pairSlots(slots || []).map((pair) => {
+        const inner = pair.map((slot) => {
+          const count = Number(slot.count || 0);
+          const className = count > 0 ? "slot has-booking" : "slot";
+          return `<div class="${className}"><span>${slot.time}</span><strong>${count}</strong></div>`;
+        }).join("");
+        return `<div class="slot-pair">${inner}</div>`;
+      }).join("");
+
+      todaySlots.innerHTML = renderSlotPairs(todayDay.slots);
+      tomorrowSlots.innerHTML = renderSlotPairs(tomorrow.slots);
+      renderModuleNavigation();
+      updateUpcomingAlarm();
+    }
+
+    function formatSlotLabel(timeStr) {
+      const parts = String(timeStr || "").split(":");
+      const h = Number(parts[0] || 0);
+      const m = Number(parts[1] || 0);
+      if (m === 0) return `${h}시`;
+      return `${h}시 ${m}분`;
+    }
+
+    function updateUpcomingAlarm() {
+      if (!consoleHeaderAlarm) return;
+      if (consoleMessageOverride) {
+        applyConsoleMessage(consoleMessageOverride);
+        return;
+      }
+      const slots = (state.operationsSummary && state.operationsSummary.today && state.operationsSummary.today.slots) || [];
+      const now = new Date();
+      const items = slots
+        .filter((s) => Number(s.count) > 0)
+        .map((s) => {
+          const parts = String(s.time || "").split(":");
+          const h = Number(parts[0] || 0);
+          const m = Number(parts[1] || 0);
+          const date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
+          return { time: s.time, date };
+        })
+        .sort((a, b) => a.date - b.date);
+
+      const upcoming = items.find((it) => {
+        const diff = (it.date - now) / 60000;
+        return diff > 0 && diff <= 60;
+      });
+
+      if (!upcoming) {
+        applyConsoleMessage(CONSOLE_MSG_IDLE);
+        lastAlarmKey = "";
+        return;
+      }
+
+      const diffMin = (upcoming.date - now) / 60000;
+      const stage = diffMin > 30 ? "prep" : "soon";
+
+      // 연속(인접 60분 이내) 그룹 판정
+      const group = [];
+      for (const it of items) {
+        if (it.date < upcoming.date) continue;
+        if (!group.length) { group.push(it); continue; }
+        const gap = (it.date - group[group.length - 1].date) / 60000;
+        if (gap <= 60) group.push(it);
+        else break;
+      }
+
+      let headline;
+      let sub;
+      const label = formatSlotLabel(upcoming.time);
+      if (group.length > 1) {
+        if (stage === "prep") {
+          headline = `${label}부터 시작되는 촬영준비 시간입니다`;
+        } else {
+          headline = `${label}부터 시작 · 촬영시작 30분 전입니다`;
+        }
+        sub = `연속 ${group.length}건 예정 · ${Math.ceil(diffMin)}분 후 시작`;
+      } else {
+        if (stage === "prep") {
+          headline = `${label} 촬영준비 시간입니다`;
+        } else {
+          headline = `${label} 촬영시작 30분 전입니다`;
+        }
+        sub = `${Math.ceil(diffMin)}분 후 시작`;
+      }
+
+      applyConsoleMessage({ headline, sub, mode: "alarm" });
+
+      const alarmKey = `${upcoming.time}@${stage}`;
+      if (alarmKey !== lastAlarmKey) {
+        lastAlarmKey = alarmKey;
+        try {
+          alarmAudio.currentTime = 0;
+          const p = alarmAudio.play();
+          if (p && typeof p.catch === "function") p.catch(() => {});
+        } catch (_) {}
+      }
+    }
+
+    async function loadOperationsSummary(announce = false) {
+      if (!canLoadProtectedData()) return;
+      try {
+        const summary = await api("/api/operations/summary");
+        renderOperationsSummary(summary);
+        if (announce) {
+          setAssistantMessage(`RUNS 운영 카운터를 갱신했습니다. 오늘 예약 ${summary.today.stats.total}건, 내일 예약 ${summary.tomorrow.total}건입니다.`);
+        }
+      } catch (error) {
+        setAssistantMessage(`RUNS 운영 카운터를 불러오지 못했습니다: ${error.message}`);
+      }
+    }
+
+    function bookingEventSub(event) {
+      const parts = [];
+      if (event.date) parts.push(event.date);
+      if (event.time) parts.push(event.time);
+      if (event.product) parts.push(event.product);
+      if (event.resno) parts.push(`예약번호 ${event.resno}`);
+      return parts.join(" · ") || "새 예약";
+    }
+
+    function showBookingEvent(event) {
+      const message = "화보촬영 예약이 체결 되었습니다.";
+      showTemporaryConsoleMessage(message, bookingEventSub(event), "success", 45000);
+      setAssistantMessage(message);
+      playConsoleAudio(bookingAudio);
+      addNotificationHistory(message, bookingEventSub(event));
+      api("/api/booking/log-event", {
+        method: "POST",
+        body: JSON.stringify({
+          event_key: event.eventKey || "",
+          resno: event.resno || "",
+          date: event.date || "",
+          time: event.time || "",
+          name: event.name || event.maskedName || "",
+          product: event.product || "",
+          message,
+        }),
+      }).catch(() => {});
+    }
+
+    async function loadBookingEvents() {
+      if (!canLoadProtectedData()) return;
+      try {
+        const payload = await api("/api/booking/events?limit=8");
+        state.bookingEventErrorShown = false;
+        const latest = (payload.events || [])[0];
+        if (!latest || !latest.eventKey) return;
+
+        const storageKey = "dkphotobox.lastBookingEventKey";
+        const storedKey = window.localStorage?.getItem(storageKey) || "";
+        const previousKey = state.lastBookingEventKey || storedKey;
+        state.lastBookingEventKey = latest.eventKey;
+        try {
+          window.localStorage?.setItem(storageKey, latest.eventKey);
+        } catch (_) {}
+
+        if (!state.bookingEventsReady) {
+          state.bookingEventsReady = true;
+          if (storedKey && storedKey !== latest.eventKey) {
+            showBookingEvent(latest);
+          }
+          return;
+        }
+
+        if (previousKey && previousKey !== latest.eventKey) {
+          showBookingEvent(latest);
+        }
+      } catch (error) {
+        if (!state.bookingEventErrorShown) {
+          state.bookingEventErrorShown = true;
+          setAssistantMessage(`예약 이벤트 확인 실패: ${error.message}`);
+        }
+      }
+    }
+
+    function renderPriorityQueue(items) {
+      if (!priorityQueue) return;
+      state.priorityItems = items || [];
+      if (!items?.length) {
+        priorityQueue.innerHTML = `
+          <div class="job">
+            <div class="job-top"><span>대기 없음</span><span>CLEAR</span></div>
+            <div class="job-meta">현재 우선 처리할 항목이 없습니다.</div>
+          </div>
+        `;
+        return;
+      }
+
+      priorityQueue.innerHTML = items.map((item, index) => `
+        <div class="job">
+          <div class="job-top">
+            <span>${escapeHtml(item.title || "-")}</span>
+            <span>${escapeHtml(item.badge || "")}</span>
+          </div>
+          <div class="job-meta">${escapeHtml(item.meta || "")}</div>
+          ${item.action?.type && item.action.type !== "none" ? `
+            <div class="result-actions">
+              <button class="mini-action" data-priority-index="${index}">${escapeHtml(item.action.label || "열기")}</button>
+            </div>
+          ` : ""}
+        </div>
+      `).join("");
+    }
+
+    async function handlePriorityAction(index) {
+      const item = state.priorityItems?.[Number(index)];
+      const action = item?.action || {};
+      if (!action.type || action.type === "none") return;
+      if (action.type === "customer_search" && action.query) {
+        await searchCustomers(action.query, true);
+        return;
+      }
+      if (action.type === "photoaction_status") {
+        await showPhotoActionStatusBoard();
+        return;
+      }
+      if (action.type === "open_module" && action.moduleId) {
+        await openModule(action.moduleId);
+      }
+    }
+
+    async function loadPriorityQueue() {
+      if (!canLoadProtectedData()) return;
+      try {
+        const data = await api("/api/priority-queue");
+        state.priorityData = data;
+        renderPriorityQueue(data.items || []);
+        renderModuleNavigation();
+      } catch (error) {
+        if (!priorityQueue) return;
+        priorityQueue.innerHTML = `
+          <div class="job">
+            <div class="job-top"><span>Priority Queue</span><span>ERROR</span></div>
+            <div class="job-meta">${escapeHtml(error.message)}</div>
+          </div>
+        `;
+      }
+    }
+
+    function renderPhotoActionLive(summary) {
+      if (!photoactionLive) return;
+      if (!summary) {
+        photoactionLive.innerHTML = `
+          <div class="job">
+            <div class="job-meta">PhotoAction 세션 정보가 없습니다.</div>
+          </div>
+        `;
+        return;
+      }
+      photoactionLive.innerHTML = `
+        <div class="job">
+          <div class="job-top">
+            <span>${escapeHtml(summary.date || "PhotoAction")}</span>
+            <span>${escapeHtml(summary.assignedPercent || 0)}%</span>
+          </div>
+          <div class="job-meta">
+            고객 ${escapeHtml(summary.activeCustomers || summary.customers || 0)} · 매칭 ${escapeHtml(summary.assigned || 0)}/${escapeHtml(summary.photos || 0)} · 복사 ${escapeHtml(summary.copied || 0)} · RAW 누락 ${escapeHtml(summary.rawMissing || 0)}
+          </div>
+          <div class="meter" title="PhotoAction 매칭 진행률"><span style="--value:${Number(summary.assignedPercent || 0)}%"></span></div>
+          <div class="metric-grid">
+            <div class="metric">JPG<strong>${escapeHtml(summary.standBy?.jpgCount ?? "-")}</strong></div>
+            <div class="metric">RAW<strong>${escapeHtml(summary.standBy?.rawCount ?? "-")}</strong></div>
+            <div class="metric">미분류<strong>${escapeHtml(summary.unclassified ?? 0)}</strong></div>
+          </div>
+          <div class="result-actions">
+            <button class="mini-action primary" data-photoaction-action="open">열기</button>
+            <button class="mini-action" data-photoaction-action="refresh">새로고침</button>
+            <button class="mini-action" data-tool-action="photoaction-status">상태 보드</button>
+            <button class="mini-action" data-photoaction-action="lightroom">Lightroom RAW</button>
+            <button class="mini-action" data-photoaction-action="master-dry-runs">마스터 dry-run</button>
+          </div>
+        </div>
+        ${(summary.customerPreview || []).slice(0, 3).map((customer) => `
+          <div class="dev-row">
+            ${customer.mugshotUrl ? `<img class="customer-thumb" src="${escapeHtml(customer.mugshotUrl)}" alt="">` : ""}
+            <div class="job-top">
+              <span>${escapeHtml(customer.time || "--:--")} ${escapeHtml(customer.name || "-")}</span>
+              <span>SNS ${escapeHtml(customer.sns || "-")}</span>
+            </div>
+            <div class="job-meta">${escapeHtml(customer.resno || "")} · 매칭 ${escapeHtml(customer.assigned || 0)}장 ${customer.copied ? "· 완료" : ""}</div>
+          </div>
+        `).join("")}
+      `;
+    }
+
+    async function loadPhotoActionLive() {
+      if (!canLoadProtectedData()) return;
+      try {
+        const data = await api("/api/photoaction/session");
+        renderPhotoActionLive(data.summary);
+        await loadPhotoActionLogs();
+      } catch (error) {
+        if (!photoactionLive) return;
+        photoactionLive.innerHTML = `
+          <div class="job">
+            <div class="job-top"><span>PhotoAction</span><span>CHECK</span></div>
+            <div class="job-meta">${escapeHtml(error.message)}</div>
+          </div>
+        `;
+      }
+    }
+
+    function renderPhotoActionLogs(logs) {
+      if (!photoactionLogs) return;
+      if (!logs?.length) {
+        photoactionLogs.innerHTML = "";
+        return;
+      }
+      photoactionLogs.innerHTML = logs.slice(0, 3).map((log) => `
+        <div class="dev-row">
+          <div class="job-top">
+            <span>${escapeHtml(log.kind || "log")}</span>
+            <span>${escapeHtml((log.modifiedAt || "").slice(11, 16))}</span>
+          </div>
+          <div class="job-meta">
+            ${escapeHtml(log.name || "")}<br>
+            copied ${escapeHtml(log.copied ?? 0)} · skipped ${escapeHtml(log.skipped ?? 0)} · raw missing ${escapeHtml(log.rawMissing ?? 0)}
+          </div>
+        </div>
+      `).join("");
+    }
+
+    async function loadPhotoActionLogs() {
+      try {
+        const data = await api("/api/photoaction/logs?limit=4");
+        renderPhotoActionLogs(data.logs || []);
+      } catch (error) {
+        if (photoactionLogs) photoactionLogs.innerHTML = "";
+      }
+    }
+
+    async function createLightroomPackage() {
+      if (!confirm("현재 PhotoAction 매칭 상태 기준으로 Lightroom RAW 패키지를 생성할까요? 기존 파일은 덮어쓰지 않습니다.")) return;
+      const data = await api("/api/photoaction/lightroom-package", { method: "POST", body: "{}" });
+      const summary = data.summary || {};
+      setAssistantMessage(`Lightroom RAW 패키지 생성 완료. 복사 ${summary.copied || 0}개, 스킵 ${summary.skipped || 0}개, RAW 누락 ${summary.rawMissing || 0}개입니다.`);
+      addNotificationHistory("Lightroom RAW 패키지 생성 완료", `복사 ${summary.copied || 0} · 스킵 ${summary.skipped || 0} · RAW 누락 ${summary.rawMissing || 0}`);
+      await loadPhotoActionLive();
+    }
+
+    function handlePhotoActionButton(button) {
+      if (!button) return;
+      if (button.dataset.photoactionAction === "open") {
+        openModule("photoaction");
+      } else if (button.dataset.photoactionAction === "lightroom") {
+        createLightroomPackage().catch((error) => {
+          setAssistantMessage(`Lightroom RAW 패키지 생성 실패: ${error.message}`);
+        });
+      } else if (button.dataset.photoactionAction === "refresh") {
+        loadPhotoActionLive().then(() => {
+          setAssistantMessage("PhotoAction Live 패널을 새로고침했습니다.");
+        }).catch((error) => {
+          setAssistantMessage(`PhotoAction 새로고침 실패: ${error.message}`);
+        });
+      } else if (button.dataset.photoactionAction === "master-dry-runs") {
+        api("/api/photoaction/master-dry-runs", { method: "POST", body: "{}" }).then((payload) => {
+          setAssistantMessage(`PhotoAction 고객 ${payload.count || 0}건의 마스터로그 dry-run을 확인했습니다.`);
+          addNotificationHistory("PhotoAction 마스터로그 dry-run", `대상 ${payload.count || 0}건`);
+        }).catch((error) => {
+          setAssistantMessage(`PhotoAction 마스터 dry-run 실패: ${error.message}`);
+        });
+      }
+    }
+
+    function renderSignals(signals) {
+      state.signals = signals || [];
+      renderModuleNavigation();
+    }
+
+    async function loadSignals() {
+      try {
+        const data = await api("/api/signals");
+        renderSignals(data.signals || []);
+      } catch (error) {
+        state.signals = [];
+        renderModuleNavigation();
+      }
+    }
+
+    async function loadSystemStatus() {
+      try {
+        const data = await api("/api/system/status");
+        const online = (data.signals || []).filter((signal) => signal.level === "green").length;
+        if (systemStatusText) {
+          systemStatusText.textContent = `${online}/${data.modules} Modules Ready`;
+        }
+      } catch (error) {
+        if (systemStatusText) systemStatusText.textContent = "System Check";
+      }
+    }
+
+    function devStatusLabel(status) {
+      return {
+        queued: "대기",
+        doing: "진행",
+        done: "완료",
+      }[status] || status || "대기";
+    }
+
+    function renderDevRequests(requests) {
+      if (!devRequests) return;
+      if (!requests?.length) {
+        devRequests.innerHTML = `
+          <div class="job">
+            <div class="job-meta">개발팀 전달 항목이 여기에 표시됩니다.</div>
+          </div>
+        `;
+        return;
+      }
+
+      devRequests.innerHTML = requests.map((request) => `
+        <div class="dev-row">
+          <div class="job-top">
+            <span>${escapeHtml(request.source || "AI 안내데스크")}</span>
+            <span>${escapeHtml(devStatusLabel(request.status))}</span>
+          </div>
+          <div class="dev-message">${escapeHtml(request.message || "")}</div>
+          <div class="job-meta">${escapeHtml(request.createdAt || "")}</div>
+          <div class="dev-actions">
+            <button data-dev-id="${escapeHtml(request.id)}" data-dev-status="queued">대기</button>
+            <button data-dev-id="${escapeHtml(request.id)}" data-dev-status="doing">진행</button>
+            <button data-dev-id="${escapeHtml(request.id)}" data-dev-status="done">완료</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    async function loadDevRequests() {
+      try {
+        const data = await api("/api/dev-requests?limit=8");
+        renderDevRequests(data.requests || []);
+      } catch (error) {
+        if (!devRequests) return;
+        devRequests.innerHTML = `
+          <div class="job">
+            <div class="job-top"><span>Dev Requests</span><span>ERROR</span></div>
+            <div class="job-meta">${escapeHtml(error.message)}</div>
+          </div>
+        `;
+      }
+    }
+
+    async function updateDevRequest(requestId, status) {
+      await api(`/api/dev-requests/${encodeURIComponent(requestId)}`, {
+        method: "PATCH",
+        body: JSON.stringify({ status }),
+      });
+      await loadDevRequests();
+      setAssistantMessage(`개발팀 전달 항목 상태를 ${devStatusLabel(status)}으로 변경했습니다.`);
+    }
+
+    async function exportDevRequestPackage() {
+      const data = await api("/api/dev-requests/export", { method: "POST", body: "{}" });
+      setAssistantMessage(`개발팀 전달 패키지를 생성했습니다. 미완료 ${data.pending || 0}건, 전체 ${data.total || 0}건입니다.`);
+    }
+
+    stageOpenNew.addEventListener("click", openActiveNewWindow);
+    stageOpenFolder.addEventListener("click", openActiveFolder);
+    stageExpand?.addEventListener("click", () => {
+      const expanded = document.body.classList.toggle("stage-expanded");
+      if (stageExpand) {
+        stageExpand.textContent = expanded ? "축소" : "확장 보기";
+        stageExpand.classList.toggle("expanded-on", expanded);
+      }
+    });
+    stageClose.addEventListener("click", closeStage);
+    stageBody.addEventListener("click", handleResultAction);
+    stageBody.addEventListener("click", (event) => {
+      handleLetterAction(event).catch((error) => {
+        setAssistantMessage(`Letter / Watermark 처리 실패: ${error.message}`);
+      });
+    });
+    stageBody.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-letter-path]");
+      if (!button) return;
+      api("/api/letter/open-path", {
+        method: "POST",
+        body: JSON.stringify({ path: button.dataset.letterPath }),
+      }).then(() => {
+        setAssistantMessage("Letter / Watermark 경로를 열었습니다.");
+      }).catch((error) => {
+        setAssistantMessage(`Letter 경로 열기 실패: ${error.message}`);
+      });
+    });
+    stageBody.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-tool-action]");
+      if (!button) return;
+      if (button.dataset.toolAction === "photoaction-status") {
+        showPhotoActionStatusBoard().catch((error) => {
+          setAssistantMessage(`PhotoAction 상태 확인 실패: ${error.message}`);
+        });
+      } else if (button.dataset.toolAction === "system-status") {
+        showSystemStatusBoard().catch((error) => {
+          setAssistantMessage(`시스템 점검 실패: ${error.message}`);
+        });
+      } else if (button.dataset.toolAction === "permission-status") {
+        showPermissionStatusBoard().catch((error) => {
+          setAssistantMessage(`권한 점검 실패: ${error.message}`);
+        });
+      } else if (button.dataset.toolAction === "write-readiness") {
+        showWriteReadinessBoard().catch((error) => {
+          setAssistantMessage(`쓰기 준비 실패: ${error.message}`);
+        });
+      }
+    });
+    stageBody.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-write-action]");
+      if (!button) return;
+      const action = button.dataset.writeAction;
+      const handlers = {
+        "master-dry-run": runMasterDryRun,
+        "photoaction-master-dry-runs": runPhotoActionMasterDryRuns,
+        "drive-upload-check": runDriveUploadCheck,
+        "drive-capability-check": runDriveCapabilityCheck,
+        "permission-export": exportPermissionStatus,
+      };
+      handlers[action]?.().catch((error) => {
+        setAssistantMessage(`쓰기 준비 작업 실패: ${error.message}`);
+      });
+    });
+    stageBody.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-drive-folder]");
+      if (!button) return;
+      showDriveFolderFiles(button.dataset.driveFolder, state.driveContext?.sourceIndex ?? null).catch((error) => {
+        setAssistantMessage(`Drive 폴더 조회 실패: ${error.message}`);
+      });
+    });
+    stageBody.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-drive-open-url]");
+      if (!button || !button.dataset.driveOpenUrl) return;
+      window.open(button.dataset.driveOpenUrl, "_blank", "noopener");
+    });
+    stageBody.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-mugshot-url]");
+      if (!button || !button.dataset.mugshotUrl) return;
+      const sourceIndex = state.driveContext?.sourceIndex;
+      if (sourceIndex === null || sourceIndex === undefined || !state.searchResults[sourceIndex]) return;
+      state.searchResults[sourceIndex].mugshotUrl = button.dataset.mugshotUrl;
+      const card = button.closest(".result-card");
+      const thumb = card?.querySelector("img")?.getAttribute("src") || "";
+      state.searchResults[sourceIndex].mugshotThumbnail = thumb;
+      setAssistantMessage("머그샷 후보를 이 고객의 PhotoAction 전달 값으로 지정했습니다.");
+    });
+    stageBody.addEventListener("click", (event) => {
+      handlePhotoActionButton(event.target.closest("[data-photoaction-action]"));
+    });
+    stageBody.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-module]");
+      if (!button) return;
+      openModule(button.dataset.module).catch((error) => {
+        setAssistantMessage(`모듈 열기 실패: ${error.message}`);
+      });
+    });
+    photoactionLive?.addEventListener("click", (event) => {
+      const toolButton = event.target.closest("[data-tool-action]");
+      if (toolButton?.dataset.toolAction === "photoaction-status") {
+        showPhotoActionStatusBoard().catch((error) => {
+          setAssistantMessage(`PhotoAction 상태 확인 실패: ${error.message}`);
+        });
+        return;
+      }
+      const button = event.target.closest("[data-photoaction-action]");
+      handlePhotoActionButton(button);
+    });
+    priorityQueue?.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-priority-index]");
+      if (!button) return;
+      handlePriorityAction(button.dataset.priorityIndex).catch((error) => {
+        setAssistantMessage(`대기열 액션 실패: ${error.message}`);
+      });
+    });
+    exportDevRequests?.addEventListener("click", () => {
+      exportDevRequestPackage().catch((error) => {
+        setAssistantMessage(`개발팀 전달 패키지 생성 실패: ${error.message}`);
+      });
+    });
+    devRequests?.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-dev-status]");
+      if (!button) return;
+      updateDevRequest(button.dataset.devId, button.dataset.devStatus).catch((error) => {
+        setAssistantMessage(`개발팀 전달 상태 변경 실패: ${error.message}`);
+      });
+    });
+    commandSearch.addEventListener("keydown", handleCommandSearch);
+    aiSend.addEventListener("click", () => askAssistant());
+    aiInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") askAssistant();
+    });
+    document.querySelectorAll("[data-ai-query]").forEach((button) => {
+      button.addEventListener("click", () => askAssistant(button.dataset.aiQuery));
+    });
+    document.querySelectorAll(".action-grid [data-photoaction-action]").forEach((button) => {
+      button.addEventListener("click", () => {
+        handlePhotoActionButton(button);
+      });
+    });
+    document.querySelectorAll(".action-grid [data-tool-action]").forEach((button) => {
+      button.addEventListener("click", () => {
+        if (button.dataset.toolAction === "photoaction-status") {
+          showPhotoActionStatusBoard().catch((error) => {
+            setAssistantMessage(`PhotoAction 상태 확인 실패: ${error.message}`);
+          });
+        } else if (button.dataset.toolAction === "system-status") {
+          showSystemStatusBoard().catch((error) => {
+            setAssistantMessage(`시스템 점검 실패: ${error.message}`);
+          });
+        } else if (button.dataset.toolAction === "permission-status") {
+          showPermissionStatusBoard().catch((error) => {
+            setAssistantMessage(`권한 점검 실패: ${error.message}`);
+          });
+        } else if (button.dataset.toolAction === "write-readiness") {
+          showWriteReadinessBoard().catch((error) => {
+            setAssistantMessage(`쓰기 준비 실패: ${error.message}`);
+          });
+        } else if (button.dataset.toolAction === "work-summary") {
+          api("/api/work-summary/export", { method: "POST", body: "{}" }).then((payload) => {
+            setAssistantMessage(`작업 요약을 저장했습니다: ${payload.path}`);
+          }).catch((error) => {
+            setAssistantMessage(`작업 요약 생성 실패: ${error.message}`);
+          });
+        }
+      });
+    });
+    window.addEventListener("keydown", (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        commandSearch.focus();
+      }
+    });
+
+    const consoleHeaderState = { data: null };
+
+    function applyConsoleHeader(data) {
+      if (!data) return;
+      consoleHeaderState.data = { ...data };
+      const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (value && String(value).trim()) {
+          el.textContent = value;
+          el.hidden = false;
+        } else {
+          el.textContent = "";
+          el.hidden = true;
+        }
+      };
+      setText("consoleHeaderLine1", data.line1 || "");
+      setText("consoleHeaderLine2", data.line2 || "");
+      setText("consoleHeaderLine3", data.line3 || "");
+      setText("consoleHeaderVersion", data.version || "");
+      const photoEl = document.getElementById("consoleHeaderPhoto");
+      if (photoEl) {
+          const photoVal = (data.photo || "").trim();
+          if (photoVal) {
+            const bust = Date.now();
+          photoEl.style.backgroundImage = `url("${apiUrl(`/api/console/header-photo?t=${bust}`)}")`;
+          } else {
+            photoEl.style.backgroundImage = "";
+          }
+      }
+    }
+
+    async function loadConsoleHeader() {
+      try {
+        const data = await api("/api/console/header");
+        applyConsoleHeader(data);
+      } catch (error) {
+        console.warn("Console header load failed", error);
+      }
+    }
+
+    function openConsoleHeaderModal() {
+      const data = consoleHeaderState.data || {};
+      const setVal = (id, key) => {
+        const el = document.getElementById(id);
+        if (el) el.value = data[key] || "";
+      };
+      setVal("consoleHeaderInput1", "line1");
+      setVal("consoleHeaderInput2", "line2");
+      setVal("consoleHeaderInput3", "line3");
+      setVal("consoleHeaderInputVersion", "version");
+      setVal("consoleHeaderInputPhoto", "photo");
+      const modal = document.getElementById("consoleHeaderModal");
+      if (modal) modal.hidden = false;
+      document.getElementById("consoleHeaderInput1")?.focus();
+    }
+
+    function closeConsoleHeaderModal() {
+      const modal = document.getElementById("consoleHeaderModal");
+      if (modal) modal.hidden = true;
+    }
+
+    async function saveConsoleHeaderFromModal() {
+      const payload = {
+        line1: document.getElementById("consoleHeaderInput1")?.value ?? "",
+        line2: document.getElementById("consoleHeaderInput2")?.value ?? "",
+        line3: document.getElementById("consoleHeaderInput3")?.value ?? "",
+        version: document.getElementById("consoleHeaderInputVersion")?.value ?? "",
+        photo: document.getElementById("consoleHeaderInputPhoto")?.value ?? "",
+      };
+      try {
+        const result = await api("/api/console/header", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        applyConsoleHeader(result);
+        closeConsoleHeaderModal();
+      } catch (error) {
+        alert(`헤더 저장 실패: ${error.message}`);
+      }
+    }
+
+    async function pickConsoleHeaderPhoto() {
+      const input = document.getElementById("consoleHeaderInputPhoto");
+      try {
+        const payload = await api("/api/console/header-photo/select", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ initial_path: input?.value || "" }),
+        });
+        if (payload.path && input) {
+          input.value = payload.path;
+        }
+      } catch (error) {
+        alert(`사진 선택 실패: ${error.message}`);
+      }
+    }
+
+    const welcomeModal = document.getElementById("welcomeModal");
+    const welcomeStartBtn = document.getElementById("welcomeModalStart");
+    let welcomeDismissed = false;
+
+    function dismissWelcomeModal() {
+      if (welcomeDismissed) return;
+      welcomeDismissed = true;
+      if (welcomeModal) welcomeModal.hidden = true;
+      try {
+        startAudio.currentTime = 0;
+        const sp = startAudio.play();
+        if (sp && typeof sp.catch === "function") sp.catch(() => {});
+      } catch (_) {}
+      try {
+        const prevVol = bookingAudio.volume;
+        bookingAudio.volume = 0;
+        const bp = bookingAudio.play();
+        if (bp && typeof bp.then === "function") {
+          bp.then(() => {
+            bookingAudio.pause();
+            bookingAudio.currentTime = 0;
+            bookingAudio.volume = prevVol;
+          }).catch(() => {
+            bookingAudio.volume = prevVol;
+          });
+        }
+      } catch (_) {}
+      try {
+        const prevVol = alarmAudio.volume;
+        alarmAudio.volume = 0;
+        const ap = alarmAudio.play();
+        if (ap && typeof ap.then === "function") {
+          ap.then(() => {
+            alarmAudio.pause();
+            alarmAudio.currentTime = 0;
+            alarmAudio.volume = prevVol;
+          }).catch(() => {
+            alarmAudio.volume = prevVol;
+          });
+        }
+      } catch (_) {}
+      document.removeEventListener("keydown", handleWelcomeKey, true);
+      document.removeEventListener("click", handleWelcomeClick, true);
+    }
+
+    function handleWelcomeKey(event) {
+      if (welcomeDismissed) return;
+      dismissWelcomeModal();
+    }
+
+    function handleWelcomeClick(event) {
+      if (welcomeDismissed) return;
+      dismissWelcomeModal();
+    }
+
+    welcomeStartBtn?.addEventListener("click", dismissWelcomeModal);
+    if (welcomeModal && !welcomeDismissed) {
+      document.addEventListener("keydown", handleWelcomeKey, true);
+      document.addEventListener("click", handleWelcomeClick, true);
+    }
+
+    document.getElementById("consoleHeaderEditBtn")?.addEventListener("click", openConsoleHeaderModal);
+    document.getElementById("consoleHeaderModalClose")?.addEventListener("click", closeConsoleHeaderModal);
+    document.getElementById("consoleHeaderModalCancel")?.addEventListener("click", closeConsoleHeaderModal);
+    document.getElementById("consoleHeaderModalSave")?.addEventListener("click", saveConsoleHeaderFromModal);
+    document.getElementById("consoleHeaderPhotoPick")?.addEventListener("click", pickConsoleHeaderPhoto);
+    document.getElementById("bookingSoundTest")?.addEventListener("click", () => {
+      playConsoleAudio(bookingAudio);
+      showTemporaryConsoleMessage("화보촬영 예약이 체결 되었습니다.", "예약 사운드 테스트", "success", 15000);
+      addNotificationHistory("예약 사운드 테스트", "booking-01.mp3");
+      setAssistantMessage("예약 사운드를 테스트했습니다.");
+    });
+    document.getElementById("notificationClear")?.addEventListener("click", () => {
+      state.notificationHistory = [];
+      renderNotificationHistory();
+      window.consoleMessage.clear();
+      setAssistantMessage("알림 히스토리를 정리했습니다.");
+    });
+    document.getElementById("consoleHeaderModal")?.addEventListener("click", (event) => {
+      if (event.target.id === "consoleHeaderModal") closeConsoleHeaderModal();
+    });
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        const modal = document.getElementById("consoleHeaderModal");
+        if (modal && !modal.hidden) closeConsoleHeaderModal();
+      }
+    });
+
+    wireModuleButtons();
+    updateClock();
+    setInterval(updateClock, 30000);
+    loadConsoleHeader();
+    loadModules();
+    loadPermissionGate().then((ready) => {
+      if (!ready) return;
+      loadOperationsSummary(true);
+      loadBookingEvents();
+      loadPriorityQueue();
+      loadPhotoActionLive();
+      loadDevRequests();
+      loadSignals();
+      loadSystemStatus();
+    });
+    setInterval(loadBookingEvents, 60000);
+    setInterval(loadOperationsSummary, 180000);
+    setInterval(loadPriorityQueue, 180000);
+    setInterval(loadPhotoActionLive, 180000);
+    setInterval(loadPermissionGate, 180000);
+    setInterval(loadSignals, 180000);
+    setInterval(loadSystemStatus, 180000);
+    setInterval(updateUpcomingAlarm, 60000);
+  </script>
+</body>
+</html>
