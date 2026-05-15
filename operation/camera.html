@@ -33,33 +33,17 @@ video{
   height:100%;
   object-fit:cover;
   display:block;
-  background:#06070a;
-  opacity:.01;
-  transform:translateZ(0);
-  -webkit-transform:translateZ(0);
-  backface-visibility:hidden;
-  -webkit-backface-visibility:hidden;
-  transition:opacity .18s ease;
 }
-#video-wrap.camera-ready video{opacity:1;}
-#video-wrap::before{
-  content:'카메라 프리뷰 준비 중';
-  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  color:rgba(255,255,255,.45);font-size:16px;letter-spacing:.08em;z-index:0;
-}
-#video-wrap.camera-ready::before{display:none;}
-#btn-flip,#btn-refresh{
+#btn-flip{
   position:absolute;top:12px;left:12px;
   padding:10px 18px;border-radius:2rem;
   background:rgba(0,0,0,.65);border:1px solid rgba(255,255,255,.3);
-  color:#fff;font-size:16px;cursor:pointer;display:none;z-index:2;
+  color:#fff;font-size:16px;cursor:pointer;display:none;
 }
-#btn-refresh{left:auto;right:12px;top:56px;}
 #cam-status{
   position:absolute;top:12px;right:12px;
   font-size:14px;color:rgba(255,255,255,.6);
   background:rgba(0,0,0,.45);padding:6px 12px;border-radius:1rem;
-  z-index:2;
 }
 
 #btn-start{
@@ -93,9 +77,8 @@ video{
 </div>
 
 <div id="video-wrap">
-  <video id="videoEl" autoplay playsinline webkit-playsinline muted></video>
+  <video id="videoEl" autoplay playsinline muted></video>
   <button id="btn-flip" onclick="flip()">전/후면 FLIP</button>
-  <button id="btn-refresh" onclick="refreshPreview()">화면 새로고침</button>
   <div id="cam-status">대기 중 WAITING</div>
 </div>
 
@@ -116,53 +99,6 @@ var STREAM = null;
 var FACING = 'environment';
 var DATA = {};
 
-function setCameraReady(isReady) {
-  document.getElementById('video-wrap').classList.toggle('camera-ready', !!isReady);
-}
-
-function revealVideo() {
-  var v = document.getElementById('videoEl');
-  var playPromise = v.play();
-  if (playPromise && playPromise.catch) playPromise.catch(function(){});
-  requestAnimationFrame(function() {
-    v.style.display = 'none';
-    v.offsetHeight;
-    v.style.display = 'block';
-    v.style.opacity = '1';
-    setCameraReady(true);
-  });
-}
-
-function attachStream(stream) {
-  STREAM = stream;
-  var v = document.getElementById('videoEl');
-  v.setAttribute('playsinline', '');
-  v.setAttribute('webkit-playsinline', '');
-  v.muted = true;
-  v.autoplay = true;
-  v.style.opacity = '.01';
-  setCameraReady(false);
-  v.srcObject = stream;
-  v.onloadedmetadata = revealVideo;
-  v.onloadeddata = revealVideo;
-  setTimeout(revealVideo, 450);
-}
-
-function stopStream() {
-  if (STREAM) {
-    STREAM.getTracks().forEach(function(t){ t.stop(); });
-    STREAM = null;
-  }
-}
-
-function refreshPreview() {
-  document.getElementById('cam-status').textContent = '화면 갱신 중... REFRESH';
-  revealVideo();
-  setTimeout(function(){
-    document.getElementById('cam-status').textContent = '준비 완료 READY';
-  }, 350);
-}
-
 window.addEventListener('message', function(e) {
   if (e.data && e.data.type === 'INIT_CAMERA') {
     DATA = e.data;
@@ -177,13 +113,14 @@ function startCam() {
   document.getElementById('btn-start').style.display   = 'none';
   document.getElementById('btn-shutter').style.display = 'block';
   document.getElementById('btn-flip').style.display    = 'block';
-  document.getElementById('btn-refresh').style.display = 'block';
   document.getElementById('cam-status').textContent    = '연결 중... CONNECTING';
 
-  stopStream();
   navigator.mediaDevices.getUserMedia({ video:{ facingMode: FACING }, audio: false })
   .then(function(stream) {
-    attachStream(stream);
+    STREAM = stream;
+    var v = document.getElementById('videoEl');
+    v.srcObject = stream;
+    v.play();
     document.getElementById('cam-status').textContent = '준비 완료 READY';
   })
   .catch(function(err) {
@@ -191,18 +128,18 @@ function startCam() {
     document.getElementById('btn-start').style.display   = 'block';
     document.getElementById('btn-shutter').style.display = 'none';
     document.getElementById('btn-flip').style.display    = 'none';
-    document.getElementById('btn-refresh').style.display = 'none';
   });
 }
 
 function flip() {
   FACING = FACING === 'environment' ? 'user' : 'environment';
-  stopStream();
-  document.getElementById('cam-status').textContent = '전환 중... SWITCHING';
+  if (STREAM) { STREAM.getTracks().forEach(function(t){ t.stop(); }); STREAM = null; }
   navigator.mediaDevices.getUserMedia({ video:{ facingMode: FACING }, audio: false })
   .then(function(stream) {
-    attachStream(stream);
-    document.getElementById('cam-status').textContent = '준비 완료 READY';
+    STREAM = stream;
+    var v = document.getElementById('videoEl');
+    v.srcObject = stream;
+    v.play();
   });
 }
 
@@ -213,7 +150,7 @@ function shoot() {
   var vh = video.videoHeight || 960;
   var MAX_WIDTH = 1280;
   var MAX_HEIGHT = 960;
-  
+
   if (vw > MAX_WIDTH) { vh = Math.floor(vh * (MAX_WIDTH / vw)); vw = MAX_WIDTH; }
   if (vh > MAX_HEIGHT) { vw = Math.floor(vw * (MAX_HEIGHT / vh)); vh = MAX_HEIGHT; }
 
