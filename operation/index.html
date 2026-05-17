@@ -280,7 +280,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 <!-- ════════════════ 대시보드 ════════════════ -->
 <div id="s-dashboard" class="screen active">
   <div class="topbar">
-    <div class="topbar-brand">DKSEQUENCE 제주 중문별장 RUNS V.4.14</div>
+    <div class="topbar-brand">DKSEQUENCE 제주 중문별장 RUNS V.4.15</div>
     <div class="topbar-date-row">
       <button class="today-btn" onclick="goToToday()">TODAY</button>
       <button class="date-nav-btn" onclick="changeDate(-1)">◀</button>
@@ -584,12 +584,11 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 <!-- ════════════════ 신규 고객 (현장 결제) ════════════════ -->
 <div id="s-new" class="screen">
   <div class="topbar">
-    <button class="back-btn" onclick="show('s-dashboard')">← 목록</button>
-    <div style="text-align:center;">
-      <div class="topbar-title">신규 고객 추가</div>
-      <div class="topbar-sub">현장 결제</div>
+    <div style="width:120px;flex-shrink:0;"></div>
+    <div style="text-align:center;flex:1;">
+      <div class="topbar-title" style="white-space:nowrap;">신규 고객 추가 · 현장 결제</div>
     </div>
-    <div style="width:60px;"></div>
+    <button onclick="show('s-dashboard')" style="flex-shrink:0;padding:13px 26px;font-size:17px;font-weight:700;border-radius:.9rem;background:#0071e3;color:#fff;border:none;cursor:pointer;font-family:'Inter',sans-serif;">≡ 목록</button>
   </div>
   <div class="checkin-body">
     <div style="background:rgba(240,165,0,0.08);border-radius:.75rem;padding:10px 14px;font-size:12px;color:var(--warn);margin-bottom:20px;display:flex;align-items:center;gap:8px;">
@@ -657,7 +656,8 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
     </div>
     <div class="field-group" style="margin-bottom:20px;">
       <div class="field-label">결제금액 <span class="opt">선택</span></div>
-      <input class="field-input" type="number" id="new-amount" placeholder="0" inputmode="numeric" min="0" style="text-align:right;"/>
+      <input class="field-input" type="text" id="new-amount" placeholder="예: 25 → 25,000 · 40000 → 40,000" inputmode="numeric" autocomplete="off" style="text-align:right;" oninput="onAmountInput(this)" onblur="normalizeAmount(this)"/>
+      <div style="font-size:11px;color:var(--on-surface-dim);margin-top:6px;text-align:right;">3자리 이하 천원 자동(25→25,000) · 4자리 이상 그대로 콤마(40000→40,000)</div>
     </div>
 
     <!-- 동의 -->
@@ -723,7 +723,8 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
     </div>
     <div style="display:flex;gap:10px;">
       <button onclick="show('s-dashboard')" style="flex:1;padding:14px;border-radius:1rem;border:1px solid var(--outline);background:transparent;font-size:14px;color:var(--on-surface-dim);cursor:pointer;font-family:'Inter',sans-serif;">취소</button>
-      <button onclick="goNewCamera()" style="flex:2;padding:14px;border-radius:1rem;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-container) 100%);color:#fff;font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:'Inter',sans-serif;">접수 후 촬영하기</button>
+      <button onclick="preRegisterCustomer()" style="flex:1.4;padding:14px;border-radius:1rem;border:1px solid var(--primary);background:transparent;font-size:14px;font-weight:600;color:var(--primary);cursor:pointer;font-family:'Inter',sans-serif;">고객카드 사전 기록</button>
+      <button onclick="goNewCamera()" style="flex:1.6;padding:14px;border-radius:1rem;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-container) 100%);color:#fff;font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:'Inter',sans-serif;">촬영 후 저장하기</button>
     </div>
   </div>
 </div>
@@ -1694,6 +1695,57 @@ function setPayTab(el) {
   }
 }
 
+// ── 결제금액 자동 서식 ───────────────────────────────────
+// 입력 중: 천단위 콤마.  포커스 아웃: 3자리 이하면 ×1000(25→25,000), 4자리↑ 그대로(40000→40,000)
+function onAmountInput(el) {
+  var d = el.value.replace(/[^0-9]/g, '');
+  el.value = d ? Number(d).toLocaleString('en-US') : '';
+}
+function normalizeAmount(el) {
+  if (!el) return 0;
+  var d = el.value.replace(/[^0-9]/g, '');
+  if (!d) { el.value = ''; return 0; }
+  var won = (d.length <= 3) ? parseInt(d, 10) * 1000 : parseInt(d, 10);
+  el.value = won.toLocaleString('en-US');
+  return won;
+}
+
+// ── 고객카드 사전 기록 (촬영 없이 미리 등록 + 캘린더) ──────────
+function preRegisterCustomer() {
+  var name = document.getElementById('new-name').value.trim();
+  if (!name) { showToast('이름을 입력해주세요'); return; }
+  var privacyOn = document.getElementById('toggle-privacy2').classList.contains('on');
+  if (!privacyOn) { showToast('개인정보 수집 동의는 필수입니다'); return; }
+  var codeEl = document.getElementById('new-code');
+  var code = codeEl ? codeEl.textContent.trim() : '';
+  if (!code || code.indexOf('-R') === -1 || code.indexOf('?') !== -1) {
+    showToast('접수 코드 확인 중입니다. 잠시 후 다시 시도해주세요.');
+    regenWalkInCode(); return;
+  }
+  var activePayTab = document.querySelector('.pay-tab.active');
+  var isExperience = CURRENT_ADD_TYPE === 'V';
+  var rawMemo = document.getElementById('new-memo').value.trim();
+  callApi({
+    action: 'preRegister', date: getToday(),
+    time: document.getElementById('new-time').value,
+    resno: code, realName: name,
+    product: document.getElementById('new-product').value,
+    people: document.getElementById('new-people').value,
+    email: document.getElementById('new-email').value.trim(),
+    phone: document.getElementById('new-phone').value.trim(),
+    memo: isExperience ? ('[체험/테스트] ' + rawMemo).trim() : rawMemo,
+    privacyConsent: privacyOn,
+    snsConsent: document.getElementById('toggle-sns2').classList.contains('on'),
+    paymentMethod: activePayTab ? activePayTab.textContent.trim() : '',
+    paymentAmount: normalizeAmount(document.getElementById('new-amount')),
+    source: isExperience ? 'V' : 'A'
+  }, function(err, res) {
+    if (err || !res || !res.ok) { showToast('사전 기록 실패: ' + (err ? err.message : (res && res.error))); return; }
+    showToast('✅ 고객카드 사전 기록 완료 (' + (res.resno || code) + ') · 캘린더 등록됨');
+    setTimeout(function(){ show('s-dashboard'); }, 1000);
+  });
+}
+
 function goNewCamera() {
   var name = document.getElementById('new-name').value.trim();
   if (!name) { showToast('이름을 입력해주세요'); return; }
@@ -1726,7 +1778,7 @@ function goNewCamera() {
     privacyConsent : privacyOn,
     snsConsent     : document.getElementById('toggle-sns2').classList.contains('on'),
     paymentMethod  : activePayTab ? activePayTab.textContent.trim() : '',
-    paymentAmount  : parseInt(document.getElementById('new-amount').value || '0') || 0,
+    paymentAmount  : normalizeAmount(document.getElementById('new-amount')),
     source         : isExperience ? 'V' : 'A',
     isNew          : true,
   };
