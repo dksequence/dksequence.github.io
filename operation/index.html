@@ -233,10 +233,13 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 .cta-btn:disabled{opacity:.35;cursor:not-allowed;}
 
 /* ── 에러 토스트 ── */
-.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);
-  background:#2a1a1a;color:var(--danger);padding:12px 20px;border-radius:1rem;
-  font-size:13px;z-index:99;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
+.toast{position:fixed;bottom:48px;left:50%;transform:translateX(-50%);
+  background:#1e2a44;color:#fff;padding:20px 34px;border-radius:1rem;
+  font-size:22px;font-weight:700;line-height:1.4;z-index:99;opacity:0;transition:opacity .3s;
+  pointer-events:none;max-width:86vw;white-space:normal;text-align:center;
+  box-shadow:0 6px 24px rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.12);}
 .toast.show{opacity:1;}
+.edit-btn{margin-top:6px;font-size:12px;font-weight:700;color:#fff;background:#3b4a66;border:1px solid rgba(255,255,255,.15);border-radius:.6rem;padding:6px 12px;cursor:pointer;font-family:'Inter',sans-serif;}
 
 .pay-tab { flex:1; padding:9px; border-radius:.75rem; border:1px solid var(--outline); font-size:12px; color:var(--on-surface-dim); background:transparent; cursor:pointer; text-align:center; font-family:'Inter',sans-serif; }
 .pay-tab.active { background:rgba(171,199,255,.1); color:var(--primary); border-color:rgba(171,199,255,.2); font-weight:500; }
@@ -280,7 +283,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 <!-- ════════════════ 대시보드 ════════════════ -->
 <div id="s-dashboard" class="screen active">
   <div class="topbar">
-    <div class="topbar-brand">DKSEQUENCE 제주 중문별장 RUNS V.4.15</div>
+    <div class="topbar-brand">DKSEQUENCE 제주 중문별장 RUNS V.4.17</div>
     <div class="topbar-date-row">
       <button class="today-btn" onclick="goToToday()">TODAY</button>
       <button class="date-nav-btn" onclick="changeDate(-1)">◀</button>
@@ -730,6 +733,54 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 </div>
 
 <!-- ── 에러 토스트 ── -->
+<!-- ════════════════ 고객카드 수정 (오타 정정 전용) ════════════════ -->
+<div id="s-edit" class="screen">
+  <div class="topbar">
+    <div style="width:120px;flex-shrink:0;"></div>
+    <div style="text-align:center;flex:1;">
+      <div class="topbar-title" style="white-space:nowrap;">고객카드 수정</div>
+    </div>
+    <button onclick="show('s-dashboard')" style="flex-shrink:0;padding:13px 26px;font-size:17px;font-weight:700;border-radius:.9rem;background:#0071e3;color:#fff;border:none;cursor:pointer;font-family:'Inter',sans-serif;">≡ 목록</button>
+  </div>
+  <div class="checkin-body">
+    <div style="background:rgba(91,156,246,0.08);border-radius:.75rem;padding:10px 14px;font-size:13px;color:var(--on-surface-dim);margin-bottom:8px;">
+      접수코드 <b id="ed-resno" style="font-family:monospace;color:var(--primary);"></b>
+    </div>
+    <div id="ed-context" style="font-size:11px;color:var(--on-surface-dim);margin-bottom:18px;"></div>
+
+    <div class="field-group"><div class="field-label">이름 <span class="req">*</span></div>
+      <input class="field-input" type="text" id="ed-name" autocomplete="off"/></div>
+    <div class="field-row">
+      <div><div class="field-label">날짜</div><input class="field-input" type="text" id="ed-date" placeholder="YYYY-MM-DD"/></div>
+      <div><div class="field-label">시간</div><input class="field-input" type="text" id="ed-time" placeholder="HH:MM"/></div>
+    </div>
+    <div class="field-row">
+      <div><div class="field-label">상품</div><input class="field-input" type="text" id="ed-product"/></div>
+      <div><div class="field-label">인원</div><input class="field-input" type="text" id="ed-people" inputmode="numeric"/></div>
+    </div>
+    <div class="field-group"><div class="field-label">전화번호</div>
+      <input class="field-input" type="tel" id="ed-phone" placeholder="010-0000-0000"/></div>
+    <div class="field-group"><div class="field-label">이메일</div>
+      <input class="field-input" type="email" id="ed-email"/></div>
+    <div class="field-group"><div class="field-label">이메일2</div>
+      <input class="field-input" type="email" id="ed-email2"/></div>
+    <div class="field-group"><div class="field-label">이메일3</div>
+      <input class="field-input" type="email" id="ed-email3"/></div>
+    <div class="field-group"><div class="field-label">결제금액</div>
+      <input class="field-input" type="text" id="ed-amount" inputmode="numeric" style="text-align:right;" oninput="onAmountInput(this)" onblur="normalizeAmount(this)"/></div>
+    <div class="field-group" style="margin-bottom:20px;"><div class="field-label">메모</div>
+      <input class="field-input" type="text" id="ed-memo"/></div>
+
+    <div style="background:rgba(240,165,0,0.08);border-radius:.75rem;padding:10px 14px;font-size:11px;color:var(--warn);margin-bottom:16px;">
+      ⚠️ 동의·결과폴더·체크인시각·납품상태는 이 화면에서 변경되지 않습니다 (오타 정정 전용).
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="show('s-dashboard')" style="flex:1;padding:14px;border-radius:1rem;border:1px solid var(--outline);background:transparent;font-size:14px;color:var(--on-surface-dim);cursor:pointer;font-family:'Inter',sans-serif;">취소</button>
+      <button onclick="saveEdit()" style="flex:2;padding:14px;border-radius:1rem;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-container) 100%);color:#fff;font-size:14px;font-weight:600;border:none;cursor:pointer;font-family:'Inter',sans-serif;">수정 저장</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -767,6 +818,58 @@ function refreshData() {
   playSound('EFFECT008');
   document.getElementById('sync-btn').classList.remove('new');
   loadReservations(SELECTED_TIME, true);
+}
+
+// ── 고객카드 수정 (오타 정정 전용) ─────────────────────────
+var EDIT_CUR = null;
+function openEdit(resno) {
+  showToast('고객 정보 불러오는 중…');
+  callApi({ action: 'getCustomer', resno: resno }, function(err, res) {
+    if (err || !res || !res.ok || !res.customer) { showToast('불러오기 실패: ' + (err ? err.message : (res && res.error))); return; }
+    var c = res.customer; EDIT_CUR = c;
+    document.getElementById('ed-resno').textContent = c.reservation_no || resno;
+    document.getElementById('ed-name').value    = c.real_name || '';
+    document.getElementById('ed-date').value    = c.use_date || '';
+    document.getElementById('ed-time').value    = c.use_time || '';
+    document.getElementById('ed-product').value = c.product || '';
+    document.getElementById('ed-people').value  = c.people || '';
+    document.getElementById('ed-phone').value   = c.phone || '';
+    document.getElementById('ed-email').value   = c.email || '';
+    document.getElementById('ed-email2').value  = c.email2 || '';
+    document.getElementById('ed-email3').value  = c.email3 || '';
+    var amt = String(c.payment_amount || '').replace(/[^0-9]/g, '');
+    document.getElementById('ed-amount').value  = amt ? Number(amt).toLocaleString('en-US') : '';
+    document.getElementById('ed-memo').value    = c.memo || '';
+    document.getElementById('ed-context').textContent =
+      '상태: ' + (c.checkin_at ? '체크인됨' : '대기') + (c.type ? ' · ' + c.type : '') +
+      ' · 동의/폴더/체크인시각은 안 바뀝니다';
+    show('s-edit');
+  });
+}
+function saveEdit() {
+  if (!EDIT_CUR) { showToast('수정 대상이 없습니다'); return; }
+  var name = document.getElementById('ed-name').value.trim();
+  if (!name) { showToast('이름은 비울 수 없습니다'); return; }
+  callApi({
+    action: 'editCustomer',
+    resno: EDIT_CUR.reservation_no,
+    realName: name,
+    useDate: document.getElementById('ed-date').value.trim(),
+    useTime: document.getElementById('ed-time').value.trim(),
+    product: document.getElementById('ed-product').value.trim(),
+    people:  document.getElementById('ed-people').value.trim(),
+    phone:   document.getElementById('ed-phone').value.trim(),
+    email:   document.getElementById('ed-email').value.trim(),
+    email2:  document.getElementById('ed-email2').value.trim(),
+    email3:  document.getElementById('ed-email3').value.trim(),
+    paymentAmount: normalizeAmount(document.getElementById('ed-amount')),
+    memo:    document.getElementById('ed-memo').value.trim()
+  }, function(err, res) {
+    if (err || !res || !res.ok) { showToast('수정 실패: ' + (err ? err.message : (res && res.error))); return; }
+    playSound('EFFECT007');
+    showToast('✅ 고객카드 수정 완료 (' + (res.resno || '') + ')');
+    setTimeout(function(){ show('s-dashboard'); refreshData(); }, 1000);
+  });
 }
 
 // ── 사운드 재생 ──────────────────────────────────────────
@@ -1085,6 +1188,7 @@ function renderList(reservations) {
       '<div class="card-right">' +
         '<div class="badge ' + badgeClass + '">' + badgeLabel + '</div>' +
         spBadge +
+        '<button class="edit-btn" onclick="event.stopPropagation();openEdit(\'' + r.resno + '\')">✏️ 수정</button>' +
       '</div>';
 
     if (isCancelled || r.checkedIn) {
