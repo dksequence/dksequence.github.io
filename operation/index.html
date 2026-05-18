@@ -268,6 +268,10 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 .badge-edit-wait{background:rgba(240,165,0,.12);color:var(--warn);}
 .badge-sent{background:rgba(171,199,255,.1);color:var(--primary);}
 .badge-unsent{background:rgba(255,255,255,.06);color:var(--on-surface-dim);}
+.badge-sms-queued,.badge-sms-locked,.badge-sms-retry_wait{background:rgba(240,165,0,.12);color:var(--warn);}
+.badge-sms-sent{background:rgba(78,203,161,.12);color:var(--success);}
+.badge-sms-failed{background:rgba(255,107,107,.12);color:var(--danger);}
+.badge-sms-empty{background:rgba(255,255,255,.06);color:var(--on-surface-dim);}
 .delivery-btn{width:100%;padding:16px;border-radius:.75rem;font-size:20px;font-weight:700;
   border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .2s;}
 .delivery-btn:disabled{opacity:.3;cursor:not-allowed;}
@@ -573,6 +577,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
     <div class="detail-row"><span class="detail-key">전화번호</span><span class="detail-val" id="dm-phone"></span></div>
     <div class="detail-row"><span class="detail-key">이메일</span><span class="detail-val" id="dm-email"></span></div>
     <div class="detail-row"><span class="detail-key">결제방법</span><span class="detail-val" id="dm-payment"></span></div>
+    <div class="detail-row"><span class="detail-key">화보금액</span><span class="detail-val" id="dm-hwabo"></span></div>
     <div class="detail-row"><span class="detail-key">개인정보동의</span><span class="detail-val" id="dm-privacy"></span></div>
     <div class="detail-row"><span class="detail-key">마케팅동의</span><span class="detail-val" id="dm-sns"></span></div>
     <div class="detail-row"><span class="detail-key">메모</span><span class="detail-val" id="dm-memo"></span></div>
@@ -1221,6 +1226,8 @@ function showDetail(r) {
   document.getElementById('dm-phone').innerHTML     = val(r.phone);
   document.getElementById('dm-email').innerHTML     = val(r.email);
   document.getElementById('dm-payment').innerHTML   = val(r.type);
+  // 화보금액(2차/SP원장 화보 옵션 단가) — GAS item.spHwaboAmount 제공. 0/없으면 미입력.
+  document.getElementById('dm-hwabo').innerHTML     = val((r.spHwaboAmount && r.spHwaboAmount > 0) ? Number(r.spHwaboAmount).toLocaleString() + '원' : '');
   document.getElementById('dm-privacy').innerHTML   = consent(r.privacyConsent);
   document.getElementById('dm-sns').innerHTML       = consent(r.snsConsent);
   document.getElementById('dm-memo').innerHTML      = val(r.memo);
@@ -2028,6 +2035,19 @@ function renderDeliveryList(items) {
     var sentBadge = isSent
       ? '<span class="delivery-badge badge-sent">📧 ' + item.deliveryStatus + '</span>'
       : '<span class="delivery-badge badge-unsent">📧 미발송</span>';
+
+    var smsStatus = item.smsStatus || '';
+    var smsLabelMap = {
+      queued: '예약',
+      locked: '발송중',
+      retry_wait: '재시도',
+      sent: '완료',
+      failed: '실패',
+      cancelled: '취소'
+    };
+    var smsBadge = smsStatus
+      ? '<span class="delivery-badge badge-sms-' + smsStatus + '">문자 ' + (smsLabelMap[smsStatus] || smsStatus) + '</span>'
+      : '<span class="delivery-badge badge-sms-empty">문자 미예약</span>';
     
     // 버튼 결정
     var btnHtml = '';
@@ -2053,7 +2073,7 @@ function renderDeliveryList(items) {
           (item.email3 ? '<div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:1px;">✉ ' + item.email3 + '</div>' : '') +
         '</div>' +
       '</div>' +
-      '<div class="delivery-status-row">' + editBadge + sentBadge + '</div>' +
+      '<div class="delivery-status-row">' + editBadge + sentBadge + smsBadge + '</div>' +
       btnHtml;
     
     list.appendChild(card);
@@ -2137,7 +2157,8 @@ function confirmDEM() {
       showToast('발송 실패: ' + (err ? err.message : res.error));
       return;
     }
-    showToast('✅ 이메일 발송 완료! (' + selected.length + '개)');
+    var smsText = res.smsQueue && res.smsQueue.ok ? ' · 문자 예약됨' : '';
+    showToast('✅ 이메일 발송 완료! (' + selected.length + '개)' + smsText);
     closeDEM();
     loadDeliveryList();
   });
