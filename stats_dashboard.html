@@ -246,6 +246,14 @@
     .rpt-btrack { flex:1; background:rgba(255,255,255,0.07); border-radius:3px; height:11px; overflow:hidden; }
     .rpt-bval { width:20px; font-size:9px; color:var(--sub); flex-shrink:0; }
 
+    /* [2026-05-21] 월간 일별 = 세로막대 가로배치(높이 절약) */
+    .rpt-vchart { display:flex; align-items:flex-end; gap:2px; height:96px; padding-top:4px; }
+    .rpt-vbar { flex:1 1 0; min-width:0; display:flex; flex-direction:column; align-items:center; gap:1px; }
+    .rpt-vbar-val { font-size:8px; color:var(--text); height:10px; line-height:10px; }
+    .rpt-vbar-track { width:100%; max-width:14px; height:56px; display:flex; align-items:flex-end; background:rgba(255,255,255,0.06); border-radius:2px; }
+    .rpt-vbar-fill { width:100%; background:#5b9cf6; border-radius:2px; min-height:1px; }
+    .rpt-vbar-lbl { font-size:7px; color:var(--text); white-space:nowrap; }
+
     .rpt-hrow { margin-bottom:6px; }
     .rpt-hlabel { display:flex; align-items:center; gap:5px; font-size:10px; color:var(--sub); margin-bottom:2px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
     .rpt-hdot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
@@ -259,6 +267,13 @@
     .rpt-rate-ring { width:72px; height:72px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; }
     .rpt-rate-core { width:52px; height:52px; border-radius:50%; background:var(--s1); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:900; }
     .rpt-rate-lbl { font-size:10px; color:var(--sub); margin-top:6px; }
+    /* [2026-05-21] 리포트 회색 글씨 → 하얀색 */
+    #report-print-area .rpt-period, #report-print-area .rpt-s-label,
+    #report-print-area .rpt-table th, #report-print-area .rpt-meta,
+    #report-print-area .rpt-analytics-head, #report-print-area .rpt-blbl,
+    #report-print-area .rpt-bval, #report-print-area .rpt-hlabel,
+    #report-print-area .rpt-hpct, #report-print-area .rpt-rate-lbl,
+    #report-print-area .rpt-table td { color:var(--text) !important; }
 
     /* ── 프린트 ── */
     @media print {
@@ -960,22 +975,53 @@ function buildAnalyticsHtml(d) {
   // ── 예약 분포 바차트 ──
   const barMax = Math.max(...d.barChart.data, 1);
   const barTitle = { daily:'⏰ 시간대별 예약', weekly:'📅 요일별 예약', monthly:'📆 일별 예약' }[mode];
-  const barHtml = d.barChart.labels.map((lbl, i) => {
-    const val = d.barChart.data[i] || 0;
-    const wpct = Math.round(val / barMax * 100);
-    return `<div class="rpt-brow">
-      <div class="rpt-blbl">${lbl}</div>
-      <div class="rpt-btrack"><div style="width:${wpct}%;height:100%;background:#5b9cf6;border-radius:3px"></div></div>
-      <div class="rpt-bval">${val}</div>
-    </div>`;
-  }).join('');
+  // [2026-05-21] 월간(일별)은 항목이 많아 세로막대 가로배치(높이 절약). 일간/주간은 기존 가로막대.
+  let barWrapClass, barHtml;
+  if (mode === 'monthly') {
+    barWrapClass = 'rpt-vchart';
+    barHtml = d.barChart.labels.map((lbl, i) => {
+      const val = d.barChart.data[i] || 0;
+      const hpct = Math.round(val / barMax * 100);
+      return `<div class="rpt-vbar" title="${lbl}일 · ${val}건">
+        <div class="rpt-vbar-val">${val || ''}</div>
+        <div class="rpt-vbar-track"><div class="rpt-vbar-fill" style="height:${hpct}%"></div></div>
+        <div class="rpt-vbar-lbl">${lbl}</div>
+      </div>`;
+    }).join('');
+  } else {
+    barWrapClass = 'rpt-bchart';
+    barHtml = d.barChart.labels.map((lbl, i) => {
+      const val = d.barChart.data[i] || 0;
+      const wpct = Math.round(val / barMax * 100);
+      return `<div class="rpt-brow">
+        <div class="rpt-blbl">${lbl}</div>
+        <div class="rpt-btrack"><div style="width:${wpct}%;height:100%;background:#5b9cf6;border-radius:3px"></div></div>
+        <div class="rpt-bval">${val}</div>
+      </div>`;
+    }).join('');
+  }
 
-  // ── 상품별 ──
-  const prodE = Object.entries(d.products).sort((a,b) => b[1]-a[1]);
+  // ── 상품별 (화보종류) ──
+  const prodE = Object.entries(d.productsByType || d.products).sort((a,b) => b[1]-a[1]);
   const prodTotal = prodE.reduce((a,[,v]) => a+v, 0);
   const prodHtml = prodE.map(([k,v], i) => {
     const wpct = prodTotal ? Math.round(v/prodTotal*100) : 0;
     const c = ACOLS[i % ACOLS.length];
+    return `<div class="rpt-hrow">
+      <div class="rpt-hlabel"><span class="rpt-hdot" style="background:${c}"></span>${escHtml(k)}</div>
+      <div class="rpt-hright">
+        <div class="rpt-htrack"><div class="rpt-hfill" style="width:${wpct}%;background:${c}"></div></div>
+        <span class="rpt-hpct">${v}건</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // ── 단독 · 옵션 ──
+  const modeE = Object.entries(d.productsByMode || {}).sort((a,b) => b[1]-a[1]);
+  const modeTotal = modeE.reduce((a,[,v]) => a+v, 0);
+  const modeHtml = modeE.map(([k,v]) => {
+    const wpct = modeTotal ? Math.round(v/modeTotal*100) : 0;
+    const c = (k === '옵션') ? '#a78bfa' : '#5b9cf6';
     return `<div class="rpt-hrow">
       <div class="rpt-hlabel"><span class="rpt-hdot" style="background:${c}"></span>${escHtml(k)}</div>
       <div class="rpt-hright">
@@ -1002,15 +1048,20 @@ function buildAnalyticsHtml(d) {
   }).join('');
 
   // ── 완료율 원형 ──
-  function rateRing(pct, color, label) {
+  function rateRing(pct, color, label, centerTxt) {
     const deg = Math.round(pct * 3.6);
     return `<div class="rpt-rate-item">
       <div class="rpt-rate-ring" style="background:conic-gradient(${color} ${deg}deg,rgba(255,255,255,0.07) 0deg)">
-        <div class="rpt-rate-core" style="color:${color}">${pct}%</div>
+        <div class="rpt-rate-core" style="color:${color}">${centerTxt != null ? centerTxt : pct + '%'}</div>
       </div>
       <div class="rpt-rate-lbl">${label}</div>
     </div>`;
   }
+
+  // ── 취소율 ──
+  const cancelCnt = s.cancelCount || 0;
+  const totalIncl = (s.count || 0) + cancelCnt;
+  const cancelRate = totalIncl ? Math.round(cancelCnt / totalIncl * 100) : 0;
 
   return `
   <div class="rpt-analytics">
@@ -1018,12 +1069,16 @@ function buildAnalyticsHtml(d) {
     <div class="rpt-analytics-grid">
       <div class="rpt-a-card">
         <div class="rpt-a-title">${barTitle}</div>
-        <div class="rpt-bchart">${barHtml}</div>
+        <div class="${barWrapClass}">${barHtml}</div>
       </div>
       <div>
         <div class="rpt-a-card" style="margin-bottom:10px">
-          <div class="rpt-a-title">📦 상품별 예약</div>
+          <div class="rpt-a-title">📦 상품별 (화보종류)</div>
           ${prodHtml || '<span style="font-size:11px;color:var(--muted)">데이터 없음</span>'}
+        </div>
+        <div class="rpt-a-card" style="margin-bottom:10px">
+          <div class="rpt-a-title">🎯 단독 · 옵션</div>
+          ${modeHtml || '<span style="font-size:11px;color:var(--muted)">데이터 없음</span>'}
         </div>
         <div class="rpt-a-card">
           <div class="rpt-a-title">📡 유입 경로</div>
@@ -1032,11 +1087,12 @@ function buildAnalyticsHtml(d) {
       </div>
     </div>
     <div class="rpt-a-card" style="margin-top:10px">
-      <div class="rpt-a-title">완료율</div>
+      <div class="rpt-a-title">완료율 · 취소</div>
       <div class="rpt-rates-row">
         ${rateRing(s.editRate,     '#5b9cf6', '✏️ 편집 완료율')}
         ${rateRing(s.deliveryRate, '#34d399', '📨 발송 완료율')}
         ${rateRing(s.snsRate,      '#a78bfa', '📸 SNS 동의율')}
+        ${rateRing(cancelRate,     '#f87171', '🚫 취소 ' + cancelCnt + '건', cancelCnt + '건')}
       </div>
     </div>
   </div>`;
@@ -1189,17 +1245,20 @@ function buildReportHtml(d) {
 
   const dateTh   = showDate ? `<th style="text-align:left;padding:8px 10px;border-bottom:1px solid #ddd;white-space:nowrap">날짜</th>` : '';
   const rowsHtml = rows.map(c => {
-    const dateCell = showDate ? `<td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;white-space:nowrap">${c.date||'—'}</td>` : '';
+    const dateCell = showDate ? `<td style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.06);white-space:nowrap">${c.date||'—'}</td>` : '';
     const rev = c.revenue > 0 ? wonFmt(c.revenue) : '—';
     const dk  = c.dk      > 0 ? wonFmt(c.dk)      : '—';
-    return `<tr>
+    const peopleTxt = c.people > 0 ? `(${c.people})` : '';
+    const cancelTag = c.cancelled ? ` <span style="color:#f87171;font-size:10px">[취소]</span>` : '';
+    const memoRow = c.memo ? `<tr><td colspan="${showDate?6:5}" style="padding:1px 10px 8px 14px;color:#f5d76e;font-size:11px;border-bottom:1px solid rgba(255,255,255,0.06)">📝 ${escHtml(c.memo)}</td></tr>` : '';
+    return `<tr${c.cancelled?' style="opacity:0.5"':''}>
       ${dateCell}
-      <td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;white-space:nowrap">${c.time||'—'}</td>
-      <td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;font-weight:700">${escHtml(c.name||'—')}</td>
-      <td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;color:#555;font-size:11px">${escHtml(c.product||'—')}</td>
-      <td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;text-align:right;font-weight:700">${rev}</td>
-      <td style="padding:8px 10px;border-bottom:1px solid #f0f0f0;text-align:right;font-weight:700;color:#16a34a">${dk}</td>
-    </tr>`;
+      <td style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.06);white-space:nowrap">${c.time||'—'}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.06);font-weight:700">${escHtml(c.name||'—')}${peopleTxt}${cancelTag}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.06);font-size:11px">${escHtml(c.product||'—')}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.06);text-align:right;font-weight:700">${rev}</td>
+      <td style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.06);text-align:right;font-weight:700;color:#4ade80">${dk}</td>
+    </tr>${memoRow}`;
   }).join('');
 
   const totalRev = rows.reduce((a,c) => a + (c.revenue||0), 0);
@@ -1208,7 +1267,7 @@ function buildReportHtml(d) {
   return `
   <div class="rpt-header-row">
     <div>
-      <div class="rpt-title">DKsequence × 중문별장 매출 리포트</div>
+      <div class="rpt-title">화보상품 매출 리포트 [DKsequence]</div>
       <div class="rpt-period">${modeLabel} | ${periodTxt}</div>
     </div>
     <div class="rpt-meta">
@@ -1227,7 +1286,7 @@ function buildReportHtml(d) {
       <tr>
         ${dateTh}
         <th style="text-align:left;padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap">시간</th>
-        <th style="text-align:left;padding:8px 10px;border-bottom:1px solid var(--border)">이름</th>
+        <th style="text-align:left;padding:8px 10px;border-bottom:1px solid var(--border)">이름(인원)</th>
         <th style="text-align:left;padding:8px 10px;border-bottom:1px solid var(--border)">상품</th>
         <th style="text-align:right;padding:8px 10px;border-bottom:1px solid var(--border)">매출</th>
         <th style="text-align:right;padding:8px 10px;border-bottom:1px solid var(--border);color:#4ade80">DK</th>
