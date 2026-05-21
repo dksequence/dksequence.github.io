@@ -142,8 +142,8 @@
     .customer-list tr:last-child td { border-bottom:none; }
     .customer-list tr:hover td { background:rgba(255,255,255,0.02); }
     .cl-name { font-weight:700; color:var(--text); }
-    .cl-product { color:var(--sub); font-size:11px; max-width:160px; overflow:hidden; text-overflow:ellipsis; }
-    .cl-time { color:var(--muted); font-size:11px; }
+    .cl-product { color:var(--text); font-size:11px; max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .cl-time { color:var(--text); font-size:11px; }
     .badge-pill {
       display:inline-block; padding:2px 8px; border-radius:20px;
       font-size:10px; font-weight:700; white-space:nowrap;
@@ -154,7 +154,7 @@
     .pill-edit-no { background:rgba(255,255,255,0.05); color:var(--muted); border:1px solid var(--border); }
     .pill-link    { background:rgba(201,168,76,0.12); color:#c9a84c; border:1px solid rgba(201,168,76,0.25); text-decoration:none; }
     .pill-link:hover { background:rgba(201,168,76,0.25); }
-    .cl-sent-time { font-size:10px; color:var(--muted); margin-top:2px; }
+    .cl-sent-time { font-size:10px; color:var(--text); margin-top:2px; }
     #customer-section { display:none; }
 
     /* ── 리포트 툴바 ── */
@@ -733,7 +733,7 @@ function renderDashboard(d) {
         return `<tr style="opacity:0.45">
           ${dateCell}
           <td class="cl-time">${c.time||'—'}</td>
-          <td class="cl-name" style="text-decoration:line-through">${escHtml(c.name||'—')}</td>
+          <td class="cl-name" style="text-decoration:line-through">${escHtml(c.name||'—')}${c.people>0?`(${c.people})`:''}</td>
           <td class="cl-product">${escHtml(c.product||'—')}</td>
           <td colspan="6"><span class="badge-pill" style="background:rgba(139,92,246,0.15);color:#a78bfa;border:1px solid rgba(139,92,246,0.4)">취소</span></td>
           <td class="td-revenue"><span style="color:var(--muted)">—</span></td>
@@ -761,7 +761,7 @@ function renderDashboard(d) {
       return `<tr>
         ${dateCell}
         <td class="cl-time">${c.time||'—'}</td>
-        <td class="cl-name">${escHtml(c.name||'—')}</td>
+        <td class="cl-name">${escHtml(c.name||'—')}${c.people>0?`(${c.people})`:''}</td>
         <td class="cl-product">${escHtml(c.product||'—')}</td>
         <td>${editPill}</td>
         <td>${resultBtn}</td>
