@@ -23,6 +23,7 @@ const I18N = {
       "오늘의 당신이 가장 자연스럽게", "여행은 지나가도 사진은 남아요",
     ],
     download: "↓ 받기",
+    dlNote: "⚠ 팝업 차단이 설정돼 있을 수 있어요. '허용'을 눌러주세요. 원본과 디자인 커버 사진이 모두 다운로드됩니다.",
     variants: { letter: "Letter", dk: "DK", edited: "원본" },
     loading: "갤러리를 불러오는 중입니다...", notFound: "갤러리를 찾을 수 없습니다.",
     expired: "열람 기간이 만료되었습니다.", invalid: "잘못된 접근입니다.", empty: "아직 사진이 없습니다.",
@@ -44,6 +45,7 @@ const I18N = {
       "You, at your most natural today", "Journeys pass, but photos remain",
     ],
     download: "↓ Save",
+    dlNote: "⚠ Pop-ups may be blocked — please tap 'Allow'. Originals and design-cover photos will all download.",
     variants: { letter: "Letter", dk: "DK", edited: "Original" },
     loading: "Loading gallery...", notFound: "Gallery not found.",
     expired: "This gallery has expired.", invalid: "Invalid access.", empty: "No photos yet.",
@@ -65,6 +67,7 @@ const I18N = {
       "今天的你，最自然的模样", "旅程会过去，照片会留下",
     ],
     download: "↓ 下载",
+    dlNote: "⚠ 弹窗可能被拦截 — 请点击'允许'。原图和设计封面照片将全部下载。",
     variants: { letter: "Letter", dk: "DK", edited: "原图" },
     loading: "正在加载图库...", notFound: "找不到图库。",
     expired: "本图库已过期。", invalid: "无效访问。", empty: "暂无照片。",
@@ -262,20 +265,44 @@ window.downloadCurrent = function (imageId) {
 async function onDownloadAll() {
   const ids = Object.keys(window.galleryData || {});
   if (!ids.length) return;
-  const urls = ids
-    .map((id) => window.galleryData[id].variants.edited && window.galleryData[id].variants.edited.download)
-    .filter(Boolean);
+  const urls = [];
+  ids.forEach((id) => {
+    const v = window.galleryData[id].variants;
+    ["edited", "dk", "letter"].forEach((type) => { if (v[type] && v[type].download) urls.push(v[type].download); });
+  });
+  if (!urls.length) return;
+  showDownloadHint();
   await downloadUrls(urls);
 }
 
 function thumbSize(url, w) { return url ? url.replace(/([?&]sz=)w\d+/, "$1w" + w) : url; }
 
+// 숨김 iframe 다운로드 — https 페이지 컨텍스트 유지(새 탭/about:blank 안 띄움).
+// 이전 target="_blank" 방식은 about:blank 새 탭에서 받아 ①팝업차단 ②"보안연결 다운로드 불가" 경고를 유발했음.
 function triggerDownload(url) {
-  const a = document.createElement("a");
-  a.href = url; a.target = "_blank"; a.rel = "noopener";
-  document.body.appendChild(a); a.click(); a.remove();
+  if (!url) return;
+  const iframe = document.createElement("iframe");
+  iframe.style.display = "none";
+  iframe.src = url;
+  document.body.appendChild(iframe);
+  setTimeout(() => { try { iframe.remove(); } catch (e) {} }, 90000);
 }
 
 async function downloadUrls(urls) {
-  for (const u of urls) { if (!u) continue; triggerDownload(u); await new Promise((r) => setTimeout(r, 700)); }
+  for (const u of urls) { if (!u) continue; triggerDownload(u); await new Promise((r) => setTimeout(r, 800)); }
+}
+
+let _dlToastTimer = null;
+function showDownloadHint() {
+  let el = $("dl-toast");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "dl-toast";
+    el.style.cssText = "position:fixed;left:50%;bottom:24px;transform:translateX(-50%);max-width:90%;z-index:200;padding:14px 18px;border-radius:12px;background:rgba(28,29,31,.96);color:#f7f3ed;border:1px solid rgba(255,255,255,.18);box-shadow:0 12px 40px rgba(0,0,0,.5);font-size:.86rem;line-height:1.5;text-align:center;word-break:keep-all;";
+    document.body.appendChild(el);
+  }
+  el.textContent = t().dlNote;
+  el.style.display = "block";
+  if (_dlToastTimer) clearTimeout(_dlToastTimer);
+  _dlToastTimer = setTimeout(() => { el.style.display = "none"; }, 7000);
 }

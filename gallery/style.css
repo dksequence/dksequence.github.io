@@ -82,16 +82,25 @@ body {
     text-align: center;
 }
 
-.intro-line {
-    margin: 0 0 10px;
+.intro-ko {
+    margin: 0 0 16px;
     color: var(--text);
-    font-size: 0.92rem;
+    font-size: 1.12rem;
+    font-weight: 600;
     line-height: 1.55;
     word-break: keep-all;
 }
 
-.intro-line:last-of-type {
-    margin-bottom: 22px;
+.intro-sub {
+    margin: 5px 0 0;
+    color: var(--muted);
+    font-size: 0.82rem;
+    line-height: 1.5;
+    word-break: keep-all;
+}
+
+.intro-sub:last-of-type {
+    margin-bottom: 24px;
 }
 
 .intro-btn {
