@@ -262,18 +262,29 @@
     .rpt-hfill { height:100%; border-radius:3px; }
     .rpt-hpct { font-size:9px; color:var(--sub); white-space:nowrap; flex-shrink:0; min-width:28px; text-align:right; }
 
-    .rpt-rates-row { display:flex; justify-content:space-around; padding:8px 0; }
+    .rpt-rates-row { display:flex; justify-content:space-around; padding:8px 0; flex-wrap:wrap; gap:10px; }
     .rpt-rate-item { text-align:center; }
     .rpt-rate-ring { width:72px; height:72px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; }
     .rpt-rate-core { width:52px; height:52px; border-radius:50%; background:var(--s1); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:900; }
     .rpt-rate-lbl { font-size:10px; color:var(--sub); margin-top:6px; }
-    /* [2026-05-21] 리포트 회색 글씨 → 하얀색 */
-    #report-print-area .rpt-period, #report-print-area .rpt-s-label,
-    #report-print-area .rpt-table th, #report-print-area .rpt-meta,
-    #report-print-area .rpt-analytics-head, #report-print-area .rpt-blbl,
+    /* [2026-05-21] 리포트 = 프린트 전제 → 흰 배경 + 검정 글씨 */
+    #report-print-area { background:#fff; color:#1a1a1a; }
+    #report-print-area .rpt-title { color:#111; }
+    #report-print-area .rpt-period, #report-print-area .rpt-meta,
+    #report-print-area .rpt-analytics-head, #report-print-area .rpt-a-title,
+    #report-print-area .rpt-s-label, #report-print-area .rpt-blbl,
     #report-print-area .rpt-bval, #report-print-area .rpt-hlabel,
     #report-print-area .rpt-hpct, #report-print-area .rpt-rate-lbl,
-    #report-print-area .rpt-table td { color:var(--text) !important; }
+    #report-print-area .rpt-vbar-lbl, #report-print-area .rpt-vbar-val { color:#444 !important; }
+    #report-print-area .rpt-table th { color:#333 !important; border-bottom-color:#ccc !important; }
+    #report-print-area .rpt-table td { color:#222 !important; border-bottom-color:#eee !important; }
+    #report-print-area .rpt-summary { background:#f1f3f6; }
+    #report-print-area .rpt-a-card { background:#f5f6f8; }
+    #report-print-area .rpt-htrack, #report-print-area .rpt-btrack,
+    #report-print-area .rpt-vbar-track { background:rgba(0,0,0,0.09) !important; }
+    #report-print-area .rpt-rate-core { background:#fff !important; }
+    #report-print-area .rpt-analytics { border-top-color:#e0e0e0; }
+    #report-print-area .rpt-memo { color:#b8860b !important; }
 
     /* ── 프린트 ── */
     @media print {
@@ -1051,7 +1062,7 @@ function buildAnalyticsHtml(d) {
   function rateRing(pct, color, label, centerTxt) {
     const deg = Math.round(pct * 3.6);
     return `<div class="rpt-rate-item">
-      <div class="rpt-rate-ring" style="background:conic-gradient(${color} ${deg}deg,rgba(255,255,255,0.07) 0deg)">
+      <div class="rpt-rate-ring" style="background:conic-gradient(${color} ${deg}deg,rgba(0,0,0,0.1) 0deg)">
         <div class="rpt-rate-core" style="color:${color}">${centerTxt != null ? centerTxt : pct + '%'}</div>
       </div>
       <div class="rpt-rate-lbl">${label}</div>
@@ -1067,9 +1078,20 @@ function buildAnalyticsHtml(d) {
   <div class="rpt-analytics">
     <div class="rpt-analytics-head">📊 통계 분석</div>
     <div class="rpt-analytics-grid">
-      <div class="rpt-a-card">
-        <div class="rpt-a-title">${barTitle}</div>
-        <div class="${barWrapClass}">${barHtml}</div>
+      <div>
+        <div class="rpt-a-card" style="margin-bottom:10px">
+          <div class="rpt-a-title">${barTitle}</div>
+          <div class="${barWrapClass}">${barHtml}</div>
+        </div>
+        <div class="rpt-a-card">
+          <div class="rpt-a-title">완료율 · 취소</div>
+          <div class="rpt-rates-row">
+            ${rateRing(s.editRate,     '#5b9cf6', '✏️ 편집 완료율')}
+            ${rateRing(s.deliveryRate, '#34d399', '📨 발송 완료율')}
+            ${rateRing(s.snsRate,      '#a78bfa', '📸 SNS 동의율')}
+            ${rateRing(cancelRate,     '#f87171', '🚫 취소 ' + cancelCnt + '건', cancelCnt + '건')}
+          </div>
+        </div>
       </div>
       <div>
         <div class="rpt-a-card" style="margin-bottom:10px">
@@ -1084,15 +1106,6 @@ function buildAnalyticsHtml(d) {
           <div class="rpt-a-title">📡 유입 경로</div>
           ${srcHtml || '<span style="font-size:11px;color:var(--muted)">데이터 없음</span>'}
         </div>
-      </div>
-    </div>
-    <div class="rpt-a-card" style="margin-top:10px">
-      <div class="rpt-a-title">완료율 · 취소</div>
-      <div class="rpt-rates-row">
-        ${rateRing(s.editRate,     '#5b9cf6', '✏️ 편집 완료율')}
-        ${rateRing(s.deliveryRate, '#34d399', '📨 발송 완료율')}
-        ${rateRing(s.snsRate,      '#a78bfa', '📸 SNS 동의율')}
-        ${rateRing(cancelRate,     '#f87171', '🚫 취소 ' + cancelCnt + '건', cancelCnt + '건')}
       </div>
     </div>
   </div>`;
@@ -1250,7 +1263,7 @@ function buildReportHtml(d) {
     const dk  = c.dk      > 0 ? wonFmt(c.dk)      : '—';
     const peopleTxt = c.people > 0 ? `(${c.people})` : '';
     const cancelTag = c.cancelled ? ` <span style="color:#f87171;font-size:10px">[취소]</span>` : '';
-    const memoRow = c.memo ? `<tr><td colspan="${showDate?6:5}" style="padding:1px 10px 8px 14px;color:#f5d76e;font-size:11px;border-bottom:1px solid rgba(255,255,255,0.06)">📝 ${escHtml(c.memo)}</td></tr>` : '';
+    const memoRow = c.memo ? `<tr><td colspan="${showDate?6:5}" style="padding:1px 10px 8px 14px;color:#8a6d0b !important;font-size:11px;border-bottom:1px solid #eee">📝 ${escHtml(c.memo)}</td></tr>` : '';
     return `<tr${c.cancelled?' style="opacity:0.5"':''}>
       ${dateCell}
       <td style="padding:8px 10px;border-bottom:1px solid rgba(255,255,255,0.06);white-space:nowrap">${c.time||'—'}</td>
