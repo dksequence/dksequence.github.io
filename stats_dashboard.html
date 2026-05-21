@@ -98,7 +98,9 @@
     /* ── CHART GRID ── */
     .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
     .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:10px; }
-    @media(max-width:900px){ .grid-2,.grid-3{ grid-template-columns:1fr; } }
+    .grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:10px; }
+    @media(max-width:900px){ .grid-2,.grid-3,.grid-4{ grid-template-columns:1fr 1fr; } }
+    @media(max-width:500px){ .grid-2,.grid-3,.grid-4{ grid-template-columns:1fr; } }
 
     /* ── CHART CARD ── */
     .chart-card { background:var(--s1); border:1px solid var(--border); border-radius:15px; padding:16px 18px; margin-bottom:10px; transition:border-color .15s; }
@@ -155,6 +157,11 @@
     .pill-link    { background:rgba(201,168,76,0.12); color:#c9a84c; border:1px solid rgba(201,168,76,0.25); text-decoration:none; }
     .pill-link:hover { background:rgba(201,168,76,0.25); }
     .cl-sent-time { font-size:10px; color:var(--text); margin-top:2px; }
+    .cl-num { color:var(--text); font-size:11px; white-space:nowrap; }
+    .memo-btn { margin-left:5px; font-size:9px; font-weight:700; padding:1px 6px; border:1px solid var(--bd2); background:var(--s2); color:var(--sub); border-radius:5px; cursor:pointer; vertical-align:middle; }
+    .memo-btn:hover { background:var(--s3); color:var(--text); }
+    .memo-row td { border-bottom:1px solid rgba(255,255,255,0.04); }
+    .memo-cell { color:#f5d76e; font-size:11px; padding:3px 12px 8px 14px; background:rgba(245,215,110,0.04); }
     #customer-section { display:none; }
 
     /* ── 리포트 툴바 ── */
@@ -365,11 +372,11 @@
       </div>
     </div>
 
-    <!-- ③ 상품별 + 유입경로 -->
-    <div class="grid-2">
+    <!-- ③ 상품(화보종류) + 단독·옵션 + 유입경로 -->
+    <div class="grid-3">
       <div class="chart-card">
         <div class="chart-header">
-          <span class="chart-title">📦 상품별 예약</span>
+          <span class="chart-title">📦 상품별 (화보종류)</span>
           <span class="chart-badge" id="badge-prod"></span>
         </div>
         <div class="donut-wrap" style="height:190px">
@@ -384,6 +391,21 @@
 
       <div class="chart-card">
         <div class="chart-header">
+          <span class="chart-title">🎯 단독 · 옵션</span>
+          <span class="chart-badge" id="badge-mode"></span>
+        </div>
+        <div class="donut-wrap" style="height:190px">
+          <canvas id="chart-product-mode"></canvas>
+          <div class="donut-center">
+            <div class="donut-pct" id="mode-center" style="color:#a78bfa">—</div>
+            <div class="donut-lbl">건</div>
+          </div>
+        </div>
+        <div class="legend" id="legend-mode"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
           <span class="chart-title">📡 유입 경로</span>
           <span class="chart-badge" id="badge-src"></span>
         </div>
@@ -393,8 +415,8 @@
       </div>
     </div>
 
-    <!-- ④ 편집 / 발송 / SNS -->
-    <div class="grid-3">
+    <!-- ④ 편집 / 발송 / SNS / 취소 -->
+    <div class="grid-4">
       <div class="chart-card">
         <div class="chart-header">
           <span class="chart-title">✏️ 편집 완료율</span>
@@ -435,6 +457,19 @@
           </div>
         </div>
       </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <span class="chart-title">🚫 취소 건수</span>
+          <span class="chart-badge" id="badge-cancel"></span>
+        </div>
+        <div class="donut-wrap" style="height:150px">
+          <canvas id="chart-cancel"></canvas>
+          <div class="donut-center">
+            <div class="donut-pct" id="cancel-cnt" style="color:#f87171">—</div>
+            <div class="donut-lbl">취소</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- ⑤ 리포트 툴바 -->
@@ -454,9 +489,10 @@
           <table class="customer-list">
             <thead>
               <tr>
+                <th style="width:48px">#</th>
                 <th id="th-date">날짜</th>
                 <th>시간</th>
-                <th>이름</th>
+                <th>이름(인원)</th>
                 <th>상품</th>
                 <th>편집</th>
                 <th>결과물</th>
@@ -632,6 +668,36 @@ function fetchStats(m, t) {
   });
 }
 
+// ── 메모 저장 (JSONP) ──────────────────────────────────────────
+function saveMemoJsonp(resno, memo) {
+  return new Promise((resolve) => {
+    const cb = 'memoCb_' + Date.now();
+    const tag = document.createElement('script');
+    window[cb] = (res) => { resolve(res); try { delete window[cb]; } catch(e){} tag.remove(); };
+    tag.onerror = () => { resolve({ ok:false, error:'네트워크 오류' }); tag.remove(); };
+    tag.src = `${GAS_URL}?action=saveStatsMemo&resno=${encodeURIComponent(resno)}&memo=${encodeURIComponent(memo)}&callback=${cb}`;
+    document.head.appendChild(tag);
+    setTimeout(() => resolve({ ok:false, error:'시간 초과' }), 20000);
+  });
+}
+
+async function editMemo(btn) {
+  const resno = btn.dataset.resno;
+  if (!resno) { alert('예약번호가 없는 행은 메모를 달 수 없습니다.'); return; }
+  const cur = btn.dataset.memo || '';
+  const memo = prompt('메모 입력 (비우면 삭제):', cur);
+  if (memo === null) return;          // 취소
+  const prev = btn.textContent;
+  btn.textContent = '…';
+  const res = await saveMemoJsonp(resno, memo.trim());
+  if (res && res.ok) {
+    await loadStats();                // 재로드 → 메모 행 반영(주간/월간 공통)
+  } else {
+    btn.textContent = prev;
+    alert('메모 저장 실패: ' + ((res && res.error) || '알 수 없음'));
+  }
+}
+
 // ── 메인 로드 ──────────────────────────────────────────────────
 async function loadStats() {
   show('loadingView'); hide('errorView'); hide('dashboard');
@@ -683,15 +749,24 @@ function renderDashboard(d) {
   setText('badge-bar', `합계 ${d.summary.count}건`);
   charts.bar = makeBarChart('chart-bar', d.barChart.labels, d.barChart.data, col.mc);
 
-  // ③ 상품별
-  const prodE = sortedEntries(d.products);
+  // ③ 상품별 (화보종류) — productsByType 우선, 폴백 products
+  const prodE = sortedEntries(d.productsByType || d.products);
   setText('badge-prod', prodE.length + '종');
   setText('prod-center', prodE.length);
   charts.product = makeDonutChart('chart-product', prodE.map(e=>e[0]), prodE.map(e=>e[1]), PALETTE);
   renderLegend('legend-product', prodE, PALETTE);
 
-  // ③ 유입경로
-  const SRC_LABEL = { N:'네이버', A:'현장', V:'무료' };
+  // ③ 단독 · 옵션
+  const MODE_PALETTE = ['#a78bfa', '#5b9cf6'];
+  const modeE = sortedEntries(d.productsByMode || {});
+  const modeTotal = modeE.reduce((a,[,v]) => a+v, 0);
+  setText('badge-mode', modeTotal + '건');
+  setText('mode-center', modeTotal);
+  charts.productMode = makeDonutChart('chart-product-mode', modeE.map(e=>e[0]), modeE.map(e=>e[1]), MODE_PALETTE);
+  renderLegend('legend-mode', modeE, MODE_PALETTE);
+
+  // ③ 유입경로 (백엔드가 이미 네이버/현장(RUNS) 한글 라벨로 2분류)
+  const SRC_LABEL = { N:'네이버', S:'네이버', A:'현장(RUNS)', V:'무료' };
   const srcE = sortedEntries(d.sources);
   setText('badge-src', srcE.length + '경로');
   charts.source = makeHBarChart('chart-source', srcE.map(e=>SRC_LABEL[e[0]]||e[0]), srcE.map(e=>e[1]));
@@ -711,6 +786,14 @@ function renderDashboard(d) {
   setText('sns-pct',   s.snsRate + '%');
   charts.sns = makeRateDonut('chart-sns', s.snsRate, '#a78bfa');
 
+  // ④ 취소 건수 (확정 count 대비 취소 비율로 도넛, 중앙엔 건수)
+  const cancelCnt = s.cancelCount || 0;
+  const totalIncl = (s.count || 0) + cancelCnt;
+  const cancelRate = totalIncl ? Math.round(cancelCnt / totalIncl * 100) : 0;
+  setText('badge-cancel', `${cancelCnt}/${totalIncl}`);
+  setText('cancel-cnt', cancelCnt + '건');
+  charts.cancel = makeRateDonut('chart-cancel', cancelRate, '#f87171');
+
   // ⑤ 고객 현황 (전 모드 표시)
   const custSec = document.getElementById('customer-section');
   const showDate = (mode !== 'daily');
@@ -727,10 +810,13 @@ function renderDashboard(d) {
     });
     setText('badge-customers', (s.people || list.length) + '명');
     const tbody = document.getElementById('customer-tbody');
-    tbody.innerHTML = list.map(c => {
+    tbody.innerHTML = list.map((c, idx) => {
+      const numCell = `<td class="cl-num">${idx+1}<button class="memo-btn" data-resno="${escHtml(c.resno||'')}" data-memo="${escHtml(c.memo||'')}" onclick="editMemo(this)">M</button></td>`;
+      const memoRow = c.memo ? `<tr class="memo-row"><td></td><td colspan="12" class="memo-cell">📝 ${escHtml(c.memo)}</td></tr>` : '';
       if (c.cancelled) {
         const dateCell = showDate ? `<td class="cl-time">${c.date||'—'}</td>` : '';
         return `<tr style="opacity:0.45">
+          ${numCell}
           ${dateCell}
           <td class="cl-time">${c.time||'—'}</td>
           <td class="cl-name" style="text-decoration:line-through">${escHtml(c.name||'—')}${c.people>0?`(${c.people})`:''}</td>
@@ -738,7 +824,7 @@ function renderDashboard(d) {
           <td colspan="6"><span class="badge-pill" style="background:rgba(139,92,246,0.15);color:#a78bfa;border:1px solid rgba(139,92,246,0.4)">취소</span></td>
           <td class="td-revenue"><span style="color:var(--muted)">—</span></td>
           <td class="td-dk"><span style="color:var(--muted)">—</span></td>
-        </tr>`;
+        </tr>${memoRow}`;
       }
       const isSent    = c.delivSt && c.delivSt.indexOf('발송완료') === 0;
       const isEdit    = c.editSt  && c.editSt.indexOf('완료') !== -1;
@@ -759,6 +845,7 @@ function renderDashboard(d) {
       const dkCell  = c.dk > 0     ? `<span style="color:#4ade80;font-weight:700">${wonFmt(c.dk)}</span>` : `<span style="color:var(--muted)">—</span>`;
       const dateCell = showDate ? `<td class="cl-time">${c.date||'—'}</td>` : '';
       return `<tr>
+        ${numCell}
         ${dateCell}
         <td class="cl-time">${c.time||'—'}</td>
         <td class="cl-name">${escHtml(c.name||'—')}${c.people>0?`(${c.people})`:''}</td>
@@ -770,7 +857,7 @@ function renderDashboard(d) {
         <td>${clickPill}</td>
         <td class="td-revenue">${revCell}</td>
         <td class="td-dk">${dkCell}</td>
-      </tr>`;
+      </tr>${memoRow}`;
     }).join('');
   } else {
     custSec.style.display = 'none';
