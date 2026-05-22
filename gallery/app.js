@@ -23,7 +23,6 @@ const I18N = {
       "오늘의 당신이 가장 자연스럽게", "여행은 지나가도 사진은 남아요",
     ],
     download: "↓ 받기",
-    dlNote: "⚠ 팝업 차단이 설정돼 있을 수 있어요. '허용'을 눌러주세요. 원본과 디자인 커버 사진이 모두 다운로드됩니다.",
     variants: { letter: "Letter", dk: "DK", edited: "원본" },
     loading: "갤러리를 불러오는 중입니다...", notFound: "갤러리를 찾을 수 없습니다.",
     expired: "열람 기간이 만료되었습니다.", invalid: "잘못된 접근입니다.", empty: "아직 사진이 없습니다.",
@@ -45,7 +44,6 @@ const I18N = {
       "You, at your most natural today", "Journeys pass, but photos remain",
     ],
     download: "↓ Save",
-    dlNote: "⚠ Pop-ups may be blocked — please tap 'Allow'. Originals and design-cover photos will all download.",
     variants: { letter: "Letter", dk: "DK", edited: "Original" },
     loading: "Loading gallery...", notFound: "Gallery not found.",
     expired: "This gallery has expired.", invalid: "Invalid access.", empty: "No photos yet.",
@@ -67,7 +65,6 @@ const I18N = {
       "今天的你，最自然的模样", "旅程会过去，照片会留下",
     ],
     download: "↓ 下载",
-    dlNote: "⚠ 弹窗可能被拦截 — 请点击'允许'。原图和设计封面照片将全部下载。",
     variants: { letter: "Letter", dk: "DK", edited: "原图" },
     loading: "正在加载图库...", notFound: "找不到图库。",
     expired: "本图库已过期。", invalid: "无效访问。", empty: "暂无照片。",
@@ -292,17 +289,27 @@ async function downloadUrls(urls) {
   for (const u of urls) { if (!u) continue; triggerDownload(u); await new Promise((r) => setTimeout(r, 800)); }
 }
 
+const DL_HINT = {
+  ko: "잠깐! 사진을 받을 때 브라우저가 '허용' 또는 '다운로드'를 물어볼 수 있어요. 눌러주시면 사진이 저장됩니다 😊",
+  en: "Your browser may ask permission to download — just tap 'Allow' to save your photos.",
+  zh: "浏览器可能会请求下载权限 — 点击'允许'即可保存照片。",
+};
 let _dlToastTimer = null;
 function showDownloadHint() {
   let el = $("dl-toast");
   if (!el) {
     el = document.createElement("div");
     el.id = "dl-toast";
-    el.style.cssText = "position:fixed;left:50%;bottom:24px;transform:translateX(-50%);max-width:90%;z-index:200;padding:14px 18px;border-radius:12px;background:rgba(28,29,31,.96);color:#f7f3ed;border:1px solid rgba(255,255,255,.18);box-shadow:0 12px 40px rgba(0,0,0,.5);font-size:.86rem;line-height:1.5;text-align:center;word-break:keep-all;";
+    el.style.cssText = "position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:88%;max-width:380px;z-index:200;padding:26px 22px;border-radius:18px;background:rgba(22,23,26,.97);border:1px solid rgba(255,255,255,.16);box-shadow:0 24px 70px rgba(0,0,0,.65);text-align:center;cursor:pointer;";
+    el.addEventListener("click", () => { el.style.display = "none"; });
     document.body.appendChild(el);
   }
-  el.textContent = t().dlNote;
+  el.innerHTML =
+    '<div style="font-size:1.12rem;font-weight:600;color:#f7f3ed;line-height:1.6;word-break:keep-all;">' + DL_HINT.ko + '</div>' +
+    '<div style="margin-top:14px;font-size:0.8rem;color:#b9b2a8;line-height:1.5;word-break:keep-all;">' + DL_HINT.en + '</div>' +
+    '<div style="margin-top:5px;font-size:0.8rem;color:#b9b2a8;line-height:1.5;word-break:keep-all;">' + DL_HINT.zh + '</div>' +
+    '<div style="margin-top:18px;font-size:0.72rem;color:rgba(255,255,255,.4);">(화면을 누르면 닫혀요)</div>';
   el.style.display = "block";
   if (_dlToastTimer) clearTimeout(_dlToastTimer);
-  _dlToastTimer = setTimeout(() => { el.style.display = "none"; }, 7000);
+  _dlToastTimer = setTimeout(() => { el.style.display = "none"; }, 9000);
 }
