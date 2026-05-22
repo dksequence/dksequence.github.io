@@ -287,7 +287,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 <!-- ════════════════ 대시보드 ════════════════ -->
 <div id="s-dashboard" class="screen active">
   <div class="topbar">
-    <div class="topbar-brand">DKSEQUENCE 제주 중문별장 RUNS V.4.17</div>
+    <div class="topbar-brand">DKSEQUENCE 제주 중문별장 RUNS V.4.18</div>
     <div class="topbar-date-row">
       <button class="today-btn" onclick="goToToday()">TODAY</button>
       <button class="date-nav-btn" onclick="changeDate(-1)">◀</button>
@@ -1282,7 +1282,16 @@ function goCheckin(r) {
   document.getElementById('ci-people').textContent   = r.people + '인';
   document.getElementById('ci-time').textContent     = r.time;
   var notice = document.getElementById('realname-notice');
-  if (r.spVerified) {
+  // 현장 신규/체험(source A/V)은 사전기록으로 이미 입력·저장된 고객 → 재방문 시 저장값 복원.
+  // (이 분기 없으면 빈칸으로 덮어써 '껍데기'로 보이고, 재체크인 시 실명까지 날아갈 수 있었음)
+  var isPreRecorded = (r.source === 'A' || r.source === 'V');
+  if (isPreRecorded) {
+    document.getElementById('ci-realname').value = r.name  || '';
+    document.getElementById('ci-email').value    = r.email || '';
+    document.getElementById('ci-phone').value    = r.phone || '';
+    notice.textContent = '사전 기록된 정보입니다 (확인·수정 가능)';
+    notice.style.color = '#4ade80';
+  } else if (r.spVerified) {
     document.getElementById('ci-realname').value = r.spName  || '';
     document.getElementById('ci-email').value    = r.spEmail || '';
     document.getElementById('ci-phone').value    = r.spPhone || '';
@@ -1297,13 +1306,14 @@ function goCheckin(r) {
   }
   document.getElementById('ci-email2').value   = '';
   document.getElementById('ci-email3').value   = '';
-  document.getElementById('ci-memo').value     = '';
+  document.getElementById('ci-memo').value     = isPreRecorded ? (r.memo || '') : '';
   // 납품 체크박스 초기화 (이메일 값에 맞춰 동기화)
   document.getElementById('ci-email-del1').checked = !!(document.getElementById('ci-email').value.trim());
   document.getElementById('ci-email-del2').checked = false;
   document.getElementById('ci-email-del3').checked = false;
-  document.getElementById('toggle-privacy').classList.add('on');
-  document.getElementById('toggle-sns').classList.remove('on');
+  // 동의 토글 — 사전기록이면 저장값 복원, 신규 체크인은 기본(개인정보 ON·SNS OFF)
+  document.getElementById('toggle-privacy').classList.toggle('on', isPreRecorded ? (r.privacyConsent === 'Y') : true);
+  document.getElementById('toggle-sns').classList.toggle('on', isPreRecorded ? (r.snsConsent === 'Y') : false);
   show('s-checkin');
 }
 
