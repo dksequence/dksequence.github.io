@@ -91,7 +91,6 @@ const t = () => I18N[currentLang];
 
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".lang-btn").forEach((b) => b.addEventListener("click", () => applyLang(b.dataset.lang)));
-  $("download-all-btn").addEventListener("click", onDownloadAll);
   setupBgm();
   applyLang(currentLang); // 정적 텍스트·버튼 즉시 반영
   loadGallery();
@@ -139,7 +138,6 @@ function applyLang(lang) {
   document.documentElement.lang = lang;
   document.querySelectorAll(".lang-btn").forEach((b) => b.classList.toggle("active", b.dataset.lang === lang));
   setText("subtitle", tt.subtitle);
-  setText("dl-all-text", tt.downloadAll);
   const titleEl = $("gallery-title");
   if (titleEl) titleEl.textContent = state.customerName ? state.customerName + tt.titleSuffix : tt.titleGeneric;
   const expEl = $("expiry-note");
@@ -259,19 +257,6 @@ window.downloadCurrent = function (imageId) {
   if (v && v.download) triggerDownload(v.download);
 };
 
-async function onDownloadAll() {
-  const ids = Object.keys(window.galleryData || {});
-  if (!ids.length) return;
-  const urls = [];
-  ids.forEach((id) => {
-    const v = window.galleryData[id].variants;
-    ["edited", "dk", "letter"].forEach((type) => { if (v[type] && v[type].download) urls.push(v[type].download); });
-  });
-  if (!urls.length) return;
-  showDownloadHint();
-  await downloadUrls(urls);
-}
-
 function thumbSize(url, w) { return url ? url.replace(/([?&]sz=)w\d+/, "$1w" + w) : url; }
 
 // 숨김 iframe 다운로드 — https 페이지 컨텍스트 유지(새 탭/about:blank 안 띄움).
@@ -285,31 +270,3 @@ function triggerDownload(url) {
   setTimeout(() => { try { iframe.remove(); } catch (e) {} }, 90000);
 }
 
-async function downloadUrls(urls) {
-  for (const u of urls) { if (!u) continue; triggerDownload(u); await new Promise((r) => setTimeout(r, 800)); }
-}
-
-const DL_HINT = {
-  ko: "잠깐! 사진을 받을 때 브라우저가 '허용' 또는 '다운로드'를 물어볼 수 있어요. 눌러주시면 사진이 저장됩니다 😊",
-  en: "Your browser may ask permission to download — just tap 'Allow' to save your photos.",
-  zh: "浏览器可能会请求下载权限 — 点击'允许'即可保存照片。",
-};
-let _dlToastTimer = null;
-function showDownloadHint() {
-  let el = $("dl-toast");
-  if (!el) {
-    el = document.createElement("div");
-    el.id = "dl-toast";
-    el.style.cssText = "position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:88%;max-width:380px;z-index:200;padding:26px 22px;border-radius:18px;background:rgba(22,23,26,.97);border:1px solid rgba(255,255,255,.16);box-shadow:0 24px 70px rgba(0,0,0,.65);text-align:center;cursor:pointer;";
-    el.addEventListener("click", () => { el.style.display = "none"; });
-    document.body.appendChild(el);
-  }
-  el.innerHTML =
-    '<div style="font-size:1.12rem;font-weight:600;color:#f7f3ed;line-height:1.6;word-break:keep-all;">' + DL_HINT.ko + '</div>' +
-    '<div style="margin-top:14px;font-size:0.8rem;color:#b9b2a8;line-height:1.5;word-break:keep-all;">' + DL_HINT.en + '</div>' +
-    '<div style="margin-top:5px;font-size:0.8rem;color:#b9b2a8;line-height:1.5;word-break:keep-all;">' + DL_HINT.zh + '</div>' +
-    '<div style="margin-top:18px;font-size:0.72rem;color:rgba(255,255,255,.4);">(화면을 누르면 닫혀요)</div>';
-  el.style.display = "block";
-  if (_dlToastTimer) clearTimeout(_dlToastTimer);
-  _dlToastTimer = setTimeout(() => { el.style.display = "none"; }, 9000);
-}
