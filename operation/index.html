@@ -287,7 +287,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 <!-- ════════════════ 대시보드 ════════════════ -->
 <div id="s-dashboard" class="screen active">
   <div class="topbar">
-    <div class="topbar-brand">DKSEQUENCE 제주 중문별장 RUNS V.4.18</div>
+    <div class="topbar-brand">DKSEQUENCE 제주 중문별장 RUNS V.4.19</div>
     <div class="topbar-date-row">
       <button class="today-btn" onclick="goToToday()">TODAY</button>
       <button class="date-nav-btn" onclick="changeDate(-1)">◀</button>
@@ -1187,7 +1187,7 @@ function renderList(reservations) {
       '<div class="avatar ' + sourceClass + '">' + avatarText + '</div>' +
       '<div class="card-info">' +
         '<div class="card-name">' + (r.spName || r.name) + '</div>' +
-        '<div class="card-meta">' + r.product + ' · ' + r.people + '인 · ' + r.time + '</div>' +
+        '<div class="card-meta">' + (r.displayProduct || r.product) + ' · ' + r.people + '인 · ' + r.time + '</div>' +
         '<div class="card-resno">' + r.resno + '</div>' +
       '</div>' +
       '<div class="card-right">' +
@@ -1221,7 +1221,7 @@ function showDetail(r) {
   }
   document.getElementById('dm-name').textContent    = r.name || '이름없음';
   document.getElementById('dm-resno').textContent   = r.resno;
-  document.getElementById('dm-product').innerHTML   = val(r.product);
+  document.getElementById('dm-product').innerHTML   = val(r.displayProduct || r.product);
   document.getElementById('dm-people').innerHTML    = val(r.people ? r.people + '인 · ' + r.time : '');
   document.getElementById('dm-phone').innerHTML     = val(r.phone);
   document.getElementById('dm-email').innerHTML     = val(r.email);
@@ -2076,7 +2076,7 @@ function renderDeliveryList(items) {
         '<div class="avatar ' + sourceClass + '" style="margin-right:15px; margin-top:5px; width:36px; height:36px; font-size:16px;">' + src + '</div>' +
         '<div style="flex:1;">' +
           '<div class="delivery-card-name">' + (item.realName || item.maskedName) + '</div>' +
-          '<div class="delivery-card-meta">' + item.product + ' · ' + item.people + '인 · ' + item.time + '</div>' +
+          '<div class="delivery-card-meta">' + (item.displayProduct || item.product) + ' · ' + item.people + '인 · ' + item.time + '</div>' +
           '<div class="delivery-card-resno">' + item.resno + (item.checkinAt ? ' (체크인: ' + item.checkinAt + ')' : ' [미입실]') + '</div>' +
           (item.email  ? '<div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:2px;">✉ ' + item.email  + '</div>' : '') +
           (item.email2 ? '<div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:1px;">✉ ' + item.email2 + '</div>' : '') +
@@ -2147,6 +2147,7 @@ function sendDelivery(resno) {
 
 function closeDEM() {
   document.getElementById('delivery-email-modal').style.display = 'none';
+  var ce = document.getElementById('dem-custom'); if (ce) ce.value = '';
   DEM_RESNO = null;
 }
 
@@ -2154,7 +2155,16 @@ function confirmDEM() {
   var checkboxes = document.querySelectorAll('#dem-list .dem-check:checked');
   var selected = [];
   checkboxes.forEach(function(cb){ if (cb.value) selected.push(cb.value); });
-  if (!selected.length) { showToast('발송할 이메일을 1개 이상 선택하세요'); return; }
+  // 직접 입력한 추가 이메일(쉼표 구분·형식검증) 합치기 — 테스트는 내 메일만 입력
+  var customEl = document.getElementById('dem-custom');
+  if (customEl && customEl.value) {
+    customEl.value.split(',').forEach(function(e){
+      e = e.trim();
+      if (e && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) selected.push(e);
+    });
+  }
+  selected = selected.filter(function(v, i){ return selected.indexOf(v) === i; }); // 중복 제거
+  if (!selected.length) { showToast('발송할 이메일을 1개 이상 선택하거나 입력하세요'); return; }
 
   var sendBtn = document.querySelector('#delivery-email-modal .dem-send');
   sendBtn.disabled = true;
@@ -2169,6 +2179,7 @@ function confirmDEM() {
     }
     var smsText = res.smsQueue && res.smsQueue.ok ? ' · 문자 예약됨' : '';
     showToast('✅ 이메일 발송 완료! (' + selected.length + '개)' + smsText);
+    try { new Audio('/sound/delivery.mp3').play().catch(function(){}); } catch (e) {}
     closeDEM();
     loadDeliveryList();
   });
@@ -2236,6 +2247,11 @@ function submitCheckin() {
   <div class="dem-box">
     <div class="dem-title">📬 납품 이메일 선택</div>
     <div id="dem-list"><!-- JS로 동적 생성 --></div>
+    <div class="dem-row" style="gap:10px;">
+      <span class="dem-label" style="flex-shrink:0;margin:0;">＋ 직접 입력</span>
+      <input id="dem-custom" type="text" autocomplete="off" placeholder="추가 이메일 (쉼표로 여러 개)" style="flex:1;min-width:0;padding:9px 11px;border-radius:.5rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#fff;font-size:14px;">
+    </div>
+    <div style="font-size:12px;color:rgba(255,255,255,.4);margin-top:6px;line-height:1.5;">고객 이메일 체크를 해제하고 내 메일만 입력하면 나에게만 발송됩니다(테스트). 확인 후 <b>재발송</b>으로 실제 고객에게 보내세요.</div>
     <div class="dem-actions">
       <button class="dem-cancel" onclick="closeDEM()">취소</button>
       <button class="dem-send" onclick="confirmDEM()">발송</button>
