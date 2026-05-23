@@ -5,6 +5,7 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycby85mMvihHsSClT73x4rECt
 const params = new URLSearchParams(location.search);
 const RESNO = (params.get("c") || "").trim();
 const TOKEN = (params.get("t") || "").trim();
+const PREVIEW = (params.get("preview") || "") === "1";   // 소유자 최종확인용 — 열람시각 기록 안 함
 
 const I18N = {
   ko: {
@@ -103,7 +104,7 @@ async function loadGallery() {
   try {
     const res = await fetch(GAS_URL, {
       method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({ action: "getCustomerGallery", resno: RESNO, token: TOKEN }),
+      body: JSON.stringify({ action: "getCustomerGallery", resno: RESNO, token: TOKEN, preview: PREVIEW ? "1" : "" }),
     });
     const data = await res.json();
     if (!data || data.ok === false) {
