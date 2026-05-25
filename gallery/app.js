@@ -63,7 +63,7 @@ const I18N = {
     downloadAll: "전체 사진 다운로드",
     wifi: "⚠ 용량이 크니 와이파이 환경에서 다운로드를 권장드립니다.",
     letterLabel: "제주에서 보내는 편지",
-    expiry: (d) => `이 갤러리는 ${d}까지 보관 후 자동 만료됩니다. 그 전에 받아주세요 :)`,
+    expiry: (d) => `이 갤러리는 ${d}까지<br>보관 후 자동 만료됩니다. 그 전에 받아주세요 :)`,
     expiryNoDate: "촬영일로부터 30일 후 자동 만료됩니다. 미리 받아주세요 :)",
     captions: [
       "소중한 순간이 예쁘게 담겼어요~", "오늘의 여행이 사진으로 남았어요", "이 순간, 오래 기억되길 바라요",
@@ -92,7 +92,7 @@ const I18N = {
     downloadAll: "Download All",
     wifi: "⚠ Files are large — downloading on Wi-Fi is recommended.",
     letterLabel: "A NOTE FROM JEJU",
-    expiry: (d) => `Saved until ${d}, then auto-expires. Please download before then :)`,
+    expiry: (d) => `Saved until ${d},<br>then auto-expires. Please download before then :)`,
     expiryNoDate: "Auto-expires 30 days after the shoot. Please download in time :)",
     captions: [
       "A precious moment, beautifully captured~", "Today's journey, saved in a photo", "May this moment be remembered for long",
@@ -121,7 +121,7 @@ const I18N = {
     downloadAll: "全部下载",
     wifi: "⚠ 文件较大，建议在 Wi-Fi 环境下下载。",
     letterLabel: "来自济州的信",
-    expiry: (d) => `本图库保存至 ${d}，之后自动过期，请在此之前下载 :)`,
+    expiry: (d) => `本图库保存至 ${d}，<br>之后自动过期，请在此之前下载 :)`,
     expiryNoDate: "拍摄日起 30 天后自动过期，请尽早下载 :)",
     captions: [
       "珍贵的瞬间，被美好地记录下来~", "今天的旅程，留在了照片里", "愿这一刻，被长久记住",
@@ -165,6 +165,7 @@ let ratings = {};
 try { ratings = JSON.parse(localStorage.getItem(RATING_KEY) || "{}") || {}; } catch (e) { ratings = {}; }
 let ssTimer = null;   // 슬라이드쇼 자동전환 타이머(재렌더 시 정리)
 let rateTimer = null; // 하트 입력 백엔드 전송 디바운스(연타 합치기)
+let ssCapTimer = null; // 슬라이드쇼 거터 랜덤 문구 타이머
 // 홍보용(?demo=1) = 쇼잉 전용: 다운로드 버튼은 보이되 동작 차단(안내만). 실제 납품 갤러리(?c=&t=)는 정상 다운로드.
 const DEMO_TXT = {
   ko: { toast: "샘플(쇼잉용) 갤러리예요 :) 실제 촬영 후 받으시는 갤러리에선 원본·스토리카드를 모두 내려받으실 수 있어요.", introTitle: "✨ 샘플 갤러리입니다", introSub: "실제 촬영 결과물의 예시예요. 다운로드는 실제 갤러리에서 동작합니다 :)", badge: "SAMPLE · 샘플" },
@@ -172,14 +173,21 @@ const DEMO_TXT = {
   zh: { toast: "这是样品(展示用)图库 :) 正式图库可下载全部原图与故事卡。", introTitle: "✨ 样品图库", introSub: "这是成品预览。下载功能在正式图库中开放 :)", badge: "SAMPLE · 样品" },
 };
 function demoTxt() { return DEMO_TXT[currentLang] || DEMO_TXT.ko; }
-function demoNotice() {                       // 다운로드 시도 시 안내 토스트(실제 다운로드 안 함)
-  let el = document.getElementById("demo-toast");
-  if (!el) { el = document.createElement("div"); el.id = "demo-toast"; el.className = "demo-toast"; document.body.appendChild(el); }
-  el.textContent = demoTxt().toast;
+function toast(msg) {                          // 공용 안내 토스트(하단 가운데 잠깐 표시)
+  let el = document.getElementById("g-toast");
+  if (!el) { el = document.createElement("div"); el.id = "g-toast"; el.className = "demo-toast"; document.body.appendChild(el); }
+  el.textContent = msg;
   el.classList.add("show");
-  clearTimeout(demoNotice._t);
-  demoNotice._t = setTimeout(() => el.classList.remove("show"), 3400);
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => el.classList.remove("show"), 3600);
 }
+function demoNotice() { toast(demoTxt().toast); }   // 홍보용: 다운로드 차단 안내
+const REEL_TXT = {
+  ko: { save: "동영상으로 저장", soon: "🎬 슬라이드쇼 영상은 준비되는 대로 여기서 받으실 수 있어요!" },
+  en: { save: "Save as video", soon: "🎬 The slideshow video will be available here soon!" },
+  zh: { save: "保存为视频", soon: "🎬 幻灯片视频准备好后可在此下载!" },
+};
+function reelTxt() { return REEL_TXT[currentLang] || REEL_TXT.ko; }
 function setupDemoMode() {
   if (!DEMO) return;
   document.body.classList.add("is-demo");
@@ -270,7 +278,7 @@ function applyLang(lang) {
   const labelEl = document.querySelector(".letter-label");
   if (labelEl && tt.letterLabel) labelEl.textContent = tt.letterLabel;   // 제주 편지 라벨 번역
   const expEl = $("expiry-note");
-  if (expEl) expEl.textContent = state.expY ? tt.expiry(tt.fmtDate(state.expY, state.expM, state.expD)) : (tt.expiryNoDate || "");
+  if (expEl) expEl.innerHTML = state.expY ? tt.expiry(tt.fmtDate(state.expY, state.expM, state.expD)) : (tt.expiryNoDate || "");
   const hb = $("heart-sort"); if (hb && tt.sortHearts) hb.textContent = tt.sortHearts;
   if (state.loaded) renderItems();
 }
@@ -524,20 +532,33 @@ const SS_SKETCH = {
   star: '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M50 8 C52 38 62 48 92 50 C62 52 52 62 50 92 C48 62 38 52 8 50 C38 48 48 38 50 8Z"/></svg>',
   sprig: '<svg viewBox="0 0 60 110" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M30 106 C30 78 30 42 31 8"/><path d="M30 76 C17 70 11 58 12 45 C25 47 31 58 30 70"/><path d="M31 60 C44 54 50 42 49 29 C36 31 30 42 31 54"/><path d="M30 42 C20 36 16 27 17 16 C27 18 31 27 30 36"/></svg>',
   twinkle: '<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M20 5V15M20 25V35M5 20H15M25 20H35"/></svg>',
+  cloud: '<svg viewBox="0 0 120 78" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M30 64 C13 64 8 46 23 42 C22 27 44 22 52 34 C58 21 82 23 84 40 C100 39 105 62 88 64Z"/></svg>',
+  sun: '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="19"/><path d="M50 6V20M50 80V94M6 50H20M80 50H94M20 20l9 9M71 71l9 9M80 20l-9 9M29 71l-9 9"/></svg>',
+  wave: '<svg viewBox="0 0 120 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 16q12-12 24 0t24 0t24 0t24 0"/><path d="M6 34q12-12 24 0t24 0t24 0t24 0"/></svg>',
+  leaf: '<svg viewBox="0 0 70 100" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M35 96 C8 70 8 26 35 4 C62 26 62 70 35 96Z"/><path d="M35 16V88"/><path d="M35 32q12 4 18 14M35 50q-12 4 -18 16M35 60q12 4 18 16"/></svg>',
+  shell: '<svg viewBox="0 0 100 96" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M50 90 C18 90 6 56 22 30 C30 16 46 10 50 10 C54 10 70 16 78 30 C94 56 82 90 50 90Z"/><path d="M50 90V12M34 86 C30 56 38 30 48 12M66 86 C70 56 62 30 52 12"/></svg>',
+  bloom: '<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="50" r="9"/><path d="M50 41 C50 22 42 14 50 4 C58 14 50 22 50 41M59 50 C78 50 86 42 96 50 C86 58 78 50 59 50M50 59 C50 78 58 86 50 96 C42 86 50 78 50 59M41 50 C22 50 14 58 4 50 C14 42 22 50 41 50"/></svg>',
 };
 function ssDecor() {
   const D = [
-    ["citrus", "left:8%;top:9%", 56], ["star", "left:3%;top:30%", 42], ["sprig", "left:13%;top:50%", 66], ["palm", "left:5%;bottom:3%", 92],
-    ["twinkle", "left:20%;top:18%", 26],
-    ["citrus", "right:8%;top:8%", 54], ["star", "right:4%;top:28%", 46], ["twinkle", "right:14%;top:50%", 28], ["palm", "right:5%;bottom:3%", 92],
-    ["sprig", "right:17%;bottom:14%", 60],
+    // 왼쪽 거터 — 빼곡히(그림처럼)
+    ["citrus", "left:7%;top:5%", 54], ["twinkle", "left:19%;top:12%", 24], ["star", "left:3%;top:18%", 40],
+    ["leaf", "left:13%;top:25%", 50], ["sprig", "left:4%;top:37%", 62], ["cloud", "left:15%;top:45%", 56],
+    ["bloom", "left:6%;top:55%", 46], ["wave", "left:14%;top:64%", 56], ["sun", "left:7%;top:74%", 44],
+    ["palm", "left:3%;bottom:11%", 86], ["shell", "left:17%;bottom:7%", 48], ["star", "left:19%;top:33%", 28], ["twinkle", "left:11%;bottom:24%", 22],
+    // 오른쪽 거터
+    ["citrus", "right:7%;top:6%", 52], ["star", "right:17%;top:13%", 34], ["sun", "right:4%;top:20%", 46],
+    ["sprig", "right:13%;top:29%", 60], ["bloom", "right:5%;top:41%", 44], ["leaf", "right:16%;top:50%", 48],
+    ["cloud", "right:6%;top:60%", 56], ["twinkle", "right:18%;top:68%", 24], ["wave", "right:14%;top:77%", 56],
+    ["palm", "right:3%;bottom:11%", 86], ["shell", "right:8%;bottom:6%", 46], ["star", "right:19%;bottom:25%", 28], ["twinkle", "right:11%;top:19%", 22],
   ];
   return '<div class="ss-decor" aria-hidden="true">' + D.map(([k, pos, s], i) =>
-    `<span class="ss-d" style="${pos};width:${s}px;animation-delay:${(i * 0.5).toFixed(1)}s">${SS_SKETCH[k]}</span>`).join("") + "</div>";
+    `<span class="ss-d" style="${pos};width:${s}px;animation-delay:${(i * 0.32).toFixed(2)}s">${SS_SKETCH[k]}</span>`).join("") + "</div>";
 }
 
 // ── 첫 칸 자동 슬라이드쇼(켄번즈 크로스페이드). 사진 2장 이상일 때만 ──
 function createSlideshow() {
+  clearInterval(ssTimer); clearInterval(ssCapTimer);
   const wrap = document.createElement("div");
   wrap.className = "gallery-item slideshow";
   const imgs = state.images.slice(0, 15);
@@ -546,7 +567,12 @@ function createSlideshow() {
     const url = thumbSize(im.variants[tp].url, 1200);
     return `<div class="ss-slide${i === 0 ? " on" : ""}" style="background-image:url('${url}')"></div>`;
   }).join("");
-  wrap.innerHTML = ssDecor() + `<div class="ss-stage">${slidesHtml}<div class="ss-badge">▶ SLIDESHOW</div></div>`;
+  const signHtml = `<img class="ss-sign" src="sign.png?v=20260525p25" alt="" aria-hidden="true">`;   // DK 서명·중문별장 인장 워터마크(우하단)
+  wrap.innerHTML = ssDecor()
+    + `<div class="ss-captions" aria-hidden="true"></div>`
+    + `<div class="ss-stage">${slidesHtml}${signHtml}<div class="ss-badge">▶ SLIDESHOW</div></div>`
+    + `<button class="ss-dl-btn" type="button" id="ss-dl">🎬 ${reelTxt().save}</button>`;
+  const dl = wrap.querySelector("#ss-dl"); if (dl) dl.addEventListener("click", handleReelDownload);
   const slides = wrap.querySelectorAll(".ss-slide");
   let idx = 0;
   if (slides.length > 1) {
@@ -556,7 +582,35 @@ function createSlideshow() {
       slides[idx].classList.add("on");
     }, 4000);
   }
+  startSsCaptions(wrap.querySelector(".ss-captions"));
   return wrap;
+}
+
+// 슬라이드쇼 동영상 저장: 홍보=차단안내 / 실서비스=릴스 mp4(준비되면 state.reelUrl) 다운로드, 아직이면 안내
+function handleReelDownload() {
+  if (DEMO) { demoNotice(); return; }
+  if (state.reelUrl) { triggerDownload(state.reelUrl); return; }
+  toast(reelTxt().soon);
+}
+
+// 슬라이드쇼 거터에 감성 문구가 랜덤하게 떴다 사라짐(다른 곳 작은 문구 재활용)
+function startSsCaptions(box) {
+  if (!box) return;
+  const caps = (t().captions || []).slice();
+  if (!caps.length) return;
+  function pop() {
+    const el = document.createElement("span");
+    el.className = "ss-caption";
+    el.textContent = caps[Math.floor(Math.random() * caps.length)];
+    const side = Math.random() < 0.5 ? "left" : "right";
+    el.style[side] = (3 + Math.random() * 12).toFixed(1) + "%";
+    el.style.top = (12 + Math.random() * 64).toFixed(1) + "%";
+    box.appendChild(el);
+    requestAnimationFrame(() => el.classList.add("show"));
+    setTimeout(() => { el.classList.remove("show"); setTimeout(() => { try { el.remove(); } catch (e) {} }, 900); }, 2600);
+  }
+  pop();
+  ssCapTimer = setInterval(pop, 2800);
 }
 
 function thumbSize(url, w) { return url ? url.replace(/([?&]sz=)w\d+/, "$1w" + w) : url; }
