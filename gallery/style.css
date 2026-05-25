@@ -8,6 +8,8 @@
     --accent: #d8b26e;
     --accent-strong: #f0ca7a;
     --shadow: 0 18px 55px rgba(0, 0, 0, 0.42);
+    --serif: "Cormorant Garamond", "Noto Serif KR", serif;
+    --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 * {
@@ -18,8 +20,11 @@ body {
     margin: 0;
     min-height: 100vh;
     background: var(--bg);
+    background-image: radial-gradient(130% 78% at 50% -12%, #202023 0%, rgba(32, 32, 35, 0) 58%);
+    background-attachment: fixed;
     color: var(--text);
     font-family: Inter, "Noto Sans KR", sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
 .lang-switch {
@@ -144,34 +149,150 @@ body {
     display: inline-flex;
 }
 
-.gallery-header {
+/* ── 히어로 커버: 대표 사진 풀블리드 + 타이틀 오버레이 ── */
+.gallery-hero {
+    position: relative;
+    height: 88vh;
+    min-height: 560px;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 14px;
-    max-width: 1320px;
-    margin: 0 auto;
-    padding: 42px 24px 24px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    overflow: hidden;
+}
+
+.hero-bg {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    align-content: start;
+    background-color: #0a0a0a;
+    opacity: 0;
+    transition: opacity 1.3s ease;
+}
+
+.hero-bg.loaded {
+    opacity: 1;
+}
+
+.hero-tile {
+    aspect-ratio: 3 / 4;
+    background-size: cover;
+    background-position: center 26%;   /* 인물 얼굴(상단)을 더 보이게 */
+}
+
+.hero-scrim {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(115% 78% at 50% 44%, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.3) 52%, rgba(0, 0, 0, 0.12) 100%),
+        linear-gradient(to bottom, rgba(10, 10, 11, 0.42) 0%, rgba(10, 10, 11, 0.08) 30%, rgba(10, 10, 11, 0.5) 72%, var(--bg) 100%);
+}
+
+.hero-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+    animation: heroRise 1s var(--ease) 0.15s both;
+}
+
+@keyframes heroRise {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 아래로 스크롤 유도(마우스 캡슐) */
+.hero-scroll {
+    position: absolute;
+    left: 50%;
+    bottom: 26px;
+    z-index: 2;
+    transform: translateX(-50%);
+    width: 26px;
+    height: 42px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 999px;
+}
+
+.hero-scroll span {
+    position: absolute;
+    left: 50%;
+    top: 9px;
+    width: 3px;
+    height: 8px;
+    margin-left: -1.5px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.85);
+    animation: heroScroll 1.7s ease-in-out infinite;
+}
+
+@keyframes heroScroll {
+    0% { opacity: 0; transform: translateY(0); }
+    30% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(15px); }
 }
 
 .eyebrow {
-    margin: 0 0 10px;
+    position: relative;
+    margin: 0 0 16px;
+    padding-bottom: 14px;
     color: var(--accent-strong);
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
 }
 
-.gallery-header h1 {
+/* eyebrow 아래 작은 골드 디바이더 — 화보집 느낌 */
+.eyebrow::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 34px;
+    height: 1px;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+
+.gallery-hero h1 {
     margin: 0;
-    font-size: clamp(2rem, 4vw, 4rem);
-    line-height: 1;
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(2.9rem, 6.5vw, 5.6rem);
+    line-height: 1.04;
+    letter-spacing: 0.01em;
+    text-shadow: 0 2px 32px rgba(0, 0, 0, 0.55);
 }
 
 .subtitle {
     margin: 14px 0 0;
+    max-width: 560px;
     color: var(--muted);
     font-size: 1rem;
+    line-height: 1.6;
+    word-break: keep-all;
+}
+
+/* 히어로(사진 위) 텍스트 가독성 */
+.gallery-hero .subtitle {
+    margin-left: auto;
+    margin-right: auto;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 1px 16px rgba(0, 0, 0, 0.6);
+}
+
+.gallery-hero .dl-note {
+    margin-top: 16px;
+    color: rgba(255, 255, 255, 0.7);
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55);
+}
+
+.gallery-hero .eyebrow {
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.5);
 }
 
 .subtitle.small {
@@ -225,9 +346,9 @@ button {
 .header-actions {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 8px;
-    margin-top: 4px;
+    margin-top: 6px;
 }
 
 .dl-note {
@@ -236,7 +357,7 @@ button {
     color: var(--muted);
     font-size: 0.8rem;
     line-height: 1.5;
-    text-align: left;
+    text-align: center;
     word-break: keep-all;
 }
 
@@ -246,16 +367,34 @@ button {
     gap: 22px;
     max-width: 1320px;
     margin: 0 auto;
-    padding: 18px 24px 54px;
+    padding: 48px 24px 54px;
 }
 
 .gallery-item {
     position: relative;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
+    border-radius: 12px;
     background: var(--panel);
     box-shadow: var(--shadow);
+    animation: gItemIn 0.65s var(--ease) both;
+    transition: transform 0.35s var(--ease), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.gallery-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 28px 72px rgba(0, 0, 0, 0.52);
+    border-color: rgba(216, 178, 110, 0.4);
+}
+
+@keyframes gItemIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gallery-item { animation: none; }
+    .image-frame img { transition: none; }
 }
 
 .gallery-item.portrait {
@@ -273,6 +412,7 @@ button {
     display: grid;
     place-items: center;
     background: #0a0a0a;
+    cursor: zoom-in;
 }
 
 .image-frame img {
@@ -280,6 +420,11 @@ button {
     height: 100%;
     object-fit: contain;
     display: block;
+    transition: transform 0.7s var(--ease);
+}
+
+.gallery-item:hover .image-frame img {
+    transform: scale(1.045);
 }
 
 .item-overlay {
@@ -369,23 +514,209 @@ button {
     border-color: white;
 }
 
+/* ── 사진 하트(점수) + 하트순 정렬 버튼 ── */
+.heart-rate {
+    position: absolute;
+    top: 9px;
+    left: 9px;
+    z-index: 4;
+    display: flex;
+    gap: 1px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.32);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+}
+.heart {
+    border: none;
+    background: none;
+    padding: 0 1px;
+    font-size: 0.95rem;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: color 0.15s ease, transform 0.15s ease;
+}
+.heart.on { color: #ff5b8a; }
+.heart:hover { transform: scale(1.25); }
+
+.heart-sort-btn {
+    position: fixed;
+    left: 50%;
+    bottom: 18px;
+    z-index: 45;
+    transform: translateX(-50%) translateY(24px);
+    opacity: 0;
+    pointer-events: none;
+    padding: 11px 22px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: var(--accent);
+    color: #15110b;
+    font-family: Inter, "Noto Sans KR", sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.32);
+    transition: opacity 0.25s ease, transform 0.25s ease, background-color 0.18s ease;
+}
+.heart-sort-btn.show { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.heart-sort-btn:hover { background: var(--accent-strong); }
+body.theme-jeju .heart-sort-btn { background: #f4892b; color: #fff; }
+body.theme-jeju .heart-sort-btn:hover { background: #e8643c; }
+
+/* ── 마무리 카드(갤러리 맨 끝, 전체폭) ── */
+.closing-card {
+    grid-column: 1 / -1;
+    aspect-ratio: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 24px;
+    background: var(--panel);
+    cursor: default;
+}
+.closing-card:hover { transform: none; }
+.closing-card .image-frame { display: none; }
+.cc-inner { text-align: center; max-width: 540px; }
+.cc-heart { font-size: 2rem; color: #ff5b8a; line-height: 1; }
+.closing-card h3 { margin: 12px 0 8px; font-family: var(--serif); font-weight: 600; font-size: clamp(1.5rem, 3vw, 2.2rem); color: var(--text); }
+.closing-card p { margin: 0 0 22px; color: var(--muted); font-size: 0.95rem; line-height: 1.6; word-break: keep-all; }
+.cc-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.cc-btn {
+    display: inline-flex; align-items: center;
+    padding: 11px 20px; border-radius: 999px;
+    border: 1px solid var(--line); background: rgba(255, 255, 255, 0.06);
+    color: var(--text); font-weight: 700; font-size: 0.9rem; cursor: pointer;
+    text-decoration: none; transition: transform 0.18s ease, background-color 0.18s ease;
+}
+.cc-btn.primary { background: var(--accent); color: #15110b; border-color: transparent; }
+.cc-btn:hover { transform: translateY(-2px); }
+.cc-handle { margin-top: 18px; color: var(--muted); font-size: 0.82rem; letter-spacing: 0.05em; }
+
+/* 제주 테마 = 크림 카드 */
+body.theme-jeju .closing-card { background: #fdfaf1; border: 1px solid rgba(120, 100, 60, 0.16); }
+body.theme-jeju .closing-card h3 { font-family: "Fraunces", serif; color: #3a342c; }
+body.theme-jeju .closing-card p { font-family: "Gaegu", "Noto Sans KR", cursive; color: #6b6253; }
+body.theme-jeju .cc-btn { background: #fff; color: #5b5247; border-color: rgba(0, 0, 0, 0.1); }
+body.theme-jeju .cc-btn.primary { background: #f4892b; color: #fff; }
+body.theme-jeju .cc-handle { color: #8a7c63; }
+body.theme-jeju .gallery-item.closing-card { transform: none; }   /* 폴라로이드 기울기 해제 */
+body.theme-jeju .closing-card::before { display: none; }          /* 워시테이프 제거 */
+
+/* ── 첫 칸 자동 슬라이드쇼 = 세로 9:16(1080×1920) 플레이어, 가운데 ── */
+.slideshow {
+    grid-column: 1 / -1;
+    aspect-ratio: auto;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 0 12px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    overflow: visible;
+    cursor: default;
+}
+.slideshow:hover { transform: none; }
+.ss-stage {
+    position: relative;
+    width: min(360px, 74vw);
+    aspect-ratio: 9 / 16;          /* 1080 × 1920 세로 */
+    border-radius: 14px;
+    overflow: hidden;
+    background: #0a0a0a;
+    box-shadow: var(--shadow);
+}
+.ss-slide {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center 32%;
+    opacity: 0;
+    transition: opacity 1.3s ease;
+}
+.ss-slide.on { opacity: 1; animation: ssKen 8s ease-out forwards; }
+@keyframes ssKen { from { transform: scale(1.03); } to { transform: scale(1.13); } }
+.ss-badge {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    z-index: 2;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.42);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+}
+body.theme-jeju .gallery-item.slideshow { transform: none; border: none; background: transparent; box-shadow: none; }
+body.theme-jeju .slideshow::before { display: none; }
+body.theme-jeju .ss-stage { border: 6px solid #fff; }   /* 제주 = 세로 폴라로이드 */
+
+/* 슬라이드쇼 양옆 손그림 라인 스케치 장식(고급스럽게) */
+.slideshow { position: relative; }
+.ss-decor { position: absolute; inset: 0; z-index: 0; pointer-events: none; color: rgba(216, 178, 110, 0.5); }
+body.theme-jeju .ss-decor { color: rgba(122, 111, 91, 0.52); }
+.ss-d { position: absolute; line-height: 0; animation: ssFloat 7s ease-in-out infinite alternate; }
+.ss-d svg { width: 100%; height: auto; display: block; }
+@keyframes ssFloat { from { transform: translateY(-6px) rotate(-2deg); } to { transform: translateY(6px) rotate(2deg); } }
+@media (max-width: 920px) { .ss-decor { display: none; } }   /* 좁으면 스테이지와 겹쳐 숨김 */
+
+/* ── 홍보용(?demo=1) 쇼잉 전용: 샘플 배지 + 다운로드 시도 안내 토스트 ── */
+.demo-badge {
+    position: fixed; top: 14px; left: 50%; transform: translateX(-50%);
+    padding: 5px 14px; border-radius: 999px; z-index: 60; pointer-events: none;
+    font: 600 0.72rem/1 Inter, sans-serif; letter-spacing: 0.14em; white-space: nowrap;
+    color: #fff; background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.3); backdrop-filter: blur(6px);
+}
+body.theme-jeju .demo-badge { color: #5a4632; background: rgba(255, 252, 245, 0.66); border-color: rgba(122, 90, 60, 0.3); }
+.demo-toast {
+    position: fixed; left: 50%; bottom: 92px; transform: translateX(-50%) translateY(20px);
+    max-width: min(440px, 86vw); padding: 14px 20px; border-radius: 16px; z-index: 9999;
+    background: rgba(20, 18, 30, 0.92); color: #fff; text-align: center;
+    font-size: 0.92rem; line-height: 1.45; box-shadow: 0 12px 34px rgba(0, 0, 0, 0.32);
+    opacity: 0; pointer-events: none; transition: opacity 0.3s ease, transform 0.3s var(--ease);
+}
+.demo-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
 .loader {
     grid-column: 1 / -1;
-    padding: 72px 20px;
+    padding: 80px 20px;
     border: 1px solid var(--line);
-    border-radius: 8px;
-    background: var(--panel);
+    border-radius: 12px;
+    background: linear-gradient(100deg, var(--panel) 28%, var(--panel-soft) 50%, var(--panel) 72%);
+    background-size: 220% 100%;
+    animation: loaderShimmer 1.5s ease-in-out infinite;
     color: var(--muted);
     text-align: center;
+    letter-spacing: 0.02em;
+}
+
+@keyframes loaderShimmer {
+    from { background-position: 220% 0; }
+    to { background-position: -220% 0; }
 }
 
 .loader.error {
+    background: var(--panel);
+    animation: none;
     color: #ffd2c8;
 }
 
 @media (max-width: 1100px) {
     .gallery-container {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .hero-bg {
+        grid-template-columns: repeat(4, 1fr);
     }
 }
 
@@ -401,14 +732,14 @@ button {
         font-size: 0.74rem;
     }
 
-    .gallery-header {
-        display: block;
-        padding: 52px 14px 16px;
+    .gallery-hero {
+        height: 80vh;
+        min-height: 440px;
+        padding: 20px 16px;
     }
 
-    .header-actions {
-        align-items: stretch;
-        margin-top: 18px;
+    .hero-bg {
+        grid-template-columns: repeat(3, 1fr);
     }
 
     .btn-primary {
@@ -417,7 +748,7 @@ button {
 
     .dl-note {
         max-width: none;
-        text-align: left;
+        text-align: center;
     }
 
     .gallery-container {
@@ -454,4 +785,548 @@ button {
         height: 46px;
         min-width: 86px;
     }
+}
+
+/* ── 데스크톱(마우스): 오버레이를 호버 때만 노출 → 평소엔 사진만 깔끔하게, 모바일은 항상 표시 ── */
+@media (hover: hover) and (pointer: fine) {
+    .item-overlay {
+        opacity: 0;
+        transform: translateY(8px);
+        transition: opacity 0.3s ease, transform 0.3s var(--ease);
+    }
+    .gallery-item:hover .item-overlay,
+    .gallery-item:focus-within .item-overlay {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ── 라이트박스 (사진 클릭 시 큰 화면) ── */
+.lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 28px;
+    background: rgba(8, 8, 9, 0.94);
+    backdrop-filter: blur(8px);
+    animation: lbFade 0.25s ease both;
+}
+
+.lightbox.show {
+    display: flex;
+}
+
+@keyframes lbFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.lb-stage {
+    max-width: min(94vw, 1180px);
+    max-height: 92vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lb-img {
+    max-width: 100%;
+    max-height: 92vh;
+    object-fit: contain;
+    border-radius: 6px;
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    transform: scale(0.98);
+    transition: opacity 0.35s ease, transform 0.35s var(--ease);
+}
+
+.lb-img.ready {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.lb-close,
+.lb-nav {
+    position: fixed;
+    z-index: 210;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    color: var(--text);
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.18s ease, transform 0.18s ease;
+}
+
+.lb-close:hover,
+.lb-nav:hover {
+    background: rgba(255, 255, 255, 0.22);
+}
+
+.lb-close {
+    top: 20px;
+    right: 24px;
+    width: 46px;
+    height: 46px;
+    font-size: 1.7rem;
+}
+
+.lb-nav {
+    top: 50%;
+    transform: translateY(-50%);
+    width: 54px;
+    height: 54px;
+    font-size: 2.1rem;
+}
+
+.lb-nav:hover {
+    transform: translateY(-50%) scale(1.06);
+}
+
+.lb-prev { left: 20px; }
+.lb-next { right: 20px; }
+
+@media (max-width: 760px) {
+    .lightbox { padding: 12px; }
+    .lb-close { top: 12px; right: 14px; width: 42px; height: 42px; }
+    .lb-nav { width: 44px; height: 44px; font-size: 1.7rem; }
+    .lb-prev { left: 8px; }
+    .lb-next { right: 8px; }
+}
+
+/* ── 꽃잎 살랑살랑 (전면 오버레이, 클릭 방해 없음) ── */
+.petals {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.petal-fall {
+    position: absolute;
+    top: -8vh;
+    animation-name: petalFall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    will-change: transform;
+}
+
+.petal {
+    display: block;
+    overflow: visible;
+    animation-name: petalSway;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    will-change: transform;
+}
+
+.petal.sway2 { animation-name: petalSway2; }
+
+@keyframes petalFall {
+    from { transform: translateY(-8vh); }
+    to { transform: translateY(116vh); }
+}
+
+@keyframes petalSway {
+    from { transform: translateX(-15px) rotate(18deg); }
+    to { transform: translateX(15px) rotate(64deg); }
+}
+
+@keyframes petalSway2 {
+    from { transform: translateX(-23px) rotate(-12deg); }
+    to { transform: translateX(16px) rotate(50deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .petals { display: none; }
+}
+
+/* ============================================================
+   THEME · 제주 매거진 스크랩북 (?theme=jeju) — body.theme-jeju 에만 적용. 럭셔리(기본)는 무영향.
+   ============================================================ */
+body.theme-jeju {
+    background: #fdf7ec;
+    background-image:
+        radial-gradient(120% 85% at 50% -8%, #cfeaff 0%, rgba(207, 234, 255, 0) 52%),
+        linear-gradient(180deg, #fdf9f0 0%, #f5eddd 100%);
+    color: #3a342c;
+}
+
+body.theme-jeju .lang-btn { background: rgba(255, 255, 255, 0.72); color: #7a6f60; border-color: rgba(0, 0, 0, 0.08); }
+body.theme-jeju .lang-btn.active { background: #f4892b; color: #fff; }
+
+/* ── 히어로 = 매거진 커버 ── */
+/* 타일을 흩뿌린 미니 폴라로이드로(흰 테두리 + 크림 간격, 회전·크기는 JS 인라인) */
+body.theme-jeju .hero-bg {
+    filter: saturate(1.02) brightness(1.02);
+    gap: 8px;
+    padding: 10px;
+    background-color: #fbf3e4;
+}
+body.theme-jeju .hero-tile {
+    border: 3px solid #fff;
+    border-radius: 5px;
+    box-shadow: 0 3px 8px rgba(80, 60, 30, 0.2);
+}
+body.theme-jeju .hero-scrim {
+    background:
+        radial-gradient(76% 50% at 50% 44%, rgba(253, 247, 236, 0.42) 0%, rgba(253, 247, 236, 0) 66%),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0) 26%, rgba(245, 237, 221, 0.16) 78%, rgba(245, 237, 221, 0.5) 100%);
+}
+
+body.theme-jeju .gallery-hero h1 {
+    font-family: "Fraunces", "Cormorant Garamond", serif;
+    font-weight: 700;
+    font-size: clamp(3rem, 9vw, 7rem);
+    background: linear-gradient(96deg, #f4892b 0%, #19a3a3 38%, #3aa856 64%, #e8643c 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: none;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.16));
+}
+
+/* 마스트헤드 텍스트 = 반투명 크림 카드 위 → 컬러 타이포 또렷하게 */
+body.theme-jeju .hero-inner {
+    background: rgba(255, 251, 243, 0.64);
+    -webkit-backdrop-filter: blur(8px) saturate(1.1);
+    backdrop-filter: blur(8px) saturate(1.1);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 22px;
+    padding: 30px 40px 34px;
+    box-shadow: 0 16px 50px rgba(60, 45, 20, 0.18);
+}
+
+.jeju-script {
+    margin: 0 0 -4px;
+    font-family: "Caveat", cursive;
+    font-weight: 700;
+    font-size: clamp(1.7rem, 4vw, 2.8rem);
+    color: #14918f;
+    transform: rotate(-3deg);
+}
+
+.jeju-issue {
+    margin: 12px 0 0;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.32em;
+    color: #e0562c;
+}
+
+body.theme-jeju .gallery-hero .eyebrow { display: none; }   /* 매거진 마스트헤드로 대체 */
+body.theme-jeju .gallery-hero .subtitle { font-family: "Gaegu", "Noto Sans KR", cursive; color: #564d40; text-shadow: none; }
+body.theme-jeju .gallery-hero .dl-note { font-family: "Gaegu", "Noto Sans KR", cursive; color: #7d7261; text-shadow: none; }
+
+/* ── 타이틀 = 봉투에서 나온 편지 (살짝 플로팅) ── */
+/* 편지지+글자+봉투를 '하나의 단위'로 — 애니메이션은 봉투에만(자식은 함께 움직임) */
+.jeju-envelope {
+    position: relative;
+    width: min(90vw, 540px);
+    margin: 0 auto;
+    transform-origin: top center;           /* 위에서 매단 듯 좌우로 천천히 흔들 */
+    animation: envIn 1.2s var(--ease) both, envSway 7.5s ease-in-out 1.2s infinite alternate;
+}
+@keyframes envIn {
+    from { opacity: 0; transform: translateY(46px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes envSway {
+    from { transform: rotate(-1.3deg); }
+    to { transform: rotate(1.3deg); }
+}
+
+/* 편지지 (hero-inner.letter) — 종이 질감(미세 노이즈) + 불투명 크림 */
+body.theme-jeju .hero-inner.letter {
+    position: relative;
+    z-index: 2;
+    background-color: #fdfaf1;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)' opacity='0.05'/%3E%3C/svg%3E");
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border: 1px solid rgba(120, 100, 60, 0.16);
+    border-radius: 5px 5px 3px 3px;
+    padding: 32px 42px 60px;
+    box-shadow: 0 14px 34px rgba(60, 45, 20, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    text-align: center;
+    animation: none;                         /* 봉투(부모)와 함께 움직임 — 따로 안 놀게 */
+}
+@keyframes letterOut {
+    from { opacity: 0; transform: translateY(50px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.letter-label {
+    margin: 0 0 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(120, 100, 60, 0.22);
+    font-family: Inter, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.26em;
+    color: #8a7c63;
+}
+
+/* 편지 본문 — 차분한 다크 세리프(레퍼런스 톤) */
+body.theme-jeju .hero-inner.letter h1 {
+    font-family: "Fraunces", "Cormorant Garamond", serif;
+    font-weight: 600;
+    font-size: clamp(2.1rem, 4.6vw, 3.5rem);
+    line-height: 1.08;
+    letter-spacing: 0;
+    background: none;
+    -webkit-text-fill-color: #3a342c;
+    color: #3a342c;
+    filter: none;
+    text-shadow: none;
+}
+body.theme-jeju .hero-inner.letter .subtitle {
+    font-family: "Gaegu", "Cormorant Garamond", serif;
+    font-style: normal;
+    font-size: clamp(1.02rem, 2.2vw, 1.3rem);
+    line-height: 1.85;
+    color: #6b6253;
+    max-width: 420px;
+    white-space: pre-line;   /* 시 줄바꿈 유지 */
+}
+body.theme-jeju .hero-inner.letter .dl-note {
+    margin-top: 12px;
+    font-family: Inter, sans-serif;
+    font-size: 0.7rem;
+    color: #9a8e76;
+}
+
+.letter-flower { margin: 18px auto 0; line-height: 0; }
+
+/* 봉투 앞주머니 — 편지가 꽂힌 느낌 + 서명 */
+.env-pocket {
+    position: absolute;
+    left: -5%;
+    right: -5%;
+    top: calc(100% - 58px);
+    height: 152px;
+    background-color: #e7d6b6;
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='q'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23q)' opacity='0.06'/%3E%3C/svg%3E"),
+        linear-gradient(160deg, #ecdfc4, #e2d2b0);
+    clip-path: polygon(0 38%, 50% 0, 100% 38%, 100% 100%, 0 100%);
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 18px 42px rgba(60, 45, 20, 0.2);
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 26px;
+}
+.env-mark { display: block; width: 66px; height: auto; opacity: 0.9; }   /* 봉투 중앙 = 중문별장 로고 */
+
+/* 갤러리 유효기간 — 편지봉투 '아래' (봉투 주머니가 ~94px 내려와 있어 로고와 안 겹치게 더 내림).
+   .dl-note(margin:0)와 동일 특이도 충돌 방지를 위해 body.theme-jeju 로 특이도 ↑ */
+body.theme-jeju .jeju-expiry {
+    position: relative;
+    z-index: 2;
+    margin: 124px auto 0;
+    max-width: 440px;
+    padding: 7px 18px;
+    border-radius: 999px;
+    background: rgba(253, 250, 244, 0.68);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    box-shadow: 0 4px 14px rgba(60, 45, 20, 0.1);
+    font-family: Inter, "Noto Sans KR", sans-serif;
+    font-size: 0.72rem;
+    color: #6e6353;
+    text-align: center;
+}
+
+/* 편지 가운데 = DKSequence 엠블럼(02.png · 다크 씰) */
+.letter-emblem { display: block; width: 102px; margin: 8px auto 0; }
+.letter-emblem img { display: block; width: 100%; border-radius: 16px; box-shadow: 0 7px 18px rgba(0, 0, 0, 0.28); }
+/* 편지 하단 = 중문별장 로고(야자수) + 서명 */
+.letter-foot { display: flex; flex-direction: column; align-items: center; gap: 2px; margin-top: 20px; }
+.letter-mark { display: block; width: 58px; height: auto; opacity: 0.92; }
+.letter-name { font-family: "Caveat", cursive; font-weight: 700; font-size: 1.5rem; color: #6b6253; line-height: 1; }
+
+/* 배경 사진 한 줄 — 크게 + 좌→우 무한 슬라이드(연하게) */
+.jeju-photo-row { position: absolute; left: 0; right: 0; top: 5%; height: 40vh; overflow: hidden; opacity: 0.22; z-index: 0; }
+.jeju-photo-track { display: flex; gap: 6px; height: 100%; width: max-content; will-change: transform; animation: photoSlide 70s linear infinite; }
+.jeju-photo-cell { flex: 0 0 auto; width: 246px; height: 100%; background-size: cover; background-position: center 26%; border-radius: 5px; }
+@keyframes photoSlide { from { transform: translateX(-50%); } to { transform: translateX(0); } }   /* 좌→우 */
+
+/* 하단 구름 띠 */
+.field-cloud {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 56%, rgba(255, 255, 255, 0.95), rgba(255, 244, 249, 0.55) 52%, rgba(255, 238, 246, 0) 74%);
+    filter: blur(7px);
+    pointer-events: none;
+    animation: cloudDrift 16s ease-in-out infinite alternate;
+}
+@keyframes cloudDrift { from { transform: translateX(-14px); } to { transform: translateX(14px); } }
+
+/* 빛나는 하트 */
+.field-heart {
+    position: absolute;
+    pointer-events: none;
+    filter: drop-shadow(0 6px 11px rgba(214, 70, 120, 0.3));
+    animation: heartFloat 5s ease-in-out infinite alternate;
+}
+.field-heart svg { width: 100%; height: 100%; display: block; }
+@keyframes heartFloat { from { transform: translateY(-9px) rotate(-5deg); } to { transform: translateY(9px) rotate(5deg); } }
+
+@media (max-width: 760px) {
+    .jeju-photo-cell { width: 152px; }
+    .jeju-photo-row { height: 30vh; }
+}
+
+/* 히어로 높이를 콘텐츠에 맞춰 키움 — 위(편지지 윗단) 답답함 해소 + 아래(만료문구) 안 잘리게 */
+body.theme-jeju .gallery-hero {
+    height: auto;
+    min-height: 100vh;
+    padding-top: 76px;
+    padding-bottom: 84px;
+}
+body.theme-jeju .hero-scroll { bottom: 24px; }
+
+/* ── 제주 꽃밭 배경 (타일 대체) — 몽환 파스텔 하늘 + 코스모스 꽃밭 + 보케 ── */
+body.theme-jeju .hero-bg.jeju-field {
+    display: block;
+    filter: none;
+    padding: 0;
+    background:
+        radial-gradient(72% 48% at 50% 20%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 62%),
+        linear-gradient(180deg, #cdb8e8 0%, #e4bedb 34%, #f6d4cd 60%, #f5e6c8 100%);
+}
+
+/* 하단 꽃밭+구름 이미지 (bg-gallery-online.png · 50% 투명) */
+.jeju-bg-photo {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 66%;
+    background: url("bg-gallery-online.png?v=20260525p14") center bottom / cover no-repeat;
+    opacity: 0.5;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 22%);
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 22%);   /* 위쪽은 부드럽게 페이드인 */
+}
+.field-bokeh {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 38%, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0) 70%);
+    filter: blur(3px);
+    pointer-events: none;
+    animation: bokehFloat 8s ease-in-out infinite alternate;
+}
+@keyframes bokehFloat { from { transform: translateY(-9px); } to { transform: translateY(9px); } }
+.field-flower {
+    position: absolute;
+    transform-origin: bottom center;
+    pointer-events: none;
+    animation: flowerSway 4s ease-in-out infinite alternate;
+}
+@keyframes flowerSway { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
+
+/* ── 블링 스티커(글로시 SVG) ── */
+.jeju-sticker svg { width: 100%; height: 100%; display: block; }
+.jeju-sticker.bling { filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.12)); }   /* 그림자 연하게 */
+
+/* 스티커 + 소인 */
+.jeju-stickers { position: absolute; inset: 0; z-index: 5; pointer-events: none; }   /* 편지지 앞(위) 레이어 */
+.jeju-sticker {
+    position: absolute;
+    filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.18));
+    animation-name: jejuDrift;             /* 크고 느린 드리프트(범위·속도는 인라인 CSS변수) */
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    will-change: transform;
+}
+@keyframes jejuDrift {
+    from { transform: translate(0, 0) rotate(var(--r0, 0deg)); }
+    to { transform: translate(var(--dx, 0px), var(--dy, 0px)) rotate(var(--r1, 0deg)); }
+}
+.jeju-stamp {
+    position: absolute;
+    bottom: 9%;
+    right: 8%;
+    width: 96px;
+    height: 96px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #c9573c;
+    border-radius: 50%;
+    color: #c9573c;
+    text-align: center;
+    line-height: 1.15;
+    font-size: 0.46rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    transform: rotate(-12deg);
+    opacity: 0.82;
+}
+.jeju-stamp b { font-family: "Fraunces", serif; font-size: 1.15rem; letter-spacing: 0; margin: 2px 0; }
+
+/* ── 사진 = 폴라로이드/스크랩 조각 ── */
+body.theme-jeju .gallery-container { gap: 30px; padding-top: 34px; }
+body.theme-jeju .gallery-item {
+    border: 10px solid #fff;
+    border-radius: 3px;
+    background: #fff;
+    box-shadow: 0 12px 28px rgba(90, 70, 40, 0.18);
+    animation-name: jejuFade;
+}
+@keyframes jejuFade { from { opacity: 0; } to { opacity: 1; } }
+
+body.theme-jeju .image-frame { background: #fff; }
+body.theme-jeju .image-frame img { object-fit: cover; }   /* 폴라로이드는 꽉 채움(레터박스 없음) */
+
+body.theme-jeju .gallery-item::before {   /* 워시테이프 */
+    content: "";
+    position: absolute;
+    top: -13px;
+    left: 50%;
+    width: 92px;
+    height: 27px;
+    transform: translateX(-50%) rotate(-4deg);
+    background: repeating-linear-gradient(45deg, rgba(255, 208, 110, 0.5), rgba(255, 208, 110, 0.5) 6px, rgba(255, 226, 150, 0.5) 6px, rgba(255, 226, 150, 0.5) 12px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    z-index: 6;
+}
+
+body.theme-jeju .gallery-item:nth-child(4n)   { transform: rotate(-2.4deg); }
+body.theme-jeju .gallery-item:nth-child(4n+1) { transform: rotate(1.8deg); }
+body.theme-jeju .gallery-item:nth-child(4n+2) { transform: rotate(-1deg); }
+body.theme-jeju .gallery-item:nth-child(4n+3) { transform: rotate(2.6deg); }
+body.theme-jeju .gallery-item:hover {
+    transform: rotate(0deg) translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 44px rgba(90, 70, 40, 0.26);
+    z-index: 7;
+}
+
+/* 캡션/버튼 — 밝게 */
+body.theme-jeju .item-overlay { background: linear-gradient(to top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.45) 60%, rgba(255, 255, 255, 0)); padding: 60px 14px 14px; }
+body.theme-jeju .overlay-copy span { font-family: "Gaegu", cursive; color: #4a4038; text-shadow: none; font-size: 0.98rem; }
+body.theme-jeju .variant-btn { background: rgba(255, 255, 255, 0.85); color: #5b5247; border-color: rgba(0, 0, 0, 0.1); }
+body.theme-jeju .variant-btn.active,
+body.theme-jeju .variant-btn:hover { background: #19a3a3; color: #fff; border-color: #19a3a3; }
+body.theme-jeju .download-icon-btn { background: #f4892b; color: #fff; border-color: #f4892b; }
+body.theme-jeju .download-icon-btn:hover { background: #e8643c; color: #fff; border-color: #e8643c; }
+
+@media (max-width: 760px) {
+    .jeju-stamp { width: 74px; height: 74px; font-size: 0.4rem; bottom: 6%; right: 6%; }
+    .jeju-stamp b { font-size: 0.95rem; }
+    body.theme-jeju .hero-inner { padding: 22px 22px 26px; border-radius: 18px; }
 }
