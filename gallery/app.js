@@ -5,7 +5,20 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycby85mMvihHsSClT73x4rECt
 const params = new URLSearchParams(location.search);
 const RESNO = (params.get("c") || "").trim();
 const TOKEN = (params.get("t") || "").trim();
-const PREVIEW = (params.get("preview") || "") === "1";   // 소유자 최종확인용 — 열람시각 기록 안 함
+// preview=소유자 점검(열람시각 firstAccessAt 미기록).
+//  preview=1 → 이 브라우저를 '소유자'로 영구 표시(localStorage). 이후 preview 없는 고객 raw링크를
+//             눌러도 자동 소유자 취급 → 소유자가 실수로 고객링크를 눌러도 수신확인이 오염되지 않음.
+//  preview=0 → 소유자 표시 해제(그 브라우저를 다시 일반 고객처럼 — 실제 열람 동작 테스트용).
+//  고객 기기는 preview=1 링크를 받은 적이 없으므로 플래그가 없어 정상 기록(고객 동작 영향 0).
+const OWNER_KEY = "dkgallery.owner";
+const PREVIEW_PARAM = params.get("preview");
+try {
+  if (PREVIEW_PARAM === "1") localStorage.setItem(OWNER_KEY, "1");
+  else if (PREVIEW_PARAM === "0") localStorage.removeItem(OWNER_KEY);
+} catch (e) {}
+let OWNER_FLAG = false;
+try { OWNER_FLAG = localStorage.getItem(OWNER_KEY) === "1"; } catch (e) {}
+const PREVIEW = PREVIEW_PARAM === "1" || OWNER_FLAG;
 
 const I18N = {
   ko: {
