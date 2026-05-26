@@ -583,7 +583,7 @@ body.theme-jeju .heart-sort-btn:hover { background: #e8643c; }
 .closing-card .image-frame { display: none; }
 .cc-inner { text-align: center; max-width: 640px; }
 .cc-heart { font-size: 2.5rem; color: #ff5b8a; line-height: 1; }
-.closing-card h3 { margin: 14px 0 10px; font-family: var(--serif); font-weight: 600; font-size: clamp(1.9rem, 4vw, 3rem); color: var(--text); }
+.closing-card h3 { margin: 14px 0 10px; font-family: var(--serif); font-weight: 600; font-size: clamp(1.55rem, 4.2vw, 3rem); color: var(--text); word-break: keep-all; }
 .closing-card p { margin: 0 0 26px; color: var(--muted); font-size: clamp(1.05rem, 2vw, 1.38rem); line-height: 1.6; word-break: keep-all; }
 .cc-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
 .cc-btn {
@@ -679,11 +679,14 @@ body.theme-jeju .ss-decor { color: rgba(120, 104, 78, 0.62); }
 .ss-dl-btn:hover { transform: translateY(-2px); }
 body.theme-jeju .ss-dl-btn { background: #fff; color: #5b5247; border-color: rgba(0, 0, 0, 0.1); font-family: "Gaegu", "Noto Sans KR", cursive; font-size: 1.05rem; }
 /* 거터에 랜덤하게 떴다 사라지는 감성 문구 */
-.ss-captions { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
-.ss-caption { position: absolute; max-width: 150px; text-align: center; font-family: "Gaegu", "Noto Sans KR", cursive; font-size: 1rem; line-height: 1.35; color: rgba(228, 216, 196, 0.9); opacity: 0; transform: translateY(10px) scale(0.96); transition: opacity 0.8s ease, transform 0.8s ease; }
-.ss-caption.show { opacity: 1; transform: translateY(0) scale(1); }
-body.theme-jeju .ss-caption { color: rgba(120, 100, 70, 0.92); }
-@media (max-width: 920px) { .ss-decor, .ss-captions { display: none; } }   /* 좁으면 스테이지와 겹쳐 숨김 */
+.ss-captions { position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; pointer-events: none; }
+.ss-caption { position: absolute; left: 14px; bottom: 48px; max-width: 64%; text-align: left; font-family: "Gaegu", "Noto Sans KR", cursive; font-size: 1.06rem; line-height: 1.35; color: #fff; text-shadow: 0 1px 5px rgba(0, 0, 0, 0.7); opacity: 0; transform: translateY(8px); transition: opacity 0.8s ease, transform 0.8s ease; }
+.ss-caption.show { opacity: 1; transform: translateY(0); }
+@media (max-width: 920px) {                 /* 모바일: 스케치 숨기지 말고 슬라이드 양옆에 꽉 차게 */
+    .ss-stage { width: min(320px, 66vw); }  /* 스테이지 살짝 좁혀 좌우 거터 확보 */
+    .ss-d svg { transform: scale(0.7); }    /* 스케치 살짝 축소(겹침 완화) */
+    .ss-caption { font-size: 0.94rem; bottom: 42px; max-width: 72%; }
+}
 
 /* ── 홍보용(?demo=1) 쇼잉 전용: 샘플 배지 + 다운로드 시도 안내 토스트 ── */
 .demo-badge {
