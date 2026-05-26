@@ -23,8 +23,8 @@ const PREVIEW = PREVIEW_PARAM === "1" || OWNER_FLAG;
 // 샘플(홍보) 모드: ?demo=1 → GAS 호출 없이 내장 샘플 사진으로 렌더(토큰 불필요).
 // 상품페이지 "샘플 보기" 대상이자 디자인 다듬기용 미리보기. 실제 갤러리와 같은 코드/CSS를 공유.
 const DEMO = params.get("demo") === "1";
-// 테마: 기본 'lux'(럭셔리 — 보존). 'jeju' = 제주 매거진 스크랩북.
-const THEME = (params.get("theme") || "lux").toLowerCase();
+// 테마: 기본 'jeju'(밝은 제주 — 납품·샘플 공통 기본). 'lux'(럭셔리 다크)는 &theme=lux 로 명시할 때만.
+const THEME = (params.get("theme") || "jeju").toLowerCase();
 
 // 마무리 카드 링크 — 스튜디오가 실제 값으로 채우기(비면 해당 버튼 숨김).
 const NAVER_REVIEW_URL = "";                              // TODO: 네이버 플레이스 리뷰 URL
