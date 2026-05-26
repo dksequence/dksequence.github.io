@@ -362,11 +362,8 @@ function renderItems() {
 }
 
 function pickDefaultVariant(image) {
-  const hasLetter = image.variants.letter && image.variants.letter.url;
-  const hasDk = image.variants.dk && image.variants.dk.url;
-  if (hasLetter && hasDk) return Math.random() < 0.5 ? "letter" : "dk"; // letter·WM 균등 랜덤
-  if (hasLetter) return "letter";
-  if (hasDk) return "dk";
+  if (image.variants.letter && image.variants.letter.url) return "letter"; // 초기 선택 = letter 고정
+  if (image.variants.dk && image.variants.dk.url) return "dk";
   return "edited";
 }
 
