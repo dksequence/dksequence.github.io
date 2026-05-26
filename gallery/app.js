@@ -77,7 +77,7 @@ const I18N = {
     download: "↓ 받기",
     sortHearts: "♥ 하트순으로 보기",
     closeTitle: "소중한 추억, 어떠셨나요?",
-    closeSub: "마음에 드셨다면 작은 후기와 공유가 큰 힘이 됩니다 :)",
+    closeSub: "체험의 기억이 좋으셨다면 후기와 공유 부탁드립니다 :)",
     closeReview: "⭐ 후기 작성 가기", closeShare: "🔗 갤러리 공유", closeBook: "DKsequence", closeSaveCard: "📥 스토리 카드 저장",
     variants: { letter: "Letter", dk: "DK", edited: "원본" },
     loading: "갤러리를 불러오는 중입니다...", notFound: "갤러리를 찾을 수 없습니다.",
@@ -106,7 +106,7 @@ const I18N = {
     download: "↓ Save",
     sortHearts: "♥ Sort by favorites",
     closeTitle: "How were your memories?",
-    closeSub: "If you loved them, a quick review and a share mean the world to us :)",
+    closeSub: "If you enjoyed the experience, a review and a share would mean a lot :)",
     closeReview: "⭐ Write a review", closeShare: "🔗 Share gallery", closeBook: "DKsequence", closeSaveCard: "📥 Save story card",
     variants: { letter: "Letter", dk: "DK", edited: "Original" },
     loading: "Loading gallery...", notFound: "Gallery not found.",
@@ -135,7 +135,7 @@ const I18N = {
     download: "↓ 下载",
     sortHearts: "♥ 按喜爱排序",
     closeTitle: "这些回忆，您还喜欢吗？",
-    closeSub: "如果喜欢，留个评价或分享对我们意义重大 :)",
+    closeSub: "如果您喜欢这次体验，欢迎留评与分享 :)",
     closeReview: "⭐ 写评价", closeShare: "🔗 分享相册", closeBook: "DKsequence", closeSaveCard: "📥 保存故事卡",
     variants: { letter: "Letter", dk: "DK", edited: "原图" },
     loading: "正在加载图库...", notFound: "找不到图库。",
@@ -570,8 +570,7 @@ function createSlideshow() {
   }).join("");
   const signHtml = `<img class="ss-sign" src="sign.png?v=20260525p25" alt="" aria-hidden="true">`;   // DK 서명·중문별장 인장 워터마크(우하단)
   wrap.innerHTML = ssDecor()
-    + `<div class="ss-captions" aria-hidden="true"></div>`
-    + `<div class="ss-stage">${slidesHtml}${signHtml}<div class="ss-badge">▶ SLIDESHOW</div></div>`
+    + `<div class="ss-stage">${slidesHtml}${signHtml}<div class="ss-captions" aria-hidden="true"></div><div class="ss-badge">▶ SLIDESHOW</div></div>`
     + `<button class="ss-dl-btn" type="button" id="ss-dl">🎬 ${reelTxt().save}</button>`;
   const dl = wrap.querySelector("#ss-dl"); if (dl) dl.addEventListener("click", handleReelDownload);
   const slides = wrap.querySelectorAll(".ss-slide");
@@ -599,19 +598,17 @@ function startSsCaptions(box) {
   if (!box) return;
   const caps = (t().captions || []).slice();
   if (!caps.length) return;
+  let i = Math.floor(Math.random() * caps.length);
   function pop() {
     const el = document.createElement("span");
-    el.className = "ss-caption";
-    el.textContent = caps[Math.floor(Math.random() * caps.length)];
-    const side = Math.random() < 0.5 ? "left" : "right";
-    el.style[side] = (3 + Math.random() * 12).toFixed(1) + "%";
-    el.style.top = (12 + Math.random() * 64).toFixed(1) + "%";
+    el.className = "ss-caption";              // 위치=CSS(카드 왼쪽 하단). 순서대로 떴다 사라짐.
+    el.textContent = caps[i % caps.length]; i++;
     box.appendChild(el);
     requestAnimationFrame(() => el.classList.add("show"));
     setTimeout(() => { el.classList.remove("show"); setTimeout(() => { try { el.remove(); } catch (e) {} }, 900); }, 2600);
   }
   pop();
-  ssCapTimer = setInterval(pop, 2800);
+  ssCapTimer = setInterval(pop, 3000);
 }
 
 function thumbSize(url, w) { return url ? url.replace(/([?&]sz=)w\d+/, "$1w" + w) : url; }
