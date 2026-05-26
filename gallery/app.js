@@ -80,6 +80,7 @@ const I18N = {
     closeTitle: "소중한 추억, 어떠셨나요?",
     closeSub: "체험의 기억이 좋으셨다면 후기와 공유 부탁드립니다 :)",
     closeReview: "⭐ 후기 작성 가기", closeShare: "🔗 갤러리 공유", closeBook: "DKsequence", closeSaveCard: "📥 스토리 카드 저장",
+    myPhotos: { title: "📷 내가 찍은 사진", hint: (max) => `여행 중 직접 찍은 사진을 최대 ${max}장까지 함께 보관할 수 있어요.`, add: "사진 올리기", uploading: "올리는 중…", full: "사진이 가득 찼어요 :)", err: "업로드에 실패했어요. 다시 시도해 주세요.", count: (n, max) => `${n} / ${max}` },
     variants: { letter: "Letter", dk: "DK", edited: "원본" },
     loading: "갤러리를 불러오는 중입니다...", notFound: "갤러리를 찾을 수 없습니다.",
     expired: "열람 기간이 만료되었습니다.", invalid: "잘못된 접근입니다.", empty: "아직 사진이 없습니다.",
@@ -109,6 +110,7 @@ const I18N = {
     closeTitle: "How were your memories?",
     closeSub: "If you enjoyed the experience, a review and a share would mean a lot :)",
     closeReview: "⭐ Write a review", closeShare: "🔗 Share gallery", closeBook: "DKsequence", closeSaveCard: "📥 Save story card",
+    myPhotos: { title: "📷 Photos I took", hint: (max) => `Keep up to ${max} of your own trip photos here, too.`, add: "Add photo", uploading: "Uploading…", full: "That's the max :)", err: "Upload failed. Please try again.", count: (n, max) => `${n} / ${max}` },
     variants: { letter: "Letter", dk: "DK", edited: "Original" },
     loading: "Loading gallery...", notFound: "Gallery not found.",
     expired: "This gallery has expired.", invalid: "Invalid access.", empty: "No photos yet.",
@@ -138,6 +140,7 @@ const I18N = {
     closeTitle: "这些回忆，您还喜欢吗？",
     closeSub: "如果您喜欢这次体验，欢迎留评与分享 :)",
     closeReview: "⭐ 写评价", closeShare: "🔗 分享相册", closeBook: "DKsequence", closeSaveCard: "📥 保存故事卡",
+    myPhotos: { title: "📷 我拍的照片", hint: (max) => `最多可一并保存 ${max} 张您旅途中拍的照片。`, add: "上传照片", uploading: "上传中…", full: "已达上限 :)", err: "上传失败，请重试。", count: (n, max) => `${n} / ${max}` },
     variants: { letter: "Letter", dk: "DK", edited: "原图" },
     loading: "正在加载图库...", notFound: "找不到图库。",
     expired: "本图库已过期。", invalid: "无效访问。", empty: "暂无照片。",
@@ -156,7 +159,7 @@ let bgmMuted = localStorage.getItem("dkgallery.muted") === "1";
 let bgmIndex = 0;     // 현재 곡 번호(1..BGM_MAX). 0=시작 전
 let bgmErrors = 0;    // 연속 누락 파일 가드
 
-const state = { images: [], customerName: "", expY: 0, expM: 0, expD: 0, loaded: false };
+const state = { images: [], customerName: "", expY: 0, expM: 0, expD: 0, loaded: false, reelUrl: "", customerPhotos: [], customerMax: 5 };
 const currentVariant = {};
 const captionIdx = {}; // 사진별 감성문구 인덱스 고정 — 언어 전환 시 같은 문구의 번역본이 보이도록
 const defaultVariant = {}; // 사진별 기본 변형(letter/WM 랜덤) 고정 — 재렌더(언어 전환) 때 안 바뀌도록
@@ -254,6 +257,8 @@ async function loadGallery() {
     state.images = data.images || [];
     state.customerName = data.customer_name || "";
     state.reelUrl = data.reel_url || "";        // 릴스 mp4(있으면 슬라이드쇼 '동영상 저장'이 다운로드)
+    state.customerPhotos = data.customer_photos || [];   // 고객이 올린 본인 사진(customer/ 하위)
+    state.customerMax = data.customer_max || 5;
     parseExpire(data.expire_date || "");
     state.loaded = true;
     applyLang(currentLang);
@@ -351,6 +356,7 @@ function renderItems() {
     el.style.animationDelay = Math.min(i * 55, 550) + "ms";   // 살짝 시차 페이드인
     container.appendChild(el);
   });
+  if (!DEMO && RESNO && TOKEN) container.appendChild(createCustomerSection());   // 실서비스: 고객 폰 업로드(내가 찍은 사진)
   container.appendChild(createClosingCard());   // 맨 끝 = 마무리 카드(리뷰·공유·재예약)
   const hb = $("heart-sort"); if (hb && state.images.length) hb.classList.add("show");   // 하트 정렬 버튼 노출
 }
@@ -490,6 +496,75 @@ function createClosingCard() {
   const sv = card.querySelector("#cc-savecard");
   if (sv) sv.addEventListener("click", saveStoryCard);
   return card;
+}
+
+// ── 고객 폰 업로드: 여행 중 본인이 찍은 사진을 최대 customerMax장(기본5) 함께 보관 ──
+function createCustomerSection() {
+  const tt = t().myPhotos;
+  const photos = state.customerPhotos || [];
+  const max = state.customerMax || 5;
+  const card = document.createElement("article");
+  card.className = "gallery-item customer-section";
+  const thumbs = photos.map((p) => `<div class="cust-thumb"><img src="${thumbSize(p.url, 600)}" alt="my photo" loading="lazy"></div>`).join("");
+  const adder = (photos.length < max)
+    ? `<label class="cust-add"><input type="file" id="cust-file" accept="image/*" multiple hidden><span class="cust-plus">＋</span><span>${tt.add}</span></label>`
+    : `<div class="cust-add full">${tt.full}</div>`;
+  card.innerHTML = `<div class="cust-inner">
+      <h3>${tt.title} <span class="cust-count" id="cust-count">${tt.count(photos.length, max)}</span></h3>
+      <p class="cust-hint">${tt.hint(max)}</p>
+      <div class="cust-grid">${thumbs}${adder}</div>
+      <div class="cust-status" id="cust-status"></div>
+    </div>`;
+  const file = card.querySelector("#cust-file");
+  if (file) file.addEventListener("change", () => { if (file.files && file.files.length) uploadCustomerPhotos(file.files); });
+  return card;
+}
+
+// 업로드 전 캔버스 리사이즈(최대변 maxDim) → JPEG base64(접두사 제거한 raw). 폰 원본 대용량 방지.
+function resizeImageFile(file, maxDim) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let w = img.naturalWidth, h = img.naturalHeight;
+      if (w > maxDim || h > maxDim) { const r = Math.min(maxDim / w, maxDim / h); w = Math.round(w * r); h = Math.round(h * r); }
+      const canvas = document.createElement("canvas");
+      canvas.width = w; canvas.height = h;
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL("image/jpeg", 0.85).split(",")[1]);   // 'data:...;base64,' 접두사 제거
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("image load failed")); };
+    img.src = url;
+  });
+}
+
+function setCustStatus(msg) { const el = $("cust-status"); if (el) el.textContent = msg || ""; }
+
+// 선택한 파일들을 남은 장수만큼만 순차 업로드(GAS galleryCustomerUpload) → state 반영 후 재렌더.
+async function uploadCustomerPhotos(fileList) {
+  if (DEMO || !RESNO || !TOKEN) return;
+  const max = state.customerMax || 5;
+  const remaining = max - (state.customerPhotos || []).length;
+  if (remaining <= 0) { setCustStatus(t().myPhotos.full); return; }
+  const files = Array.from(fileList).filter((f) => /^image\//.test(f.type)).slice(0, remaining);
+  if (!files.length) return;
+  let fail = 0;
+  for (let i = 0; i < files.length; i++) {
+    setCustStatus(`${t().myPhotos.uploading} (${i + 1}/${files.length})`);
+    try {
+      const base64 = await resizeImageFile(files[i], 1600);
+      const res = await fetch(GAS_URL, {
+        method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "galleryCustomerUpload", resno: RESNO, token: TOKEN, base64, filename: "upload_" + Date.now() + "_" + i + ".jpg", mimeType: "image/jpeg" }),
+      });
+      const data = await res.json();
+      if (data && data.ok) { state.customerPhotos.push({ id: data.fileId, url: data.url }); }
+      else { fail++; if (data && data.full) break; }
+    } catch (e) { fail++; }
+  }
+  if (fail) toast(t().myPhotos.err);
+  renderItems();   // 새 썸네일 + 카운트 갱신
 }
 
 function downloadBlob(blob, name) {
