@@ -244,6 +244,7 @@ async function loadGallery() {
     }
     state.images = data.images || [];
     state.customerName = data.customer_name || "";
+    state.reelUrl = data.reel_url || "";        // 릴스 mp4(있으면 슬라이드쇼 '동영상 저장'이 다운로드)
     parseExpire(data.expire_date || "");
     state.loaded = true;
     applyLang(currentLang);
