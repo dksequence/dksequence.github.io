@@ -23,6 +23,7 @@ const PREVIEW = PREVIEW_PARAM === "1" || OWNER_FLAG;
 // 샘플(홍보) 모드: ?demo=1 → GAS 호출 없이 내장 샘플 사진으로 렌더(토큰 불필요).
 // 상품페이지 "샘플 보기" 대상이자 디자인 다듬기용 미리보기. 실제 갤러리와 같은 코드/CSS를 공유.
 const DEMO = params.get("demo") === "1";
+const SAMPLE = (params.get("sample") || "").trim();       // ?demo=1&sample=별장화보 → 해당 화보 폴더 샘플(GAS getSampleGallery)
 // 테마: 기본 'jeju'(밝은 제주 — 납품·샘플 공통 기본). 'lux'(럭셔리 다크)는 &theme=lux 로 명시할 때만.
 const THEME = (params.get("theme") || "jeju").toLowerCase();
 
@@ -219,10 +220,18 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function loadGallery() {
-  if (DEMO) {                       // 샘플 모드: 내장 데이터로 즉시 렌더(백엔드 호출 없음)
-    state.images = demoImages();
+  if (DEMO) {                       // 샘플(홍보) 모드 — 쇼잉전용(다운로드 차단)
+    if (SAMPLE) {                   // 폴더기반 상품 샘플: GAS getSampleGallery(최신 batch의 <화보> 폴더 사진)
+      try {
+        const res = await fetch(GAS_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "getSampleGallery", product: SAMPLE }) });
+        const data = await res.json();
+        state.images = (data && data.ok && data.images && data.images.length) ? data.images : demoImages();
+      } catch (e) { state.images = demoImages(); }   // 실패 시 내장 데모 폴백
+    } else {
+      state.images = demoImages();  // sample 미지정 → 내장 데모 13장
+    }
     state.customerName = "";        // 일반 제목(이름 없음)
-    const exp = new Date(Date.now() + 30 * 864e5);   // 샘플 만료일 = 촬영(오늘)+30일
+    const exp = new Date(Date.now() + 30 * 864e5);   // 샘플 만료일 = 오늘+30
     state.expY = exp.getFullYear(); state.expM = exp.getMonth() + 1; state.expD = exp.getDate();
     state.loaded = true;
     applyLang(currentLang);
