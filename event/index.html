@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">  <!-- 인앱 브라우저 자동 다크모드 방지 -->
+<title>리뷰 인화 이벤트 · 비밀 게시판</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ color-scheme: only light; --bg:#f1e9da; --card:#fffdf8; --line:rgba(120,100,60,.18); --ink:#3a342c; --muted:#8a7c63; --gold:#d8b26e; --accent:#e0562c; }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",sans-serif;}
+  .wrap{max-width:680px;margin:0 auto;padding:22px 16px 60px;}
+  header{text-align:center;padding:14px 0 6px;}
+  header h1{margin:0;font-family:"Fraunces","Noto Serif KR",serif;font-size:1.5rem;color:var(--ink);}
+  header .sub{margin:8px 0 0;color:var(--muted);font-size:.9rem;line-height:1.6;}
+  .prize{margin:16px 0;padding:14px 16px;border:1px solid var(--gold);border-radius:14px;background:#fffaf0;font-size:.9rem;line-height:1.65;color:#6b5a3a;}
+  .prize b{color:var(--accent);}
+  .toolbar{display:flex;align-items:center;gap:10px;margin:14px 0 8px;}
+  .toolbar .count{color:var(--muted);font-size:.82rem;margin-right:auto;}
+  button,input,textarea{font:inherit;}
+  .btn{cursor:pointer;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);padding:9px 15px;transition:.15s;}
+  .btn:hover{background:#f6efe1;}
+  .btn.primary{background:var(--gold);color:#16110a;border-color:transparent;font-weight:800;}
+  .btn.primary:disabled{opacity:.45;cursor:not-allowed;}
+  ul.board{list-style:none;margin:0;padding:0;border-top:1px solid var(--line);}
+  ul.board li{display:flex;align-items:center;gap:10px;padding:13px 6px;border-bottom:1px solid var(--line);cursor:pointer;}
+  ul.board li:hover{background:#faf4e8;}
+  .lock{color:var(--gold);font-size:.95rem;flex:0 0 auto;}
+  .ti{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.95rem;}
+  .ti .new{color:var(--accent);font-size:.7rem;font-weight:800;margin-left:6px;vertical-align:middle;}
+  .who{flex:0 0 auto;color:var(--muted);font-size:.78rem;}
+  .dt{flex:0 0 auto;color:#b3a892;font-size:.74rem;width:78px;text-align:right;}
+  .pager{display:flex;justify-content:center;align-items:center;gap:4px;flex-wrap:wrap;margin-top:18px;}
+  .pager button{min-width:34px;height:34px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);cursor:pointer;}
+  .pager button.on{background:var(--gold);color:#16110a;border-color:transparent;font-weight:800;}
+  .pager button:disabled{opacity:.4;cursor:not-allowed;}
+  /* 모달 */
+  .modal{position:fixed;inset:0;background:rgba(40,32,20,.5);display:none;align-items:center;justify-content:center;padding:18px;z-index:20;}
+  .modal.show{display:flex;}
+  .sheet{width:100%;max-width:520px;max-height:90vh;overflow:auto;background:var(--card);border-radius:16px;padding:20px 20px 22px;box-shadow:0 20px 60px rgba(40,30,10,.3);}
+  .sheet h2{margin:0 0 14px;font-size:1.15rem;}
+  .sheet label{display:block;font-size:.8rem;color:var(--muted);margin:12px 0 5px;}
+  .sheet input[type=text],.sheet input[type=password],.sheet textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:#fffdf9;color:var(--ink);}
+  .sheet textarea{min-height:120px;resize:vertical;line-height:1.6;}
+  .sheet .hintline{font-size:.76rem;color:var(--muted);margin-top:5px;line-height:1.5;}
+  .filebox{margin-top:6px;}
+  .filebox img{max-width:100%;border-radius:10px;margin-top:8px;display:none;}
+  .sheet .row{display:flex;gap:8px;margin-top:18px;}
+  .sheet .row .btn{flex:1;text-align:center;}
+  .msg{font-size:.85rem;margin-top:10px;min-height:1.2em;}
+  .msg.err{color:#c0392b;} .msg.ok{color:#2e7d4f;}
+  .view-content{white-space:pre-wrap;line-height:1.7;color:var(--ink);font-size:.95rem;}
+  .view-img{max-width:100%;border-radius:10px;margin-top:12px;}
+  footer{margin-top:26px;text-align:center;color:#b3a892;font-size:.74rem;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🔒 리뷰 인화 이벤트</h1>
+    <p class="sub">후기 남기고 응모하시면 추첨해서 <b>실물 사진 1장</b>을 인화해 보내드려요 :)</p>
+  </header>
+
+  <div class="prize">
+    💝 <b>이벤트 안내</b><br>
+    ① 갤러리에서 <b>스토리 카드 저장</b> → ② 네이버에 <b>후기 작성</b>(스토리 카드 첨부) → ③ 아래 <b>글쓰기</b>로 응모!<br>
+    추첨 당첨되시면 갤러리에서 <b>가장 많이 ♥ 누른 사진 1장</b>을 실물 인화해 보내드립니다.<br>
+    <span style="color:#a8895a;">※ 글은 비밀글이라 본인 비밀번호로만 열 수 있어요. 성함·연락처·주소는 안심하고 적어주세요(다른 분께 안 보입니다).</span>
+  </div>
+
+  <div class="toolbar">
+    <span class="count" id="count"></span>
+    <button class="btn primary" id="write-btn">✏️ 글쓰기 (응모)</button>
+  </div>
+
+  <ul class="board" id="board"></ul>
+  <div class="pager" id="pager"></div>
+
+  <footer>중문별장 · DKsequence — 비밀 게시판</footer>
+</div>
+
+<!-- 글쓰기 모달 -->
+<div class="modal" id="write-modal">
+  <div class="sheet">
+    <h2>✏️ 이벤트 응모 (비밀글)</h2>
+    <label>제목</label>
+    <input type="text" id="w-title" maxlength="40" placeholder="예) 리뷰 이벤트 응모합니다~">
+    <label>내용 <span style="color:#a8895a;">— 성함 / 연락처 / 주소를 적어주세요 (당첨 시 인화 발송용)</span></label>
+    <textarea id="w-content" placeholder="성함:&#10;연락처:&#10;주소:&#10;&#10;(남기고 싶은 한마디도 환영해요!)"></textarea>
+    <label>리뷰 인증 캡처 (1장)</label>
+    <div class="filebox">
+      <input type="file" id="w-image" accept="image/*">
+      <img id="w-preview" alt="preview">
+    </div>
+    <div class="hintline">네이버에 올리신 후기 화면을 캡처해서 올려주세요. (작가만 확인합니다)</div>
+    <label>비밀번호 <span style="color:#a8895a;">— 내 글을 다시 열 때 필요해요</span></label>
+    <input type="password" id="w-pw" maxlength="20" placeholder="숫자/문자 4자 이상" inputmode="text">
+    <div class="msg" id="w-msg"></div>
+    <div class="row">
+      <button class="btn" id="w-cancel">취소</button>
+      <button class="btn primary" id="w-submit">응모하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 글 보기 모달 (비번 게이트) -->
+<div class="modal" id="view-modal">
+  <div class="sheet">
+    <h2 id="v-title">🔒 비밀글</h2>
+    <div id="v-gate">
+      <label>비밀번호를 입력하세요</label>
+      <input type="password" id="v-pw" maxlength="20" placeholder="작성 시 설정한 비밀번호">
+      <div class="msg" id="v-msg"></div>
+      <div class="row">
+        <button class="btn" id="v-cancel">닫기</button>
+        <button class="btn primary" id="v-open">열기</button>
+      </div>
+    </div>
+    <div id="v-body" style="display:none;">
+      <div class="view-content" id="v-content"></div>
+      <img class="view-img" id="v-img" alt="" style="display:none;">
+      <div class="row"><button class="btn" id="v-close2">닫기</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const GAS_URL = "https://script.google.com/macros/s/AKfycby85mMvihHsSClT73x4rECt3DG4_sH_oNWJqifVclmfauh2eqsVUPgrTdzMaF6LJFMqcw/exec";
+  const $ = (id) => document.getElementById(id);
+  const params = new URLSearchParams(location.search);
+  const RESNO = (params.get("c") || "").trim();
+  const TOKEN = (params.get("t") || "").trim();
+  const PER = 10;
+
+  // ── 더미 비밀글(활발해 보이게) — 고정 시드라 새로고침해도 동일 ──
+  function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+  const TITLES = ["리뷰 이벤트 응모합니다~","리뷰 했어요!","뽑아주세요 ㅎㅎ","너무 즐거운 경험이었어요","여행 가면 또 갈게요","작가님 너무 재밌었어요","인생샷 건졌어요","사진 너무 예뻐요ㅠㅠ","추억 최고였어요","또 오고 싶어요","친구한테도 추천했어요","꼭 당첨되고 싶어요","제주 최고!!","사진 잘 받았습니다","이벤트 참여해요~","가족사진 너무 예뻐요","커플샷 대만족이에요","응모합니다 :)","후기 남겼어요!","감사합니다 작가님","최고의 추억 만들었어요","사진 보고 감동했어요","또 찍고 싶어요","주변에 다 추천했어요","예약 잘한 것 같아요","분위기 너무 좋았어요","행복한 하루였어요","기념으로 갖고 싶어요","리뷰+응모 완료!","일러스트 너무 예뻐요","스토리카드 공유했어요","제주 여행 인생 추억","아이가 너무 좋아해요","작가님 센스 최고","또 방문할게요~"];
+  const SUR = "김이박최정강조윤장임한오서신권황안송류전".split("");
+  const dRng = mulberry32(20260527);
+  const NOW = Date.now();
+  const DUMMY = Array.from({ length: 100 }, (_, i) => {
+    const days = Math.floor(dRng() * 88) + 1;
+    return { id: "d" + i, title: TITLES[Math.floor(dRng() * TITLES.length)], name: SUR[Math.floor(dRng() * SUR.length)] + "**", date: NOW - days * 86400000, dummy: true };
+  }).sort((a, b) => b.date - a.date);
+
+  let realPosts = [];   // GAS boardList 결과(있으면)
+  let page = 1;
+
+  function fmtDate(ms){ const d=new Date(ms); return `${d.getFullYear().toString().slice(2)}.${String(d.getMonth()+1).padStart(2,"0")}.${String(d.getDate()).padStart(2,"0")}`; }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
+  function allPosts(){ return realPosts.concat(DUMMY).sort((a,b)=>b.date-a.date); }
+
+  function render(){
+    const all = allPosts();
+    const pages = Math.max(1, Math.ceil(all.length / PER));
+    page = Math.min(Math.max(1, page), pages);
+    $("count").textContent = `총 ${all.length}개의 응모글`;
+    const slice = all.slice((page-1)*PER, page*PER);
+    $("board").innerHTML = slice.map(p =>
+      `<li data-id="${esc(p.id)}"><span class="lock">🔒</span>`
+      + `<span class="ti">${esc(p.title)}${p.fresh?'<span class="new">N</span>':''}</span>`
+      + `<span class="who">${esc(p.name||"비밀**")}</span>`
+      + `<span class="dt">${fmtDate(p.date)}</span></li>`).join("");
+    $("board").querySelectorAll("li").forEach(li => li.addEventListener("click", () => openView(li.dataset.id)));
+    // 페이저 (현재 기준 최대 10개 윈도우)
+    const win = 10, start = Math.max(1, Math.min(page - 4, pages - win + 1)), end = Math.min(pages, start + win - 1);
+    let h = `<button ${page<=1?"disabled":""} data-p="${page-1}">◁</button>`;
+    for (let i = start; i <= end; i++) h += `<button class="${i===page?"on":""}" data-p="${i}">${i}</button>`;
+    h += `<button ${page>=pages?"disabled":""} data-p="${page+1}">▷</button>`;
+    $("pager").innerHTML = h;
+    $("pager").querySelectorAll("[data-p]").forEach(b => b.addEventListener("click", () => { page = +b.dataset.p; render(); window.scrollTo({top:0,behavior:"smooth"}); }));
+  }
+
+  // ── 글 보기(비번 게이트) ──
+  let viewing = null;
+  function openView(id){
+    viewing = allPosts().find(p => p.id === id) || null;
+    $("v-title").textContent = "🔒 " + (viewing ? viewing.title : "비밀글");
+    $("v-gate").style.display = ""; $("v-body").style.display = "none";
+    $("v-pw").value = ""; $("v-msg").textContent = "";
+    $("view-modal").classList.add("show");
+  }
+  async function doOpen(){
+    const pw = $("v-pw").value.trim();
+    if (!pw) { $("v-msg").className="msg err"; $("v-msg").textContent="비밀번호를 입력하세요."; return; }
+    if (!viewing) return;
+    if (viewing.dummy) { $("v-msg").className="msg err"; $("v-msg").textContent="비밀번호가 일치하지 않습니다 :("; return; }
+    $("v-msg").className="msg"; $("v-msg").textContent="확인 중…";
+    try {
+      const r = await fetch(GAS_URL, { method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify({ action:"boardView", id: viewing.id, password: pw }) });
+      const d = await r.json();
+      if (!d || !d.ok) { $("v-msg").className="msg err"; $("v-msg").textContent = (d&&d.error) || "비밀번호가 일치하지 않습니다 :("; return; }
+      $("v-gate").style.display="none"; $("v-body").style.display="";
+      $("v-content").textContent = d.content || "";
+      if (d.imageUrl) { $("v-img").src = d.imageUrl; $("v-img").style.display="block"; } else $("v-img").style.display="none";
+    } catch(e){ $("v-msg").className="msg err"; $("v-msg").textContent="오류: "+e.message; }
+  }
+
+  // ── 글쓰기 ──
+  function resizeToB64(file, maxDim){ return new Promise((res,rej)=>{ const img=new Image(), u=URL.createObjectURL(file); img.onload=()=>{ URL.revokeObjectURL(u); let w=img.naturalWidth,h=img.naturalHeight; if(w>maxDim||h>maxDim){const r=Math.min(maxDim/w,maxDim/h);w=Math.round(w*r);h=Math.round(h*r);} const c=document.createElement("canvas"); c.width=w;c.height=h; c.getContext("2d").drawImage(img,0,0,w,h); res(c.toDataURL("image/jpeg",0.85).split(",")[1]); }; img.onerror=()=>{URL.revokeObjectURL(u);rej(new Error("이미지 로드 실패"));}; img.src=u; }); }
+  let pendingB64 = "";
+  $("w-image").addEventListener("change", async () => {
+    const f = $("w-image").files && $("w-image").files[0]; if(!f) return;
+    try { pendingB64 = await resizeToB64(f, 1400); $("w-preview").src = "data:image/jpeg;base64,"+pendingB64; $("w-preview").style.display="block"; }
+    catch(e){ $("w-msg").className="msg err"; $("w-msg").textContent="이미지 처리 실패"; }
+  });
+  function openWrite(){ $("w-title").value=""; $("w-content").value=""; $("w-pw").value=""; $("w-image").value=""; pendingB64=""; $("w-preview").style.display="none"; $("w-msg").textContent=""; $("write-modal").classList.add("show"); }
+  async function submitWrite(){
+    const title=$("w-title").value.trim(), content=$("w-content").value.trim(), pw=$("w-pw").value.trim();
+    if(!title){ return wmsg("제목을 입력하세요."); }
+    if(!content){ return wmsg("내용(성함·연락처·주소)을 입력하세요."); }
+    if(pw.length<4){ return wmsg("비밀번호는 4자 이상으로 설정하세요."); }
+    $("w-submit").disabled=true; $("w-msg").className="msg"; $("w-msg").textContent="응모 접수 중…";
+    try {
+      const r = await fetch(GAS_URL, { method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify({ action:"boardCreate", resno:RESNO, token:TOKEN, title, content, password:pw, imageBase64:pendingB64 }) });
+      const d = await r.json();
+      if(!d || !d.ok){ throw new Error((d&&d.error) || "접수 실패"); }
+      realPosts.unshift({ id:d.id, title, name:(d.name||"비밀**"), date:Date.now(), fresh:true });
+      $("write-modal").classList.remove("show"); page=1; render();
+      alert("응모가 접수되었습니다! 추첨을 기대해 주세요 :)");
+    } catch(e){ wmsg("오류: "+e.message+" (잠시 후 다시 시도해주세요)"); }
+    $("w-submit").disabled=false;
+  }
+  function wmsg(m){ $("w-msg").className="msg err"; $("w-msg").textContent=m; }
+
+  // 실제 응모글 목록(있으면) 불러와 더미 위에 얹기. 백엔드 없거나 실패해도 더미는 보임.
+  async function loadReal(){
+    try {
+      const r = await fetch(GAS_URL, { method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify({ action:"boardList" }) });
+      const d = await r.json();
+      if (d && d.ok && Array.isArray(d.posts)) realPosts = d.posts.map(p => ({ id:p.id, title:p.title, name:p.name||"비밀**", date:p.date||Date.now() }));
+    } catch(e){}
+    render();
+  }
+
+  $("write-btn").addEventListener("click", openWrite);
+  $("w-cancel").addEventListener("click", ()=>$("write-modal").classList.remove("show"));
+  $("w-submit").addEventListener("click", submitWrite);
+  $("v-open").addEventListener("click", doOpen);
+  $("v-cancel").addEventListener("click", ()=>$("view-modal").classList.remove("show"));
+  $("v-close2").addEventListener("click", ()=>$("view-modal").classList.remove("show"));
+  [ "write-modal","view-modal" ].forEach(id=>$(id).addEventListener("click",e=>{ if(e.target.id===id) $(id).classList.remove("show"); }));
+
+  render();      // 더미 즉시 표시
+  loadReal();    // 실제 글 덧입히기(백엔드 준비되면)
+</script>
+</body>
+</html>
