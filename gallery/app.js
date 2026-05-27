@@ -64,8 +64,9 @@ const I18N = {
     downloadAll: "전체 사진 다운로드",
     wifi: "⚠ 용량이 크니 와이파이 환경에서 다운로드를 권장드립니다.",
     letterLabel: "제주에서 보내는 편지",
-    expiry: (d) => `30일간 여행의 여운을 간직하세요 :)<br>${d}까지 보관 후 자동 만료됩니다.`,
-    expiryNoDate: "30일간 여행의 여운을 간직하세요 :) 촬영일로부터 30일 후 만료됩니다.",
+    expiry: (d, left) => `30일간 여행의 여운을 간직하세요 :)<br>만료까지 <b>${left}일</b> 남았어요 · ${d}까지 보관`,
+    expirySample: "30일간 여행의 여운을 간직하세요 :)",
+    expiryNoDate: "30일간 여행의 여운을 간직하세요 :)",
     captions: [
       "소중한 순간이 예쁘게 담겼어요~", "오늘의 여행이 사진으로 남았어요", "이 순간, 오래 기억되길 바라요",
       "지금의 미소를 예쁘게 담았어요", "여행 속 가장 따뜻한 순간", "당신의 오늘이 사진이 되었어요",
@@ -94,8 +95,9 @@ const I18N = {
     downloadAll: "Download All",
     wifi: "⚠ Files are large — downloading on Wi-Fi is recommended.",
     letterLabel: "A NOTE FROM JEJU",
-    expiry: (d) => `Cherish the afterglow of your trip for 30 days :)<br>Saved until ${d}, then auto-expires.`,
-    expiryNoDate: "Cherish the afterglow of your trip for 30 days :) Auto-expires 30 days after the shoot.",
+    expiry: (d, left) => `Cherish the afterglow of your trip for 30 days :)<br><b>${left} days</b> left · saved until ${d}`,
+    expirySample: "Cherish the afterglow of your trip for 30 days :)",
+    expiryNoDate: "Cherish the afterglow of your trip for 30 days :)",
     captions: [
       "A precious moment, beautifully captured~", "Today's journey, saved in a photo", "May this moment be remembered for long",
       "Your smile, beautifully captured", "The warmest moment of the trip", "Your today became a photograph",
@@ -124,8 +126,9 @@ const I18N = {
     downloadAll: "全部下载",
     wifi: "⚠ 文件较大，建议在 Wi-Fi 环境下下载。",
     letterLabel: "来自济州的信",
-    expiry: (d) => `用30天细细回味这趟旅行的余韵 :)<br>保存至 ${d}，之后自动过期。`,
-    expiryNoDate: "用30天细细回味这趟旅行的余韵 :) 拍摄日起30天后自动过期。",
+    expiry: (d, left) => `用30天细细回味这趟旅行的余韵 :)<br>剩余 <b>${left}天</b> · 保存至 ${d}`,
+    expirySample: "用30天细细回味这趟旅行的余韵 :)",
+    expiryNoDate: "用30天细细回味这趟旅行的余韵 :)",
     captions: [
       "珍贵的瞬间，被美好地记录下来~", "今天的旅程，留在了照片里", "愿这一刻，被长久记住",
       "此刻的微笑，被温柔定格", "旅途中最温暖的瞬间", "你的今天，成了一张照片",
@@ -274,6 +277,15 @@ function parseExpire(s) {
   if (m) { state.expY = +m[1]; state.expM = +m[2]; state.expD = +m[3]; }
 }
 
+// 만료까지 남은 일수(달력일 기준, 0 미만 없음). 페이지 열 때 계산 → 매일 열면 하루씩 줄어듦.
+function daysLeft() {
+  if (!state.expY) return 0;
+  const end = new Date(state.expY, state.expM - 1, state.expD);
+  const now = new Date();
+  const ms = end - new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.max(0, Math.round(ms / 86400000));
+}
+
 function showMessage(msg) {
   $("gallery").innerHTML = `<div class="loader error">${msg}</div>`;
 }
@@ -293,7 +305,11 @@ function applyLang(lang) {
   const labelEl = document.querySelector(".letter-label");
   if (labelEl && tt.letterLabel) labelEl.textContent = tt.letterLabel;   // 제주 편지 라벨 번역
   const expEl = $("expiry-note");
-  if (expEl) expEl.innerHTML = state.expY ? tt.expiry(tt.fmtDate(state.expY, state.expM, state.expD)) : (tt.expiryNoDate || "");
+  if (expEl) {
+    if (DEMO) expEl.innerHTML = tt.expirySample || tt.expiryNoDate || "";          // 샘플=30일 안내만(날짜·카운트 X)
+    else if (state.expY) expEl.innerHTML = tt.expiry(tt.fmtDate(state.expY, state.expM, state.expD), daysLeft());  // 실서비스=만료 카운트다운(매일 ↓)
+    else expEl.innerHTML = tt.expiryNoDate || "";
+  }
   const hb = $("heart-sort"); if (hb && tt.sortHearts) hb.textContent = tt.sortHearts;
   if (state.loaded) renderItems();
 }
