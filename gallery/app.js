@@ -78,8 +78,8 @@ const I18N = {
     download: "↓ 받기",
     sortHearts: "♥ 하트순으로 보기",
     closeTitle: "소중한 추억, 어떠셨나요?",
-    closeSub: "마음에 드셨다면, 아래 스토리 카드를 저장해 후기에 사진으로 함께 올려주세요 :)",
-    closeReview: "⭐ 후기 작성 가기", closeShare: "🔗 갤러리 공유", closeBook: "DKsequence", closeSaveCard: "📥 스토리 카드 저장",
+    closeSub: "① 스토리 카드 저장 → ② 후기 작성(카드 첨부) → ③ 비밀게시판 응모! 추첨해서 베스트샷 1장 인화해 드려요 :)",
+    closeReview: "⭐ 후기 작성 가기", closeShare: "🔗 갤러리 공유", closeBook: "DKsequence", closeSaveCard: "📥 스토리 카드 저장", closeBoard: "🔒 비밀 게시판",
     myPhotos: { title: "📷 내가 찍은 사진", hint: (max) => `중문별장에서 촬영하신 사진을 갤러리에서 함께 감상할 수 있어요~`, add: "사진 올리기", uploading: "올리는 중…", full: "사진이 가득 찼어요 :)", err: "업로드에 실패했어요. 다시 시도해 주세요.", count: (n, max) => `${n} / ${max}` },
     variants: { letter: "Letter", dk: "DK", edited: "원본" },
     loading: "갤러리를 불러오는 중입니다...", notFound: "갤러리를 찾을 수 없습니다.",
@@ -108,8 +108,8 @@ const I18N = {
     download: "↓ Save",
     sortHearts: "♥ Sort by favorites",
     closeTitle: "How were your memories?",
-    closeSub: "If you enjoyed it, save the story card below and add it to your review :)",
-    closeReview: "⭐ Write a review", closeShare: "🔗 Share gallery", closeBook: "DKsequence", closeSaveCard: "📥 Save story card",
+    closeSub: "① Save the story card → ② Write a review (attach it) → ③ Apply on the board — win a printed best shot :)",
+    closeReview: "⭐ Write a review", closeShare: "🔗 Share gallery", closeBook: "DKsequence", closeSaveCard: "📥 Save story card", closeBoard: "🔒 Event board",
     myPhotos: { title: "📷 Photos I took", hint: (max) => `Keep up to ${max} of your own trip photos here, too.`, add: "Add photo", uploading: "Uploading…", full: "That's the max :)", err: "Upload failed. Please try again.", count: (n, max) => `${n} / ${max}` },
     variants: { letter: "Letter", dk: "DK", edited: "Original" },
     loading: "Loading gallery...", notFound: "Gallery not found.",
@@ -138,8 +138,8 @@ const I18N = {
     download: "↓ 下载",
     sortHearts: "♥ 按喜爱排序",
     closeTitle: "这些回忆，您还喜欢吗？",
-    closeSub: "如果喜欢，请保存下方故事卡并附在评价中 :)",
-    closeReview: "⭐ 写评价", closeShare: "🔗 分享相册", closeBook: "DKsequence", closeSaveCard: "📥 保存故事卡",
+    closeSub: "① 保存故事卡 → ② 写评价(附上卡片) → ③ 留言板报名！抽奖冲印一张最佳照片 :)",
+    closeReview: "⭐ 写评价", closeShare: "🔗 分享相册", closeBook: "DKsequence", closeSaveCard: "📥 保存故事卡", closeBoard: "🔒 活动留言板",
     myPhotos: { title: "📷 我拍的照片", hint: (max) => `最多可一并保存 ${max} 张您旅途中拍的照片。`, add: "上传照片", uploading: "上传中…", full: "已达上限 :)", err: "上传失败，请重试。", count: (n, max) => `${n} / ${max}` },
     variants: { letter: "Letter", dk: "DK", edited: "原图" },
     loading: "正在加载图库...", notFound: "找不到图库。",
@@ -480,12 +480,13 @@ function createClosingCard() {
   const card = document.createElement("article");
   card.className = "gallery-item closing-card";
   const review = `<a class="cc-btn primary" href="${NAVER_REVIEW_URL || "#"}" target="_blank" rel="noopener">② ${tt.closeReview}</a>`;   // ②단계: 저장한 스토리카드를 첨부해 후기 작성
+  const board = (RESNO && TOKEN) ? `<a class="cc-btn primary" href="../event/?c=${encodeURIComponent(RESNO)}&t=${encodeURIComponent(TOKEN)}" target="_blank" rel="noopener">③ ${tt.closeBoard}</a>` : "";   // ③단계: 비밀게시판 인화이벤트 응모(c·t로 어느 고객인지 전달)
   const book = BOOKING_URL ? `<a class="cc-btn" href="${BOOKING_URL}" target="_blank" rel="noopener">${tt.closeBook}</a>` : "";
   card.innerHTML = `<div class="cc-inner">
       <div class="cc-heart">♥</div>
       <h3>${tt.closeTitle}</h3>
       <p>${tt.closeSub}</p>
-      <div class="cc-actions"><button class="cc-btn primary" type="button" id="cc-savecard">① ${tt.closeSaveCard}</button>${review}<button class="cc-btn" type="button" id="cc-share">${tt.closeShare}</button>${book}</div>
+      <div class="cc-actions"><button class="cc-btn primary" type="button" id="cc-savecard">① ${tt.closeSaveCard}</button>${review}${board}<button class="cc-btn" type="button" id="cc-share">${tt.closeShare}</button>${book}</div>
       <div class="cc-handle">${INSTAGRAM_HANDLE}</div>
     </div>`;
   const sh = card.querySelector("#cc-share");
