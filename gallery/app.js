@@ -64,8 +64,8 @@ const I18N = {
     downloadAll: "전체 사진 다운로드",
     wifi: "⚠ 용량이 크니 와이파이 환경에서 다운로드를 권장드립니다.",
     letterLabel: "제주에서 보내는 편지",
-    expiry: (d) => `이 갤러리는 ${d}까지<br>보관 후 자동 만료됩니다. 그 전에 받아주세요 :)`,
-    expiryNoDate: "촬영일로부터 30일 후 자동 만료됩니다. 미리 받아주세요 :)",
+    expiry: (d) => `30일간 여행의 여운을 간직하세요 :)<br>${d}까지 보관 후 자동 만료됩니다.`,
+    expiryNoDate: "30일간 여행의 여운을 간직하세요 :) 촬영일로부터 30일 후 만료됩니다.",
     captions: [
       "소중한 순간이 예쁘게 담겼어요~", "오늘의 여행이 사진으로 남았어요", "이 순간, 오래 기억되길 바라요",
       "지금의 미소를 예쁘게 담았어요", "여행 속 가장 따뜻한 순간", "당신의 오늘이 사진이 되었어요",
@@ -94,8 +94,8 @@ const I18N = {
     downloadAll: "Download All",
     wifi: "⚠ Files are large — downloading on Wi-Fi is recommended.",
     letterLabel: "A NOTE FROM JEJU",
-    expiry: (d) => `Saved until ${d},<br>then auto-expires. Please download before then :)`,
-    expiryNoDate: "Auto-expires 30 days after the shoot. Please download in time :)",
+    expiry: (d) => `Cherish the afterglow of your trip for 30 days :)<br>Saved until ${d}, then auto-expires.`,
+    expiryNoDate: "Cherish the afterglow of your trip for 30 days :) Auto-expires 30 days after the shoot.",
     captions: [
       "A precious moment, beautifully captured~", "Today's journey, saved in a photo", "May this moment be remembered for long",
       "Your smile, beautifully captured", "The warmest moment of the trip", "Your today became a photograph",
@@ -124,8 +124,8 @@ const I18N = {
     downloadAll: "全部下载",
     wifi: "⚠ 文件较大，建议在 Wi-Fi 环境下下载。",
     letterLabel: "来自济州的信",
-    expiry: (d) => `本图库保存至 ${d}，<br>之后自动过期，请在此之前下载 :)`,
-    expiryNoDate: "拍摄日起 30 天后自动过期，请尽早下载 :)",
+    expiry: (d) => `用30天细细回味这趟旅行的余韵 :)<br>保存至 ${d}，之后自动过期。`,
+    expiryNoDate: "用30天细细回味这趟旅行的余韵 :) 拍摄日起30天后自动过期。",
     captions: [
       "珍贵的瞬间，被美好地记录下来~", "今天的旅程，留在了照片里", "愿这一刻，被长久记住",
       "此刻的微笑，被温柔定格", "旅途中最温暖的瞬间", "你的今天，成了一张照片",
