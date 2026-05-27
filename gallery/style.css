@@ -644,6 +644,15 @@ body.theme-jeju .customer-section h3 { font-family: "Fraunces", serif; color: #3
 body.theme-jeju .cust-hint { font-family: "Gaegu", "Noto Sans KR", cursive; color: #6b6253; }
 body.theme-jeju .cust-add { background: #fff; border-color: rgba(0, 0, 0, 0.14); color: #8a7c63; }
 body.theme-jeju .cust-add:hover { border-color: #f4892b; color: #5b5247; }
+/* 업로드 사진 삭제(×) 버튼 + '갤러리에 포함' 버튼 */
+.cust-thumb { position: relative; }
+.cust-del { position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; padding: 0; border: 0; border-radius: 50%; background: rgba(0, 0, 0, 0.55); color: #fff; font-size: 1.05rem; line-height: 1; cursor: pointer; display: grid; place-items: center; }
+.cust-del:hover { background: rgba(200, 50, 50, 0.9); }
+.cust-include { margin-top: 16px; padding: 11px 20px; border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 999px; background: rgba(255, 255, 255, 0.06); color: inherit; font: inherit; cursor: pointer; transition: border-color .15s, background .15s; }
+.cust-include:hover { border-color: var(--accent); background: rgba(255, 255, 255, 0.1); }
+.cust-include:disabled { opacity: .5; cursor: default; }
+body.theme-jeju .cust-include { background: #fff; border-color: rgba(0, 0, 0, 0.16); color: #5b5247; }
+body.theme-jeju .cust-include:hover { border-color: #f4892b; }
 
 /* ── 첫 칸 자동 슬라이드쇼 = 세로 9:16(1080×1920) 플레이어, 가운데 ── */
 .slideshow {
