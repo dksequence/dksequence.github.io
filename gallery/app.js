@@ -590,8 +590,6 @@ function saveStoryCard() {
     en: { title: "A perfect day in Jeju", sub: "the day we'll remember" },
     zh: { title: "济州，我们完美的一天", sub: "a perfect day in Jeju" },
   })[currentLang] || { title: "제주, 우리의 어느 완벽한 하루", sub: "a perfect day in Jeju" };
-  const brand = "제주 중문별장     ·     " + INSTAGRAM_HANDLE;   // 슬쩍(여행 위치 + 핸들)
-
   function fitFont(weight, family, text, maxW, start) {
     let s = start; cx.font = `${weight} ${s}px ${family}`;
     while (s > 26 && cx.measureText(text).width > maxW) { s -= 2; cx.font = `${weight} ${s}px ${family}`; }
@@ -601,10 +599,12 @@ function saveStoryCard() {
     cx.textAlign = "center";
     cx.shadowColor = "rgba(0,0,0,0.55)"; cx.shadowBlur = 16; cx.shadowOffsetY = 1;
     cx.fillStyle = "#fff";
-    const ts = fitFont("700", "'Fraunces','Noto Serif KR',serif", SC.title, W - 130, 66);
-    cx.font = `700 ${ts}px 'Fraunces','Noto Serif KR',serif`; cx.fillText(SC.title, W / 2, 170);
-    cx.font = "500 54px 'Caveat',cursive"; cx.fillStyle = "rgba(255,255,255,0.93)"; cx.fillText(SC.sub, W / 2, 242);
-    cx.font = "600 38px Inter,'Noto Sans KR',sans-serif"; cx.fillStyle = "rgba(255,255,255,0.92)"; cx.fillText(brand, W / 2, H - 108);
+    const ts = fitFont("700", "'Fraunces','Noto Serif KR',serif", SC.title, W - 130, 64);
+    cx.font = `700 ${ts}px 'Fraunces','Noto Serif KR',serif`; cx.fillText(SC.title, W / 2, 146);
+    cx.font = "500 50px 'Caveat',cursive"; cx.fillStyle = "rgba(255,255,255,0.92)"; cx.fillText(SC.sub, W / 2, 210);
+    // 하단 2줄: 제주 추억 화보 / DKsequence X 중문별장
+    cx.font = "500 40px Inter,'Noto Sans KR',sans-serif"; cx.fillStyle = "rgba(255,255,255,0.9)"; cx.fillText("제주 추억 화보", W / 2, H - 128);
+    cx.font = "700 46px Inter,'Noto Sans KR',sans-serif"; cx.fillStyle = "#fff"; cx.fillText("DKsequence X 중문별장", W / 2, H - 70);
     cx.shadowBlur = 0; cx.shadowOffsetY = 0;
   }
   function paintBgFallback() { const g = cx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#cdb8e8"); g.addColorStop(0.5, "#f0c6d8"); g.addColorStop(1, "#f5e6c8"); cx.fillStyle = g; cx.fillRect(0, 0, W, H); }
@@ -617,8 +617,10 @@ function saveStoryCard() {
     cx.drawImage(im, (W - im.width * rc) / 2, (H - im.height * rc) / 2, im.width * rc, im.height * rc);
     cx.filter = "none";
     cx.fillStyle = "rgba(0,0,0,0.45)"; cx.fillRect(0, 0, W, H);
-    const fw = 1000, r = fw / im.width, fh = im.height * r;      // 2) 일러스트 통째(가로폭 맞춤) 중앙
-    cx.drawImage(im, (W - fw) / 2, Math.max(150, (H - fh) / 2), fw, fh);
+    // 2) 일러스트: 상단 카피(아래)와 하단 2줄(위) 사이 밴드에 맞춰 배치 — 글씨와 안 겹치게
+    const bandTop = 280, bandH = H - 180 - bandTop;
+    const r = Math.min(1000 / im.width, bandH / im.height), fw = im.width * r, fh = im.height * r;
+    cx.drawImage(im, (W - fw) / 2, bandTop + (bandH - fh) / 2, fw, fh);
     paintText(); done();
   };
   im.onerror = () => { paintBgFallback(); paintText(); done(); };   // CORS 실패 → 파스텔 배경 폴백
