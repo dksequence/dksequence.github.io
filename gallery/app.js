@@ -574,31 +574,55 @@ function downloadBlob(blob, name) {
 
 // 인스타 스토리/릴스용 9:16(1080×1920) 카드 PNG 저장. 대표컷(하트1등 우선) + 타이틀 + @핸들.
 // Drive 썸네일이 CORS 허용이면 사진 포함, 아니면(taint) 파스텔 배경으로 자동 폴백.
+// 인스타 스토리 9:16(1080×1920) — 디자인 A(미니멀 풀프레임). 주인공 = 갤러리 #1(일러스트 A1 있으면 그것).
+// 블러 커버 배경 + 일러스트 통째(가로폭 맞춤) + 위 여행감성 카피 + 아래 슬쩍 브랜드(위치·핸들만, 직접홍보 X).
 function saveStoryCard() {
   if (DEMO) { demoNotice(); return; }          // 홍보용(쇼잉): 저장 차단 — 안내만
   if (!state.images.length) return;
-  const top = state.images.slice().sort((a, b) => (ratings[b.id] || 0) - (ratings[a.id] || 0))[0];
-  const tp = ["edited", "dk", "letter"].find((k) => top.variants[k] && top.variants[k].url) || firstAvailableVariant(top);
-  const src = top.variants[tp] ? driveCorsUrl(top.variants[tp].url, 1280) : "";   // CORS 허용 URL(아니면 캔버스 taint→빈카드)
+  const hero = state.images[0];                // #1 = 일러스트(끝번호 001) 우선, 없으면 첫 컷
+  const tp = ["edited", "dk", "letter"].find((k) => hero.variants[k] && hero.variants[k].url) || firstAvailableVariant(hero);
+  const src = hero.variants[tp] ? driveCorsUrl(hero.variants[tp].url, 1280) : "";   // CORS 허용 URL(아니면 캔버스 taint→빈카드)
   const W = 1080, H = 1920;
   const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
   const cx = cv.getContext("2d");
-  const tt = t();
-  const title = THEME === "jeju" ? (tt.titleJeju || "제주 추억 Gallery") : (tt.titleGeneric || "Gallery");
-  function paintBg() { const g = cx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#cdb8e8"); g.addColorStop(0.5, "#f0c6d8"); g.addColorStop(1, "#f5e6c8"); cx.fillStyle = g; cx.fillRect(0, 0, W, H); }
-  function paintText() {
-    const g = cx.createLinearGradient(0, H * 0.46, 0, H); g.addColorStop(0, "rgba(0,0,0,0)"); g.addColorStop(1, "rgba(0,0,0,0.62)");
-    cx.fillStyle = g; cx.fillRect(0, H * 0.46, W, H * 0.54);
-    cx.textAlign = "center"; cx.fillStyle = "#fff";
-    cx.font = "500 56px 'Caveat', cursive"; cx.fillText("Island Sequence", W / 2, H - 360);
-    cx.font = "700 104px 'Fraunces', 'Noto Serif KR', serif"; cx.fillText(title, W / 2, H - 250);
-    cx.font = "700 44px Inter, 'Noto Sans KR', sans-serif"; cx.fillStyle = "rgba(255,255,255,0.92)"; cx.fillText(INSTAGRAM_HANDLE, W / 2, H - 140);
+  const SC = ({
+    ko: { title: "제주, 우리의 어느 완벽한 하루", sub: "a perfect day in Jeju" },
+    en: { title: "A perfect day in Jeju", sub: "the day we'll remember" },
+    zh: { title: "济州，我们完美的一天", sub: "a perfect day in Jeju" },
+  })[currentLang] || { title: "제주, 우리의 어느 완벽한 하루", sub: "a perfect day in Jeju" };
+  const brand = "제주 중문별장     ·     " + INSTAGRAM_HANDLE;   // 슬쩍(여행 위치 + 핸들)
+
+  function fitFont(weight, family, text, maxW, start) {
+    let s = start; cx.font = `${weight} ${s}px ${family}`;
+    while (s > 26 && cx.measureText(text).width > maxW) { s -= 2; cx.font = `${weight} ${s}px ${family}`; }
+    return s;
   }
+  function paintText() {
+    cx.textAlign = "center";
+    cx.shadowColor = "rgba(0,0,0,0.55)"; cx.shadowBlur = 16; cx.shadowOffsetY = 1;
+    cx.fillStyle = "#fff";
+    const ts = fitFont("700", "'Fraunces','Noto Serif KR',serif", SC.title, W - 130, 66);
+    cx.font = `700 ${ts}px 'Fraunces','Noto Serif KR',serif`; cx.fillText(SC.title, W / 2, 170);
+    cx.font = "500 54px 'Caveat',cursive"; cx.fillStyle = "rgba(255,255,255,0.93)"; cx.fillText(SC.sub, W / 2, 242);
+    cx.font = "600 38px Inter,'Noto Sans KR',sans-serif"; cx.fillStyle = "rgba(255,255,255,0.92)"; cx.fillText(brand, W / 2, H - 108);
+    cx.shadowBlur = 0; cx.shadowOffsetY = 0;
+  }
+  function paintBgFallback() { const g = cx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#cdb8e8"); g.addColorStop(0.5, "#f0c6d8"); g.addColorStop(1, "#f5e6c8"); cx.fillStyle = g; cx.fillRect(0, 0, W, H); }
   function done() { try { cv.toBlob((b) => { if (b) downloadBlob(b, "dk-story.png"); }, "image/png"); } catch (e) {} }
+
   const im = new Image(); im.crossOrigin = "anonymous";
-  im.onload = () => { const r = Math.max(W / im.width, H / im.height); const dw = im.width * r, dh = im.height * r; cx.drawImage(im, (W - dw) / 2, (H - dh) / 2, dw, dh); paintText(); done(); };
-  im.onerror = () => { paintBg(); paintText(); done(); };   // CORS 실패 → 파스텔 배경 폴백
-  if (src) im.src = src; else { paintBg(); paintText(); done(); }
+  im.onload = () => {
+    const rc = Math.max(W / im.width, H / im.height);            // 1) 블러 커버 배경(어둡게)
+    cx.filter = "blur(34px)";
+    cx.drawImage(im, (W - im.width * rc) / 2, (H - im.height * rc) / 2, im.width * rc, im.height * rc);
+    cx.filter = "none";
+    cx.fillStyle = "rgba(0,0,0,0.45)"; cx.fillRect(0, 0, W, H);
+    const fw = 1000, r = fw / im.width, fh = im.height * r;      // 2) 일러스트 통째(가로폭 맞춤) 중앙
+    cx.drawImage(im, (W - fw) / 2, Math.max(150, (H - fh) / 2), fw, fh);
+    paintText(); done();
+  };
+  im.onerror = () => { paintBgFallback(); paintText(); done(); };   // CORS 실패 → 파스텔 배경 폴백
+  if (src) im.src = src; else { paintBgFallback(); paintText(); done(); }
 }
 function shareGallery() {                  // 모바일=네이티브 공유시트, 데스크톱=링크복사+토스트(무반응 방지)
   const url = location.href.replace(/([?&])preview=1\b&?/, "$1").replace(/[?&]$/, "");
