@@ -80,7 +80,7 @@ const I18N = {
     closeTitle: "소중한 추억, 어떠셨나요?",
     closeSub: "① 스토리 카드 저장 → ② 후기 작성(카드 첨부) → ③ 비밀게시판 응모! 추첨해서 베스트샷 1장 인화해 드려요 :)",
     closeReview: "⭐ 후기 작성 가기", closeShare: "🔗 갤러리 공유", closeBook: "DKsequence", closeSaveCard: "📥 스토리 카드 저장", closeBoard: "🔒 비밀 게시판",
-    myPhotos: { title: "📷 내가 찍은 사진", hint: (max) => `중문별장에서 촬영하신 사진을 갤러리에서 함께 감상할 수 있어요~`, add: "사진 올리기", uploading: "올리는 중…", full: "사진이 가득 찼어요 :)", err: "업로드에 실패했어요. 다시 시도해 주세요.", count: (n, max) => `${n} / ${max}` },
+    myPhotos: { title: "📷 내가 찍은 사진", hint: (max) => `중문별장에서 촬영하신 사진을 갤러리에서 함께 감상할 수 있어요~`, add: "사진 올리기", uploading: "올리는 중…", full: "사진이 가득 찼어요 :)", err: "업로드에 실패했어요. 다시 시도해 주세요.", count: (n, max) => `${n} / ${max}`, includeBtn: "🖼️ 내 사진도 갤러리에 넣기", included: (n) => `내 사진 ${n}장을 갤러리에 추가했어요! 잠시 후 새로고침됩니다`, includeNone: "추가할 새 사진이 없어요", deleting: "삭제 중…", delConfirm: "이 사진을 삭제할까요?" },
     variants: { letter: "Letter", dk: "DK", edited: "원본" },
     loading: "갤러리를 불러오는 중입니다...", notFound: "갤러리를 찾을 수 없습니다.",
     expired: "열람 기간이 만료되었습니다.", invalid: "잘못된 접근입니다.", empty: "아직 사진이 없습니다.",
@@ -110,7 +110,7 @@ const I18N = {
     closeTitle: "How were your memories?",
     closeSub: "① Save the story card → ② Write a review (attach it) → ③ Apply on the board — win a printed best shot :)",
     closeReview: "⭐ Write a review", closeShare: "🔗 Share gallery", closeBook: "DKsequence", closeSaveCard: "📥 Save story card", closeBoard: "🔒 Event board",
-    myPhotos: { title: "📷 Photos I took", hint: (max) => `Keep up to ${max} of your own trip photos here, too.`, add: "Add photo", uploading: "Uploading…", full: "That's the max :)", err: "Upload failed. Please try again.", count: (n, max) => `${n} / ${max}` },
+    myPhotos: { title: "📷 Photos I took", hint: (max) => `Keep up to ${max} of your own trip photos here, too.`, add: "Add photo", uploading: "Uploading…", full: "That's the max :)", err: "Upload failed. Please try again.", count: (n, max) => `${n} / ${max}`, includeBtn: "🖼️ Add my photos to the gallery", included: (n) => `Added ${n} of your photos! Refreshing…`, includeNone: "No new photos to add", deleting: "Deleting…", delConfirm: "Delete this photo?" },
     variants: { letter: "Letter", dk: "DK", edited: "Original" },
     loading: "Loading gallery...", notFound: "Gallery not found.",
     expired: "This gallery has expired.", invalid: "Invalid access.", empty: "No photos yet.",
@@ -140,7 +140,7 @@ const I18N = {
     closeTitle: "这些回忆，您还喜欢吗？",
     closeSub: "① 保存故事卡 → ② 写评价(附上卡片) → ③ 留言板报名！抽奖冲印一张最佳照片 :)",
     closeReview: "⭐ 写评价", closeShare: "🔗 分享相册", closeBook: "DKsequence", closeSaveCard: "📥 保存故事卡", closeBoard: "🔒 活动留言板",
-    myPhotos: { title: "📷 我拍的照片", hint: (max) => `最多可一并保存 ${max} 张您旅途中拍的照片。`, add: "上传照片", uploading: "上传中…", full: "已达上限 :)", err: "上传失败，请重试。", count: (n, max) => `${n} / ${max}` },
+    myPhotos: { title: "📷 我拍的照片", hint: (max) => `最多可一并保存 ${max} 张您旅途中拍的照片。`, add: "上传照片", uploading: "上传中…", full: "已达上限 :)", err: "上传失败，请重试。", count: (n, max) => `${n} / ${max}`, includeBtn: "🖼️ 把我的照片也放进相册", included: (n) => `已将您的 ${n} 张照片加入相册！即将刷新`, includeNone: "没有可添加的新照片", deleting: "删除中…", delConfirm: "删除这张照片？" },
     variants: { letter: "Letter", dk: "DK", edited: "原图" },
     loading: "正在加载图库...", notFound: "找不到图库。",
     expired: "本图库已过期。", invalid: "无效访问。", empty: "暂无照片。",
@@ -503,18 +503,23 @@ function createCustomerSection() {
   const max = state.customerMax || 5;
   const card = document.createElement("article");
   card.className = "gallery-item customer-section";
-  const thumbs = photos.map((p) => `<div class="cust-thumb"><img src="${thumbSize(p.url, 600)}" alt="my photo" loading="lazy"></div>`).join("");
+  const thumbs = photos.map((p) => `<div class="cust-thumb"><img src="${thumbSize(p.url, 600)}" alt="my photo" loading="lazy"><button class="cust-del" type="button" data-del="${p.id}" title="삭제" aria-label="삭제">×</button></div>`).join("");
   const adder = (photos.length < max)
     ? `<label class="cust-add"><input type="file" id="cust-file" accept="image/*" multiple hidden><span class="cust-plus">＋</span><span>${tt.add}</span></label>`
     : `<div class="cust-add full">${tt.full}</div>`;
+  const includeBtn = photos.length ? `<button class="cust-include" type="button" id="cust-include">${tt.includeBtn}</button>` : "";
   card.innerHTML = `<div class="cust-inner">
       <h3>${tt.title} <span class="cust-count" id="cust-count">${tt.count(photos.length, max)}</span></h3>
       <p class="cust-hint">${tt.hint(max)}</p>
       <div class="cust-grid">${thumbs}${adder}</div>
+      ${includeBtn}
       <div class="cust-status" id="cust-status"></div>
     </div>`;
   const file = card.querySelector("#cust-file");
   if (file) file.addEventListener("change", () => { if (file.files && file.files.length) uploadCustomerPhotos(file.files); });
+  card.querySelectorAll("[data-del]").forEach((b) => b.addEventListener("click", () => deleteCustomerPhoto(b.dataset.del)));
+  const inc = card.querySelector("#cust-include");
+  if (inc) inc.addEventListener("click", () => includeCustomerPhotos(inc));
   return card;
 }
 
@@ -563,6 +568,32 @@ async function uploadCustomerPhotos(fileList) {
   }
   if (fail) toast(t().myPhotos.err);
   renderItems();   // 새 썸네일 + 카운트 갱신
+}
+
+// 업로드 사진 1장 삭제(교체용) — GAS galleryCustomerDelete → state 반영 후 재렌더
+async function deleteCustomerPhoto(id) {
+  if (DEMO || !RESNO || !TOKEN || !id) return;
+  if (!confirm(t().myPhotos.delConfirm)) return;
+  setCustStatus(t().myPhotos.deleting);
+  try {
+    const res = await fetch(GAS_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "galleryCustomerDelete", resno: RESNO, token: TOKEN, fileId: id }) });
+    const d = await res.json();
+    if (d && d.ok) { state.customerPhotos = (state.customerPhotos || []).filter((p) => p.id !== id); renderItems(); }
+    else { toast(t().myPhotos.err); setCustStatus(""); }
+  } catch (e) { toast(t().myPhotos.err); setCustStatus(""); }
+}
+
+// 내가 찍은 사진을 본 갤러리에 포함 — GAS galleryCustomerInclude → 추가되면 새로고침해서 노출
+async function includeCustomerPhotos(btn) {
+  if (DEMO || !RESNO || !TOKEN) return;
+  if (btn) btn.disabled = true;
+  try {
+    const res = await fetch(GAS_URL, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify({ action: "galleryCustomerInclude", resno: RESNO, token: TOKEN }) });
+    const d = await res.json();
+    if (d && d.ok && d.added > 0) { toast(t().myPhotos.included(d.added)); setTimeout(() => location.reload(), 1300); }
+    else if (d && d.ok) { toast(t().myPhotos.includeNone); if (btn) btn.disabled = false; }
+    else { toast(t().myPhotos.err); if (btn) btn.disabled = false; }
+  } catch (e) { toast(t().myPhotos.err); if (btn) btn.disabled = false; }
 }
 
 function downloadBlob(blob, name) {
