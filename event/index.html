@@ -60,14 +60,12 @@
 <div class="wrap">
   <header>
     <h1>🔒 리뷰 인화 이벤트</h1>
-    <p class="sub">후기 남기고 응모하시면 추첨해서 <b>실물 사진 1장</b>을 인화해 보내드려요 :)</p>
+    <p class="sub">후기 남기고 응모하시면, 추첨을 통해<br><b>실물 사진(베스트샷 1장)</b>을 인화해서 보내드려요~</p>
   </header>
 
   <div class="prize">
-    💝 <b>이벤트 안내</b><br>
-    ① 갤러리에서 <b>스토리 카드 저장</b> → ② 네이버에 <b>후기 작성</b>(스토리 카드 첨부) → ③ 아래 <b>글쓰기</b>로 응모!<br>
-    추첨 당첨되시면 갤러리에서 <b>가장 많이 ♥ 누른 사진 1장</b>을 실물 인화해 보내드립니다.<br>
-    <span style="color:#a8895a;">※ 글은 비밀글이라 본인 비밀번호로만 열 수 있어요. 성함·연락처·주소는 안심하고 적어주세요(다른 분께 안 보입니다).</span>
+    💝 <b>참여 방법</b> &nbsp; ① <b>스토리 카드 저장</b> → ② 네이버 <b>후기 작성</b>(카드 첨부) → ③ 아래 <b>글쓰기</b>로 응모!<br>
+    <span style="color:#a8895a;">※ 비밀글이라 본인 비밀번호로만 열려요 — 성함·연락처·주소 안심하고 적어주세요(남에게 안 보입니다).</span>
   </div>
 
   <div class="toolbar">
@@ -78,7 +76,7 @@
   <ul class="board" id="board"></ul>
   <div class="pager" id="pager"></div>
 
-  <footer>중문별장 · DKsequence — 비밀 게시판</footer>
+  <footer>DKsequence 비밀 게시판</footer>
 </div>
 
 <!-- 글쓰기 모달 -->
@@ -132,7 +130,7 @@
   const params = new URLSearchParams(location.search);
   const RESNO = (params.get("c") || "").trim();
   const TOKEN = (params.get("t") || "").trim();
-  const PER = 10;
+  const PER = 7;
 
   // ── 더미 비밀글(활발해 보이게) — 고정 시드라 새로고침해도 동일 ──
   function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
@@ -156,7 +154,7 @@
     const all = allPosts();
     const pages = Math.max(1, Math.ceil(all.length / PER));
     page = Math.min(Math.max(1, page), pages);
-    $("count").textContent = `총 ${all.length}개의 응모글`;
+    // 응모 개수는 노출하지 않음(요청)
     const slice = all.slice((page-1)*PER, page*PER);
     $("board").innerHTML = slice.map(p =>
       `<li data-id="${esc(p.id)}"><span class="lock">🔒</span>`
