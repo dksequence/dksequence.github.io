@@ -603,8 +603,8 @@ function saveStoryCard() {
     cx.font = `700 ${ts}px 'Fraunces','Noto Serif KR',serif`; cx.fillText(SC.title, W / 2, 146);
     cx.font = "500 50px 'Caveat',cursive"; cx.fillStyle = "rgba(255,255,255,0.92)"; cx.fillText(SC.sub, W / 2, 210);
     // 하단 2줄: 제주 추억 화보 / DKsequence X 중문별장
-    cx.font = "500 40px Inter,'Noto Sans KR',sans-serif"; cx.fillStyle = "rgba(255,255,255,0.9)"; cx.fillText("제주 추억 화보", W / 2, H - 128);
-    cx.font = "700 46px Inter,'Noto Sans KR',sans-serif"; cx.fillStyle = "#fff"; cx.fillText("DKsequence X 중문별장", W / 2, H - 70);
+    cx.font = "500 40px Inter,'Noto Sans KR',sans-serif"; cx.fillStyle = "rgba(255,255,255,0.9)"; cx.fillText("제주 추억 화보", W / 2, H - 108);
+    cx.font = "700 46px Inter,'Noto Sans KR',sans-serif"; cx.fillStyle = "#fff"; cx.fillText("DKsequence X 중문별장", W / 2, H - 52);
     cx.shadowBlur = 0; cx.shadowOffsetY = 0;
   }
   function paintBgFallback() { const g = cx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#cdb8e8"); g.addColorStop(0.5, "#f0c6d8"); g.addColorStop(1, "#f5e6c8"); cx.fillStyle = g; cx.fillRect(0, 0, W, H); }
