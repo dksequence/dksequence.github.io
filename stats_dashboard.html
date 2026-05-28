@@ -854,7 +854,8 @@ function renderDashboard(d) {
         </tr>${memoRow}`;
       }
       const isSent    = c.delivSt && c.delivSt.indexOf('발송완료') === 0;
-      const isEdit    = c.editSt  && c.editSt.indexOf('완료') !== -1;
+      // 「완료」 substring만 보면 「미완료」도 매칭되는 버그 → 「미」로 시작하면 미완료로 강제 인식(2026-05-29 수정)
+      const isEdit    = c.editSt  && c.editSt.indexOf('완료') !== -1 && c.editSt.indexOf('미') !== 0;
       // 갤러리 firstAccessAt(viewedAt) OR 이메일 링크클릭로그(clickedAt) 둘 다 인정 — 옛 로직은 clickedAt만 봐서 갤러리 열람을 놓침(2026-05-29 수정)
       const viewedSrc = c.viewedAt || c.clickedAt || '';
       const isClicked = !!(c.viewed || viewedSrc);
