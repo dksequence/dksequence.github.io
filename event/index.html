@@ -53,6 +53,11 @@
   .msg.err{color:#c0392b;} .msg.ok{color:#2e7d4f;}
   .view-content{white-space:pre-wrap;line-height:1.7;color:var(--ink);font-size:.95rem;}
   .view-img{max-width:100%;border-radius:10px;margin-top:12px;}
+  .btn.danger{background:#d05a3e;color:#fff;border-color:transparent;}
+  .btn.danger:hover{background:#bc4d33;}
+  .admin-del{flex:0 0 auto;width:26px;height:26px;border:1px solid var(--line);border-radius:6px;background:#fff;color:#d05a3e;font-weight:800;cursor:pointer;line-height:1;}
+  .admin-del:hover{background:#fdecea;border-color:#d05a3e;}
+  .admin-tag{display:inline-block;font-size:.7rem;font-weight:800;padding:2px 8px;border-radius:999px;background:#fde8cf;color:#a4571f;margin-left:6px;vertical-align:middle;}
   footer{margin-top:26px;text-align:center;color:#b3a892;font-size:.74rem;}
 </style>
 </head>
@@ -87,12 +92,17 @@
     <input type="text" id="w-title" maxlength="40" placeholder="예) 리뷰 이벤트 응모합니다~">
     <label>내용 <span style="color:#a8895a;">— 성함 / 연락처 / 주소를 적어주세요 (당첨 시 인화 발송용)</span></label>
     <textarea id="w-content" placeholder="성함:&#10;연락처:&#10;주소:&#10;&#10;(남기고 싶은 한마디도 환영해요!)"></textarea>
-    <label>리뷰 인증 캡처 (1장)</label>
+    <label>리뷰 인증 캡처 ① (1장)</label>
     <div class="filebox">
       <input type="file" id="w-image" accept="image/*">
       <img id="w-preview" alt="preview">
     </div>
-    <div class="hintline">네이버에 올리신 후기 화면을 캡처해서 올려주세요. (작가만 확인합니다)</div>
+    <label>리뷰 인증 캡처 ② (선택, 추가 1장)</label>
+    <div class="filebox">
+      <input type="file" id="w-image2" accept="image/*">
+      <img id="w-preview2" alt="preview">
+    </div>
+    <div class="hintline">네이버에 올리신 후기 화면을 캡처해서 올려주세요. 최대 2장 (작가만 확인합니다)</div>
     <label>비밀번호 <span style="color:#a8895a;">— 내 글을 다시 열 때 필요해요</span></label>
     <input type="password" id="w-pw" maxlength="20" placeholder="숫자/문자 4자 이상" inputmode="text">
     <div class="msg" id="w-msg"></div>
@@ -119,7 +129,7 @@
     <div id="v-body" style="display:none;">
       <div class="view-content" id="v-content"></div>
       <img class="view-img" id="v-img" alt="" style="display:none;">
-      <div class="row"><button class="btn" id="v-close2">닫기</button></div>
+      <div class="row"><button class="btn danger" id="v-delete">🗑 이 글 삭제</button><button class="btn" id="v-close2">닫기</button></div>
     </div>
   </div>
 </div>
@@ -131,6 +141,17 @@
   const RESNO = (params.get("c") || "").trim();
   const TOKEN = (params.get("t") || "").trim();
   const PER = 7;
+
+  // ── 관리자 모드 (?admin=1) — 관리자 비번 1회 입력 후 sessionStorage 캐시 → 목록 각 글 × 버튼 ──
+  const ADMIN_MODE = params.get("admin") === "1";
+  let adminPw = "";
+  if (ADMIN_MODE) {
+    adminPw = sessionStorage.getItem("dkboard.adminPw") || "";
+    if (!adminPw) {
+      adminPw = (prompt("🔐 관리자 비밀번호를 입력하세요") || "").trim();
+      if (adminPw) sessionStorage.setItem("dkboard.adminPw", adminPw);
+    }
+  }
 
   // ── 더미 비밀글(활발해 보이게) — 고정 시드라 새로고침해도 동일 ──
   function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
@@ -160,8 +181,14 @@
       `<li data-id="${esc(p.id)}"><span class="lock">🔒</span>`
       + `<span class="ti">${esc(p.title)}${p.fresh?'<span class="new">N</span>':''}</span>`
       + `<span class="who">${esc(p.name||"비밀**")}</span>`
-      + `<span class="dt">${fmtDate(p.date)}</span></li>`).join("");
-    $("board").querySelectorAll("li").forEach(li => li.addEventListener("click", () => openView(li.dataset.id)));
+      + `<span class="dt">${fmtDate(p.date)}</span>`
+      + ((ADMIN_MODE && !p.dummy) ? `<button class="admin-del" data-adel="${esc(p.id)}" title="관리자 삭제">×</button>` : "")
+      + `</li>`).join("");
+    $("board").querySelectorAll("li").forEach(li => li.addEventListener("click", (e) => {
+      if (e.target && e.target.dataset && e.target.dataset.adel) return;        // × 누른 거면 보기 안 열림
+      openView(li.dataset.id);
+    }));
+    $("board").querySelectorAll("[data-adel]").forEach(b => b.addEventListener("click", (e) => { e.stopPropagation(); adminDeletePost(b.dataset.adel); }));
     // 페이저 (현재 기준 최대 10개 윈도우)
     const win = 10, start = Math.max(1, Math.min(page - 4, pages - win + 1)), end = Math.min(pages, start + win - 1);
     let h = `<button ${page<=1?"disabled":""} data-p="${page-1}">◁</button>`;
@@ -178,7 +205,34 @@
     $("v-title").textContent = "🔒 " + (viewing ? viewing.title : "비밀글");
     $("v-gate").style.display = ""; $("v-body").style.display = "none";
     $("v-pw").value = ""; $("v-msg").textContent = "";
+    $("v-delete").style.display = "none"; $("v-delete").onclick = null;          // 매번 초기화(이전 클로저 누수 방지)
     $("view-modal").classList.add("show");
+  }
+  // 본인 삭제 — 비번 풀고 본 글에서 같은 비번으로 삭제 가능
+  async function deleteOwnPost(pw){
+    if (!viewing || !confirm("이 글을 정말 삭제할까요?")) return;
+    try {
+      const r = await fetch(GAS_URL, { method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify({ action:"boardDelete", id: viewing.id, password: pw }) });
+      const d = await r.json();
+      if (!d || !d.ok) throw new Error((d&&d.error) || "삭제 실패");
+      realPosts = realPosts.filter(p => p.id !== viewing.id);
+      $("view-modal").classList.remove("show"); render();
+    } catch(e){ alert("오류: "+e.message); }
+  }
+  // 관리자 삭제 — 목록 × 버튼. adminPw(sessionStorage)로 인증.
+  async function adminDeletePost(id){
+    if (!adminPw) { adminPw = (prompt("🔐 관리자 비밀번호") || "").trim(); if (adminPw) sessionStorage.setItem("dkboard.adminPw", adminPw); else return; }
+    if (!confirm("[관리자] 이 글을 삭제할까요?")) return;
+    try {
+      const r = await fetch(GAS_URL, { method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify({ action:"boardDelete", id, password: adminPw }) });
+      const d = await r.json();
+      if (!d || !d.ok) {
+        if (d && /비밀번호/.test(d.error || "")) { sessionStorage.removeItem("dkboard.adminPw"); adminPw=""; }
+        throw new Error((d&&d.error) || "삭제 실패");
+      }
+      realPosts = realPosts.filter(p => p.id !== id);
+      render();
+    } catch(e){ alert("오류: "+e.message); }
   }
   async function doOpen(){
     const pw = $("v-pw").value.trim();
@@ -193,18 +247,29 @@
       $("v-gate").style.display="none"; $("v-body").style.display="";
       $("v-content").textContent = d.content || "";
       if (d.imageUrl) { $("v-img").src = d.imageUrl; $("v-img").style.display="block"; } else $("v-img").style.display="none";
+      // 본인이 비번 풀고 들어왔으므로 같은 비번으로 삭제 허용 — 버튼 노출 + 핸들러
+      $("v-delete").style.display = ""; $("v-delete").onclick = () => deleteOwnPost(pw);
     } catch(e){ $("v-msg").className="msg err"; $("v-msg").textContent="오류: "+e.message; }
   }
 
   // ── 글쓰기 ──
   function resizeToB64(file, maxDim){ return new Promise((res,rej)=>{ const img=new Image(), u=URL.createObjectURL(file); img.onload=()=>{ URL.revokeObjectURL(u); let w=img.naturalWidth,h=img.naturalHeight; if(w>maxDim||h>maxDim){const r=Math.min(maxDim/w,maxDim/h);w=Math.round(w*r);h=Math.round(h*r);} const c=document.createElement("canvas"); c.width=w;c.height=h; c.getContext("2d").drawImage(img,0,0,w,h); res(c.toDataURL("image/jpeg",0.85).split(",")[1]); }; img.onerror=()=>{URL.revokeObjectURL(u);rej(new Error("이미지 로드 실패"));}; img.src=u; }); }
-  let pendingB64 = "";
-  $("w-image").addEventListener("change", async () => {
-    const f = $("w-image").files && $("w-image").files[0]; if(!f) return;
-    try { pendingB64 = await resizeToB64(f, 1400); $("w-preview").src = "data:image/jpeg;base64,"+pendingB64; $("w-preview").style.display="block"; }
-    catch(e){ $("w-msg").className="msg err"; $("w-msg").textContent="이미지 처리 실패"; }
-  });
-  function openWrite(){ $("w-title").value=""; $("w-content").value=""; $("w-pw").value=""; $("w-image").value=""; pendingB64=""; $("w-preview").style.display="none"; $("w-msg").textContent=""; $("write-modal").classList.add("show"); }
+  let pendingB64 = "", pendingB64_2 = "";
+  function wireImg(inputId, previewId, setter){
+    $(inputId).addEventListener("change", async () => {
+      const f = $(inputId).files && $(inputId).files[0]; if(!f) return;
+      try { const b = await resizeToB64(f, 1400); setter(b); $(previewId).src = "data:image/jpeg;base64,"+b; $(previewId).style.display="block"; }
+      catch(e){ $("w-msg").className="msg err"; $("w-msg").textContent="이미지 처리 실패"; }
+    });
+  }
+  wireImg("w-image",  "w-preview",  v => pendingB64 = v);
+  wireImg("w-image2", "w-preview2", v => pendingB64_2 = v);
+  function openWrite(){
+    $("w-title").value=""; $("w-content").value=""; $("w-pw").value="";
+    $("w-image").value=""; $("w-image2").value=""; pendingB64=""; pendingB64_2="";
+    $("w-preview").style.display="none"; $("w-preview2").style.display="none";
+    $("w-msg").textContent=""; $("write-modal").classList.add("show");
+  }
   async function submitWrite(){
     const title=$("w-title").value.trim(), content=$("w-content").value.trim(), pw=$("w-pw").value.trim();
     if(!title){ return wmsg("제목을 입력하세요."); }
@@ -212,7 +277,7 @@
     if(pw.length<4){ return wmsg("비밀번호는 4자 이상으로 설정하세요."); }
     $("w-submit").disabled=true; $("w-msg").className="msg"; $("w-msg").textContent="응모 접수 중…";
     try {
-      const r = await fetch(GAS_URL, { method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify({ action:"boardCreate", resno:RESNO, token:TOKEN, title, content, password:pw, imageBase64:pendingB64 }) });
+      const r = await fetch(GAS_URL, { method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify({ action:"boardCreate", resno:RESNO, token:TOKEN, title, content, password:pw, imageBase64:pendingB64, imageBase64_2:pendingB64_2 }) });
       const d = await r.json();
       if(!d || !d.ok){ throw new Error((d&&d.error) || "접수 실패"); }
       realPosts.unshift({ id:d.id, title, name:(d.name||"비밀**"), date:Date.now(), fresh:true });
@@ -241,6 +306,10 @@
   $("v-close2").addEventListener("click", ()=>$("view-modal").classList.remove("show"));
   [ "write-modal","view-modal" ].forEach(id=>$(id).addEventListener("click",e=>{ if(e.target.id===id) $(id).classList.remove("show"); }));
 
+  if (ADMIN_MODE) {                                                              // 헤더에 ADMIN 배지
+    const h1 = document.querySelector("header h1");
+    if (h1) h1.insertAdjacentHTML("beforeend", ' <span class="admin-tag">ADMIN</span>');
+  }
   render();      // 더미 즉시 표시
   loadReal();    // 실제 글 덧입히기(백엔드 준비되면)
 </script>
