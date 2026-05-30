@@ -632,13 +632,22 @@ function downloadBlob(blob, name) {
 function saveStoryCard() {
   if (DEMO) { demoNotice(); return; }          // 홍보용(쇼잉): 저장 차단 — 안내만
   if (!state.images.length) return;
-  // [2026-05-30] 일러스트가 있으면 그 사진을 대표컷으로, 변형도 일러스트(letter) 우선.
-  //   (원본 보존 재설계 후 edited=진짜 원본이라, edited 우선이면 원본이 나와버림 → 일러스트 우선으로 고정)
-  const hero = state.images.find((im) => im.illust && im.variants.letter && im.variants.letter.url) || state.images[0];
-  const tp = (hero.illust && hero.variants.letter && hero.variants.letter.url)
-    ? "letter"
-    : (["edited", "dk", "letter"].find((k) => hero.variants[k] && hero.variants[k].url) || firstAvailableVariant(hero));
-  const src = hero.variants[tp] ? driveCorsUrl(hero.variants[tp].url, 1280) : "";   // CORS 허용 URL(아니면 캔버스 taint→빈카드)
+  // [2026-05-31] 일러스트 생성 갯수만큼 스토리카드 다운(1개→1장 … 3개→3장). illust 사진들이 대상.
+  //   일러스트가 없으면 대표컷 1장 폴백.
+  let targets = state.images.filter((im) => im.illust && im.variants.letter && im.variants.letter.url);
+  if (!targets.length) targets = [state.images[0]];
+  targets.forEach((img, i) => {
+    const tp = (img.illust && img.variants.letter && img.variants.letter.url)
+      ? "letter"
+      : (["edited", "dk", "letter"].find((k) => img.variants[k] && img.variants[k].url) || firstAvailableVariant(img));
+    const src = img.variants[tp] ? driveCorsUrl(img.variants[tp].url, 1280) : "";
+    const fname = targets.length > 1 ? `dk-story-${i + 1}.png` : "dk-story.png";
+    setTimeout(() => _renderStoryCard(src, fname), i * 450);   // 연속 다운로드 차단 회피
+  });
+}
+
+// 스토리카드 1장 렌더(9:16 1080x1920) → filename 으로 다운로드
+function _renderStoryCard(src, filename) {
   const W = 1080, H = 1920;
   const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
   const cx = cv.getContext("2d");
@@ -665,7 +674,7 @@ function saveStoryCard() {
     cx.shadowBlur = 0; cx.shadowOffsetY = 0;
   }
   function paintBgFallback() { const g = cx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "#cdb8e8"); g.addColorStop(0.5, "#f0c6d8"); g.addColorStop(1, "#f5e6c8"); cx.fillStyle = g; cx.fillRect(0, 0, W, H); }
-  function done() { try { cv.toBlob((b) => { if (b) downloadBlob(b, "dk-story.png"); }, "image/png"); } catch (e) {} }
+  function done() { try { cv.toBlob((b) => { if (b) downloadBlob(b, filename); }, "image/png"); } catch (e) {} }
 
   const im = new Image(); im.crossOrigin = "anonymous";
   im.onload = () => {
