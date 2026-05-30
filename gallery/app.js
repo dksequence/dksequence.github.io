@@ -400,9 +400,14 @@ function createGalleryItem(image) {
   if (captionIdx[image.id] === undefined) captionIdx[image.id] = Math.floor(Math.random() * tt.captions.length);
   const cap = tt.captions[captionIdx[image.id] % tt.captions.length];
   const defUrl = image.variants[def] ? thumbSize(image.variants[def].url, 1000) : "";
+  // [2026-05-30] 일러스트 사진은 letter 변형이 '일러스트' → 버튼 라벨도 '일러스트'로(원본은 edited 버튼).
+  const illustLabel = ({ ko: "일러스트", en: "Illustration", zh: "插画" })[currentLang] || "일러스트";
   const buttons = ["letter", "dk", "edited"]
     .filter((type) => image.variants[type] && image.variants[type].url)
-    .map((type) => `<button class="variant-btn ${type === def ? "active" : ""}" type="button" data-type="${type}" data-id="${image.id}">${tt.variants[type]}</button>`)
+    .map((type) => {
+      const label = (type === "letter" && image.illust) ? illustLabel : tt.variants[type];
+      return `<button class="variant-btn ${type === def ? "active" : ""}" type="button" data-type="${type}" data-id="${image.id}">${label}</button>`;
+    })
     .join("");
   const heartBtns = [1, 2, 3, 4, 5]
     .map((n) => `<button class="heart" type="button" data-id="${image.id}" data-n="${n}" aria-label="${n}">♥</button>`)
@@ -627,8 +632,12 @@ function downloadBlob(blob, name) {
 function saveStoryCard() {
   if (DEMO) { demoNotice(); return; }          // 홍보용(쇼잉): 저장 차단 — 안내만
   if (!state.images.length) return;
-  const hero = state.images[0];                // #1 = 일러스트(끝번호 001) 우선, 없으면 첫 컷
-  const tp = ["edited", "dk", "letter"].find((k) => hero.variants[k] && hero.variants[k].url) || firstAvailableVariant(hero);
+  // [2026-05-30] 일러스트가 있으면 그 사진을 대표컷으로, 변형도 일러스트(letter) 우선.
+  //   (원본 보존 재설계 후 edited=진짜 원본이라, edited 우선이면 원본이 나와버림 → 일러스트 우선으로 고정)
+  const hero = state.images.find((im) => im.illust && im.variants.letter && im.variants.letter.url) || state.images[0];
+  const tp = (hero.illust && hero.variants.letter && hero.variants.letter.url)
+    ? "letter"
+    : (["edited", "dk", "letter"].find((k) => hero.variants[k] && hero.variants[k].url) || firstAvailableVariant(hero));
   const src = hero.variants[tp] ? driveCorsUrl(hero.variants[tp].url, 1280) : "";   // CORS 허용 URL(아니면 캔버스 taint→빈카드)
   const W = 1080, H = 1920;
   const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
@@ -878,15 +887,30 @@ function setupJejuTheme() {
                   "coffee", "harubang", "flower"];
     const rnd = (a, b) => a + Math.random() * (b - a);
     const pickOf = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    // [2026-05-30] 균등 분포: 순수 랜덤은 뭉치고 빈 곳이 생김 → 화면을 격자로 나눠
+    // 셀마다 1개씩(격자-지터/stratified) 배치해 전체에 고르게 깔되, 셀 안 지터로 자연스럽게.
+    const COLS = 5, ROWS = 4;                 // 20칸 ≥ 18개
+    const cells = [];
+    for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) cells.push([c, r]);
+    for (let i = cells.length - 1; i > 0; i--) {   // 셔플(어느 칸을 비울지 랜덤)
+      const j = Math.floor(Math.random() * (i + 1));
+      [cells[i], cells[j]] = [cells[j], cells[i]];
+    }
+    const L0 = 1, L1 = 92, T0 = 2, T1 = 88;
+    const cw = (L1 - L0) / COLS, ch = (T1 - T0) / ROWS;
+    const N = Math.min(18, cells.length);
     let uid = 0;
-    for (let i = 0; i < 18; i++) {
+    for (let i = 0; i < N; i++) {
+      const [c, r] = cells[i];
       const name = pickOf(POOL);
       const size = (name === "sparkle") ? rnd(22, 34) : rnd(40, 68);
-      const dx = (Math.random() < 0.5 ? -1 : 1) * rnd(45, 115);   // 큰 드리프트 범위
-      const dy = (Math.random() < 0.5 ? -1 : 1) * rnd(40, 100);
+      const dx = (Math.random() < 0.5 ? -1 : 1) * rnd(30, 70);    // 드리프트 축소(균등 유지)
+      const dy = (Math.random() < 0.5 ? -1 : 1) * rnd(28, 64);
+      const left = L0 + c * cw + rnd(0.18, 0.82) * cw;            // 셀 안 지터(가장자리 여백)
+      const top = T0 + r * ch + rnd(0.18, 0.82) * ch;
       const d = document.createElement("span");
       d.className = "jeju-sticker bling";
-      d.style.cssText = `top:${rnd(2, 88).toFixed(1)}%;left:${rnd(1, 92).toFixed(1)}%;`
+      d.style.cssText = `top:${top.toFixed(1)}%;left:${left.toFixed(1)}%;`
         + `width:${size.toFixed(0)}px;height:${size.toFixed(0)}px;`
         + `--dx:${dx.toFixed(0)}px;--dy:${dy.toFixed(0)}px;--r0:${rnd(-10, 10).toFixed(0)}deg;--r1:${rnd(-18, 18).toFixed(0)}deg;`
         + `animation-duration:${rnd(9, 18).toFixed(1)}s;animation-delay:${(-rnd(0, 12)).toFixed(1)}s`;
