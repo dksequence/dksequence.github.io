@@ -1057,10 +1057,19 @@ function renderLightbox() {
 // 이전 target="_blank" 방식은 about:blank 새 탭에서 받아 ①팝업차단 ②"보안연결 다운로드 불가" 경고를 유발했음.
 function triggerDownload(url) {
   if (!url) return;
-  const iframe = document.createElement("iframe");
-  iframe.style.display = "none";
-  iframe.src = url;
-  document.body.appendChild(iframe);
-  setTimeout(() => { try { iframe.remove(); } catch (e) {} }, 90000);
+  // [2026-05-31] Drive 대용량(>100MB) 다운로드 URL(drive.usercontent…)은 응답에 CSP:sandbox가 붙어
+  //   숨은 iframe에선 다운로드가 차단됨(빈 반응). attachment 응답이므로 사용자 클릭(제스처) 안에서
+  //   새 탭 anchor로 열면 브라우저가 바로 다운로드하고 갤러리 페이지는 그대로 유지된다.
+  try {
+    const a = document.createElement("a");
+    a.href = url;
+    a.target = "_blank";
+    a.rel = "noopener";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { try { a.remove(); } catch (e) {} }, 1500);
+  } catch (e) {
+    try { window.open(url, "_blank"); } catch (e2) { window.location.href = url; }
+  }
 }
 
