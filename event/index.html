@@ -136,14 +136,42 @@
 
 <script>
   const GAS_URL = "https://script.google.com/macros/s/AKfycby85mMvihHsSClT73x4rECt3DG4_sH_oNWJqifVclmfauh2eqsVUPgrTdzMaF6LJFMqcw/exec";
-  // [방문집계] 비밀게시판 방문 기록(독립 카운터 GAS, no-cors fire-and-forget). 대시보드=카운터 GAS ?page=board.
+  // [방문집계] 비밀게시판 방문 기록(독립 카운터 GAS, no-cors). 디바이스/유입/브라우저/언어/지역 포함.
   (function(){
     try{
+      var key = "event";
       var VC = "https://script.google.com/macros/s/AKfycbxTGZyYJq-q-e0wVvQq2H9GAO5uTEX9s5B8lrxaeaEuAw2fwBWh3G5O83pWwI8RF4pB5A/exec";
+      var ua = navigator.userAgent || "";
+      var device = (/iPad|Tablet|PlayBook|Silk/.test(ua) || (/Android/.test(ua) && !/Mobile/.test(ua))) ? "tablet"
+                 : /Mobi|Android|iPhone|iPod/.test(ua) ? "mobile" : "pc";
+      var browser = /KAKAOTALK/i.test(ua) ? "카카오톡인앱" : /NAVER/i.test(ua) ? "네이버앱" : /Instagram/i.test(ua) ? "인스타앱"
+                 : /Edg\//.test(ua) ? "Edge" : /SamsungBrowser/.test(ua) ? "삼성인터넷" : /Whale/.test(ua) ? "웨일"
+                 : /FxiOS|Firefox/.test(ua) ? "Firefox" : /CriOS|Chrome/.test(ua) ? "Chrome" : /Safari/.test(ua) ? "Safari" : "기타";
+      var l = (navigator.language || "").toLowerCase();
+      var lang = l.indexOf("ko")===0 ? "ko" : l.indexOf("zh")===0 ? "zh" : l.indexOf("ja")===0 ? "ja" : l.indexOf("en")===0 ? "en" : (l ? l.slice(0,2) : "기타");
+      var rf = document.referrer || "";
+      var src = rf==="" ? "직접" : /naver\./i.test(rf) ? "네이버" : /(kakao|kko|daum)/i.test(rf) ? "카카오/다음" : /instagram/i.test(rf) ? "인스타"
+              : /google\./i.test(rf) ? "구글" : /(facebook|fb\.)/i.test(rf) ? "페이스북" : /youtu/i.test(rf) ? "유튜브" : "기타";
       var dt = new Date(), ds = dt.getFullYear() + ("0"+(dt.getMonth()+1)).slice(-2) + ("0"+dt.getDate()).slice(-2);
-      var lk = "dkvc_event_" + ds, uniq = false;
+      var lk = "dkvc_" + key + "_" + ds, uniq = false;
       try { if (!localStorage.getItem(lk)) { localStorage.setItem(lk, "1"); uniq = true; } } catch(e){ uniq = true; }
-      fetch(VC + "?action=hit&page=event" + (uniq ? "&u=1" : ""), { mode:"no-cors", keepalive:true }).catch(function(){});
+      var sent = false;
+      function send(region){
+        if (sent) return; sent = true;
+        var q = "?action=hit&page=" + encodeURIComponent(key) + (uniq ? "&u=1" : "")
+              + "&dev=" + device + "&br=" + encodeURIComponent(browser) + "&lang=" + lang
+              + "&ref=" + encodeURIComponent(src) + "&region=" + encodeURIComponent(region || "미상");
+        fetch(VC + q, { mode:"no-cors", keepalive:true }).catch(function(){});
+      }
+      setTimeout(function(){ send("미상"); }, 2200);
+      fetch("https://ipwho.is/", { cache:"no-store" }).then(function(r){ return r.json(); }).then(function(g){
+        var region = "해외";
+        if (g && g.success !== false && g.country_code === "KR") {
+          var s = ((g.region||"") + " " + (g.city||"")).toLowerCase();
+          region = /jeju|제주/.test(s) ? "제주도" : "대한민국(제주외)";
+        } else if (!g || g.success === false) { region = "미상"; }
+        send(region);
+      }).catch(function(){ send("미상"); });
     } catch(e){}
   })();
   const $ = (id) => document.getElementById(id);
