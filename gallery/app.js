@@ -45,7 +45,9 @@ function visitBeacon(key){
                : /FxiOS|Firefox/.test(ua) ? "Firefox" : /CriOS|Chrome/.test(ua) ? "Chrome" : /Safari/.test(ua) ? "Safari" : "기타";
     var l = (navigator.language || "").toLowerCase();
     var lang = l.indexOf("ko")===0 ? "ko" : l.indexOf("zh")===0 ? "zh" : l.indexOf("ja")===0 ? "ja" : l.indexOf("en")===0 ? "en" : (l ? l.slice(0,2) : "기타");
-    var rf = document.referrer || "";
+    // 단축 프로모 URL(/sNN)이 넘긴 원 referrer 우선(리다이렉트로 referrer 유실 방지). 없으면 실제 referrer.
+    var rf = (params.get("via") !== null) ? (params.get("via") || "") : (document.referrer || "");
+    try { if (rf && rf.indexOf(location.origin) === 0) rf = ""; } catch(e){}   // 같은 사이트/리다이렉터에서 온 건 직접으로
     var src = rf==="" ? "직접" : /naver\./i.test(rf) ? "네이버" : /(kakao|kko|daum)/i.test(rf) ? "카카오/다음" : /instagram/i.test(rf) ? "인스타"
             : /google\./i.test(rf) ? "구글" : /(facebook|fb\.)/i.test(rf) ? "페이스북" : /youtu/i.test(rf) ? "유튜브" : "기타";
     var dt = new Date(), ds = dt.getFullYear() + ("0"+(dt.getMonth()+1)).slice(-2) + ("0"+dt.getDate()).slice(-2);
