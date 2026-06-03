@@ -70,6 +70,18 @@ function visitBeacon(key){
       } else if (!g || g.success === false) { region = "미상"; }
       send(region);
     }).catch(function(){ send("미상"); });
+
+    // 체류시간: 떠날 때(또는 화면 숨김) 경과초 1회 전송. 2초 미만(바운스)은 무시, 30분 캡.
+    var _t0 = Date.now(), _dwSent = false;
+    function sendDwell(){
+      if (_dwSent) return;
+      var sec = Math.min(1800, Math.round((Date.now() - _t0) / 1000));
+      if (sec < 2) return;
+      _dwSent = true;
+      fetch(VC + "?action=dwell&page=" + encodeURIComponent(key) + "&sec=" + sec, { mode:"no-cors", keepalive:true }).catch(function(){});
+    }
+    document.addEventListener("visibilitychange", function(){ if (document.visibilityState === "hidden") sendDwell(); });
+    window.addEventListener("pagehide", sendDwell);
   } catch(e){}
 }
 // 테마: 기본 'jeju'(밝은 제주 — 납품·샘플 공통 기본). 'lux'(럭셔리 다크)는 &theme=lux 로 명시할 때만.
