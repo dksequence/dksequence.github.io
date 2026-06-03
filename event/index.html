@@ -136,6 +136,16 @@
 
 <script>
   const GAS_URL = "https://script.google.com/macros/s/AKfycby85mMvihHsSClT73x4rECt3DG4_sH_oNWJqifVclmfauh2eqsVUPgrTdzMaF6LJFMqcw/exec";
+  // [방문집계] 비밀게시판 방문 기록(독립 카운터 GAS, no-cors fire-and-forget). 대시보드=카운터 GAS ?page=board.
+  (function(){
+    try{
+      var VC = "https://script.google.com/macros/s/AKfycbxTGZyYJq-q-e0wVvQq2H9GAO5uTEX9s5B8lrxaeaEuAw2fwBWh3G5O83pWwI8RF4pB5A/exec";
+      var dt = new Date(), ds = dt.getFullYear() + ("0"+(dt.getMonth()+1)).slice(-2) + ("0"+dt.getDate()).slice(-2);
+      var lk = "dkvc_event_" + ds, uniq = false;
+      try { if (!localStorage.getItem(lk)) { localStorage.setItem(lk, "1"); uniq = true; } } catch(e){ uniq = true; }
+      fetch(VC + "?action=hit&page=event" + (uniq ? "&u=1" : ""), { mode:"no-cors", keepalive:true }).catch(function(){});
+    } catch(e){}
+  })();
   const $ = (id) => document.getElementById(id);
   const params = new URLSearchParams(location.search);
   const RESNO = (params.get("c") || "").trim();
