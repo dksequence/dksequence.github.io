@@ -24,6 +24,20 @@ const PREVIEW = PREVIEW_PARAM === "1" || OWNER_FLAG;
 // 상품페이지 "샘플 보기" 대상이자 디자인 다듬기용 미리보기. 실제 갤러리와 같은 코드/CSS를 공유.
 const DEMO = params.get("demo") === "1";
 const SAMPLE = (params.get("sample") || "").trim();       // ?demo=1&sample=별장화보 → 해당 화보 폴더 샘플(GAS getSampleGallery)
+
+// [방문집계] 샘플/홍보(?demo=1) 페이지만 독립 카운터 GAS로 기록(no-cors fire-and-forget).
+//  실납품 갤러리(?c=&t=)는 firstAccessAt로 별도 추적하므로 제외. 대시보드=카운터 GAS ?page=board.
+(function(){
+  try{
+    if (!DEMO) return;
+    var key = "sample:" + (SAMPLE || "demo");
+    var VC = "https://script.google.com/macros/s/AKfycbxTGZyYJq-q-e0wVvQq2H9GAO5uTEX9s5B8lrxaeaEuAw2fwBWh3G5O83pWwI8RF4pB5A/exec";
+    var dt = new Date(), ds = dt.getFullYear() + ("0"+(dt.getMonth()+1)).slice(-2) + ("0"+dt.getDate()).slice(-2);
+    var lk = "dkvc_" + key + "_" + ds, uniq = false;
+    try { if (!localStorage.getItem(lk)) { localStorage.setItem(lk, "1"); uniq = true; } } catch(e){ uniq = true; }
+    fetch(VC + "?action=hit&page=" + encodeURIComponent(key) + (uniq ? "&u=1" : ""), { mode:"no-cors", keepalive:true }).catch(function(){});
+  } catch(e){}
+})();
 // 테마: 기본 'jeju'(밝은 제주 — 납품·샘플 공통 기본). 'lux'(럭셔리 다크)는 &theme=lux 로 명시할 때만.
 const THEME = (params.get("theme") || "jeju").toLowerCase();
 
