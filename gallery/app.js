@@ -25,19 +25,51 @@ const PREVIEW = PREVIEW_PARAM === "1" || OWNER_FLAG;
 const DEMO = params.get("demo") === "1";
 const SAMPLE = (params.get("sample") || "").trim();       // ?demo=1&sample=별장화보 → 해당 화보 폴더 샘플(GAS getSampleGallery)
 
-// [방문집계] 샘플/홍보(?demo=1) 페이지만 독립 카운터 GAS로 기록(no-cors fire-and-forget).
+// [방문집계] 샘플/홍보(?demo=1) 페이지만 독립 카운터 GAS로 기록(no-cors). 디바이스/유입/브라우저/언어/지역 포함.
 //  실납품 갤러리(?c=&t=)는 firstAccessAt로 별도 추적하므로 제외. 대시보드=카운터 GAS ?page=board.
 (function(){
   try{
-    if (!DEMO) return;
-    var key = "sample:" + (SAMPLE || "demo");
+    var key = DEMO ? ("sample:" + (SAMPLE || "demo")) : null;
+    if (!key) return;
+    visitBeacon(key);
+  } catch(e){}
+})();
+function visitBeacon(key){
+  try{
     var VC = "https://script.google.com/macros/s/AKfycbxTGZyYJq-q-e0wVvQq2H9GAO5uTEX9s5B8lrxaeaEuAw2fwBWh3G5O83pWwI8RF4pB5A/exec";
+    var ua = navigator.userAgent || "";
+    var device = (/iPad|Tablet|PlayBook|Silk/.test(ua) || (/Android/.test(ua) && !/Mobile/.test(ua))) ? "tablet"
+               : /Mobi|Android|iPhone|iPod/.test(ua) ? "mobile" : "pc";
+    var browser = /KAKAOTALK/i.test(ua) ? "카카오톡인앱" : /NAVER/i.test(ua) ? "네이버앱" : /Instagram/i.test(ua) ? "인스타앱"
+               : /Edg\//.test(ua) ? "Edge" : /SamsungBrowser/.test(ua) ? "삼성인터넷" : /Whale/.test(ua) ? "웨일"
+               : /FxiOS|Firefox/.test(ua) ? "Firefox" : /CriOS|Chrome/.test(ua) ? "Chrome" : /Safari/.test(ua) ? "Safari" : "기타";
+    var l = (navigator.language || "").toLowerCase();
+    var lang = l.indexOf("ko")===0 ? "ko" : l.indexOf("zh")===0 ? "zh" : l.indexOf("ja")===0 ? "ja" : l.indexOf("en")===0 ? "en" : (l ? l.slice(0,2) : "기타");
+    var rf = document.referrer || "";
+    var src = rf==="" ? "직접" : /naver\./i.test(rf) ? "네이버" : /(kakao|kko|daum)/i.test(rf) ? "카카오/다음" : /instagram/i.test(rf) ? "인스타"
+            : /google\./i.test(rf) ? "구글" : /(facebook|fb\.)/i.test(rf) ? "페이스북" : /youtu/i.test(rf) ? "유튜브" : "기타";
     var dt = new Date(), ds = dt.getFullYear() + ("0"+(dt.getMonth()+1)).slice(-2) + ("0"+dt.getDate()).slice(-2);
     var lk = "dkvc_" + key + "_" + ds, uniq = false;
     try { if (!localStorage.getItem(lk)) { localStorage.setItem(lk, "1"); uniq = true; } } catch(e){ uniq = true; }
-    fetch(VC + "?action=hit&page=" + encodeURIComponent(key) + (uniq ? "&u=1" : ""), { mode:"no-cors", keepalive:true }).catch(function(){});
+    var sent = false;
+    function send(region){
+      if (sent) return; sent = true;
+      var q = "?action=hit&page=" + encodeURIComponent(key) + (uniq ? "&u=1" : "")
+            + "&dev=" + device + "&br=" + encodeURIComponent(browser) + "&lang=" + lang
+            + "&ref=" + encodeURIComponent(src) + "&region=" + encodeURIComponent(region || "미상");
+      fetch(VC + q, { mode:"no-cors", keepalive:true }).catch(function(){});
+    }
+    setTimeout(function(){ send("미상"); }, 2200);     // geo 지연/실패 시 미상으로 전송
+    fetch("https://ipwho.is/", { cache:"no-store" }).then(function(r){ return r.json(); }).then(function(g){
+      var region = "해외";
+      if (g && g.success !== false && g.country_code === "KR") {
+        var s = ((g.region||"") + " " + (g.city||"")).toLowerCase();
+        region = /jeju|제주/.test(s) ? "제주도" : "대한민국(제주외)";
+      } else if (!g || g.success === false) { region = "미상"; }
+      send(region);
+    }).catch(function(){ send("미상"); });
   } catch(e){}
-})();
+}
 // 테마: 기본 'jeju'(밝은 제주 — 납품·샘플 공통 기본). 'lux'(럭셔리 다크)는 &theme=lux 로 명시할 때만.
 const THEME = (params.get("theme") || "jeju").toLowerCase();
 
