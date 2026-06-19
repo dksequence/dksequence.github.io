@@ -268,10 +268,6 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 .badge-edit-wait{background:rgba(240,165,0,.12);color:var(--warn);}
 .badge-sent{background:rgba(171,199,255,.1);color:var(--primary);}
 .badge-unsent{background:rgba(255,255,255,.06);color:var(--on-surface-dim);}
-.badge-sms-queued,.badge-sms-locked,.badge-sms-retry_wait{background:rgba(240,165,0,.12);color:var(--warn);}
-.badge-sms-sent{background:rgba(78,203,161,.12);color:var(--success);}
-.badge-sms-failed{background:rgba(255,107,107,.12);color:var(--danger);}
-.badge-sms-empty{background:rgba(255,255,255,.06);color:var(--on-surface-dim);}
 .delivery-btn{width:100%;padding:16px;border-radius:.75rem;font-size:20px;font-weight:700;
   border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .2s;}
 .delivery-btn:disabled{opacity:.3;cursor:not-allowed;}
@@ -287,7 +283,7 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
 <!-- ════════════════ 대시보드 ════════════════ -->
 <div id="s-dashboard" class="screen active">
   <div class="topbar">
-    <div class="topbar-brand">DKSEQUENCE 제주 중문별장 RUNS V.4.19</div>
+    <div class="topbar-brand">DKSEQUENCE 제주 중문별장 RUNS V.4.17</div>
     <div class="topbar-date-row">
       <button class="today-btn" onclick="goToToday()">TODAY</button>
       <button class="date-nav-btn" onclick="changeDate(-1)">◀</button>
@@ -577,7 +573,6 @@ html,body{height:100%;background:#000;font-family:'Inter',sans-serif;color:#fff;
     <div class="detail-row"><span class="detail-key">전화번호</span><span class="detail-val" id="dm-phone"></span></div>
     <div class="detail-row"><span class="detail-key">이메일</span><span class="detail-val" id="dm-email"></span></div>
     <div class="detail-row"><span class="detail-key">결제방법</span><span class="detail-val" id="dm-payment"></span></div>
-    <div class="detail-row"><span class="detail-key">화보금액</span><span class="detail-val" id="dm-hwabo"></span></div>
     <div class="detail-row"><span class="detail-key">개인정보동의</span><span class="detail-val" id="dm-privacy"></span></div>
     <div class="detail-row"><span class="detail-key">마케팅동의</span><span class="detail-val" id="dm-sns"></span></div>
     <div class="detail-row"><span class="detail-key">메모</span><span class="detail-val" id="dm-memo"></span></div>
@@ -1187,7 +1182,7 @@ function renderList(reservations) {
       '<div class="avatar ' + sourceClass + '">' + avatarText + '</div>' +
       '<div class="card-info">' +
         '<div class="card-name">' + (r.spName || r.name) + '</div>' +
-        '<div class="card-meta">' + (r.displayProduct || r.product) + ' · ' + r.people + '인 · ' + r.time + '</div>' +
+        '<div class="card-meta">' + r.product + ' · ' + r.people + '인 · ' + r.time + '</div>' +
         '<div class="card-resno">' + r.resno + '</div>' +
       '</div>' +
       '<div class="card-right">' +
@@ -1221,13 +1216,11 @@ function showDetail(r) {
   }
   document.getElementById('dm-name').textContent    = r.name || '이름없음';
   document.getElementById('dm-resno').textContent   = r.resno;
-  document.getElementById('dm-product').innerHTML   = val(r.displayProduct || r.product);
+  document.getElementById('dm-product').innerHTML   = val(r.product);
   document.getElementById('dm-people').innerHTML    = val(r.people ? r.people + '인 · ' + r.time : '');
   document.getElementById('dm-phone').innerHTML     = val(r.phone);
   document.getElementById('dm-email').innerHTML     = val(r.email);
   document.getElementById('dm-payment').innerHTML   = val(r.type);
-  // 화보금액(2차/SP원장 화보 옵션 단가) — GAS item.spHwaboAmount 제공. 0/없으면 미입력.
-  document.getElementById('dm-hwabo').innerHTML     = val((r.spHwaboAmount && r.spHwaboAmount > 0) ? Number(r.spHwaboAmount).toLocaleString() + '원' : '');
   document.getElementById('dm-privacy').innerHTML   = consent(r.privacyConsent);
   document.getElementById('dm-sns').innerHTML       = consent(r.snsConsent);
   document.getElementById('dm-memo').innerHTML      = val(r.memo);
@@ -1282,16 +1275,7 @@ function goCheckin(r) {
   document.getElementById('ci-people').textContent   = r.people + '인';
   document.getElementById('ci-time').textContent     = r.time;
   var notice = document.getElementById('realname-notice');
-  // 현장 신규/체험(source A/V)은 사전기록으로 이미 입력·저장된 고객 → 재방문 시 저장값 복원.
-  // (이 분기 없으면 빈칸으로 덮어써 '껍데기'로 보이고, 재체크인 시 실명까지 날아갈 수 있었음)
-  var isPreRecorded = (r.source === 'A' || r.source === 'V');
-  if (isPreRecorded) {
-    document.getElementById('ci-realname').value = r.name  || '';
-    document.getElementById('ci-email').value    = r.email || '';
-    document.getElementById('ci-phone').value    = r.phone || '';
-    notice.textContent = '사전 기록된 정보입니다 (확인·수정 가능)';
-    notice.style.color = '#4ade80';
-  } else if (r.spVerified) {
+  if (r.spVerified) {
     document.getElementById('ci-realname').value = r.spName  || '';
     document.getElementById('ci-email').value    = r.spEmail || '';
     document.getElementById('ci-phone').value    = r.spPhone || '';
@@ -1306,14 +1290,13 @@ function goCheckin(r) {
   }
   document.getElementById('ci-email2').value   = '';
   document.getElementById('ci-email3').value   = '';
-  document.getElementById('ci-memo').value     = isPreRecorded ? (r.memo || '') : '';
+  document.getElementById('ci-memo').value     = '';
   // 납품 체크박스 초기화 (이메일 값에 맞춰 동기화)
   document.getElementById('ci-email-del1').checked = !!(document.getElementById('ci-email').value.trim());
   document.getElementById('ci-email-del2').checked = false;
   document.getElementById('ci-email-del3').checked = false;
-  // 동의 토글 — 사전기록이면 저장값 복원, 신규 체크인은 기본(개인정보 ON·SNS OFF)
-  document.getElementById('toggle-privacy').classList.toggle('on', isPreRecorded ? (r.privacyConsent === 'Y') : true);
-  document.getElementById('toggle-sns').classList.toggle('on', isPreRecorded ? (r.snsConsent === 'Y') : false);
+  document.getElementById('toggle-privacy').classList.add('on');
+  document.getElementById('toggle-sns').classList.remove('on');
   show('s-checkin');
 }
 
@@ -2045,19 +2028,6 @@ function renderDeliveryList(items) {
     var sentBadge = isSent
       ? '<span class="delivery-badge badge-sent">📧 ' + item.deliveryStatus + '</span>'
       : '<span class="delivery-badge badge-unsent">📧 미발송</span>';
-
-    var smsStatus = item.smsStatus || '';
-    var smsLabelMap = {
-      queued: '예약',
-      locked: '발송중',
-      retry_wait: '재시도',
-      sent: '완료',
-      failed: '실패',
-      cancelled: '취소'
-    };
-    var smsBadge = smsStatus
-      ? '<span class="delivery-badge badge-sms-' + smsStatus + '">문자 ' + (smsLabelMap[smsStatus] || smsStatus) + '</span>'
-      : '<span class="delivery-badge badge-sms-empty">문자 미예약</span>';
     
     // 버튼 결정
     var btnHtml = '';
@@ -2076,14 +2046,14 @@ function renderDeliveryList(items) {
         '<div class="avatar ' + sourceClass + '" style="margin-right:15px; margin-top:5px; width:36px; height:36px; font-size:16px;">' + src + '</div>' +
         '<div style="flex:1;">' +
           '<div class="delivery-card-name">' + (item.realName || item.maskedName) + '</div>' +
-          '<div class="delivery-card-meta">' + (item.displayProduct || item.product) + ' · ' + item.people + '인 · ' + item.time + '</div>' +
+          '<div class="delivery-card-meta">' + item.product + ' · ' + item.people + '인 · ' + item.time + '</div>' +
           '<div class="delivery-card-resno">' + item.resno + (item.checkinAt ? ' (체크인: ' + item.checkinAt + ')' : ' [미입실]') + '</div>' +
           (item.email  ? '<div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:2px;">✉ ' + item.email  + '</div>' : '') +
           (item.email2 ? '<div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:1px;">✉ ' + item.email2 + '</div>' : '') +
           (item.email3 ? '<div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:1px;">✉ ' + item.email3 + '</div>' : '') +
         '</div>' +
       '</div>' +
-      '<div class="delivery-status-row">' + editBadge + sentBadge + smsBadge + '</div>' +
+      '<div class="delivery-status-row">' + editBadge + sentBadge + '</div>' +
       btnHtml;
     
     list.appendChild(card);
@@ -2147,7 +2117,6 @@ function sendDelivery(resno) {
 
 function closeDEM() {
   document.getElementById('delivery-email-modal').style.display = 'none';
-  var ce = document.getElementById('dem-custom'); if (ce) ce.value = '';
   DEM_RESNO = null;
 }
 
@@ -2155,16 +2124,7 @@ function confirmDEM() {
   var checkboxes = document.querySelectorAll('#dem-list .dem-check:checked');
   var selected = [];
   checkboxes.forEach(function(cb){ if (cb.value) selected.push(cb.value); });
-  // 직접 입력한 추가 이메일(쉼표 구분·형식검증) 합치기 — 테스트는 내 메일만 입력
-  var customEl = document.getElementById('dem-custom');
-  if (customEl && customEl.value) {
-    customEl.value.split(',').forEach(function(e){
-      e = e.trim();
-      if (e && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) selected.push(e);
-    });
-  }
-  selected = selected.filter(function(v, i){ return selected.indexOf(v) === i; }); // 중복 제거
-  if (!selected.length) { showToast('발송할 이메일을 1개 이상 선택하거나 입력하세요'); return; }
+  if (!selected.length) { showToast('발송할 이메일을 1개 이상 선택하세요'); return; }
 
   var sendBtn = document.querySelector('#delivery-email-modal .dem-send');
   sendBtn.disabled = true;
@@ -2177,9 +2137,7 @@ function confirmDEM() {
       showToast('발송 실패: ' + (err ? err.message : res.error));
       return;
     }
-    var smsText = res.smsQueue && res.smsQueue.ok ? ' · 문자 예약됨' : '';
-    showToast('✅ 이메일 발송 완료! (' + selected.length + '개)' + smsText);
-    try { new Audio('/sound/delivery.mp3').play().catch(function(){}); } catch (e) {}
+    showToast('✅ 이메일 발송 완료! (' + selected.length + '개)');
     closeDEM();
     loadDeliveryList();
   });
@@ -2247,11 +2205,6 @@ function submitCheckin() {
   <div class="dem-box">
     <div class="dem-title">📬 납품 이메일 선택</div>
     <div id="dem-list"><!-- JS로 동적 생성 --></div>
-    <div class="dem-row" style="gap:10px;">
-      <span class="dem-label" style="flex-shrink:0;margin:0;">＋ 직접 입력</span>
-      <input id="dem-custom" type="text" autocomplete="off" placeholder="추가 이메일 (쉼표로 여러 개)" style="flex:1;min-width:0;padding:9px 11px;border-radius:.5rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:#fff;font-size:14px;">
-    </div>
-    <div style="font-size:12px;color:rgba(255,255,255,.4);margin-top:6px;line-height:1.5;">고객 이메일 체크를 해제하고 내 메일만 입력하면 나에게만 발송됩니다(테스트). 확인 후 <b>재발송</b>으로 실제 고객에게 보내세요.</div>
     <div class="dem-actions">
       <button class="dem-cancel" onclick="closeDEM()">취소</button>
       <button class="dem-send" onclick="confirmDEM()">발송</button>
