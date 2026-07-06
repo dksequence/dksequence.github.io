@@ -1179,6 +1179,9 @@ function _periodForMode() {
   return { from: `${y}-${pad(mo)}-01`, to: `${y}-${pad(mo)}-${pad(last)}` };
 }
 
+// 내장 기본 수신 이메일(저장값 없을 때 자동 표기 — 발송 시 수정·삭제 가능)
+const DEFAULT_RPT_EMAILS = ['kitan98@hanmail.net','admin@discover-jeju.com'];
+
 function openEmailModal() {
   const p = _periodForMode();
   document.getElementById('ef-from').value = p.from;
@@ -1186,9 +1189,10 @@ function openEmailModal() {
   document.getElementById('send-status').textContent = '';
   document.getElementById('send-btn').disabled = false;
 
-  // 기본값 이메일 불러오기(없으면 빈 1칸)
+  // 기본값 이메일 불러오기(저장값 없으면 내장 디폴트 2개)
   const saved = localStorage.getItem('rpt_emails');
-  const emails = saved ? JSON.parse(saved) : [''];
+  let emails = saved ? JSON.parse(saved) : DEFAULT_RPT_EMAILS.slice();
+  if (!emails.length) emails = DEFAULT_RPT_EMAILS.slice();
   const wrap = document.getElementById('email-list-wrap');
   wrap.innerHTML = '';
   emails.forEach(e => _appendEmailRow(e));
