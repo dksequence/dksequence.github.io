@@ -79,9 +79,10 @@
     .retry-btn:hover { background:var(--s3); }
 
     /* ── CARDS ── */
-    .cards { display:grid; grid-template-columns:3fr 3fr 5fr 3fr; gap:10px; margin-bottom:12px; }
-    @media(max-width:900px){ .cards{ grid-template-columns:repeat(2,1fr); } }
-    @media(max-width:500px){ .cards{ grid-template-columns:1fr 1fr; } }
+    .cards { display:grid; grid-template-columns:repeat(5, 1fr); gap:10px; margin-bottom:12px; }
+    @media(max-width:1024px){ .cards{ grid-template-columns:repeat(3, 1fr); } }
+    @media(max-width:768px){ .cards{ grid-template-columns:repeat(2, 1fr); } }
+    @media(max-width:480px){ .cards{ grid-template-columns:1fr; } }
 
     .card {
       background:var(--s1); border:1px solid var(--border);
@@ -289,6 +290,8 @@
     #report-print-area .rpt-rate-core { background:#fff !important; }
     #report-print-area .rpt-analytics { border-top-color:#e0e0e0; }
     #report-print-area .rpt-memo { color:#b8860b !important; }
+    #report-print-area .rpt-settlement-card { background:#f9fafb !important; border-color:#e5e7eb !important; color:#1f2937 !important; }
+    #report-print-area .rpt-settlement-card table { color:#1f2937 !important; }
 
     /* ── 프린트 ── */
     @media print {
@@ -306,6 +309,8 @@
       .rpt-blbl,.rpt-bval,.rpt-hlabel,.rpt-hpct,.rpt-rate-lbl,.rpt-meta { color:#666 !important; }
       .rpt-btrack,.rpt-htrack { background:#ddd !important; }
       .rpt-rate-core { background:#f0f0f0 !important; }
+      .rpt-settlement-card { background:#f9fafb !important; border-color:#ddd !important; color:#000 !important; }
+      .rpt-settlement-card table { color:#000 !important; }
     }
   </style>
 </head>
@@ -389,6 +394,12 @@
         <div class="card-label">체크인율</div>
         <div class="card-value" id="c-checkin">—</div>
         <div class="card-sub" id="c-checkin-sub"></div>
+      </div>
+      <div class="card" style="--cc:linear-gradient(135deg,#10b981,#059669)">
+        <div class="card-icon">💸</div>
+        <div class="card-label">실지급액 (입금총액)</div>
+        <div class="card-value" id="c-payment">—</div>
+        <div class="card-sub" id="c-payment-sub"></div>
       </div>
     </div>
 
@@ -604,8 +615,11 @@ const MODE_COLOR = {
 const PALETTE = ['#5b9cf6','#a78bfa','#f59e0b','#34d399','#fb7185','#38bdf8','#fb923c','#a3e635','#e879f9','#67e8f9'];
 
 // ── 상태 ──────────────────────────────────────────────────────
-let mode      = 'daily';
-let target    = todayStr();
+let mode      = sessionStorage.getItem('stats_mode') || 'daily';
+let target    = sessionStorage.getItem('stats_target') || 
+                (mode === 'daily'   ? todayStr()    :
+                 mode === 'weekly'  ? mondayStr(todayStr()) :
+                                      thisMonthStr());
 let charts    = {};
 let _lastData = null;
 
@@ -649,6 +663,8 @@ function switchMode(m) {
   target = m === 'daily'   ? todayStr()    :
            m === 'weekly'  ? mondayStr(todayStr()) :
                              thisMonthStr();
+  sessionStorage.setItem('stats_mode', m);
+  sessionStorage.setItem('stats_target', target);
   updateModeUI();
   loadStats();
 }
@@ -665,6 +681,7 @@ function navigate(dir) {
     const d = new Date(y, mo-1+dir, 1);
     target = `${d.getFullYear()}-${pad(d.getMonth()+1)}`;
   }
+  sessionStorage.setItem('stats_target', target);
   document.getElementById('periodLabel').textContent = periodDisplay(mode, target);
   loadStats();
 }
@@ -673,6 +690,7 @@ function goToday() {
   target = mode === 'daily'  ? todayStr()    :
            mode === 'weekly' ? mondayStr(todayStr()) :
                                thisMonthStr();
+  sessionStorage.setItem('stats_target', target);
   document.getElementById('periodLabel').textContent = periodDisplay(mode, target);
   loadStats();
 }
@@ -765,10 +783,23 @@ function renderDashboard(d) {
     document.getElementById('c-revenue-sub').innerHTML = s.count
       ? `<span style="color:#fff">1건 평균 ${wonFmt(Math.round(s.revenue/s.count))}</span>`
       : '';
+
+    const vat = Math.round(s.revenue * 0.1);
+    const cardFee = Math.round(s.revenue * 0.03);
+    const netTotal = s.revenue - vat - cardFee;
+    const halfShare = Math.round(netTotal * 0.5);
+    const withholdingTax = Math.floor(halfShare * 0.033);
+    const finalPayment = halfShare - withholdingTax;
+
+    document.getElementById('c-payment').textContent = wonFmt(finalPayment);
+    document.getElementById('c-payment-sub').innerHTML =
+      `<span style="color:#a7f3d0;cursor:pointer;text-decoration:underline;" onclick="alert('정산 상세 내역\\n총매출: ${wonFmt(s.revenue)}\\n부가세(10%): -${wonFmt(vat)}\\n카드수수료(3%): -${wonFmt(cardFee)}\\n정산대상액: ${wonFmt(netTotal)}\\n50% 지분: ${wonFmt(halfShare)}\\n원천세(3.3%): -${wonFmt(withholdingTax)}\\n최종 실지급액: ${wonFmt(finalPayment)}')">정산 상세 내역 보기 ⓘ</span>`;
   } else {
     document.getElementById('c-revenue').textContent = '—';
     document.getElementById('c-revenue-sub').innerHTML =
       '<span style="font-size:10px;color:var(--muted)">⚙ 예약 시트에 결제금액 컬럼 필요</span>';
+    document.getElementById('c-payment').textContent = '—';
+    document.getElementById('c-payment-sub').innerHTML = '';
   }
 
   setText('c-checkin',     s.checkinRate + '%');
@@ -1284,6 +1315,13 @@ function buildReportHtml(d) {
   const totalRev = rows.reduce((a,c) => a + (c.revenue||0), 0);
   const totalDk  = rows.reduce((a,c) => a + (c.dk||0),      0);
 
+  const vat = Math.round(totalRev * 0.1);
+  const cardFee = Math.round(totalRev * 0.03);
+  const netTotal = totalRev - vat - cardFee;
+  const halfShare = Math.round(netTotal * 0.5);
+  const withholdingTax = Math.floor(halfShare * 0.033);
+  const finalPayment = halfShare - withholdingTax;
+
   return `
   <div class="rpt-header-row">
     <div>
@@ -1295,11 +1333,25 @@ function buildReportHtml(d) {
       <div>발송처: DKsequence</div>
     </div>
   </div>
-  <div class="rpt-summary">
+  <div class="rpt-summary" style="display:flex; gap:16px; flex-wrap:wrap;">
     <div><div class="rpt-s-label">예약 건수</div><div class="rpt-s-val" style="color:#5b9cf6">${s.count}건</div></div>
     <div><div class="rpt-s-label">총 인원</div><div class="rpt-s-val" style="color:#34d399">${s.people}명</div></div>
     <div><div class="rpt-s-label">매출</div><div class="rpt-s-val" style="color:#f59e0b">${wonFmt(totalRev)}</div></div>
-    <div><div class="rpt-s-label">DK</div><div class="rpt-s-val" style="color:#4ade80">${wonFmt(totalDk)}</div></div>
+    <div><div class="rpt-s-label">DK (50%)</div><div class="rpt-s-val" style="color:#4ade80">${wonFmt(totalDk)}</div></div>
+    <div><div class="rpt-s-label">실지급액</div><div class="rpt-s-val" style="color:#10b981">${wonFmt(finalPayment)}</div></div>
+  </div>
+
+  <div class="rpt-settlement-card" style="margin-top:15px; margin-bottom:20px; max-width: 320px; background:var(--s2); border:1px solid var(--border); border-radius:10px; padding:16px; color:var(--text);">
+    <div style="font-size:12px; font-weight:800; border-bottom:1px solid var(--border); padding-bottom:6px; margin-bottom:8px;">🧾 정산 상세 내역 (원천세 3.3% 공제)</div>
+    <table style="width:100%; font-size:12px; border-collapse:collapse; color:var(--text);">
+      <tr><td style="padding:4px 0; color:var(--sub);">총매출</td><td style="padding:4px 0; text-align:right; font-weight:700;">${wonFmt(totalRev)}</td></tr>
+      <tr><td style="padding:4px 0; color:var(--sub);">부가세 (10%)</td><td style="padding:4px 0; text-align:right; color:#fb7185;">-${wonFmt(vat)}</td></tr>
+      <tr><td style="padding:4px 0; color:var(--sub);">카드수수료 (3%)</td><td style="padding:4px 0; text-align:right; color:#fb7185;">-${wonFmt(cardFee)}</td></tr>
+      <tr style="border-top:1px solid var(--border); border-bottom:1px solid var(--border);"><td style="padding:6px 0; font-weight:700;">정산대상액 (총)</td><td style="padding:6px 0; text-align:right; font-weight:800;">${wonFmt(netTotal)}</td></tr>
+      <tr><td style="padding:4px 0; color:var(--sub);">50% 지분</td><td style="padding:4px 0; text-align:right; font-weight:700; color:#4ade80;">${wonFmt(halfShare)}</td></tr>
+      <tr><td style="padding:4px 0; color:var(--sub);">원천징수 (3.3%)</td><td style="padding:4px 0; text-align:right; color:#fb7185;">-${wonFmt(withholdingTax)}</td></tr>
+      <tr style="border-top:2px double var(--bd2); font-size:13px;"><td style="padding:8px 0; font-weight:900;">입금총액 (지급액)</td><td style="padding:8px 0; text-align:right; font-weight:900; color:#10b981;">${wonFmt(finalPayment)}</td></tr>
+    </table>
   </div>
   <table class="rpt-table">
     <thead>
