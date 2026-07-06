@@ -1008,7 +1008,17 @@ function renderLegend(id, entries, colors) {
 }
 
 // ── 유틸 ───────────────────────────────────────────────────────
-function getCtx(id) { return document.getElementById(id).getContext('2d'); }
+function getCleanCanvas(id) {
+  const oldCanvas = document.getElementById(id);
+  if (!oldCanvas) return null;
+  const newCanvas = oldCanvas.cloneNode(true);
+  oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
+  return newCanvas;
+}
+function getCtx(id) {
+  const canvas = getCleanCanvas(id);
+  return canvas ? canvas.getContext('2d') : null;
+}
 function setText(id, v) { const el=document.getElementById(id); if(el) el.textContent=v; }
 function show(id) { document.getElementById(id).style.display=''; }
 function hide(id) { document.getElementById(id).style.display='none'; }
@@ -1341,16 +1351,16 @@ function buildReportHtml(d) {
     <div><div class="rpt-s-label">실지급액</div><div class="rpt-s-val" style="color:#10b981">${wonFmt(finalPayment)}</div></div>
   </div>
 
-  <div class="rpt-settlement-card" style="margin-top:15px; margin-bottom:20px; max-width: 320px; background:var(--s2); border:1px solid var(--border); border-radius:10px; padding:16px; color:var(--text);">
-    <div style="font-size:12px; font-weight:800; border-bottom:1px solid var(--border); padding-bottom:6px; margin-bottom:8px;">🧾 정산 상세 내역 (원천세 3.3% 공제)</div>
-    <table style="width:100%; font-size:12px; border-collapse:collapse; color:var(--text);">
-      <tr><td style="padding:4px 0; color:var(--sub);">총매출</td><td style="padding:4px 0; text-align:right; font-weight:700;">${wonFmt(totalRev)}</td></tr>
-      <tr><td style="padding:4px 0; color:var(--sub);">부가세 (10%)</td><td style="padding:4px 0; text-align:right; color:#fb7185;">-${wonFmt(vat)}</td></tr>
-      <tr><td style="padding:4px 0; color:var(--sub);">카드수수료 (3%)</td><td style="padding:4px 0; text-align:right; color:#fb7185;">-${wonFmt(cardFee)}</td></tr>
-      <tr style="border-top:1px solid var(--border); border-bottom:1px solid var(--border);"><td style="padding:6px 0; font-weight:700;">정산대상액 (총)</td><td style="padding:6px 0; text-align:right; font-weight:800;">${wonFmt(netTotal)}</td></tr>
-      <tr><td style="padding:4px 0; color:var(--sub);">50% 지분</td><td style="padding:4px 0; text-align:right; font-weight:700; color:#4ade80;">${wonFmt(halfShare)}</td></tr>
-      <tr><td style="padding:4px 0; color:var(--sub);">원천징수 (3.3%)</td><td style="padding:4px 0; text-align:right; color:#fb7185;">-${wonFmt(withholdingTax)}</td></tr>
-      <tr style="border-top:2px double var(--bd2); font-size:13px;"><td style="padding:8px 0; font-weight:900;">입금총액 (지급액)</td><td style="padding:8px 0; text-align:right; font-weight:900; color:#10b981;">${wonFmt(finalPayment)}</td></tr>
+  <div class="rpt-settlement-card" style="margin-top:15px; margin-bottom:20px; max-width: 320px; background:#f8f9fa; border:1px solid #e9ecef; border-radius:10px; padding:16px; color:#212529;">
+    <div style="font-size:12px; font-weight:800; border-bottom:1px solid #dee2e6; padding-bottom:6px; margin-bottom:8px; color:#212529;">🧾 정산 상세 내역 (원천세 3.3% 공제)</div>
+    <table style="width:100%; font-size:12px; border-collapse:collapse; color:#212529;">
+      <tr><td style="padding:4px 0; color:#495057;">총매출</td><td style="padding:4px 0; text-align:right; font-weight:700; color:#212529;">${wonFmt(totalRev)}</td></tr>
+      <tr><td style="padding:4px 0; color:#495057;">부가세 (10%)</td><td style="padding:4px 0; text-align:right; color:#e63946; font-weight:600;">-${wonFmt(vat)}</td></tr>
+      <tr><td style="padding:4px 0; color:#495057;">카드수수료 (3%)</td><td style="padding:4px 0; text-align:right; color:#e63946; font-weight:600;">-${wonFmt(cardFee)}</td></tr>
+      <tr style="border-top:1px solid #dee2e6; border-bottom:1px solid #dee2e6;"><td style="padding:6px 0; font-weight:700; color:#212529;">정산대상액 (총)</td><td style="padding:6px 0; text-align:right; font-weight:800; color:#212529;">${wonFmt(netTotal)}</td></tr>
+      <tr><td style="padding:4px 0; color:#495057;">50% 지분</td><td style="padding:4px 0; text-align:right; font-weight:700; color:#2a9d8f;">${wonFmt(halfShare)}</td></tr>
+      <tr><td style="padding:4px 0; color:#495057;">원천징수 (3.3%)</td><td style="padding:4px 0; text-align:right; color:#e63946; font-weight:600;">-${wonFmt(withholdingTax)}</td></tr>
+      <tr style="border-top:2px double #adb5bd; font-size:13px;"><td style="padding:8px 0; font-weight:900; color:#212529;">입금총액 (지급액)</td><td style="padding:8px 0; text-align:right; font-weight:900; color:#2a9d8f;">${wonFmt(finalPayment)}</td></tr>
     </table>
   </div>
   <table class="rpt-table">
