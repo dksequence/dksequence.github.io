@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wifi-mate — 개인정보처리방침 / Privacy Policy</title>
+<meta name="description" content="Wifi-mate privacy policy. Wi-Fi names and passwords stay on your device and are never sent to our servers.">
+<style>
+  :root{
+    --bg:#FBF5EC; --card:#ffffff; --ink:#2A2622; --muted:#6b7280;
+    --accent:#E07A5F; --teal:#2F8F7F; --line:#e7e7ee;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic",
+      "Apple SD Gothic Neo",Roboto,sans-serif;
+    background:linear-gradient(180deg,#FBF5EC 0%,#F3E4D8 100%);
+    color:var(--ink); line-height:1.7; -webkit-text-size-adjust:100%;
+    padding:24px 14px 64px; word-break:keep-all;
+  }
+  .wrap{max-width:760px;margin:0 auto}
+  header{text-align:center;padding:18px 0 26px}
+  .badge{font-size:12px;letter-spacing:.18em;color:var(--accent);font-weight:700}
+  header h1{font-size:24px;margin:8px 0 4px;font-weight:800;color:#2A2622}
+  header .meta{font-size:13px;color:#8a7f74;margin-top:6px}
+  .toggle{display:flex;justify-content:center;gap:8px;margin:18px 0 22px}
+  .toggle button{
+    border:1px solid rgba(224,122,95,.4);background:#fff;
+    color:#8a7f74;padding:8px 18px;border-radius:999px;font-size:14px;
+    font-weight:600;cursor:pointer;min-width:96px;line-height:1.2;
+  }
+  .toggle button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .card{
+    background:var(--card);border-radius:18px;padding:26px 22px;
+    box-shadow:0 18px 48px rgba(0,0,0,.12);
+  }
+  h2{font-size:18px;margin:26px 0 8px;color:#111;font-weight:800}
+  h2:first-child{margin-top:0}
+  .summary{
+    background:#eafaf6;border:1px solid #bfeee3;border-radius:12px;
+    padding:14px 16px;color:#0c5f51;font-weight:600;margin:0 0 6px;
+  }
+  ul{margin:6px 0 6px;padding-left:20px}
+  li{margin:4px 0}
+  p{margin:8px 0}
+  .muted{color:var(--muted);font-size:14px}
+  a{color:var(--accent);font-weight:600;text-decoration:none;word-break:break-all}
+  .lang{display:none}
+  .lang.show{display:block}
+  footer{text-align:center;color:#8a7f74;font-size:12px;margin-top:24px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="badge">WIFI · QR · SHARE</div>
+    <h1>Wifi-mate</h1>
+    <div class="meta">개인정보처리방침 · Privacy Policy<br>
+      <span class="muted" style="color:#8a7f74">최종 수정일 / Last updated: 2026-07-13 · DKsequence</span>
+    </div>
+    <div class="toggle">
+      <button id="btn-ko" class="active" onclick="setLang('ko')">한국어</button>
+      <button id="btn-en" onclick="setLang('en')">English</button>
+    </div>
+  </header>
+
+  <div class="card">
+    <!-- 한국어 -->
+    <section id="ko" class="lang show">
+      <p class="summary">입력한 와이파이 정보(이름·비밀번호)는 기기에만 저장 — 우리 서버로 보내지 않습니다.
+        (무료 제공을 위해 Google AdMob 광고가 포함됩니다.)</p>
+
+      <h2>1. 요약</h2>
+      <p>Wifi-mate에 입력한 와이파이 네트워크 정보(이름·비밀번호·보안방식 등)는
+        <b>오직 사용자의 기기 내부에만 저장</b>되며 개발자에게 전송되지 않습니다.
+        우리는 서버·계정·로그인이 없습니다. <b>단, 무료 제공을 위해 앱에는 Google AdMob
+        광고가 포함</b>되며, 광고 제공·측정을 위해 Google이 광고 식별자 등 일부 정보를
+        수집·이용할 수 있습니다(아래 5항).</p>
+
+      <h2>2. 기기에 저장되는 정보 (외부 전송 없음)</h2>
+      <p>앱은 기능 제공을 위해 다음을 <b>기기 로컬 저장소(앱 내부)</b>에만 보관합니다.</p>
+      <ul>
+        <li>와이파이 네트워크 이름(SSID)·비밀번호·보안방식(WPA/WEP/개방형)·숨김 여부</li>
+        <li>사용자가 지정한 이름표(라벨)와 카드 이모지</li>
+        <li>선택한 언어, 광고 제거 구매 여부</li>
+      </ul>
+      <p>이 정보는 앱을 삭제하면 함께 삭제됩니다. QR 코드는 저장된 정보로 기기에서 즉시
+        생성되며, 어디로도 전송되지 않습니다.</p>
+
+      <h2>3. 권한</h2>
+      <ul>
+        <li><b>위치(ACCESS_FINE_LOCATION / ACCESS_COARSE_LOCATION)</b>:
+          <b>‘현재 와이파이 불러오기’</b> 기능에서 현재 연결된 네트워크 이름(SSID)을
+          확인하기 위해서만 사용합니다. 안드로이드는 보안 정책상 SSID 조회에 위치 권한을
+          요구합니다. <b>위치 정보 자체는 수집·저장·전송하지 않으며</b>, 이 기능을
+          사용하지 않으면 권한을 허용하지 않아도 나머지 기능은 모두 동작합니다.</li>
+        <li><b>카메라 권한은 사용하지 않습니다.</b> (QR은 손님이 자신의 카메라로 스캔합니다.)</li>
+      </ul>
+
+      <h2>4. 네트워크</h2>
+      <p>앱은 사용자가 입력한 와이파이 정보를 우리 서버로 전송하지 않습니다. 다만
+        <b>광고 표시</b>와 <b>글꼴 표시(Google Fonts)</b>를 위해 네트워크 통신이
+        발생합니다. 글꼴은 파일 요청만 이뤄지며 개인정보가 전송되지 않습니다.</p>
+
+      <h2>5. 광고 / 제3자 (Google AdMob)</h2>
+      <ul>
+        <li>본 앱은 무료 제공을 위해 <b>Google AdMob</b> 광고(배너·전면·보상형)를 표시합니다.</li>
+        <li>광고 제공·게재 빈도 제한·측정·부정클릭 방지 등을 위해 Google은
+          <b>광고 식별자(Advertising ID), 기기 정보, 대략적 위치(IP 기반),
+          앱 상호작용 정보</b> 등을 수집·이용할 수 있으며, 이 데이터는
+          <b>Google이 제3자로서 처리</b>합니다.
+          (<a href="https://policies.google.com/privacy">Google 개인정보처리방침</a> ·
+          <a href="https://policies.google.com/technologies/partner-sites">파트너 앱 데이터 이용</a>)</li>
+        <li><b>맞춤 광고 거부·광고 ID 재설정</b>: 기기의 <i>설정 &gt; 개인정보 보호 &gt; 광고</i>에서
+          광고 ID를 재설정하거나 맞춤 광고를 끌 수 있습니다.</li>
+        <li>광고 외 별도의 분석(애널리틱스) SDK는 사용하지 않습니다.</li>
+      </ul>
+
+      <h2>6. 인앱 결제</h2>
+      <p>광고 제거(remove_ads)는 Google Play 결제로 처리되며, 앱은 결제·카드 정보를
+        저장하지 않습니다.</p>
+
+      <h2>7. 아동</h2>
+      <p>앱은 특정 연령을 겨냥하지 않으며, 어떠한 개인정보도 수집하지 않으므로
+        아동의 개인정보를 수집하지 않습니다.</p>
+
+      <h2>8. 변경</h2>
+      <p>정책이 바뀌면 본 문서의 ‘최종 수정일’과 함께 갱신합니다.</p>
+
+      <h2>9. 문의</h2>
+      <p>개인정보 관련 문의: <a href="mailto:kitan98@gmail.com">kitan98@gmail.com</a></p>
+    </section>
+
+    <!-- English -->
+    <section id="en" class="lang">
+      <p class="summary">The Wi-Fi details you enter (name and password) stay on your device —
+        we never send them to our servers. (The app includes Google AdMob ads to stay free.)</p>
+
+      <h2>1. Summary</h2>
+      <p>The Wi-Fi network details you enter into Wifi-mate (name, password, security type, etc.)
+        are stored <b>only on your device</b> and are never sent to the developer. We have no
+        server, account, or login. <b>However, to keep the app free, it includes Google AdMob
+        ads</b>, and Google may collect and use certain information (such as advertising
+        identifiers) to serve and measure ads (see §5).</p>
+
+      <h2>2. Information stored on your device (never transmitted)</h2>
+      <p>For the app to work, the following is kept <b>only in local on-device storage</b>:</p>
+      <ul>
+        <li>Wi-Fi network name (SSID), password, security type (WPA/WEP/open), and hidden flag</li>
+        <li>Your custom label and card emoji</li>
+        <li>Selected language and remove-ads purchase state</li>
+      </ul>
+      <p>This data is deleted when you uninstall the app. QR codes are generated on-device from
+        the stored details and are never transmitted anywhere.</p>
+
+      <h2>3. Permissions</h2>
+      <ul>
+        <li><b>Location (ACCESS_FINE_LOCATION / ACCESS_COARSE_LOCATION):</b> used only by the
+          <b>“detect current Wi-Fi”</b> feature to read the name (SSID) of the network you are
+          connected to. Android requires location permission to read the SSID for security
+          reasons. <b>Location itself is never collected, stored, or transmitted</b>, and if you
+          don't use this feature, the rest of the app works without granting the permission.</li>
+        <li><b>The app does not use the camera.</b> (Guests scan the QR with their own camera.)</li>
+      </ul>
+
+      <h2>4. Network</h2>
+      <p>The app does not send the Wi-Fi details you enter to our servers. Network communication
+        does occur to <b>display ads</b> and to <b>render fonts (Google Fonts)</b>. The font
+        request transfers only a font file, no personal data.</p>
+
+      <h2>5. Ads / Third parties (Google AdMob)</h2>
+      <ul>
+        <li>To keep the app free, it shows <b>Google AdMob</b> ads (banner, interstitial, and rewarded).</li>
+        <li>To serve, frequency-cap, measure, and protect against invalid activity, Google may
+          collect and use the <b>Advertising ID, device information, approximate (IP-based)
+          location, and app-interaction data</b>. This data is processed by <b>Google as a third
+          party</b>.
+          (<a href="https://policies.google.com/privacy">Google Privacy Policy</a> ·
+          <a href="https://policies.google.com/technologies/partner-sites">How Google uses partner-app data</a>)</li>
+        <li><b>Opt out / reset ad ID:</b> in your device <i>Settings &gt; Privacy &gt; Ads</i>
+          you can reset your Advertising ID or turn off personalized ads.</li>
+        <li>No separate analytics SDK beyond advertising is used.</li>
+      </ul>
+
+      <h2>6. In-app purchases</h2>
+      <p>Remove Ads (remove_ads) is processed through Google Play billing; the app does not store
+        payment or card information.</p>
+
+      <h2>7. Children</h2>
+      <p>The app does not target a specific age group and collects no personal data, so it does
+        not knowingly collect children's personal information.</p>
+
+      <h2>8. Changes</h2>
+      <p>If this policy changes, we update it along with the “Last updated” date above.</p>
+
+      <h2>9. Contact</h2>
+      <p>Privacy inquiries: <a href="mailto:kitan98@gmail.com">kitan98@gmail.com</a></p>
+    </section>
+  </div>
+
+  <footer>© 2026 DKsequence · Wifi-mate</footer>
+</div>
+<script>
+  function setLang(l){
+    document.getElementById('ko').classList.toggle('show', l==='ko');
+    document.getElementById('en').classList.toggle('show', l==='en');
+    document.getElementById('btn-ko').classList.toggle('active', l==='ko');
+    document.getElementById('btn-en').classList.toggle('active', l==='en');
+  }
+</script>
+</body>
+</html>
