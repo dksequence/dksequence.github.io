@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>한마디 녹음메모장 (Murmur Voice Memo) — 개인정보처리방침 / Privacy Policy</title>
+<style>
+  :root{ --navy:#101A33; --violet:#1E2A4D; --teal:#4FD1C5; --gold:#FFD66B; --ink:#EAF0FF; --muted:#9FB0D4; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:linear-gradient(180deg,var(--navy),var(--violet)); color:var(--ink);
+        font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Malgun Gothic",sans-serif;
+        line-height:1.65; word-break:keep-all; }
+  .wrap{ max-width:760px; margin:0 auto; padding:28px 20px 64px; }
+  header{ text-align:center; padding:22px 0 6px; }
+  header h1{ color:var(--gold); margin:0 0 4px; font-size:26px; }
+  header .sub{ color:var(--teal); font-size:14px; }
+  .meta{ color:var(--muted); font-size:13px; text-align:center; margin-bottom:18px; }
+  .card{ background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08);
+         border-radius:16px; padding:18px 20px; margin:16px 0; }
+  h2{ color:var(--gold); font-size:18px; margin:18px 0 8px; }
+  a{ color:var(--teal); }
+  .lang-tabs{ display:flex; gap:8px; justify-content:center; margin:8px 0 4px; }
+  .lang-tabs button{ background:rgba(255,255,255,.08); color:var(--ink); border:1px solid rgba(255,255,255,.15);
+         border-radius:999px; padding:7px 16px; font-weight:700; cursor:pointer; white-space:nowrap; }
+  .lang-tabs button.on{ background:var(--gold); color:#3A2606; border-color:var(--gold); }
+  .hidden{ display:none; }
+  ul{ padding-left:20px; } li{ margin:4px 0; }
+  footer{ text-align:center; color:var(--muted); font-size:12px; margin-top:26px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>한마디 녹음메모장 · Murmur Voice Memo</h1>
+    <div class="sub">개인정보처리방침 · Privacy Policy</div>
+  </header>
+  <div class="meta">최종 업데이트 2026-07-16 · com.dksequence.voicememo · DKsequence · kitan98@gmail.com</div>
+
+  <div class="lang-tabs">
+    <button id="t-ko" class="on" onclick="sw('ko')">한국어</button>
+    <button id="t-en" onclick="sw('en')">English</button>
+  </div>
+
+  <section id="ko" class="card">
+    <p>한마디 녹음메모장(이하 "본 앱")은 이용자의 개인정보를 소중히 다루며, 대한민국 개인정보보호법 및 Google Play 개발자 정책을 준수합니다.</p>
+
+    <h2>1. 수집하지 않는 정보</h2>
+    <p>본 앱은 <b>회원가입·로그인이 없으며, 이름·이메일·전화번호·위치·연락처 등 개인 식별 정보를 수집하지 않습니다.</b></p>
+
+    <h2>2. 마이크와 음성 인식</h2>
+    <ul>
+      <li><b>마이크(RECORD_AUDIO)</b>는 음성을 텍스트로 변환하기 위해서만 사용합니다.</li>
+      <li>음성 인식은 <b>기기의 OS 음성 엔진</b>이 처리합니다. <b>본 앱은 음성을 저장하거나 자체 서버로 전송하지 않습니다.</b></li>
+      <li>다만 기기·설정에 따라 <b>OS 음성 엔진(예: Google 음성 서비스)이 인식을 위해 네트워크를 사용</b>할 수 있으며, 이 처리는 해당 OS 제공자의 정책을 따릅니다.</li>
+      <li>마이크를 허용하지 않아도 <b>키보드로 직접 입력</b>해 앱을 사용할 수 있습니다.</li>
+    </ul>
+
+    <h2>3. 기기에만 저장되는 정보</h2>
+    <p>작성한 메모, 소리·햅틱 설정, 광고 제거 구매 여부는 <b>기기 내부(로컬)에만 저장</b>되며 외부로 전송되지 않습니다. 앱을 삭제하면 함께 삭제됩니다.</p>
+
+    <h2>4. 광고 (Google AdMob · UMP)</h2>
+    <p>무료 제공을 위해 Google AdMob 광고(배너 · 보상형)를 표시합니다. AdMob은 광고 제공·측정·부정클릭 방지를 위해 <b>광고 식별자(ADID), 기기 정보, 대략적 위치(IP 기반)</b> 등을 수집·이용할 수 있습니다.</p>
+    <ul>
+      <li>Google 광고 정책: <a href="https://policies.google.com/technologies/ads">policies.google.com/technologies/ads</a></li>
+      <li>유럽 등 대상 지역에서는 <b>UMP 동의</b>에 따라 맞춤/비맞춤 광고가 결정됩니다.</li>
+      <li>광고 개인 최적화는 기기 설정(설정 &gt; Google &gt; 광고)에서 재설정·해제할 수 있습니다.</li>
+      <li><b>광고 제거</b> 인앱구매 시 앱 내 광고가 표시되지 않습니다.</li>
+    </ul>
+
+    <h2>5. 인앱 결제 (Google Play)</h2>
+    <p>인앱 상품 구매는 Google Play 결제로 처리되며, 결제 정보는 본 앱이 수집·저장하지 않습니다.</p>
+
+    <h2>6. 제3자 제공</h2>
+    <p>광고 식별자는 광고 제공사(Google AdMob)에 한해 공유됩니다. 음성 인식은 기기 OS가 처리합니다. 그 외 제3자 제공은 없습니다.</p>
+
+    <h2>7. 아동</h2>
+    <p>본 앱은 만 13세 미만을 주요 대상으로 하지 않으며 개인정보를 수집하지 않습니다.</p>
+
+    <h2>8. 변경 / 문의</h2>
+    <p>본 방침은 변경될 수 있으며 변경 시 본 페이지에 게시합니다. 문의: <a href="mailto:kitan98@gmail.com">kitan98@gmail.com</a></p>
+  </section>
+
+  <section id="en" class="card hidden">
+    <p>Murmur Voice Memo ("the App") respects your privacy. This policy explains what data the App handles.</p>
+
+    <h2>1. Information we do NOT collect</h2>
+    <p>The App has <b>no sign-up and no login</b>, and does <b>not</b> collect personally identifiable information (name, email, phone, location, contacts).</p>
+
+    <h2>2. Microphone and speech recognition</h2>
+    <ul>
+      <li>The <b>microphone (RECORD_AUDIO)</b> is used solely to convert your speech into text.</li>
+      <li>Recognition is performed by your <b>device's OS speech engine</b>. <b>The App does not store your audio or send it to any server of ours.</b></li>
+      <li>Depending on your device and settings, the <b>OS speech engine (e.g. Google speech services) may use the network</b> to perform recognition; that processing follows the OS provider's own policy.</li>
+      <li>You can decline the microphone and still use the App by <b>typing memos directly</b>.</li>
+    </ul>
+
+    <h2>3. Stored only on your device</h2>
+    <p>Your memos, sound/haptic settings, and remove-ads purchase status are stored <b>only on your device</b> and are never transmitted. They are removed when you uninstall the App.</p>
+
+    <h2>4. Advertising (Google AdMob · UMP)</h2>
+    <p>To keep the App free, it shows Google AdMob ads (banner and rewarded). AdMob may collect and use an <b>Advertising ID, device information, and approximate (IP-based) location</b> to serve/measure ads and prevent fraud.</p>
+    <ul>
+      <li>Google Ads policy: <a href="https://policies.google.com/technologies/ads">policies.google.com/technologies/ads</a></li>
+      <li>In applicable regions, <b>UMP consent</b> determines personalized vs non-personalized ads.</li>
+      <li>You can reset/opt out of ad personalization in device Settings &gt; Google &gt; Ads.</li>
+      <li>The <b>Remove Ads</b> in-app purchase disables ads.</li>
+    </ul>
+
+    <h2>5. In-app purchases (Google Play)</h2>
+    <p>Purchases are processed by Google Play Billing; the App does not collect or store payment details.</p>
+
+    <h2>6. Third parties</h2>
+    <p>The Advertising ID is shared only with the ad provider (Google AdMob). Speech recognition is handled by your device OS. No other third-party sharing occurs.</p>
+
+    <h2>7. Children</h2>
+    <p>The App is not directed primarily to children under 13 and collects no personal data.</p>
+
+    <h2>8. Changes / Contact</h2>
+    <p>This policy may change; updates will be posted here. Contact: <a href="mailto:kitan98@gmail.com">kitan98@gmail.com</a></p>
+  </section>
+
+  <footer>© 2026 DKsequence · 한마디 녹음메모장 / Murmur Voice Memo</footer>
+</div>
+<script>
+  function sw(l){
+    document.getElementById('ko').classList.toggle('hidden', l!=='ko');
+    document.getElementById('en').classList.toggle('hidden', l!=='en');
+    document.getElementById('t-ko').classList.toggle('on', l==='ko');
+    document.getElementById('t-en').classList.toggle('on', l==='en');
+  }
+</script>
+</body>
+</html>
