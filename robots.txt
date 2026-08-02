@@ -1,0 +1,76 @@
+# dksequence.com — DKsequence
+# 생성: gen_robots_sitemap.py (012-marketing/01-seo-pages/tools) — 직접 수정 금지
+# 갱신: 2026-08-02
+
+User-agent: *
+Allow: /
+
+# ── AI 검색 크롤러 명시 허용 ───────────────────────────
+# 앱 발견의 35~40%가 소셜·AI 검색에서 일어난다(2026). 인용되려면 먼저 읽혀야 한다.
+
+# OpenAI 학습·브라우징
+User-agent: GPTBot
+Allow: /
+
+# ChatGPT 검색 색인
+User-agent: OAI-SearchBot
+Allow: /
+
+# ChatGPT 실시간 조회
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic 학습
+User-agent: ClaudeBot
+Allow: /
+
+# Claude.ai 웹 검색
+User-agent: Claude-Web
+Allow: /
+
+# Anthropic (구형 표기)
+User-agent: anthropic-ai
+Allow: /
+
+# Perplexity 색인
+User-agent: PerplexityBot
+Allow: /
+
+# Perplexity 실시간 조회
+User-agent: Perplexity-User
+Allow: /
+
+# Gemini·Vertex
+User-agent: Google-Extended
+Allow: /
+
+# Siri·Apple Intelligence
+User-agent: Applebot-Extended
+Allow: /
+
+# Bing·Copilot
+User-agent: Bingbot
+Allow: /
+
+# Common Crawl (다수 LLM의 학습 원천)
+User-agent: CCBot
+Allow: /
+
+# Alexa
+User-agent: Amazonbot
+Allow: /
+
+# ByteDance
+User-agent: Bytespider
+Allow: /
+
+# Meta AI
+User-agent: Meta-ExternalAgent
+Allow: /
+
+# ── 색인 제외 (작업용·중복 문서) ──────────────────────
+Disallow: /email_template.html
+Disallow: /dk-hub-sample.html
+Disallow: /index_v2.html
+
+Sitemap: https://dksequence.com/sitemap.xml
