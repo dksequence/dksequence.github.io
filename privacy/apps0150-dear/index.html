@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dear — 개인정보처리방침 / Privacy Policy</title>
+<meta name="description" content="Dear privacy policy. No account, no server. Your reminders and messages stay on your device. The app never reads or sends SMS by itself.">
+<style>
+  :root{ --card:#ffffff; --ink:#2A2724; --muted:#6B635A; --accent:#2E5D50; --line:#E3DBCE; }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic","Apple SD Gothic Neo",Roboto,sans-serif;
+    background:linear-gradient(180deg,#FAF6EF 0%,#EFEAE0 100%); color:var(--ink); line-height:1.7;
+    padding:24px 14px 64px; word-break:keep-all; }
+  .wrap{max-width:760px;margin:0 auto}
+  header{text-align:center;padding:18px 0 26px}
+  .badge{font-size:12px;letter-spacing:.18em;color:var(--accent);font-weight:700}
+  header h1{font-size:23px;margin:8px 0 4px;font-weight:800}
+  header .meta{font-size:13px;color:var(--muted);margin-top:6px}
+  .toggle{display:flex;justify-content:center;gap:8px;margin:18px 0 22px}
+  .toggle button{ border:1px solid rgba(46,93,80,.45);background:#fff;color:var(--muted);
+    padding:8px 18px;border-radius:999px;font-size:14px;font-weight:600;cursor:pointer;min-width:96px }
+  .toggle button.active{background:var(--accent);border-color:var(--accent);color:#fff}
+  .card{ background:var(--card);border:1px solid var(--line);border-radius:18px;
+    padding:22px 20px;margin:0 0 16px }
+  h2{font-size:18px;margin:0 0 14px}
+  h3{font-size:15px;margin:20px 0 6px;color:var(--accent)}
+  p,li{font-size:14.5px;margin:6px 0}
+  ul{padding-left:18px;margin:6px 0}
+  .key{background:#F2ECE1;border-left:3px solid var(--accent);padding:12px 14px;border-radius:8px;margin:12px 0}
+  .foot{text-align:center;font-size:12.5px;color:var(--muted);margin-top:26px}
+  section[hidden]{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="badge">DEAR</div>
+    <h1>개인정보처리방침 / Privacy Policy</h1>
+    <div class="meta">앱: Dear (com.dksequence.dear) · 개발: DKsequence<br>최종 수정: 2026-08-02</div>
+  </header>
+
+  <div class="toggle">
+    <button id="btn-ko" class="active" onclick="pick('ko')">한국어</button>
+    <button id="btn-en" onclick="pick('en')">English</button>
+  </div>
+
+  <section id="ko">
+    <div class="card">
+      <h2>한 줄 요약</h2>
+      <div class="key">
+        <p><strong>Dear는 계정도 서버도 사용하지 않습니다.</strong> 예약과 문장은 이 앱을 설치한 기기 안에만 저장되며, 개발자를 포함한 누구에게도 전송되지 않습니다.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>1. 앱이 기기에 저장하는 정보</h2>
+      <p>다음 정보는 <strong>기기 내부 저장소</strong>에만 보관되며 외부로 전송되지 않습니다.</p>
+      <ul>
+        <li>사용자가 만든 예약(이름, 반복 주기, 시각)</li>
+        <li>사용자가 직접 작성한 문장</li>
+        <li>사용자가 지정한 받는 사람의 이름과 전화번호</li>
+        <li>발송 기록(보낸 날짜)과 연속 일수</li>
+        <li>앱 설정(언어, 힌트 표시 여부, 광고 제거 구매 여부)</li>
+      </ul>
+      <p>앱을 삭제하면 위 정보는 기기에서 함께 사라집니다.</p>
+
+      <h3>연락처에 대하여</h3>
+      <p>Dear는 <strong>연락처 읽기 권한을 요청하지 않습니다.</strong> 「연락처에서 고르기」를 누르면 안드로이드 시스템의 연락처 화면이 열리고, <strong>사용자가 직접 선택한 한 건의 이름과 전화번호만</strong> 앱에 전달됩니다. 앱은 연락처 목록 전체를 읽을 수 없습니다. 전화번호를 직접 입력해도 됩니다.</p>
+
+      <h3>문자에 대하여</h3>
+      <p>Dear는 <strong>문자를 읽거나 스스로 보내지 않습니다.</strong> 문자 관련 권한(SEND_SMS, READ_SMS 등)을 선언하지 않습니다. 「문자앱 열기」를 누르면 기기의 기본 문자 앱이 받는 사람과 내용이 채워진 상태로 열릴 뿐이며, <strong>전송 버튼은 사용자가 직접 누릅니다.</strong> 따라서 앱은 실제 전송 여부나 상대방의 답장 내용을 알 수 없습니다. 문자 발송에 따르는 요금은 사용자의 통신사 요금제에 따릅니다.</p>
+    </div>
+
+    <div class="card">
+      <h2>2. 알림 권한</h2>
+      <p>정한 시각에 사용자를 부르기 위해 알림 권한과 정확 알람(알람 및 리마인더) 권한을 사용합니다. 알림은 <strong>기기 안에서 생성</strong>되며 서버를 거치지 않습니다. 권한을 허용하지 않아도 앱의 나머지 기능은 사용할 수 있습니다.</p>
+    </div>
+
+    <div class="card">
+      <h2>3. 광고 (Google AdMob)</h2>
+      <p>앱은 Google AdMob 광고를 표시합니다. AdMob은 광고 게재와 성과 측정을 위해 <strong>광고 ID 등의 식별자와 기기 정보</strong>를 수집할 수 있습니다. 이는 Google의 정책에 따라 처리되며 개발자는 해당 정보를 별도로 보관하지 않습니다.</p>
+      <ul>
+        <li>Google 개인정보처리방침: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a></li>
+        <li>광고 ID 초기화·맞춤 광고 해제: 기기 설정 &gt; Google &gt; 광고</li>
+      </ul>
+      <p>「광고 제거」를 구매하면 배너와 전면 광고가 표시되지 않습니다.</p>
+    </div>
+
+    <div class="card">
+      <h2>4. 인앱 결제</h2>
+      <p>결제는 <strong>Google Play가 처리</strong>하며, 개발자는 카드 번호 등 결제 수단 정보를 수집하거나 보관하지 않습니다. 구매 사실만 기기에 기록되어 광고 제거 상태를 유지합니다.</p>
+    </div>
+
+    <div class="card">
+      <h2>5. 아동</h2>
+      <p>이 앱은 만 13세 미만 아동을 대상으로 하지 않으며, 아동으로부터 개인정보를 고의로 수집하지 않습니다.</p>
+    </div>
+
+    <div class="card">
+      <h2>6. 문의</h2>
+      <p>개인정보 관련 문의: <a href="mailto:kitan98@gmail.com">kitan98@gmail.com</a></p>
+      <p>본 방침이 변경되면 이 페이지에 게시하고 최종 수정일을 갱신합니다.</p>
+    </div>
+  </section>
+
+  <section id="en" hidden>
+    <div class="card">
+      <h2>In one line</h2>
+      <div class="key">
+        <p><strong>Dear uses no account and no server.</strong> Your reminders and messages are stored only on the device where the app is installed, and are never sent to anyone, including the developer.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>1. What the app stores on your device</h2>
+      <p>The following is kept in <strong>local device storage only</strong> and is never transmitted.</p>
+      <ul>
+        <li>Reminders you create (name, repeat rule, time)</li>
+        <li>Messages you write yourself</li>
+        <li>The name and phone number of the recipient you choose</li>
+        <li>Send history (dates) and streak count</li>
+        <li>App settings (language, hint toggle, ad-removal purchase state)</li>
+      </ul>
+      <p>Uninstalling the app removes this data from the device.</p>
+
+      <h3>About contacts</h3>
+      <p>Dear <strong>does not request contacts permission.</strong> When you tap "Pick from contacts", the Android system contact picker opens and only the <strong>single name and phone number you select</strong> is returned to the app. The app cannot read your contact list. You may also type the number manually.</p>
+
+      <h3>About text messages</h3>
+      <p>Dear <strong>never reads or sends SMS by itself.</strong> It declares no SMS permissions (SEND_SMS, READ_SMS, etc.). Tapping "Open messages" simply opens your device's default messaging app with the recipient and body pre-filled; <strong>you press send yourself.</strong> Because of this, the app cannot know whether a message was actually sent, or what any reply says. Carrier charges for text messages follow your own mobile plan.</p>
+    </div>
+
+    <div class="card">
+      <h2>2. Notification permissions</h2>
+      <p>The app uses notification and exact-alarm permissions to remind you at the time you set. Notifications are <strong>generated on the device</strong> and do not pass through a server. The rest of the app works even if you decline.</p>
+    </div>
+
+    <div class="card">
+      <h2>3. Advertising (Google AdMob)</h2>
+      <p>The app shows Google AdMob ads. AdMob may collect <strong>identifiers such as the advertising ID and device information</strong> to serve and measure ads. This is handled under Google's policies; the developer does not separately retain that data.</p>
+      <ul>
+        <li>Google Privacy Policy: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a></li>
+        <li>Reset advertising ID / opt out: Device Settings &gt; Google &gt; Ads</li>
+      </ul>
+      <p>Purchasing "Remove ads" stops banner and full-screen ads from being shown.</p>
+    </div>
+
+    <div class="card">
+      <h2>4. In-app purchases</h2>
+      <p>Payments are <strong>processed by Google Play</strong>. The developer does not collect or store payment instrument details. Only the fact of purchase is recorded on the device to keep ads removed.</p>
+    </div>
+
+    <div class="card">
+      <h2>5. Children</h2>
+      <p>This app is not directed to children under 13, and does not knowingly collect personal information from children.</p>
+    </div>
+
+    <div class="card">
+      <h2>6. Contact</h2>
+      <p>Privacy inquiries: <a href="mailto:kitan98@gmail.com">kitan98@gmail.com</a></p>
+      <p>If this policy changes, the updated version will be posted on this page with a new revision date.</p>
+    </div>
+  </section>
+
+  <div class="foot">© 2026 DKsequence · Dear</div>
+</div>
+
+<script>
+function pick(lang){
+  document.getElementById('ko').hidden = (lang !== 'ko');
+  document.getElementById('en').hidden = (lang !== 'en');
+  document.getElementById('btn-ko').classList.toggle('active', lang === 'ko');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+}
+if ((navigator.language || '').toLowerCase().indexOf('ko') !== 0) pick('en');
+</script>
+</body>
+</html>
