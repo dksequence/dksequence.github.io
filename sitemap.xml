@@ -283,30 +283,6 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://dksequence.com/html/cnameboardv1.html</loc>
-    <lastmod>2026-07-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/html/comming_index.html</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/html/components/foother.html</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/html/components/header.html</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://dksequence.com/html/digitaltwin_index.html</loc>
     <lastmod>2026-07-22</lastmod>
     <changefreq>monthly</changefreq>
@@ -314,18 +290,6 @@
   </url>
   <url>
     <loc>https://dksequence.com/html/drone_index.html</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/html/foother.html</loc>
-    <lastmod>2026-07-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/html/gallery_manager.html</loc>
     <lastmod>2026-07-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
@@ -355,12 +319,6 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://dksequence.com/html/pingpong.html</loc>
-    <lastmod>2026-07-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://dksequence.com/html/portrait_index.html</loc>
     <lastmod>2026-07-22</lastmod>
     <changefreq>monthly</changefreq>
@@ -373,18 +331,6 @@
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://dksequence.com/html/time_teller.html</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/html/tournament.html</loc>
-    <lastmod>2026-07-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://dksequence.com/html/uv_index.html</loc>
     <lastmod>2026-07-22</lastmod>
     <changefreq>monthly</changefreq>
@@ -393,54 +339,6 @@
   <url>
     <loc>https://dksequence.com/html/works.html</loc>
     <lastmod>2026-07-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/lab/</loc>
-    <lastmod>2026-07-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/lab/editer.html</loc>
-    <lastmod>2026-07-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/lab/introeditor.html</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/lab/run.html</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/operation/</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/operation/camera.html</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/operation/cameratest.html</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/operation/display.html</loc>
-    <lastmod>2026-07-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -489,66 +387,6 @@
   <url>
     <loc>https://dksequence.com/snapgallery/</loc>
     <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/snapgallery/admin.html</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/stats_dashboard.html</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/vaultboard/</loc>
-    <lastmod>2026-07-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/vaultboard/account.html</loc>
-    <lastmod>2026-07-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/vaultboard/admin-user.html</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/vaultboard/admin.html</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/vaultboard/dashboard.html</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/vaultboard/login.html</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/vaultboard/signup.html</loc>
-    <lastmod>2026-07-22</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://dksequence.com/vaultboard/trial.html</loc>
-    <lastmod>2026-07-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>

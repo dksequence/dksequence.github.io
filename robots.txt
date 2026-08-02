@@ -1,76 +1,50 @@
 # dksequence.com — DKsequence
 # 생성: gen_robots_sitemap.py (012-marketing/01-seo-pages/tools) — 직접 수정 금지
+# 소유자: 축1(01-seo-pages). robots.txt·루트 sitemap.xml 은 이 파일 하나가 만든다.
 # 갱신: 2026-08-02
 
+# ── 모든 크롤러 ────────────────────────────────────────
 User-agent: *
-Allow: /
-
-# ── AI 검색 크롤러 명시 허용 ───────────────────────────
-# 앱 발견의 35~40%가 소셜·AI 검색에서 일어난다(2026). 인용되려면 먼저 읽혀야 한다.
-
-# OpenAI 학습·브라우징
-User-agent: GPTBot
-Allow: /
-
-# ChatGPT 검색 색인
-User-agent: OAI-SearchBot
-Allow: /
-
-# ChatGPT 실시간 조회
-User-agent: ChatGPT-User
-Allow: /
-
-# Anthropic 학습
-User-agent: ClaudeBot
-Allow: /
-
-# Claude.ai 웹 검색
-User-agent: Claude-Web
-Allow: /
-
-# Anthropic (구형 표기)
-User-agent: anthropic-ai
-Allow: /
-
-# Perplexity 색인
-User-agent: PerplexityBot
-Allow: /
-
-# Perplexity 실시간 조회
-User-agent: Perplexity-User
-Allow: /
-
-# Gemini·Vertex
-User-agent: Google-Extended
-Allow: /
-
-# Siri·Apple Intelligence
-User-agent: Applebot-Extended
-Allow: /
-
-# Bing·Copilot
-User-agent: Bingbot
-Allow: /
-
-# Common Crawl (다수 LLM의 학습 원천)
-User-agent: CCBot
-Allow: /
-
-# Alexa
-User-agent: Amazonbot
-Allow: /
-
-# ByteDance
-User-agent: Bytespider
-Allow: /
-
-# Meta AI
-User-agent: Meta-ExternalAgent
-Allow: /
-
-# ── 색인 제외 (작업용·중복 문서) ──────────────────────
 Disallow: /email_template.html
 Disallow: /dk-hub-sample.html
 Disallow: /index_v2.html
+Disallow: /vaultboard/
+Disallow: /lab/
+Disallow: /operation/
+Disallow: /stats_dashboard.html
+Disallow: /snapgallery/admin.html
+Disallow: /html/gallery_manager.html
+Disallow: /html/components/
+
+# ── AI 검색 크롤러 ─────────────────────────────────────
+# 공개 페이지는 읽어가라(앱 발견의 35~40%가 소셜·AI 검색에서 일어난다).
+# 다만 비공개 운영 화면은 `*` 그룹과 동일하게 막는다 — 그룹을 따로 만든 이상
+# 여기에 Disallow 를 반복하지 않으면 이들은 차단을 보지 못한다.
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-Web
+User-agent: anthropic-ai
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: Bingbot
+User-agent: CCBot
+User-agent: Amazonbot
+User-agent: Bytespider
+User-agent: Meta-ExternalAgent
+Disallow: /email_template.html
+Disallow: /dk-hub-sample.html
+Disallow: /index_v2.html
+Disallow: /vaultboard/
+Disallow: /lab/
+Disallow: /operation/
+Disallow: /stats_dashboard.html
+Disallow: /snapgallery/admin.html
+Disallow: /html/gallery_manager.html
+Disallow: /html/components/
 
 Sitemap: https://dksequence.com/sitemap.xml
+Sitemap: https://dksequence.com/answers/sitemap.xml
