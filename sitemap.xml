@@ -2,19 +2,19 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://dksequence.com/</loc>
-    <lastmod>2026-07-22</lastmod>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://dksequence.com/apps/</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://dksequence.com/apps/ko/</loc>
-    <lastmod>2026-08-02</lastmod>
+    <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -271,6 +271,12 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://dksequence.com/googlef7ac21619118154e.html</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://dksequence.com/html/ai_con.html</loc>
     <lastmod>2026-07-22</lastmod>
     <changefreq>monthly</changefreq>
@@ -279,6 +285,12 @@
   <url>
     <loc>https://dksequence.com/html/ai_index.html</loc>
     <lastmod>2026-07-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/html/appdev_index.html</loc>
+    <lastmod>2026-08-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -355,6 +367,90 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://dksequence.com/play/boomtoss/</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/play/brickworld/</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/play/chesshuman/</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/play/iqtest/</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/play/ladderdraw/</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/play/mathking/</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/play/minestep/</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/play/numbaseball/</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/play/omokfighter/</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/play/pastel2048/</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/play/pochamerge/</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/play/shellgame/</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/play/stairdash/</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/play/tableroulette/</loc>
+    <lastmod>2026-08-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://dksequence.com/projects/</loc>
     <lastmod>2026-07-13</lastmod>
     <changefreq>monthly</changefreq>
@@ -416,7 +512,7 @@
   </url>
   <url>
     <loc>https://dksequence.com/privacy/apps0005-startergun/</loc>
-    <lastmod>2026-07-22</lastmod>
+    <lastmod>2026-08-03</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
@@ -446,13 +542,13 @@
   </url>
   <url>
     <loc>https://dksequence.com/privacy/apps0010-wobbly-stack/</loc>
-    <lastmod>2026-07-22</lastmod>
+    <lastmod>2026-08-03</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://dksequence.com/privacy/apps0011-potion-sort/</loc>
-    <lastmod>2026-07-22</lastmod>
+    <lastmod>2026-08-03</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
@@ -464,7 +560,7 @@
   </url>
   <url>
     <loc>https://dksequence.com/privacy/apps0013-millihit/</loc>
-    <lastmod>2026-07-22</lastmod>
+    <lastmod>2026-08-03</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
@@ -482,13 +578,13 @@
   </url>
   <url>
     <loc>https://dksequence.com/privacy/apps0016-rhythmjump/</loc>
-    <lastmod>2026-07-22</lastmod>
+    <lastmod>2026-08-03</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://dksequence.com/privacy/apps0017-tootkart/</loc>
-    <lastmod>2026-07-22</lastmod>
+    <lastmod>2026-08-03</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
@@ -500,37 +596,37 @@
   </url>
   <url>
     <loc>https://dksequence.com/privacy/apps0019-roadwalker/</loc>
-    <lastmod>2026-07-22</lastmod>
+    <lastmod>2026-08-03</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://dksequence.com/privacy/apps0020-orbitdiary/</loc>
-    <lastmod>2026-07-22</lastmod>
+    <lastmod>2026-08-03</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://dksequence.com/privacy/apps0021-loopdrive/</loc>
-    <lastmod>2026-07-22</lastmod>
+    <lastmod>2026-08-03</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://dksequence.com/privacy/apps0022-synchrono/</loc>
-    <lastmod>2026-07-22</lastmod>
+    <lastmod>2026-08-03</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://dksequence.com/privacy/apps0023-loopcrash/</loc>
-    <lastmod>2026-07-22</lastmod>
+    <lastmod>2026-08-03</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
     <loc>https://dksequence.com/privacy/apps0024-satisfyingslice/</loc>
-    <lastmod>2026-07-22</lastmod>
+    <lastmod>2026-08-03</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
@@ -638,7 +734,7 @@
   </url>
   <url>
     <loc>https://dksequence.com/privacy/apps0087-daylog/</loc>
-    <lastmod>2026-07-22</lastmod>
+    <lastmod>2026-08-03</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
@@ -758,7 +854,7 @@
   </url>
   <url>
     <loc>https://dksequence.com/privacy/apps0126-whoosharrow/</loc>
-    <lastmod>2026-07-23</lastmod>
+    <lastmod>2026-08-08</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
@@ -789,6 +885,12 @@
   <url>
     <loc>https://dksequence.com/privacy/apps0132-nyangchong/</loc>
     <lastmod>2026-07-30</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/privacy/apps0136-cheesepull/</loc>
+    <lastmod>2026-08-03</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
@@ -837,6 +939,90 @@
   <url>
     <loc>https://dksequence.com/privacy/apps0150-dear/</loc>
     <lastmod>2026-08-02</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/privacy/apps0151-sonagi/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/privacy/apps0152-treedo/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/privacy/apps0153-cupshot/</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/privacy/apps0154-connect1994/</loc>
+    <lastmod>2026-08-06</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/privacy/apps0156-owned/</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/privacy/apps0157-measureup/</loc>
+    <lastmod>2026-08-11</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/privacy/apps0158-lastdome/</loc>
+    <lastmod>2026-08-09</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/privacy/apps0159-twospot/</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/privacy/apps0160-teeter/</loc>
+    <lastmod>2026-08-09</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/privacy/apps0163-forgedex/</loc>
+    <lastmod>2026-08-09</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/privacy/apps0163-molewick/</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/privacy/apps0166-tapline/</loc>
+    <lastmod>2026-08-09</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/privacy/apps0167-weatherscore/</loc>
+    <lastmod>2026-08-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/privacy/apps0168-pocketcounter/</loc>
+    <lastmod>2026-08-11</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
