@@ -1,7 +1,7 @@
 # dksequence.com — DKsequence
 # 생성: gen_robots_sitemap.py (012-marketing/01-seo-pages/tools) — 직접 수정 금지
 # 소유자: 축1(01-seo-pages). robots.txt·루트 sitemap.xml 은 이 파일 하나가 만든다.
-# 갱신: 2026-08-13
+# 갱신: 2026-08-17
 
 # ── 모든 크롤러 ────────────────────────────────────────
 User-agent: *
