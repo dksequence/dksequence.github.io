@@ -528,6 +528,30 @@
     <button class="inline-btn" onclick="resetToDefault()" style="border-color:rgba(248,113,113,0.3);color:var(--danger);">초기화</button>
   </div>
 
+  <div class="section-label">💾 데이터</div>
+  <div class="setting-row">
+    <div>
+      <div class="setting-row-label">내보내기</div>
+      <div class="setting-row-sub">현재 목록을 JSON 파일로 저장합니다</div>
+    </div>
+    <button class="inline-btn" onclick="exportData()">저장</button>
+  </div>
+  <div class="setting-row">
+    <div>
+      <div class="setting-row-label">가져오기</div>
+      <div class="setting-row-sub">내보낸 JSON 파일을 불러옵니다</div>
+    </div>
+    <button class="inline-btn" onclick="document.getElementById('importFile').click()">불러오기</button>
+  </div>
+  <input type="file" id="importFile" accept="application/json,.json" style="display:none" onchange="importData(this)">
+  <div class="setting-row">
+    <div>
+      <div class="setting-row-label">동기화 주소</div>
+      <div class="setting-row-sub" id="gasState">이 기기에만 저장됩니다</div>
+    </div>
+    <button class="inline-btn" onclick="setGasUrl()">설정</button>
+  </div>
+
   <div class="section-label">카테고리</div>
   <button class="add-btn" onclick="addGroup()">+ 카테고리 추가</button>
   <div id="groupEditorList"></div>
@@ -569,7 +593,8 @@ const STORAGE_KEY  = 'dk_hub_v1';
 const PIN_KEY      = 'dk_hub_pin';
 const DATA_VERSION = 'v20260415b';
 const VERSION_KEY  = 'dk_hub_ver';
-const GAS_URL      = 'https://script.google.com/macros/s/AKfycbwoqVAZVZclcog_8hGo6W5xKCGWdK9HHRCw-CtidsA3sygtPJatZ88b82iouE0brF0G/exec';
+const GAS_KEY      = 'dk_hub_gas';
+function gasUrl() { return localStorage.getItem(GAS_KEY) || ''; }
 
 const GROUP_COLORS = [
   '#4da3ff','#35c46b','#ffb020','#ff6b6b',
@@ -586,30 +611,8 @@ const defaultData = {
     { id: 'g6', name: '📈 분석 · 통계',        color: '#ff9f43' },
     { id: 'g7', name: '🛠 개발 도구',           color: '#9aa0a6' }
   ],
-  items: [
-    { id: 'i01', gid: 'g1', title: '예약 운영 메인 (GAS v1)', note: 'GAS 실서버 메인 화면',          url: 'https://script.google.com/macros/s/AKfycbwoqVAZVZclcog_8hGo6W5xKCGWdK9HHRCw-CtidsA3sygtPJatZ88b82iouE0brF0G/exec' },
-    { id: 'i02', gid: 'g1', title: '운영 로그인 (GAS v2)',    note: 'Vaultboard 로그인',             url: 'https://script.google.com/macros/s/AKfycby35IYWtv0gZwaW7W53CD0pb-1oI_aQi6XFmwg-C8TjiakYm9Cc23HCVPvluhle1ifr/exec' },
-    { id: 'i03', gid: 'g1', title: 'DK홈페이지 GAS (v3)',    note: '02폴더 기준 GAS URL',           url: 'https://script.google.com/macros/s/AKfycbxnCnebOE_yY2duvsUua4EM1GihVqUUGICvl-gzQd3X5jIZGaYKdyc8P6byI3XokeXCNA/exec' },
-    { id: 'i04', gid: 'g1', title: 'iPad 운영 화면',          note: '현장 체크인/운영 전용',         url: 'https://dksequence.github.io/operation/index.html' },
-    { id: 'i05', gid: 'g2', title: '예약 마스터 시트',       note: 'SHEET_ID — 예약 원본 데이터',   url: 'https://docs.google.com/spreadsheets/d/1llMx1e7JYdGG5l1OOJiGvFoi4TvdlL9LEaZo9GiBUN4/edit?gid=0#gid=0' },
-    { id: 'i06', gid: 'g2', title: '예약 슬레이브 시트',     note: '보조 예약 데이터',              url: 'https://docs.google.com/spreadsheets/d/1cfG_rgirmM14cL_HIY52APT31WoGfw__T1ohm4Hm2WE/edit?gid=0#gid=0' },
-    { id: 'i07', gid: 'g2', title: '고객 파일 마스터 시트',  note: 'MASTER_SS_ID — 고객 전체 현황', url: 'https://docs.google.com/spreadsheets/d/1TVzwgFW5oaqL2e0LjCZl0ZPc_gxcr7cFESZ-sqOIjeU/edit?gid=2061314180#gid=2061314180' },
-    { id: 'i08', gid: 'g2', title: '운영 통계 시트',         note: '일간/주간/월간 대시보드',        url: 'https://docs.google.com/spreadsheets/d/1PthCSvS8cmKxOCZlFfr3R9l1Ind7LvXOe3VPQkcSvbk/edit' },
-    { id: 'i09', gid: 'g3', title: '루트 운영 폴더',         note: 'ROOT_FOLDER_ID — 고객 폴더 생성 위치', url: 'https://drive.google.com/drive/folders/1MJlGEFWKN4ipSQp5e-cEmPSFJ7gyGvMN' },
-    { id: 'i10', gid: 'g3', title: '예약 캘린더',            note: 'Google Calendar — 체크인/아웃', url: 'https://calendar.google.com/calendar/r?cid=b80af760ccd9b450a8bdea35f6fd6a43fb8e2eba5f0be964af5043ef9d30ca2e@group.calendar.google.com' },
-    { id: 'i11', gid: 'g4', title: 'DK 홈페이지',            note: '실제 운영 홈페이지',            url: 'https://dksequence.github.io/' },
-    { id: 'i12', gid: 'g4', title: 'GitHub 저장소',          note: '소스코드 · 배포 관리',          url: 'https://github.com/dksequence/dksequence.github.io' },
-    { id: 'i20', gid: 'g4', title: 'DK 운영 허브',           note: '운영 · 관리 URL 모음 (온라인)', url: 'https://dksequence.github.io/dk-hub-sample.html' },
-    { id: 'i13', gid: 'g5', title: 'Cloud Console',          note: 'dk-booking 프로젝트',           url: 'https://console.cloud.google.com/home/dashboard?project=dk-booking' },
-    { id: 'i14', gid: 'g5', title: 'Cloud Run 관리',         note: 'dk-booking-job · us-central1',  url: 'https://console.cloud.google.com/run?project=dk-booking' },
-    { id: 'i15', gid: 'g5', title: 'Cloud Build 로그',       note: '배포 이력 확인',                url: 'https://console.cloud.google.com/cloud-build/builds?project=dk-booking' },
-    { id: 'i16', gid: 'g6', title: 'GoatCounter 방문자',     note: 'dksequence 방문자 분석',        url: 'https://dksequence.goatcounter.com/' },
-    { id: 'i21', gid: 'g6', title: '운영 통계 대시보드',     note: '일간/주간/월간 차트 대시보드',   url: 'https://dksequence.github.io/stats_dashboard.html' },
-    { id: 'i17', gid: 'g7', title: 'GAS 코드 편집기',        note: 'Apps Script 편집기',            url: 'https://script.google.com/home/projects/1k1tW6IH3zDcvxUTmeYkHlv7dBUVVjwA7v3tv5c68p87ea1lPk62Fb8v3/edit' },
-    { id: 'i18', gid: 'g7', title: '네이버 메일 생성기',     note: '로컬 도구 — 브라우저에서만 동작', url: 'file:///E:/%EC%A4%91%EB%AC%B8%EB%B3%84%EC%9E%A5%20work/000-Development/05-tools/0002%20naver_email_generator.html' },
-    { id: 'i19', gid: 'g7', title: '에디터',                 note: '로컬 도구 — 브라우저에서만 동작', url: 'file:///E:/%EC%A4%91%EB%AC%B8%EB%B3%84%EC%9E%A5%20work/000-Development/05-tools/editer.html' }
-  ],
-  expandedGroups: ['g1'],
+  items: [],
+  expandedGroups: [],
   starredItems:   []
 };
 
@@ -649,8 +652,10 @@ function saveData() {
 
 // ── GAS 동기화 ──────────────────────────────────────────────────
 function syncToGAS() {
+  const u = gasUrl();
+  if (!u) return;
   try {
-    fetch(GAS_URL, {
+    fetch(u, {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain' },
@@ -660,9 +665,11 @@ function syncToGAS() {
 }
 
 function loadFromGAS() {
+  const u = gasUrl();
+  if (!u) return;
   const cb  = '_gh_' + Date.now();
   const tag = document.createElement('script');
-  tag.src   = GAS_URL + '?action=getHubData&callback=' + cb;
+  tag.src   = u + '?action=getHubData&callback=' + cb;
   tag.onerror = () => { tag.remove(); delete window[cb]; };
   window[cb] = (res) => {
     delete window[cb];
@@ -682,6 +689,49 @@ function loadFromGAS() {
   document.head.appendChild(tag);
 }
 
+function exportData() {
+  const blob = new Blob([JSON.stringify(data, null, 1)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'dk-hub-' + new Date().toISOString().slice(0, 10) + '.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  showToast('\u2713 \uB0B4\uBCF4\uB0C8\uC2B5\uB2C8\uB2E4');
+}
+
+function importData(input) {
+  const f = input.files && input.files[0];
+  input.value = '';
+  if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    try {
+      const p = JSON.parse(rd.result);
+      if (!p.groups || !p.items) throw new Error('format');
+      if (!confirm('\uD604\uC7AC \uBAA9\uB85D\uC744 \uBD88\uB7EC\uC628 \uB0B4\uC6A9\uC73C\uB85C \uBC14\uAFC9\uB2C8\uB2E4. \uACC4\uC18D\uD560\uAE4C\uC694?')) return;
+      data = p;
+      saveData(); closeSettings(); render();
+      showToast('\u2713 \uAC00\uC838\uC654\uC2B5\uB2C8\uB2E4');
+    } catch (e) { alert('JSON \uD30C\uC77C\uC744 \uC77D\uC744 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4'); }
+  };
+  rd.readAsText(f);
+}
+
+function setGasUrl() {
+  const cur = gasUrl();
+  const v = prompt('\uB3D9\uAE30\uD654 \uC8FC\uC18C(Apps Script /exec). \uBE44\uC6B0\uBA74 \uB3D9\uAE30\uD654\uD558\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.', cur);
+  if (v === null) return;
+  const t = v.trim();
+  if (t) localStorage.setItem(GAS_KEY, t); else localStorage.removeItem(GAS_KEY);
+  renderGasState();
+  showToast(t ? '\u2713 \uC800\uC7A5\uB410\uC2B5\uB2C8\uB2E4' : '\u2713 \uB3D9\uAE30\uD654\uB97C \uAECD\uB2C8\uB2E4');
+}
+
+function renderGasState() {
+  const el = document.getElementById('gasState');
+  if (el) el.textContent = gasUrl() ? '\uC124\uC815\uB428 \u00B7 \uC774 \uAE30\uAE30\uC5D0\uB9CC \uC800\uC7A5' : '\uAEBC\uC9D0 \u00B7 \uC774 \uAE30\uAE30\uC5D0\uB9CC \uC800\uC7A5';
+}
+
 function resetToDefault() {
   if (!confirm('모든 데이터를 최신 기본값으로 초기화할까요?\n직접 추가/수정한 항목은 사라집니다.')) return;
   localStorage.removeItem(STORAGE_KEY);
@@ -693,7 +743,24 @@ function resetToDefault() {
 }
 
 function getSavedPIN() { return localStorage.getItem(PIN_KEY) || null; }
-function savePIN(pin)  { localStorage.setItem(PIN_KEY, pin); }
+function savePIN(pin)  { hashPIN(pin).then(h => localStorage.setItem(PIN_KEY, h)); }
+
+// PIN 은 해시로만 저장한다. crypto.subtle 이 없는 환경(file:// 등)에서는 평문으로 폴백.
+async function hashPIN(pin) {
+  try {
+    const b = new TextEncoder().encode('dkhub:' + pin);
+    const h = await crypto.subtle.digest('SHA-256', b);
+    return 'sha256:' + Array.from(new Uint8Array(h)).map(x => x.toString(16).padStart(2, '0')).join('');
+  } catch (e) { return pin; }
+}
+
+async function matchPIN(pin) {
+  const saved = getSavedPIN();
+  if (!saved) return false;
+  if (saved.indexOf('sha256:') === 0) return (await hashPIN(pin)) === saved;
+  if (saved === pin) { savePIN(pin); return true; }   // 옛 평문 PIN -> 해시로 이행
+  return false;
+}
 
 // ── PIN ────────────────────────────────────────────────────────
 function initPINScreen() {
@@ -738,9 +805,9 @@ function shakePinDots() {
 
 function clearPinError() { document.getElementById('pinError').textContent = ''; }
 
-function processPIN() {
+async function processPIN() {
   if (pinMode === 'unlock') {
-    if (pinBuffer === getSavedPIN()) {
+    if (await matchPIN(pinBuffer)) {
       unlockApp();
     } else {
       shakePinDots();
@@ -1104,6 +1171,7 @@ function showToast(msg) {
 
 // ── Settings Panel (카테고리만) ────────────────────────────────
 function openSettings() {
+  renderGasState();
   renderGroupEditors();
   document.getElementById('settingsPanel').classList.add('show');
   document.getElementById('panelBackdrop').classList.add('show');
