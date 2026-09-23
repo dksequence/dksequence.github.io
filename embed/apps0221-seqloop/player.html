@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <style>
+      html, body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+      }
+      #player-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100% !important;
+        height: 100% !important;
+      }
+    </style>
+    <title>SeqLoop Player</title>
+  </head>
+  <body>
+    <!--
+      SeqLoop(apps0221-seqloop) 전용 유튜브 IFrame 임베드 페이지.
+      진짜 https 오리진(https://dksequence.github.io)에서 로드되어야 유튜브의
+      Referer 검증을 통과한다(webview_flutter의 loadHtmlString+baseUrl 스푸핑
+      방식은 이 계정/환경에서 onError 152로 거부되는 것을 실측 확인했음).
+      다른 앱과 절대 공유하지 않는다 -- 이 경로 전용.
+    -->
+    <div id="player-container"><div id="player"></div></div>
+
+    <script>
+      var tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      var player;
+
+      function post(type, data) {
+        try {
+          SeqLoopChannel.postMessage(JSON.stringify({ type: type, data: data }));
+        } catch (e) {}
+      }
+
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+          host: 'https://www.youtube.com',
+          playerVars: {
+            autoplay: 1,
+            controls: 1,
+            disablekb: 1,
+            enablejsapi: 1,
+            fs: 0,
+            hl: 'en',
+            iv_load_policy: 1,
+            loop: 0,
+            modestbranding: 1,
+            origin: 'https://dksequence.github.io',
+            widget_referrer: 'https://dksequence.github.io',
+            playsinline: 1,
+            rel: 0,
+            cc_load_policy: 1,
+            cc_lang_pref: 'en',
+            color: 'white'
+          },
+          events: {
+            onReady: function (event) {
+              post('ready', null);
+            },
+            onStateChange: function (event) {
+              post('stateChange', event.data);
+            },
+            onError: function (event) {
+              post('error', event.data);
+            }
+          }
+        });
+      }
+
+      window.onresize = function () {
+        if (player && player.setSize) {
+          player.setSize(window.innerWidth, window.innerHeight);
+        }
+      };
+    </script>
+  </body>
+</html>
