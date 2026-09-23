@@ -32,6 +32,12 @@
       또한 new YT.Player() 생성자에 초기 videoId를 직접 넘겨야 실제 스트림
       재생이 성공한다(cueVideoById만으로는 onError 2로 실패, 실측 확인).
       다른 앱과 절대 공유하지 않는다 -- 이 경로 전용.
+
+      whenReady()/pendingCalls: Flutter가 cueVideoById 등을 player 생성자
+      완료(onReady) 전에 보내면 조용히 씹히는 경쟁 조건을 실기로 발견
+      (재생목록 순서를 뒤집었더니 1번 트랙 UI는 바뀌었는데 실제 영상은
+      생성자 기본값이 계속 재생되는 것으로 드러남). onReady 전 호출은
+      큐에 쌓아뒀다가 준비되면 순서대로 실행한다.
     -->
     <div id="player-container"><div id="player"></div></div>
 
@@ -43,6 +49,16 @@
 
       var player;
       var timeTimerId;
+      var playerReady = false;
+      var pendingCalls = [];
+
+      function whenReady(fn) {
+        if (playerReady) {
+          fn();
+        } else {
+          pendingCalls.push(fn);
+        }
+      }
 
       function post(type, data) {
         try {
@@ -68,6 +84,14 @@
           },
           events: {
             onReady: function (event) {
+              playerReady = true;
+              var queued = pendingCalls;
+              pendingCalls = [];
+              queued.forEach(function (fn) {
+                try {
+                  fn();
+                } catch (e) {}
+              });
               post('ready', null);
             },
             onStateChange: function (event) {
