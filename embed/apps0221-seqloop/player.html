@@ -51,22 +51,11 @@
         player = new YT.Player('player', {
           host: 'https://www.youtube.com',
           playerVars: {
-            autoplay: 1,
             controls: 1,
-            disablekb: 1,
             enablejsapi: 1,
-            fs: 0,
-            hl: 'en',
-            iv_load_policy: 1,
-            loop: 0,
-            modestbranding: 1,
             origin: 'https://dksequence.com',
-            widget_referrer: 'https://dksequence.com',
             playsinline: 1,
-            rel: 0,
-            cc_load_policy: 1,
-            cc_lang_pref: 'en',
-            color: 'white'
+            rel: 0
           },
           events: {
             onReady: function (event) {
