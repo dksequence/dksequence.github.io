@@ -1,26 +1,26 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Virtual Birthday Cake with Name and Candles to Blow Out</title>
-<meta name="description" content="Make a virtual birthday cake with a name, light the candles, and blow them out online with your real breath using the microphone - or send the cake link to the birthday person.">
-<link rel="canonical" href="https://dksequence.com/play/birthday-cake/">
+<title>Bolo de Aniversário Virtual com Nome e Velas para Soprar</title>
+<meta name="description" content="Crie um bolo de aniversário virtual com nome, acenda as velas e sopre online com seu sopro de verdade usando o microfone, ou envie o link do bolo para o aniversariante.">
+<link rel="canonical" href="https://dksequence.com/play/birthday-cake/pt/">
 <link rel="alternate" hreflang="en" href="https://dksequence.com/play/birthday-cake/">
 <link rel="alternate" hreflang="es" href="https://dksequence.com/play/birthday-cake/es/">
 <link rel="alternate" hreflang="pt-BR" href="https://dksequence.com/play/birthday-cake/pt/">
 <link rel="alternate" hreflang="x-default" href="https://dksequence.com/play/birthday-cake/">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://dksequence.com/play/birthday-cake/">
-<meta property="og:title" content="Blow out the candles! A birthday cake for you">
-<meta property="og:description" content="Someone made you a birthday cake. Open it and blow out the candles with your breath!">
+<meta property="og:url" content="https://dksequence.com/play/birthday-cake/pt/">
+<meta property="og:title" content="Sopre as velas! Um bolo de aniversário para você">
+<meta property="og:description" content="Alguém fez um bolo de aniversário para você. Abra e sopre as velas!">
 <meta property="og:image" content="https://dksequence.com/play/birthday-cake/img/cake_adult_gold.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Virtual Birthday Cake - Blow Out Candles Online","url":"https://dksequence.com/play/birthday-cake/","applicationCategory":"EntertainmentApplication","operatingSystem":"Web browser","description":"Create a virtual birthday cake with a name and candles, then blow them out online using your microphone. Share the cake link with the birthday person."}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Virtual Birthday Cake - Blow Out Candles Online","url":"https://dksequence.com/play/birthday-cake/pt/","applicationCategory":"EntertainmentApplication","operatingSystem":"Web browser","description":"Create a virtual birthday cake with a name and candles, then blow them out online using your microphone. Share the cake link with the birthday person."}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
-{"@type":"Question","name":"How do I blow out the candles online?","acceptedAnswer":{"@type":"Answer","text":"Tap Blow with your breath, allow the microphone, and blow at your phone or laptop - the flames go out like real candles. You can also press and hold the blow button instead."}},
-{"@type":"Question","name":"Can I put a name on the birthday cake?","acceptedAnswer":{"@type":"Answer","text":"Yes. Type any name and it appears on the cake greeting. You can also set the age to change the number of candles, then share the personalized cake link."}},
-{"@type":"Question","name":"How do I send this virtual cake to someone?","acceptedAnswer":{"@type":"Answer","text":"After you make the cake, tap Share - the link opens your cake with their name and lit candles, ready to blow out on their birthday."}}]}</script>
+{"@type":"Question","name":"Como soprar as velas online?","acceptedAnswer":{"@type":"Answer","text":"Toque em Sopre com seu sopro, permita o microfone e sopre no celular ou notebook: as chamas se apagam como velas de verdade. Você também pode segurar o botão de soprar."}},
+{"@type":"Question","name":"Posso colocar um nome no bolo?","acceptedAnswer":{"@type":"Answer","text":"Sim. Digite um nome e ele aparece na saudação do bolo. Você também pode definir a idade para mudar o número de velas e compartilhar o link personalizado."}},
+{"@type":"Question","name":"Como enviar este bolo virtual para alguém?","acceptedAnswer":{"@type":"Answer","text":"Depois de criar o bolo, toque em Compartilhar: o link abre o bolo com o nome da pessoa e as velas acesas, pronto para soprar no aniversário."}}]}</script>
 <style>
 :root{--bg:#141019;--card:#201a2a;--ink:#f7f2ea;--sub:#b9aec7;--acc:#ff9f43;--acc2:#ff6b9d;--line:#352c44}
 *{box-sizing:border-box;margin:0}
@@ -85,54 +85,54 @@ canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
 <body>
 <div class="wrap">
 <header class="top">
-  <div class="kicker">Virtual Birthday Cake</div>
-  <h1>Blow out the candles — right in your browser</h1>
-  <div class="sub">Put a name on the cake, light the candles, and blow with your real breath 🎂</div>
+  <div class="kicker">Bolo de Aniversário Virtual</div>
+  <h1>Sopre as velas — direto no navegador</h1>
+  <div class="sub">Coloque um nome no bolo, acenda as velas e sopre com seu sopro de verdade 🎂</div>
 </header>
 
 <div class="stage" id="stage">
-  <img class="cake" id="cakeImg" src="img/cake_adult_gold.jpg" alt="Virtual birthday cake with lit candles">
+  <img class="cake" id="cakeImg" src="../img/cake_adult_gold.jpg" alt="Bolo de aniversário virtual com velas acesas">
   <div class="shade"></div>
-  <div class="greet"><div class="hb" id="hbLine">Happy Birthday</div><div class="nm" id="nmLine"></div></div>
+  <div class="greet"><div class="hb" id="hbLine">Feliz Aniversário</div><div class="nm" id="nmLine"></div></div>
   <div class="candles" id="candles" style="top:34%"></div>
   <div class="done" id="done">
-    <div class="big" id="doneBig">🎉 Happy Birthday!</div>
-    <div class="msg" id="doneMsg">You blew them all out — make a wish!</div>
-    <button class="btn share2" id="shareBtn">🔗 Share this cake</button>
-    <a class="btn store" id="storeBtn" href="https://play.google.com/store/apps/details?id=com.dksequence.blowcake" rel="noopener">🎂 Make yours — get BlowCake</a>
-    <button class="btn share2" id="againBtn">↻ Light again</button>
+    <div class="big" id="doneBig">🎉 Feliz aniversário!</div>
+    <div class="msg" id="doneMsg">Você apagou todas! Faça um pedido</div>
+    <button class="btn share2" id="shareBtn">🔗 Compartilhar este bolo</button>
+    <a class="btn store" id="storeBtn" href="https://play.google.com/store/apps/details?id=com.dksequence.blowcake" rel="noopener">🎂 Faça o seu — baixe o BlowCake</a>
+    <button class="btn share2" id="againBtn">↻ Acender de novo</button>
   </div>
 </div>
 
 <div class="ctrls">
-  <button class="btn mic" id="micBtn">🎤 Blow with your breath</button>
-  <button class="btn hold" id="holdBtn">💨 Press &amp; hold to blow</button>
+  <button class="btn mic" id="micBtn">🎤 Sopre com seu sopro</button>
+  <button class="btn hold" id="holdBtn">💨 Segure para soprar</button>
 </div>
-<div class="hint" id="hint">Allow the microphone, then blow at your screen!</div>
+<div class="hint" id="hint">Permita o microfone e sopre na tela.</div>
 
 <div class="panel">
-  <h2>Make it yours</h2>
+  <h2>Deixe do seu jeito</h2>
   <div class="row">
-    <input type="text" id="nameIn" maxlength="18" placeholder="Name on the cake">
-    <input type="number" id="ageIn" min="1" max="99" placeholder="Age" style="max-width:86px">
+    <input type="text" id="nameIn" maxlength="18" placeholder="Nome no bolo">
+    <input type="number" id="ageIn" min="1" max="99" placeholder="Idade" style="max-width:86px">
   </div>
   <div class="cakes" id="cakeGrid"></div>
   <div class="row" style="margin:12px 0 0">
-    <button class="btn mic" id="makeShare" style="flex:1">🎁 Create &amp; share this cake</button>
+    <button class="btn mic" id="makeShare" style="flex:1">🎁 Criar e compartilhar este bolo</button>
   </div>
 </div>
 <section class="seo">
-  <h2>What is this?</h2>
-  <p>This is an interactive <b>virtual birthday cake with name and candles to blow out</b>. Type a name, pick a cake, and the candles light up. Then blow at your phone or laptop — the microphone hears your breath and the flames go out, one by one, just like a real cake.</p>
-  <h2>Blow out candles online, with your real breath</h2>
-  <p>No download needed for the web cake: allow the microphone and blow. If you prefer, press and hold the blow button. When every candle is out, confetti falls and your birthday wish is sealed.</p>
-  <h2>Send a birthday cake to someone</h2>
-  <p>Made it for a friend? Tap <b>Create &amp; share</b> — the link opens your cake with their name and lit candles, ready for their birthday. It is a tiny surprise that works in any chat app.</p>
+  <h2>O que é isto?</h2>
+  <p>É um <b>bolo de aniversário virtual com nome e velas para soprar</b>. Digite um nome, escolha um bolo e as velas se acendem. Depois sopre no celular ou notebook: o microfone ouve seu sopro e as chamas se apagam uma a uma, como num bolo de verdade.</p>
+  <h2>Sopre as velas online com seu sopro de verdade</h2>
+  <p>O bolo na web não precisa de download: permita o microfone e sopre. Se preferir, segure o botão de soprar. Quando todas as velas se apagam, cai confete e o pedido está feito.</p>
+  <h2>Envie um bolo de aniversário virtual</h2>
+  <p>Fez para alguém? Toque em <b>Criar e compartilhar</b>: o link abre o bolo com o nome da pessoa e as velas acesas, pronto para o aniversário. Uma pequena surpresa que funciona em qualquer chat.</p>
 </section>
 
 <div class="appcta">
-  <img src="../../apps/icons/blowcake.png" alt="BlowCake app icon" width="52" height="52">
-  <div class="t"><b>BlowCake — Birthday Candles</b>30 photoreal cakes, real blow detection, party candles &amp; more on Android.</div>
+  <img src="../../../apps/icons/blowcake.png" alt="BlowCake app icon" width="52" height="52">
+  <div class="t"><b>BlowCake — Birthday Candles</b>30 bolos fotorrealistas, detecção real de sopro e mais no Android.</div>
   <a href="https://play.google.com/store/apps/details?id=com.dksequence.blowcake" rel="noopener">Google Play</a>
 </div>
 
@@ -150,9 +150,9 @@ var cake=qs.get("c"); if(CAKES.indexOf(cake)<0) cake=CAKES[0];
 var $=function(id){return document.getElementById(id)};
 var stage=$("stage"),cakeImg=$("cakeImg"),candlesEl=$("candles"),nmLine=$("nmLine"),hint=$("hint");
 var lit=0,total=0,won=false,audioOn=false;
-function setCake(k){cake=k;cakeImg.src="img/"+k+".jpg";candlesEl.style.top=(TOPS[k]||33)+"%";
+function setCake(k){cake=k;cakeImg.src="../img/"+k+".jpg";candlesEl.style.top=(TOPS[k]||33)+"%";
   var im=document.querySelectorAll(".cakes img");for(var i=0;i<im.length;i++)im[i].classList.toggle("on",im[i].dataset.k===k);}
-function setName(){nmLine.textContent=name;if(name)document.title=name+" — blow out your birthday candles!";}
+function setName(){nmLine.textContent=name;if(name)document.title=name+" — sopre suas velas de aniversário!";}
 function nCand(){return age>0?Math.min(age,12):7}
 function buildCandles(){total=nCand();lit=total;won=false;stage.classList.remove("blown");
   var h="";for(var i=0;i<total;i++){var dh=72+Math.round(Math.random()*16);
@@ -164,28 +164,28 @@ function puff(strength){if(won)return;var alive=litOnes();
   clearTimeout(puff._t);puff._t=setTimeout(function(){var a2=litOnes();for(var j=0;j<a2.length;j++)a2[j].classList.remove("windy")},260);
   var kill=Math.max(1,Math.round(strength*3));
   while(kill-->0&&alive.length){var k=alive.splice(Math.floor(Math.random()*alive.length),1)[0];k.classList.add("out");k.classList.remove("windy");lit--;}
-  if(lit<=0)win();else hint.textContent="Keep blowing — "+lit+" left!";}
+  if(lit<=0)win();else hint.textContent="Continue soprando! Faltam "+lit+"!";}
 function startMic(){if(audioOn)return;
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){hint.textContent="Mic not available here — use press & hold!";return;}
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){hint.textContent="Microfone indisponível: use segurar para soprar.";return;}
   navigator.mediaDevices.getUserMedia({audio:true}).then(function(st){audioOn=true;
     var AC=window.AudioContext||window.webkitAudioContext,ac=new AC(),src=ac.createMediaStreamSource(st),an=ac.createAnalyser();
     an.fftSize=512;src.connect(an);var buf=new Uint8Array(an.fftSize);var hot=0;
-    hint.textContent="I am listening... blow at your screen!";
+    hint.textContent="Estou ouvindo... sopre na tela!";
     (function loop(){an.getByteTimeDomainData(buf);var s=0;
       for(var i=0;i<buf.length;i++){var v=(buf[i]-128)/128;s+=v*v;}
       var rms=Math.sqrt(s/buf.length);
       if(rms>0.09){hot++;if(hot>=3){puff(Math.min(rms*6,2));hot=1;}}else hot=0;
       if(!won)requestAnimationFrame(loop);})();
-  }).catch(function(){hint.textContent="Mic blocked - no problem, press & hold to blow!"});}
+  }).catch(function(){hint.textContent="Microfone bloqueado: segure o botão para soprar!"});}
 function win(){won=true;stage.classList.add("blown");
-  $("doneBig").textContent="🎉 Happy Birthday"+(name?", "+name:"")+"!";
+  $("doneBig").textContent="🎉 Feliz aniversário"+(name?", "+name:"")+"!";
   hint.textContent="";confetti();}
 function shareUrl(){var u=location.origin+location.pathname+"?c="+cake;
   if(name)u+="&n="+encodeURIComponent(name);if(age)u+="&a="+age;return u;}
-function doShare(){var u=shareUrl(),t=(name?name+", blow":"Blow")+" out your birthday candles!";
+function doShare(){var u=shareUrl(),t=(name?name+", sopre":"Sopre")+" suas velas de aniversário!";
   if(navigator.share){navigator.share({title:t,text:t,url:u}).catch(function(){});}
   else{(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(
-    function(){hint.textContent="Link copied - paste it in any chat!"},
+    function(){hint.textContent="Link copiado: cole em qualquer chat!"},
     function(){prompt("Copy this link:",u)});}}
 function confetti(){var cv=$("cf"),cx=cv.getContext("2d");cv.width=innerWidth;cv.height=innerHeight;
   var P=[];for(var i=0;i<140;i++)P.push({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*0.5,
@@ -196,7 +196,7 @@ function confetti(){var cv=$("cf"),cx=cv.getContext("2d");cv.width=innerWidth;cv
       cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cx.restore();}
     if(Date.now()-t0<2600)requestAnimationFrame(fr);else cx.clearRect(0,0,cv.width,cv.height);})();}
 var grid=$("cakeGrid"),gh="";
-for(var i=0;i<CAKES.length;i++)gh+='<img data-k="'+CAKES[i]+'" src="img/'+CAKES[i]+'.jpg" alt="birthday cake style '+(i+1)+'" loading="lazy">';
+for(var i=0;i<CAKES.length;i++)gh+='<img data-k="'+CAKES[i]+'" src="../img/'+CAKES[i]+'.jpg" alt="estilo de bolo '+(i+1)+'" loading="lazy">';
 grid.innerHTML=gh;
 grid.addEventListener("click",function(e){var k=e.target&&e.target.dataset&&e.target.dataset.k;if(k){setCake(k);buildCandles();}});
 $("micBtn").addEventListener("click",startMic);
@@ -205,7 +205,7 @@ function hStart(e){e.preventDefault();if(hT)return;hT=setInterval(function(){puf
 function hEnd(){clearInterval(hT);hT=null;}
 hb.addEventListener("pointerdown",hStart);hb.addEventListener("pointerup",hEnd);hb.addEventListener("pointerleave",hEnd);
 $("shareBtn").addEventListener("click",doShare);
-$("againBtn").addEventListener("click",function(){buildCandles();hint.textContent="Candles are lit again!"});
+$("againBtn").addEventListener("click",function(){buildCandles();hint.textContent="Velas acesas de novo!"});
 $("makeShare").addEventListener("click",function(){
   name=($("nameIn").value||"").slice(0,18);var av=parseInt($("ageIn").value,10);age=(av>0&&av<100)?av:0;
   setName();buildCandles();doShare();});
