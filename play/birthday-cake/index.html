@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Virtual Birthday Cake with Name and Candles to Blow Out</title>
+<meta name="description" content="Make a virtual birthday cake with a name, light the candles, and blow them out online with your real breath using the microphone - or send the cake link to the birthday person.">
+<link rel="canonical" href="https://dksequence.com/play/birthday-cake/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://dksequence.com/play/birthday-cake/">
+<meta property="og:title" content="Blow out the candles! A birthday cake for you">
+<meta property="og:description" content="Someone made you a birthday cake. Open it and blow out the candles with your breath!">
+<meta property="og:image" content="https://dksequence.com/play/birthday-cake/img/cake_adult_gold.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Virtual Birthday Cake - Blow Out Candles Online","url":"https://dksequence.com/play/birthday-cake/","applicationCategory":"EntertainmentApplication","operatingSystem":"Web browser","description":"Create a virtual birthday cake with a name and candles, then blow them out online using your microphone. Share the cake link with the birthday person."}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"How do I blow out the candles online?","acceptedAnswer":{"@type":"Answer","text":"Tap Blow with your breath, allow the microphone, and blow at your phone or laptop - the flames go out like real candles. You can also press and hold the blow button instead."}},
+{"@type":"Question","name":"Can I put a name on the birthday cake?","acceptedAnswer":{"@type":"Answer","text":"Yes. Type any name and it appears on the cake greeting. You can also set the age to change the number of candles, then share the personalized cake link."}},
+{"@type":"Question","name":"How do I send this virtual cake to someone?","acceptedAnswer":{"@type":"Answer","text":"After you make the cake, tap Share - the link opens your cake with their name and lit candles, ready to blow out on their birthday."}}]}</script>
+<style>
+:root{--bg:#141019;--card:#201a2a;--ink:#f7f2ea;--sub:#b9aec7;--acc:#ff9f43;--acc2:#ff6b9d;--line:#352c44}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;overflow-x:hidden;max-width:100vw}
+body{background:radial-gradient(120% 90% at 50% 0%,#241b31 0%,var(--bg) 60%);color:var(--ink);font:16px/1.6 -apple-system,"Segoe UI",Roboto,"Malgun Gothic",sans-serif}
+.wrap{max-width:560px;margin:0 auto;padding:18px 16px 60px}
+header.top{text-align:center;padding:6px 0 2px}
+.kicker{font-size:12px;letter-spacing:2px;color:var(--acc);text-transform:uppercase;font-weight:800}
+h1{font-size:clamp(20px,5.4vw,27px);line-height:1.25;margin:6px 0 2px;letter-spacing:-.3px;overflow-wrap:break-word}
+.sub{color:var(--sub);font-size:13.5px}
+.stage{position:relative;margin:14px auto 0;border-radius:22px;overflow:hidden;background:#000;box-shadow:0 24px 70px rgba(0,0,0,.55);aspect-ratio:9/11.5}
+.stage img.cake{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.96)}
+.shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.42) 0%,rgba(0,0,0,0) 30%,rgba(0,0,0,0) 62%,rgba(0,0,0,.5) 100%)}
+.greet{position:absolute;top:12px;left:0;right:0;text-align:center;text-shadow:0 2px 12px rgba(0,0,0,.75)}
+.greet .hb{font-size:15px;letter-spacing:3px;color:#ffe3b3;font-weight:700;text-transform:uppercase}
+.greet .nm{font-size:clamp(26px,8vw,40px);font-weight:900;color:#fff;letter-spacing:-.5px}
+.candles{position:absolute;left:0;right:0;display:flex;justify-content:center;gap:4.6%;pointer-events:none}
+.candle{position:relative;width:3.4%;min-width:11px}
+.stick{width:100%;aspect-ratio:1/5.2;border-radius:3px;background:repeating-linear-gradient(135deg,#fff 0 4px,#ff8fb3 4px 8px);box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.flame{position:absolute;left:50%;bottom:99%;width:160%;aspect-ratio:2/3.1;transform:translateX(-50%);background:radial-gradient(50% 62% at 50% 72%,#fff7d6 0%,#ffd36b 42%,#ff9d2e 70%,rgba(255,120,30,0) 100%);border-radius:50% 50% 50% 50%/60% 60% 40% 40%;filter:drop-shadow(0 0 7px rgba(255,170,60,.85));animation:fl .18s infinite alternate;transform-origin:50% 100%}
+@keyframes fl{from{transform:translateX(-50%) scale(1) rotate(-2deg)}to{transform:translateX(-50%) scale(1.12) rotate(2.5deg)}}
+.candle.windy .flame{animation:fl .07s infinite alternate}
+.candle.out .flame{display:none}
+.smoke{position:absolute;left:50%;bottom:100%;width:10px;height:26px;transform:translateX(-50%);opacity:0;pointer-events:none}
+.candle.out .smoke{opacity:1;background:linear-gradient(180deg,rgba(200,200,210,0) 0%,rgba(200,200,210,.55) 40%,rgba(200,200,210,0) 100%);border-radius:50%;animation:sm 1.6s ease-out forwards}
+@keyframes sm{from{transform:translate(-50%,0) scaleY(.4);opacity:.8}to{transform:translate(-50%,-30px) scaleY(1.6);opacity:0}}
+.ctrls{display:flex;gap:9px;margin:14px 0 0}
+.btn{flex:1;min-width:0;border:0;cursor:pointer;font:inherit;font-weight:800;font-size:14.5px;border-radius:14px;padding:13px 10px;transition:.15s;color:#1b1024}
+.btn.mic{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;box-shadow:0 6px 18px rgba(255,197,110,.25)}
+.btn.mic:active{transform:scale(.97)}
+.btn.hold{background:var(--card);color:var(--ink);border:1.5px solid var(--line)}
+.btn.hold:active{border-color:var(--acc);color:var(--acc)}
+.hint{font-size:12px;color:var(--sub);text-align:center;margin-top:8px;min-height:16px}
+.panel{margin:16px 0 0;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+.panel h2{font-size:14px;margin:0 0 10px;color:var(--acc)}
+.row{display:flex;gap:8px;margin-bottom:8px}
+input[type=text],input[type=number]{flex:1;min-width:0;background:#171221;border:1.5px solid var(--line);border-radius:11px;color:var(--ink);font:inherit;padding:10px 12px}
+input:focus{outline:none;border-color:var(--acc)}
+.cakes{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:4px}
+.cakes img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;cursor:pointer;border:2.5px solid transparent;opacity:.78}
+.cakes img.on{border-color:var(--acc);opacity:1}
+.done{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;background:rgba(10,6,16,.55);backdrop-filter:blur(3px);text-align:center;padding:20px}
+.stage.blown .done{display:flex}
+.done .big{font-size:clamp(24px,7vw,34px);font-weight:900;text-shadow:0 2px 14px rgba(0,0,0,.8)}
+.done .msg{color:#ffe3b3;margin:6px 0 16px;font-size:14.5px}
+.done .btn{flex:none;width:min(300px,86%);margin:5px 0}
+.btn.store{background:#fff}
+.btn.share2{background:rgba(255,255,255,.14);color:#fff;border:1.5px solid rgba(255,255,255,.4)}
+.seo{margin-top:26px;color:var(--sub);font-size:13.8px}
+.seo h2{color:var(--ink);font-size:16px;margin:18px 0 6px}
+.seo p{margin:0 0 8px}
+.appcta{display:flex;align-items:center;gap:12px;margin-top:20px;background:linear-gradient(135deg,#2a1f3d,#201a2a);border:1px solid var(--line);border-radius:16px;padding:14px}
+.appcta img{width:52px;height:52px;border-radius:12px}
+.appcta .t{flex:1;font-size:13px;color:var(--sub)}
+.appcta .t b{display:block;color:var(--ink);font-size:14.5px}
+.appcta a{background:var(--acc);color:#1b1024;text-decoration:none;font-weight:800;font-size:13px;border-radius:10px;padding:10px 14px;white-space:nowrap}
+footer{margin-top:30px;text-align:center;color:#6d6380;font-size:12px}
+footer a{color:#9a8fb0}
+canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div class="kicker">Virtual Birthday Cake</div>
+  <h1>Blow out the candles — right in your browser</h1>
+  <div class="sub">Put a name on the cake, light the candles, and blow with your real breath 🎂</div>
+</header>
+
+<div class="stage" id="stage">
+  <img class="cake" id="cakeImg" src="img/cake_adult_gold.jpg" alt="Virtual birthday cake with lit candles">
+  <div class="shade"></div>
+  <div class="greet"><div class="hb" id="hbLine">Happy Birthday</div><div class="nm" id="nmLine"></div></div>
+  <div class="candles" id="candles" style="top:34%"></div>
+  <div class="done" id="done">
+    <div class="big" id="doneBig">🎉 Happy Birthday!</div>
+    <div class="msg" id="doneMsg">You blew them all out — make a wish!</div>
+    <button class="btn share2" id="shareBtn">🔗 Share this cake</button>
+    <a class="btn store" id="storeBtn" href="https://play.google.com/store/apps/details?id=com.dksequence.blowcake" rel="noopener">🎂 Make yours — get BlowCake</a>
+    <button class="btn share2" id="againBtn">↻ Light again</button>
+  </div>
+</div>
+
+<div class="ctrls">
+  <button class="btn mic" id="micBtn">🎤 Blow with your breath</button>
+  <button class="btn hold" id="holdBtn">💨 Press &amp; hold to blow</button>
+</div>
+<div class="hint" id="hint">Allow the microphone, then blow at your screen!</div>
+
+<div class="panel">
+  <h2>Make it yours</h2>
+  <div class="row">
+    <input type="text" id="nameIn" maxlength="18" placeholder="Name on the cake">
+    <input type="number" id="ageIn" min="1" max="99" placeholder="Age" style="max-width:86px">
+  </div>
+  <div class="cakes" id="cakeGrid"></div>
+  <div class="row" style="margin:12px 0 0">
+    <button class="btn mic" id="makeShare" style="flex:1">🎁 Create &amp; share this cake</button>
+  </div>
+</div>
+<section class="seo">
+  <h2>What is this?</h2>
+  <p>This is an interactive <b>virtual birthday cake with name and candles to blow out</b>. Type a name, pick a cake, and the candles light up. Then blow at your phone or laptop — the microphone hears your breath and the flames go out, one by one, just like a real cake.</p>
+  <h2>Blow out candles online, with your real breath</h2>
+  <p>No download needed for the web cake: allow the microphone and blow. If you prefer, press and hold the blow button. When every candle is out, confetti falls and your birthday wish is sealed.</p>
+  <h2>Send a birthday cake to someone</h2>
+  <p>Made it for a friend? Tap <b>Create &amp; share</b> — the link opens your cake with their name and lit candles, ready for their birthday. It is a tiny surprise that works in any chat app.</p>
+</section>
+
+<div class="appcta">
+  <img src="../../apps/icons/blowcake.png" alt="BlowCake app icon" width="52" height="52">
+  <div class="t"><b>BlowCake — Birthday Candles</b>30 photoreal cakes, real blow detection, party candles &amp; more on Android.</div>
+  <a href="https://play.google.com/store/apps/details?id=com.dksequence.blowcake" rel="noopener">Google Play</a>
+</div>
+
+<footer>DKsequence · <a href="https://dksequence.com/">dksequence.com</a> · <a href="https://dksequence.com/apps/">All apps</a></footer>
+</div>
+<canvas class="confetti" id="cf"></canvas>
+<script>
+(function(){
+var CAKES=["cake_adult_gold","cake_adult_elegant","cake_kid_rainbow","cake_kid_bear","cake_love_heart","cake_cheer_grad","cake_adult_minimal"];
+var TOPS={cake_adult_gold:32,cake_adult_elegant:33,cake_kid_rainbow:29,cake_kid_bear:31,cake_love_heart:33,cake_cheer_grad:31,cake_adult_minimal:34};
+var qs=new URLSearchParams(location.search);
+var name=(qs.get("n")||"").slice(0,18);
+var age=parseInt(qs.get("a")||"",10); if(!(age>0&&age<100)) age=0;
+var cake=qs.get("c"); if(CAKES.indexOf(cake)<0) cake=CAKES[0];
+var $=function(id){return document.getElementById(id)};
+var stage=$("stage"),cakeImg=$("cakeImg"),candlesEl=$("candles"),nmLine=$("nmLine"),hint=$("hint");
+var lit=0,total=0,won=false,audioOn=false;
+function setCake(k){cake=k;cakeImg.src="img/"+k+".jpg";candlesEl.style.top=(TOPS[k]||33)+"%";
+  var im=document.querySelectorAll(".cakes img");for(var i=0;i<im.length;i++)im[i].classList.toggle("on",im[i].dataset.k===k);}
+function setName(){nmLine.textContent=name;if(name)document.title=name+" — blow out your birthday candles!";}
+function nCand(){return age>0?Math.min(age,12):7}
+function buildCandles(){total=nCand();lit=total;won=false;stage.classList.remove("blown");
+  var h="";for(var i=0;i<total;i++){var dh=72+Math.round(Math.random()*16);
+    h+='<div class="candle" style="height:'+dh+'px"><div class="flame"></div><div class="smoke"></div><div class="stick" style="height:100%"></div></div>';}
+  candlesEl.innerHTML=h;}
+function litOnes(){var a=[],c=candlesEl.children;for(var i=0;i<c.length;i++)if(!c[i].classList.contains("out"))a.push(c[i]);return a;}
+function puff(strength){if(won)return;var alive=litOnes();
+  for(var i=0;i<alive.length;i++)alive[i].classList.add("windy");
+  clearTimeout(puff._t);puff._t=setTimeout(function(){var a2=litOnes();for(var j=0;j<a2.length;j++)a2[j].classList.remove("windy")},260);
+  var kill=Math.max(1,Math.round(strength*3));
+  while(kill-->0&&alive.length){var k=alive.splice(Math.floor(Math.random()*alive.length),1)[0];k.classList.add("out");k.classList.remove("windy");lit--;}
+  if(lit<=0)win();else hint.textContent="Keep blowing — "+lit+" left!";}
+function startMic(){if(audioOn)return;
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){hint.textContent="Mic not available here — use press & hold!";return;}
+  navigator.mediaDevices.getUserMedia({audio:true}).then(function(st){audioOn=true;
+    var AC=window.AudioContext||window.webkitAudioContext,ac=new AC(),src=ac.createMediaStreamSource(st),an=ac.createAnalyser();
+    an.fftSize=512;src.connect(an);var buf=new Uint8Array(an.fftSize);var hot=0;
+    hint.textContent="I am listening... blow at your screen!";
+    (function loop(){an.getByteTimeDomainData(buf);var s=0;
+      for(var i=0;i<buf.length;i++){var v=(buf[i]-128)/128;s+=v*v;}
+      var rms=Math.sqrt(s/buf.length);
+      if(rms>0.09){hot++;if(hot>=3){puff(Math.min(rms*6,2));hot=1;}}else hot=0;
+      if(!won)requestAnimationFrame(loop);})();
+  }).catch(function(){hint.textContent="Mic blocked - no problem, press & hold to blow!"});}
+function win(){won=true;stage.classList.add("blown");
+  $("doneBig").textContent="🎉 Happy Birthday"+(name?", "+name:"")+"!";
+  hint.textContent="";confetti();}
+function shareUrl(){var u=location.origin+location.pathname+"?c="+cake;
+  if(name)u+="&n="+encodeURIComponent(name);if(age)u+="&a="+age;return u;}
+function doShare(){var u=shareUrl(),t=(name?name+", blow":"Blow")+" out your birthday candles!";
+  if(navigator.share){navigator.share({title:t,text:t,url:u}).catch(function(){});}
+  else{(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(
+    function(){hint.textContent="Link copied - paste it in any chat!"},
+    function(){prompt("Copy this link:",u)});}}
+function confetti(){var cv=$("cf"),cx=cv.getContext("2d");cv.width=innerWidth;cv.height=innerHeight;
+  var P=[];for(var i=0;i<140;i++)P.push({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*0.5,
+    w:5+Math.random()*6,h:8+Math.random()*8,v:2+Math.random()*3.4,r:Math.random()*6.28,
+    c:["#ff9f43","#ff6b9d","#ffe3b3","#7bd3ff","#b6ff9e"][i%5]});
+  var t0=Date.now();(function fr(){cx.clearRect(0,0,cv.width,cv.height);
+    for(var i=0;i<P.length;i++){var p=P[i];p.y+=p.v;p.r+=0.07;
+      cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cx.restore();}
+    if(Date.now()-t0<2600)requestAnimationFrame(fr);else cx.clearRect(0,0,cv.width,cv.height);})();}
+var grid=$("cakeGrid"),gh="";
+for(var i=0;i<CAKES.length;i++)gh+='<img data-k="'+CAKES[i]+'" src="img/'+CAKES[i]+'.jpg" alt="birthday cake style '+(i+1)+'" loading="lazy">';
+grid.innerHTML=gh;
+grid.addEventListener("click",function(e){var k=e.target&&e.target.dataset&&e.target.dataset.k;if(k){setCake(k);buildCandles();}});
+$("micBtn").addEventListener("click",startMic);
+var hb=$("holdBtn"),hT=null;
+function hStart(e){e.preventDefault();if(hT)return;hT=setInterval(function(){puff(0.7)},300);puff(0.7);}
+function hEnd(){clearInterval(hT);hT=null;}
+hb.addEventListener("pointerdown",hStart);hb.addEventListener("pointerup",hEnd);hb.addEventListener("pointerleave",hEnd);
+$("shareBtn").addEventListener("click",doShare);
+$("againBtn").addEventListener("click",function(){buildCandles();hint.textContent="Candles are lit again!"});
+$("makeShare").addEventListener("click",function(){
+  name=($("nameIn").value||"").slice(0,18);var av=parseInt($("ageIn").value,10);age=(av>0&&av<100)?av:0;
+  setName();buildCandles();doShare();});
+$("nameIn").addEventListener("input",function(){name=this.value.slice(0,18);setName();});
+$("ageIn").addEventListener("input",function(){var v=parseInt(this.value,10);age=(v>0&&v<100)?v:0;buildCandles();});
+if(name)$("nameIn").value=name;if(age)$("ageIn").value=age;
+setCake(cake);setName();buildCandles();
+if(qs.get("test")==="blown"){var c=candlesEl.children;for(var i=0;i<c.length;i++)c[i].classList.add("out");lit=0;win();}
+})();
+</script>
+</body>
+</html>
