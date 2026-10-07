@@ -30,11 +30,15 @@
 <li>봉인한 글의 내용 — 수집·전송하지 않음(기기 내 암호화 저장만).</li>
 <li>비밀번호 — 저장하지 않음(암호화 키 파생에만 일시 사용 후 폐기).</li>
 <li>이름·이메일·전화번호 등 계정 정보 — 요구하지 않음(로그인 없음).</li>
+<li>힌트 — 선택 입력한 힌트는 암호화되지 않은 채 기기 안에만 저장되며 전송하지 않습니다. 비밀번호를 짐작할 수 있는 내용은 적지 마세요.</li>
 </ul>
 <p><b>3. 제3자 서비스가 수집할 수 있는 것 (광고·결제)</b></p>
 <p>앱은 무료 사용을 위해 광고와 인앱 구매를 제공하며, 이를 위해 다음 제3자 SDK를 사용합니다.</p>
 <ul>
-<li><b>Google AdMob(광고):</b> 광고 제공·측정을 위해 광고 식별자, 기기 정보, 대략적 사용 데이터를 수집·처리할 수 있습니다. EEA/영국 사용자에게는 동의(UMP)를 표시합니다. ‘광고 제거’ 구매 시 배너·전면 광고가 비활성화됩니다(보상형 광고는 사용자가 선택할 때만 재생).</li>
+<li><b>Google AdMob(광고):</b> 광고 제공·측정을 위해 광고 식별자, 기기 정보, 대략적 사용 데이터를 수집·처리할 수 있습니다. EEA/영국 사용자에게는 동의(UMP)를 표시합니다. ‘광고 제거’ 구매 시 배너 광고가 비활성화됩니다(보상형 광고는 사용자가 선택할 때만 재생).</li>
+</ul>
+<ul>
+<li><b>Google Firebase Analytics(앱 사용 통계):</b> 앱 실행·화면 이동 같은 사용 이벤트와 기기 정보, 앱 인스턴스 ID를 수집할 수 있습니다. 봉인한 글·힌트·비밀번호는 보내지 않습니다.</li>
 </ul>
 <p>  - Google 정책: <a href="https://policies.google.com/privacy">https://policies.google.com/privacy</a></p>
 <ul>
@@ -44,6 +48,8 @@
 <ul>
 <li>봉인 내용은 기기에만 저장됩니다. 앱 내 ‘영원히 파쇄’ 시 즉시·영구 삭제되며 복구할 수 없습니다.</li>
 <li>앱을 삭제하면 모든 봉인 내용이 함께 삭제됩니다.</li>
+<li>1.0.6 버전부터 봉인 기록은 Android 자동 백업(클라우드 백업·기기 간 이전)에서 제외됩니다. 기기를 바꿀 때는 앱의 암호화 백업 내보내기를 사용하세요.</li>
+<li>해제 알림은 기기 안에서 예약되는 알림이며, 알림에는 봉인 내용이 들어가지 않습니다. 설정에서 끌 수 있습니다.</li>
 <li>(선택) 암호화 백업을 직접 내보낼 수 있으며, 백업 파일의 보관·공유는 사용자 책임입니다.</li>
 </ul>
 <p><b>5. 보안</b></p>
@@ -53,7 +59,7 @@
 <p><b>7. 변경</b></p>
 <p>방침이 변경되면 본 페이지에서 갱신하고 시행일을 수정합니다.</p>
 <p><b>8. 문의</b></p>
-<p>개발자: DKsequence · 이메일: kitan98@gmail.com *(확정 필요)*</p>
+<p>개발자: DKsequence · 이메일: kitan98@gmail.com</p>
 <hr>
 <h2>English</h2>
 <p><b>1. In short</b></p>
@@ -63,11 +69,15 @@
 <li>The content you seal — never collected or transmitted (encrypted on-device only).</li>
 <li>Your passcodes — never stored (used transiently to derive an encryption key, then discarded).</li>
 <li>Account info such as name, email, phone — not required (there is no sign-in).</li>
+<li>Hints — an optional hint is stored unencrypted, only on your device, and is never transmitted. Don't write anything that reveals your passcode.</li>
 </ul>
 <p><b>3. What third parties may collect (ads &amp; purchases)</b></p>
 <p>To keep the app free, we offer ads and in-app purchases via these third-party SDKs:</p>
 <ul>
-<li><b>Google AdMob (ads):</b> may collect/process an advertising identifier, device information, and coarse usage data to serve and measure ads. EEA/UK users are shown a consent prompt (UMP). Buying &quot;Remove ads&quot; disables banner/interstitial ads (rewarded ads only play when you choose).</li>
+<li><b>Google AdMob (ads):</b> may collect/process an advertising identifier, device information, and coarse usage data to serve and measure ads. EEA/UK users are shown a consent prompt (UMP). Buying &quot;Remove ads&quot; disables banner ads (rewarded ads only play when you choose).</li>
+</ul>
+<ul>
+<li><b>Google Firebase Analytics (app usage statistics):</b> may collect usage events such as app opens and screen views, device information and an app instance ID. Your sealed text, hints and passcodes are never sent.</li>
 </ul>
 <p>  - Google policy: <a href="https://policies.google.com/privacy">https://policies.google.com/privacy</a></p>
 <ul>
@@ -77,6 +87,8 @@
 <ul>
 <li>Sealed content lives only on your device. &quot;Shred forever&quot; deletes it instantly and permanently — it cannot be recovered.</li>
 <li>Uninstalling the app deletes all sealed content.</li>
+<li>From version 1.0.6, sealed records are excluded from Android automatic backup (cloud backup and device-to-device transfer). When you change phones, use the app's encrypted backup export.</li>
+<li>Unlock reminders are scheduled on your device and never include your sealed content. You can turn them off in Settings.</li>
 <li>(Optional) You may export an encrypted backup yourself; storing/sharing that backup file is your responsibility.</li>
 </ul>
 <p><b>5. Security</b></p>
@@ -86,7 +98,7 @@
 <p><b>7. Changes</b></p>
 <p>If this policy changes, we will update this page and the effective date.</p>
 <p><b>8. Contact</b></p>
-<p>Developer: DKsequence · Email: kitan98@gmail.com *(to be confirmed)*</p>
+<p>Developer: DKsequence · Email: kitan98@gmail.com</p>
 </div>
 </body>
 </html>
