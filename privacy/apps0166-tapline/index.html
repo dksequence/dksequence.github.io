@@ -13,12 +13,12 @@ td,th{border:1px solid #262C36;padding:8px;font-size:14px;text-align:left}
 a{color:#4DD4AC}
 </style></head><body>
 <h1>Tapline — Privacy Policy</h1>
-<p class="date">App: Tapline (탭라인) · Package: com.dksequence.tapline<br>Last updated: 2026-08-09 · Developer: DKSEQUENCE · Contact: kitan98@gmail.com</p>
+<p class="date">App: Tapline (탭라인) · Package: com.dksequence.tapline<br>Last updated: 2026-10-07 · Developer: DKSEQUENCE · Contact: kitan98@gmail.com</p>
 
 <h2>1. Summary</h2>
 <p>Tapline reads your device's own usage statistics to show you how long you used your phone, and it keeps
 that analysis on your device. We do not run our own servers and we do not collect, sell, or share your
-personal information. Third-party services used inside the app (advertising and in-app purchases) may
+personal information. Third-party services used inside the app (advertising, app analytics and in-app purchases) may
 process limited data as described below.</p>
 
 <h2>2. Usage access</h2>
@@ -33,7 +33,7 @@ use an accessibility service. It only sees which app was used, when, and for how
 <p>Your report settings (notification time and day, idle threshold, language choice) and the notification
 text templates are stored locally using Android's app storage. Usage figures are recomputed from the
 system each time you open the app and are not uploaded anywhere by us. All of it is deleted when you
-uninstall the app.</p>
+uninstall the app, except for any copy kept by Android's own backup: if backup is turned on for your Google account, Android may back up these settings and restore them when you reinstall. You can turn this off in Android Settings.</p>
 
 <h2>4. Third-party services</h2>
 <table>
@@ -44,12 +44,15 @@ uninstall the app.</p>
 <tr><td>Google Play Billing</td><td>Processing the ad-removal purchase</td>
 <td>Purchase token and order status (handled by Google; we never see your payment details)</td>
 <td><a href="https://policies.google.com/privacy">policies.google.com/privacy</a></td></tr>
+<tr><td>Google Analytics for Firebase</td><td>Understanding how many people open the app and which screens are used, to fix problems</td>
+<td>App instance ID, app usage events, device and app information, approximate location derived from IP</td>
+<td><a href="https://firebase.google.com/support/privacy">firebase.google.com/support/privacy</a></td></tr>
 </table>
 <p>Your usage statistics and app-by-app figures are never sent to these services or to us.</p>
 
 <h2>5. Permissions</h2>
 <p>Usage access (granted by you in Android Settings) for the report. Notification permission for the
-nightly and weekly report. Internet access, required only by the advertising and purchase services above.
+nightly and weekly report. Internet access, required only by the advertising, analytics and purchase services above.
 The app does not request access to your camera, microphone, contacts, photos, precise location, or files.</p>
 
 <h2>6. Children</h2>
@@ -69,7 +72,7 @@ app removes all locally stored data. Purchasing "Remove ads" stops the banner in
 <p>Questions about this policy: <a href="mailto:kitan98@gmail.com">kitan98@gmail.com</a></p>
 
   <h2>데이터 보관 / Data retention</h2>
-  <p>이 앱이 만드는 기록은 <b>사용자의 기기 안에만</b> 저장됩니다. 개발자는 사용자의 기록을 서버로 받지 않으며 <b>따로 보관하지 않습니다</b>. 기기에 저장된 기록은 사용자가 앱에서 삭제하거나 앱을 제거할 때까지 남아 있고, 삭제하면 함께 사라집니다. 광고에 쓰이는 식별자는 Google 및 광고 파트너가 각자의 정책과 보관 기간에 따라 처리하며, 개발자가 보관하지 않습니다.</p>
-  <p>Records created by this app are stored <b>only on the user's device</b>. The developer does not receive them on any server and <b>does not retain them</b>. Data kept on the device remains until the user deletes it in the app or uninstalls the app, at which point it is removed with the app. Advertising identifiers used for ads are handled by Google and its advertising partners under their own policies and retention periods; the developer does not retain them.</p>
-  <p>このアプリが作る記録は<b>利用者の端末内にのみ</b>保存されます。開発者はサーバーで受け取らず、<b>別途保管しません</b>。端末内の記録は利用者が削除するかアプリを削除するまで残り、削除すると一緒に消えます。広告識別子は Google および広告パートナーが各自のポリシーと保存期間に従って扱い、開発者は保管しません。</p>
+  <p>이 앱이 만드는 기록은 <b>사용자의 기기 안에만</b> 저장됩니다. 개발자는 사용자의 기록을 서버로 받지 않으며 <b>따로 보관하지 않습니다</b>. 기기에 저장된 기록은 사용자가 앱에서 삭제하거나 앱을 제거할 때까지 남아 있고, 삭제하면 함께 사라집니다. 단, Google 계정 백업이 켜져 있으면 Android 가 앱 설정을 백업해 재설치 때 되살릴 수 있습니다. 앱 분석(Firebase)에 쓰이는 식별자도 Google 이 자체 정책과 보관 기간에 따라 처리합니다. 광고에 쓰이는 식별자는 Google 및 광고 파트너가 각자의 정책과 보관 기간에 따라 처리하며, 개발자가 보관하지 않습니다.</p>
+  <p>Records created by this app are stored <b>only on the user's device</b>. The developer does not receive them on any server and <b>does not retain them</b>. Data kept on the device remains until the user deletes it in the app or uninstalls the app, at which point it is removed with the app. If Google account backup is on, Android may back up the app's settings and restore them on reinstall. Identifiers used for app analytics (Firebase) are handled by Google under its own policies and retention periods. Advertising identifiers used for ads are handled by Google and its advertising partners under their own policies and retention periods; the developer does not retain them.</p>
+  <p>このアプリが作る記録は<b>利用者の端末内にのみ</b>保存されます。開発者はサーバーで受け取らず、<b>別途保管しません</b>。端末内の記録は利用者が削除するかアプリを削除するまで残り、削除すると一緒に消えます。ただし Google アカウントのバックアップが有効な場合、Android がアプリの設定をバックアップし、再インストール時に復元することがあります。アプリ分析（Firebase）に使われる識別子も Google が自社のポリシーと保存期間に従って扱います。広告識別子は Google および広告パートナーが各自のポリシーと保存期間に従って扱い、開発者は保管しません。</p>
 </body></html>
