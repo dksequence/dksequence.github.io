@@ -4,13 +4,13 @@
 <style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:760px;margin:0 auto;padding:24px;line-height:1.7;color:#222}h1{font-size:1.5rem}h2{font-size:1.15rem;margin-top:1.8em}hr{margin:2.5em 0;border:none;border-top:1px solid #ddd}a{color:#1a6}b{color:#111}</style>
 
 <h1>Pain Diary 개인정보처리방침</h1>
-<p>최종 업데이트: 2026-08-20 · 앱: Pain Diary(com.dksequence.paindiary) · 개발자: DKsequence(디케이시퀀스) · 문의: kitan98@gmail.com</p>
+<p>최종 업데이트: 2026-10-08 · 앱: Pain Diary(com.dksequence.paindiary) · 개발자: DKsequence(디케이시퀀스) · 문의: kitan98@gmail.com</p>
 
 <h2>1. 통증 기록은 기기 안에만 있습니다</h2>
-<p>이 앱이 다루는 <b>통증 기록(강도·부위·성질·약·메모·진료일)은 기기 안의 데이터베이스에만 저장</b>되며,
+<p>이 앱이 다루는 <b>통증 기록(강도·부위·성질, 기압계가 있는 기기의 기압값, 진료일, 가족 프로필 이름)은 기기 안의 데이터베이스에만 저장</b>되며,
 개발자 서버나 제3자에게 전송되지 않습니다. 계정도, 로그인도, 클라우드 동기화도 없습니다.
-앱을 삭제하면 기록도 함께 지워집니다.</p>
-<p>기록을 옮기고 싶을 때만 <b>사용자가 직접</b> 백업 파일을 내보낼 수 있습니다. 그 파일은 사용자가 고른 위치에 저장되며, 앱이 어디로도 올리지 않습니다.</p>
+앱을 삭제하면 기록도 함께 지워집니다. 1.1.0 버전부터 통증 기록은 Android 자동 백업(Google 백업)과 기기 간 이전에도 포함되지 않습니다.</p>
+<p>기록을 옮기고 싶을 때만 <b>사용자가 직접</b> 백업 파일을 내보낼 수 있습니다. 그 파일은 기기의 앱 전용 폴더(Android/data/com.dksequence.paindiary/files)에 저장되며, 앱이 어디로도 올리지 않습니다. 이 폴더는 앱을 삭제하면 함께 지워지므로 필요하면 다른 곳으로 옮겨 두세요.</p>
 
 <h2>2. 광고</h2>
 <p>이 앱은 <b>Google AdMob</b> 광고를 표시합니다. AdMob 은 광고 제공을 위해 <b>광고 식별자(Advertising ID)</b> 등을 수집할 수 있습니다.</p>
@@ -23,8 +23,8 @@
 </ul>
 
 <h2>3. 분석</h2>
-<p>설치·실행 건수를 확인하기 위해 <b>Google Firebase Analytics</b> 를 사용합니다. 기기 식별자 수준의 익명 통계이며,
-<b>통증 기록의 내용은 전송되지 않습니다.</b></p>
+<p>앱 사용 통계를 위해 <b>Google Firebase Analytics</b> 를 사용합니다. Firebase 는 앱 실행·화면 이용 같은 자동 수집 이벤트와 앱 인스턴스 ID, 기기·OS 정보를 수집할 수 있습니다.
+<b>통증 기록의 내용은 전송되지 않습니다.</b> Google 정책: <a href="https://policies.google.com/privacy">https://policies.google.com/privacy</a></p>
 
 <h2>4. 결제</h2>
 <p>광고 제거 상품은 <b>Google Play 결제</b>로 처리됩니다. 결제 정보는 Google 이 처리하며 개발자는 카드 정보를 보관하지 않습니다.</p>
@@ -38,7 +38,7 @@
   <li><b>알림</b> — 정한 시각에 기록을 알리고, 진료 이틀 전에 미리 알려 드립니다.</li>
   <li><b>기압 센서(있는 기기에서만)</b> — 기록한 순간의 기압을 함께 남깁니다. 센서가 없는 기기에서는 이 기능이 보이지 않습니다.
       위치를 쓰지 않으며, 기압값은 다른 기록과 같이 기기 안에만 저장됩니다.</li>
-  <li><b>저장소</b> — 사용자가 백업 파일을 내보낼 때만 씁니다.</li>
+  <li><b>저장소</b> — 사용자가 백업 파일을 내보낼 때 앱 전용 폴더에만 씁니다(별도 저장소 권한을 요청하지 않습니다).</li>
 </ul>
 
 <h2>7. 아동</h2>
@@ -49,7 +49,7 @@
 기록과 리포트는 진료 시 참고 자료일 뿐이며 의료진의 판단을 대신할 수 없습니다.</p>
 
 <h2>9. 데이터 삭제</h2>
-<p>앱을 삭제하면 기기에 저장된 기록이 모두 지워집니다. 계정이 없으므로 서버에 남는 자료도 없습니다.</p>
+<p>앱을 삭제하면 기기에 저장된 기록과 앱 전용 폴더의 내보내기 파일이 모두 지워집니다. 계정이 없으므로 서버에 남는 자료도 없습니다.</p>
 
 <h2>10. 변경</h2>
 <p>이 방침이 바뀌면 이 페이지에 갱신일과 함께 게시합니다.</p>
@@ -57,13 +57,13 @@
 <hr>
 
 <h1>Pain Diary Privacy Policy</h1>
-<p>Last updated: 2026-08-20 · App: Pain Diary (com.dksequence.paindiary) · Developer: DKsequence · Contact: kitan98@gmail.com</p>
+<p>Last updated: 2026-10-08 · App: Pain Diary (com.dksequence.paindiary) · Developer: DKsequence · Contact: kitan98@gmail.com</p>
 
 <h2>1. Your pain records stay on your device</h2>
-<p>The <b>pain records this app handles (intensity, sites, qualities, medication, notes, appointment dates) are stored only in a database on your device.</b>
+<p>The <b>pain records this app handles (intensity, sites, qualities, air pressure on devices with a barometer, appointment dates and family profile names) are stored only in a database on your device.</b>
 They are not sent to our servers or to any third party. There is no account, no sign-in and no cloud sync.
-Uninstalling the app removes the records with it.</p>
-<p>If you want to move your records, <b>you</b> can export a backup file. It is written where you choose, and the app never uploads it anywhere.</p>
+Uninstalling the app removes the records with it. From version 1.1.0, pain records are also excluded from Android auto backup (Google backup) and device-to-device transfer.</p>
+<p>If you want to move your records, <b>you</b> can export a backup file. It is written to the app's own folder on the device (Android/data/com.dksequence.paindiary/files), and the app never uploads it anywhere. That folder is removed when the app is uninstalled, so move the file elsewhere if you need to keep it.</p>
 
 <h2>2. Advertising</h2>
 <p>This app shows <b>Google AdMob</b> ads. AdMob may collect the <b>Advertising ID</b> and similar identifiers to serve ads.</p>
@@ -76,8 +76,8 @@ Uninstalling the app removes the records with it.</p>
 </ul>
 
 <h2>3. Analytics</h2>
-<p><b>Google Firebase Analytics</b> is used to see install and launch counts. It is device-level anonymous statistics;
-<b>the contents of your pain records are not transmitted.</b></p>
+<p><b>Google Firebase Analytics</b> is used for app usage statistics. Firebase may collect automatically logged events such as app launches and screen use, an app instance ID, and device and OS information.
+<b>The contents of your pain records are not transmitted.</b> Google policy: <a href="https://policies.google.com/privacy">https://policies.google.com/privacy</a></p>
 
 <h2>4. Payments</h2>
 <p>The ad removal item is processed through <b>Google Play Billing</b>. Google handles payment details; the developer does not store card information.</p>
@@ -91,7 +91,7 @@ You can reopen and change it at any time in settings.</p>
   <li><b>Notifications</b> — to remind you at the times you set, and two days before an appointment.</li>
   <li><b>Barometer (only on devices that have one)</b> — records the air pressure at the moment of an entry. Devices without the sensor never see this feature.
       No location is used, and the value is stored on the device like any other record.</li>
-  <li><b>Storage</b> — used only when you export a backup file.</li>
+  <li><b>Storage</b> — used only to write an exported backup file into the app's own folder (no storage permission is requested).</li>
 </ul>
 
 <h2>7. Children</h2>
@@ -102,7 +102,7 @@ You can reopen and change it at any time in settings.</p>
 The records and the report are reference material for your appointment and cannot replace clinical judgement.</p>
 
 <h2>9. Data deletion</h2>
-<p>Uninstalling the app deletes the records stored on your device. There is no account, so no server-side data remains.</p>
+<p>Uninstalling the app deletes the records stored on your device and the exported files in the app's own folder. There is no account, so no server-side data remains.</p>
 
 <h2>10. Changes</h2>
 <p>Any change to this policy will be posted on this page with an updated date.</p>
