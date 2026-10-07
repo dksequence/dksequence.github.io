@@ -34,7 +34,7 @@
     <h1>한마디 녹음메모장 · Murmur Voice Memo</h1>
     <div class="sub">개인정보처리방침 · Privacy Policy</div>
   </header>
-  <div class="meta">최종 업데이트 2026-07-16 · com.dksequence.voicememo · DKsequence · kitan98@gmail.com</div>
+  <div class="meta">최종 업데이트 2026-10-08 · com.dksequence.voicememo · DKsequence · kitan98@gmail.com</div>
 
   <div class="lang-tabs">
     <button id="t-ko" class="on" onclick="sw('ko')">한국어</button>
@@ -56,10 +56,10 @@
     </ul>
 
     <h2>3. 기기에만 저장되는 정보</h2>
-    <p>작성한 메모, 소리·햅틱 설정, 광고 제거 구매 여부는 <b>기기 내부(로컬)에만 저장</b>되며 외부로 전송되지 않습니다. 앱을 삭제하면 함께 삭제됩니다.</p>
+    <p>작성한 메모, 소리 설정, 광고 제거 구매 여부는 <b>기기 내부(로컬)에만 저장</b>되며 본 앱이 외부로 전송하지 않습니다. 버전 1.1.0부터는 Android 자동 백업(클라우드 백업·기기 간 이전) 대상에서도 제외되므로, 기기를 바꿀 때는 설정의 «전체 내보내기»로 옮겨 주세요. 앱을 삭제하면 함께 삭제됩니다.</p>
 
     <h2>4. 광고 (Google AdMob · UMP)</h2>
-    <p>무료 제공을 위해 Google AdMob 광고(배너 · 보상형)를 표시합니다. AdMob은 광고 제공·측정·부정클릭 방지를 위해 <b>광고 식별자(ADID), 기기 정보, 대략적 위치(IP 기반)</b> 등을 수집·이용할 수 있습니다.</p>
+    <p>Google AdMob 배너 광고를 표시합니다. AdMob은 광고 제공·측정·부정클릭 방지를 위해 <b>광고 식별자(ADID), 기기 정보, 대략적 위치(IP 기반)</b> 등을 수집·이용할 수 있습니다.</p>
     <ul>
       <li>Google 광고 정책: <a href="https://policies.google.com/technologies/ads">policies.google.com/technologies/ads</a></li>
       <li>유럽 등 대상 지역에서는 <b>UMP 동의</b>에 따라 맞춤/비맞춤 광고가 결정됩니다.</li>
@@ -67,11 +67,14 @@
       <li><b>광고 제거</b> 인앱구매 시 앱 내 광고가 표시되지 않습니다.</li>
     </ul>
 
+    <h2>4-1. 앱 사용 통계 (Google Firebase Analytics)</h2>
+    <p>본 앱에는 Google Firebase Analytics 가 포함되어 있어, 앱 실행·화면 보기 같은 자동 수집 이벤트와 기기 정보·앱 인스턴스 ID 가 앱 개선을 위해 Google 로 전송됩니다. 메모 내용은 포함되지 않습니다. 처리 방식은 Google 정책(<a href="https://policies.google.com/privacy">policies.google.com/privacy</a>)을 따릅니다.</p>
+
     <h2>5. 인앱 결제 (Google Play)</h2>
     <p>인앱 상품 구매는 Google Play 결제로 처리되며, 결제 정보는 본 앱이 수집·저장하지 않습니다.</p>
 
     <h2>6. 제3자 제공</h2>
-    <p>광고 식별자는 광고 제공사(Google AdMob)에 한해 공유됩니다. 음성 인식은 기기 OS가 처리합니다. 그 외 제3자 제공은 없습니다.</p>
+    <p>광고 식별자는 광고 제공사(Google AdMob)에, 앱 사용 통계는 Google Firebase 에 전달됩니다. 음성 인식은 기기 OS 의 음성 인식 서비스가 처리합니다. 그 외 제3자 제공은 없습니다.</p>
 
     <h2>7. 아동</h2>
     <p>본 앱은 만 13세 미만을 주요 대상으로 하지 않으며 개인정보를 직접 수집하지 않습니다.</p>
@@ -95,10 +98,10 @@
     </ul>
 
     <h2>3. Stored only on your device</h2>
-    <p>Your memos, sound/haptic settings, and remove-ads purchase status are stored <b>only on your device</b> and are never transmitted. They are removed when you uninstall the App.</p>
+    <p>Your memos, sound setting, and remove-ads purchase status are stored <b>only on your device</b> and are not transmitted by the App. From version 1.1.0 they are also excluded from Android Auto Backup (cloud backup and device-to-device transfer), so use Export all in Settings when switching phones. They are removed when you uninstall the App.</p>
 
     <h2>4. Advertising (Google AdMob · UMP)</h2>
-    <p>To keep the App free, it shows Google AdMob ads (banner and rewarded). AdMob may collect and use an <b>Advertising ID, device information, and approximate (IP-based) location</b> to serve/measure ads and prevent fraud.</p>
+    <p>The App shows Google AdMob banner ads. AdMob may collect and use an <b>Advertising ID, device information, and approximate (IP-based) location</b> to serve/measure ads and prevent fraud.</p>
     <ul>
       <li>Google Ads policy: <a href="https://policies.google.com/technologies/ads">policies.google.com/technologies/ads</a></li>
       <li>In applicable regions, <b>UMP consent</b> determines personalized vs non-personalized ads.</li>
@@ -106,11 +109,14 @@
       <li>The <b>Remove Ads</b> in-app purchase disables ads.</li>
     </ul>
 
+    <h2>4-1. App usage statistics (Google Firebase Analytics)</h2>
+    <p>The App includes Google Firebase Analytics, which sends automatically collected events (such as app opens and screen views), device information and an app instance ID to Google to help improve the App. Your memo text is not included. Google processes this data under its own policy (<a href="https://policies.google.com/privacy">policies.google.com/privacy</a>).</p>
+
     <h2>5. In-app purchases (Google Play)</h2>
     <p>Purchases are processed by Google Play Billing; the App does not collect or store payment details.</p>
 
     <h2>6. Third parties</h2>
-    <p>The Advertising ID is shared only with the ad provider (Google AdMob). Speech recognition is handled by your device OS. No other third-party sharing occurs.</p>
+    <p>The Advertising ID is shared with the ad provider (Google AdMob), and app usage statistics with Google Firebase. Speech recognition is handled by your device OS speech service. No other third-party sharing occurs.</p>
 
     <h2>7. Children</h2>
     <p>The App is not directed primarily to children under 13 and collects no personal data.</p>
