@@ -170,34 +170,6 @@
       pointer-events: none;
     }
 
-    .hero-slide-content.pos-left {
-      justify-content: flex-start;
-      text-align: left;
-      padding-left: 6vw;
-    }
-
-    .hero-slide-content.pos-left .hero-text-wrap {
-      max-width: 30vw;
-    }
-
-    @media (max-width: 768px) {
-      .hero-slide-content.pos-left {
-        justify-content: center;
-        align-items: flex-end;
-        text-align: center;
-        padding: 0 20px 96px;
-      }
-
-      .hero-slide-content.pos-left .hero-text-wrap {
-        max-width: 100%;
-      }
-
-      .hero-slide-content.pos-left .hero-sub,
-      .hero-slide-content.pos-left .hero-title {
-        text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
-      }
-    }
-
     .hero-text-wrap {
       max-width: 1100px;
       pointer-events: none;
@@ -1235,7 +1207,6 @@ img {
         image: 'images/main-10.jpg',
         sub: "Let's have",
         title: 'Fun!',
-        pos: 'left',
         link: 'apps/'
       }
     ];
@@ -1264,7 +1235,7 @@ img {
         slide.innerHTML = `
           <img src="${item.image}" alt="${item.title || 'Sequence 13 - Application Development'}" ${index === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} />
           <div class="hero-overlay"></div>
-          <div class="hero-slide-content${item.pos ? ' pos-' + item.pos : ''}">
+          <div class="hero-slide-content">
             <div class="hero-text-wrap">
               <div class="hero-sub">${item.sub}</div>
               <div class="hero-title">${item.title}</div>
