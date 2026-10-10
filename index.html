@@ -1202,6 +1202,12 @@ img {
         sub: 'Artificial intelligence',
         title: 'Playground sequence',
         link: 'html/ai_index.html'
+      },
+      {
+        image: 'images/main-10.jpg',
+        sub: '',
+        title: '',
+        link: 'html/appdev_index.html'
       }
     ];
 
@@ -1227,7 +1233,7 @@ img {
         slide.setAttribute('data-link', item.link);
 
         slide.innerHTML = `
-          <img src="${item.image}" alt="${item.title}" ${index === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} />
+          <img src="${item.image}" alt="${item.title || 'Sequence 13 - Application Development'}" ${index === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} />
           <div class="hero-overlay"></div>
           <div class="hero-slide-content">
             <div class="hero-text-wrap">
