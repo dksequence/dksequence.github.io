@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boxsize — 개인정보처리방침 / Privacy Policy</title>
+<meta name="description" content="Boxsize privacy policy. Storage sizes are read and shown on-device only — nothing is sent to a server.">
+<style>
+  :root{
+    --bg:#0b1026; --card:#ffffff; --ink:#23262f; --muted:#6b7280;
+    --accent:#2b8ab6; --line:#e7e7ee;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic",
+      "Apple SD Gothic Neo",Roboto,sans-serif;
+    background:linear-gradient(180deg,#0b1026 0%,#141a38 100%);
+    color:var(--ink); line-height:1.7; -webkit-text-size-adjust:100%;
+    padding:24px 14px 64px;
+  }
+  .wrap{max-width:760px;margin:0 auto}
+  header{text-align:center;color:#f3ecdd;padding:18px 0 26px}
+  .badge{font-size:12px;letter-spacing:.18em;color:var(--accent);font-weight:700}
+  header h1{font-size:24px;margin:8px 0 4px;font-weight:800;color:#fff}
+  header .meta{font-size:13px;color:#aab2cd;margin-top:6px}
+  .toggle{display:flex;justify-content:center;gap:8px;margin:18px 0 22px}
+  .toggle button{
+    border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.06);
+    color:#e6e9f5;padding:8px 18px;border-radius:999px;font-size:14px;
+    font-weight:600;cursor:pointer;min-width:96px;line-height:1.2;
+  }
+  .toggle button.active{background:var(--accent);border-color:var(--accent);color:#06172a}
+  .card{
+    background:var(--card);border-radius:18px;padding:26px 22px;
+    box-shadow:0 18px 48px rgba(0,0,0,.35);
+  }
+  h2{font-size:18px;margin:26px 0 8px;color:#111;font-weight:800}
+  h2:first-child{margin-top:0}
+  .summary{
+    background:#eaf3fa;border:1px solid #bfdcee;border-radius:12px;
+    padding:14px 16px;color:#0c4f6f;font-weight:600;margin:0 0 6px;
+  }
+  ul{margin:6px 0 6px;padding-left:20px}
+  li{margin:4px 0}
+  p{margin:8px 0}
+  .muted{color:var(--muted);font-size:14px}
+  a{color:var(--accent);font-weight:600;text-decoration:none;word-break:break-all}
+  .lang{display:none}
+  .lang.show{display:block}
+  footer{text-align:center;color:#8f97b4;font-size:12px;margin-top:24px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="badge">STORAGE · BOXES</div>
+    <h1>Boxsize</h1>
+    <div class="meta">개인정보처리방침 · Privacy Policy<br>
+      <span class="muted" style="color:#8f97b4">최종 수정일 / Last updated: 2026-10-11 · DKsequence</span>
+    </div>
+    <div class="toggle">
+      <button id="btn-ko" class="active" onclick="setLang('ko')">한국어</button>
+      <button id="btn-en" onclick="setLang('en')">English</button>
+    </div>
+  </header>
+
+  <div class="card">
+    <!-- 한국어 -->
+    <section id="ko" class="lang show">
+      <p class="summary">저장공간·앱 용량·앱 사용 기록은 기기 안에서만 읽어 화면에 보여줍니다 — 개발자 서버로 보내지 않습니다.
+        무료 제공을 위해 Google AdMob 광고가, 앱 개선을 위해 Google Firebase 애널리틱스(사용 통계)가 포함됩니다.</p>
+
+      <h2>1. 개발자 서버</h2>
+      <p>Boxsize(패키지 <code>com.dksequence.boxsize</code>)는 계정·로그인이 없고,
+        <b>개발자가 운영하는 서버가 없습니다.</b> 아래 2항의 정보는 기기 안에서만 처리되며 개발자에게 전송되지 않습니다.</p>
+
+      <h2>2. 기기 안에서 읽는 정보 (전송 없음)</h2>
+      <ul>
+        <li><b>사진·동영상·오디오·다운로드 파일</b>: Android MediaStore에서 파일명·용량·수정일을 읽어 큰 순서로 보여줍니다.
+          이용자가 목록에서 <b>직접 골라 삭제를 확인한 파일만</b> 기기에서 삭제합니다(삭제는 되돌릴 수 없습니다).
+          파일 내용을 외부로 보내지 않습니다.</li>
+        <li><b>이 앱 자체의 용량</b>: 설치 파일·앱 데이터·캐시로 나눠 보여줍니다.</li>
+        <li><b>설치된 앱의 용량과 사용 기록</b>: 이용자가 기기 설정에서 직접 켜는 "사용정보 접근" 권한이 있으면,
+          설치된 앱별 용량(앱+데이터+캐시)과 마지막으로 화면에 띄운 날짜·사용 기록을 읽어
+          용량 큰 앱·안 쓰는 앱·메신저(카카오톡·라인·텔레그램·왓츠앱) 박스로 보여줍니다.
+          메신저 박스에서는 그 메신저가 사진·동영상 폴더에 저장한 미디어를 보여주고 선택 삭제할 수 있습니다.
+          앱 박스를 누르면 그 앱의 OS "앱 정보" 화면으로 이동하며, 캐시 정리는 이용자가 그 화면에서 직접 합니다.</li>
+        <li><b>저장공간 추이·알림·위젯</b>: 날짜별 사용량 기록을 기기 안에 저장해 "이번 주 변화"를 보여주고,
+          여유 공간이 부족하면 하루 한 번 알림을 띄우며, 홈 화면 위젯에 사용량을 표시합니다.</li>
+      </ul>
+      <p>전체 파일 접근(MANAGE_EXTERNAL_STORAGE) 권한은 쓰지 않습니다. 위 정보는 기기 안에서 읽어 화면에 그리는 것으로 끝나며,
+        개발자가 수집하지 않습니다.</p>
+
+      <h2>3. 제3자 서비스</h2>
+      <ul>
+        <li><b>Google AdMob(광고)</b>: 무료 제공을 위해 배너·전면·보상형 광고를 표시하며, 광고 제공·측정을 위해
+          광고 식별자(Advertising ID) 등 기기 정보를 수집·처리할 수 있습니다. 이 데이터는 Google이 처리합니다.
+          (<a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google 개인정보처리방침</a> ·
+          <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">파트너 앱 데이터 이용</a>)
+          맞춤 광고 거부·광고 ID 재설정은 기기의 설정 &gt; Google &gt; 광고에서 할 수 있습니다.</li>
+        <li><b>Google Firebase 애널리틱스(사용 통계)</b>: 앱 실행·화면 이용 같은 이벤트, 앱 인스턴스 ID,
+          기기 종류·OS 버전·대략적 지역을 Google에 보내 개발자가 익명 통계로 봅니다.
+          파일 목록·앱 사용 기록·용량 값은 보내지 않습니다.</li>
+        <li><b>Google 사용자 메시지 플랫폼(UMP)</b>: 유럽경제지역·영국 등 필요한 지역에서 광고 개인정보 동의를 받습니다.</li>
+        <li><b>Google Play 결제</b>: "광고 제거"(1회성 구매) 결제는 Google Play가 처리합니다.
+          개발자는 결제 수단 정보를 받지 않으며 구매 여부만 기기에 저장합니다.</li>
+      </ul>
+
+      <h2>4. 아동</h2>
+      <p>이 앱은 아동을 대상으로 하지 않습니다. 아동의 정보가 처리된 사실을 알게 되면 위 문의처로 알려 주세요.</p>
+
+      <h2>5. 보관·삭제</h2>
+      <p>설정값·구매 여부·저장공간 추이 기록은 기기 안에만 저장되며 앱을 삭제하면 함께 삭제됩니다.
+        사용정보 접근 권한·알림 권한은 기기 설정에서 언제든 끌 수 있습니다. 광고 식별자는 기기 설정에서 초기화할 수 있습니다.
+        Firebase·AdMob이 처리하는 데이터의 보관은 Google 정책을 따릅니다.</p>
+
+      <h2>6. 문의</h2>
+      <p>개인정보 관련 문의: <a href="mailto:contact@dksequence.com">contact@dksequence.com</a></p>
+    </section>
+
+    <!-- English -->
+    <section id="en" class="lang">
+      <p class="summary">Storage sizes, app sizes and app usage history are read and shown only on your device — never sent to a developer server.
+        The app includes Google AdMob ads to stay free and Google Firebase Analytics (usage statistics) to improve the app.</p>
+
+      <h2>1. No developer server</h2>
+      <p>Boxsize (package <code>com.dksequence.boxsize</code>) has no account, no login and <b>no server operated by the developer.</b>
+        The information in section 2 is processed only on your device and is never sent to the developer.</p>
+
+      <h2>2. Information read on your device (not transmitted)</h2>
+      <ul>
+        <li><b>Photos, videos, audio and downloaded files</b>: file name, size and modified date are read from the Android MediaStore
+          and listed largest-first. <b>Only files you select and confirm for deletion</b> are deleted from the device
+          (deletion cannot be undone). File contents are never sent anywhere.</li>
+        <li><b>The app's own storage</b>: shown as installed package, app data and cache.</li>
+        <li><b>Installed apps' sizes and usage history</b>: if you turn on "Usage access" in device Settings, the app reads each installed
+          app's size (app + data + cache) and the date it was last shown on screen / its usage history, and shows them as
+          largest-apps, unused-apps and messenger (KakaoTalk, LINE, Telegram, WhatsApp) boxes. Messenger boxes show the media that
+          messenger saved to your photo and video folders and let you delete selected items. Tapping an app box opens that app's
+          OS "App info" screen; clearing its cache is done there by you.</li>
+        <li><b>Storage trend, alert and widget</b>: daily usage snapshots are stored on the device to show "this week's change",
+          a once-a-day notification is shown when free space runs low, and a home-screen widget displays usage.</li>
+      </ul>
+      <p>The app does not request "All files access" (MANAGE_EXTERNAL_STORAGE). The information above is read on the device and drawn on
+        screen; it is not collected by the developer.</p>
+
+      <h2>3. Third-party services</h2>
+      <ul>
+        <li><b>Google AdMob (ads)</b>: to keep the app free it shows banner, interstitial and rewarded ads, and may collect device
+          information such as the Advertising ID to serve and measure ads. This data is processed by Google.
+          (<a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a> ·
+          <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener">How Google uses partner-app data</a>)
+          You can opt out of personalized ads or reset the ad ID in device Settings &gt; Google &gt; Ads.</li>
+        <li><b>Google Firebase Analytics (usage statistics)</b>: events such as app launches and screen use, the app instance ID,
+          device model, OS version and approximate region are sent to Google so the developer can see anonymous statistics.
+          File lists, app usage history and storage values are not sent.</li>
+        <li><b>Google User Messaging Platform (UMP)</b>: asks for ad privacy consent where required (e.g. EEA and UK).</li>
+        <li><b>Google Play Billing</b>: the one-time "Remove ads" purchase is processed by Google Play. The developer never receives
+          payment details; only whether you purchased is stored on the device.</li>
+      </ul>
+
+      <h2>4. Children</h2>
+      <p>This app is not directed at children. If you believe a child's information has been processed, please contact us below.</p>
+
+      <h2>5. Retention and deletion</h2>
+      <p>Settings, purchase status and storage-trend snapshots are stored only on the device and are deleted when you uninstall the app.
+        You can turn off Usage access and notifications in device Settings at any time, and reset the Advertising ID there.
+        Retention of data processed by Firebase and AdMob follows Google's policies.</p>
+
+      <h2>6. Contact</h2>
+      <p>Privacy questions: <a href="mailto:contact@dksequence.com">contact@dksequence.com</a></p>
+    </section>
+  </div>
+
+  <footer>© 2026 DKsequence · Boxsize (com.dksequence.boxsize)</footer>
+</div>
+
+<script>
+  function setLang(l){
+    document.getElementById('ko').classList.toggle('show', l==='ko');
+    document.getElementById('en').classList.toggle('show', l==='en');
+    document.getElementById('btn-ko').classList.toggle('active', l==='ko');
+    document.getElementById('btn-en').classList.toggle('active', l==='en');
+    document.documentElement.lang = l;
+  }
+  // 브라우저 언어가 한국어가 아니면 영어로 시작
+  if((navigator.language||'').slice(0,2).toLowerCase() !== 'ko'){ setLang('en'); }
+</script>
+</body>
+</html>
