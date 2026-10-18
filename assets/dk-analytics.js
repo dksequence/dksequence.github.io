@@ -1,6 +1,6 @@
 /* DKsequence site analytics (GA4). Measurement ID lives only here. */
 (function () {
-  var ID = 'G-PENDING';
+  var ID = 'G-Y2K2V57MKK';
   if (!/^G-[A-Z0-9]{6,}$/.test(ID) || ID === 'G-PENDING') return;
   var host = location.hostname;
   if (host !== 'dksequence.com' && host !== 'www.dksequence.com') return;
