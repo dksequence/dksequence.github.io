@@ -1,7 +1,7 @@
 // 고객전용 프라이빗 갤러리 — 프론트 (GAS 백엔드 + 다국어 ko/en/zh)
 // ?c=resno&t=token. 우상단 언어버튼으로 전체 페이지 언어 전환(한 번에 한 언어).
 
-const GAS_URL = "https://script.google.com/macros/s/AKfycby85mMvihHsSClT73x4rECt3DG4_sH_oNWJqifVclmfauh2eqsVUPgrTdzMaF6LJFMqcw/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbyNiwhHc2y5fbIbl5J1E0Ls2WTZcoY8954ddBFQAq7DRyqXfXw9LBfRCnY2oCisKjdr1Q/exec";
 const params = new URLSearchParams(location.search);
 const RESNO = (params.get("c") || "").trim();
 const TOKEN = (params.get("t") || "").trim();
