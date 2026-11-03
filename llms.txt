@@ -20,7 +20,7 @@
 - [Lux Meter](https://dksequence.com/apps/luxmeter/): Measure ambient light in lux, plus photo exposure (EV), shutter & aperture. (Tools)
 - [Pushup Counter](https://dksequence.com/apps/pushupcounter/): Phone face-up on the floor counts your push ups from the shadow, out loud. (Health & Fitness)
 - [DKCAM](https://dksequence.com/apps/dkcam/): Wind the crank, look through the viewfinder, wait for your film to develop (Photography)
-- [Radio Waves](https://dksequence.com/apps/radiowaves/): Spin a vintage dial to tune real radio stations worldwide, streaming live. (Tools)
+- [Radio Waves](https://dksequence.com/apps/radiowaves/): Spin a vintage dial to tune real radio stations worldwide, streaming live. (Music & Audio)
 - [App Diet](https://dksequence.com/apps/appdiet/): Spot long-unused, oversized apps and reclaim storage space with a single tap. (Tools)
 - [Murmur](https://dksequence.com/apps/voicememo/): Press one button and talk — your thoughts stack up as text on a timeline. (Productivity)
 - [Psybox](https://dksequence.com/apps/psybox/): 30 fun psychology tests on love, personality and past lives. Emoji card results. (Entertainment)
