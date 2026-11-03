@@ -42,3 +42,4 @@ footer .bd{margin-top:12px;display:flex;gap:10px;justify-content:center;flex-wra
 #zoom{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;z-index:30;cursor:zoom-out}#zoom img{max-width:96vw;max-height:96vh;border-radius:8px}
 @media (max-width:640px){.grid{grid-template-columns:1fr}.brand small{display:none}.shots img{height:52vh}.num{font-size:26px}}
 .dl{margin:1.2em 0 .4em}.dl a{display:inline-block;padding:11px 22px;border-radius:8px;background:#fff;color:#111;font-weight:700;font-size:15px;text-decoration:none;transition:.15s}.dl a:hover{opacity:.85}
+.dlnote{margin:.2em 0 0;color:#9a9a9a;font-size:13px}
