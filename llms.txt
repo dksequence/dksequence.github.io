@@ -127,3 +127,6 @@
 - [Lunamap](https://dksequence.com/apps/lunamap/): Lunar and solar dates side by side, with events, alerts and your own decorations (Productivity)
 - [Water Beaker](https://dksequence.com/apps/waterbeaker/): Your phone becomes a beaker that fills as you drink, to log water every day (Health & Fitness)
 - [Hourglass](https://dksequence.com/apps/hourglass/): Tilt to pour a lifelike sand hourglass. Set 1–60 minutes and focus. (Tools)
+- [How The Beat](https://dksequence.com/apps/howthebeat/): Turn a knob, a formula writes the rhythm. Build a song, make a 9:16 short. (Music & Audio)
+- [When The Beats](https://dksequence.com/apps/whenthebeats/): 80 songs, 10 ways to play. Tap the beat and chase the perfect hit. (Music)
+- [Reverse The Beat](https://dksequence.com/apps/reversethebeat/): Snap a score, turn it into editable notation, and hear the tune played backward. (Music & Audio)
