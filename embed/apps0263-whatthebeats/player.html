@@ -35,6 +35,7 @@
             },
             onStateChange: function (e) {
               post('stateChange', e.data);
+              try { var vd = player.getVideoData(); if (vd && vd.video_id && (e.data === 1 || e.data === 3)) post('video', vd.video_id); } catch (x) {}
               clearInterval(timer);
               if (e.data === 1) timer = setInterval(function () { post('time', player.getCurrentTime()); }, 500);
             },
