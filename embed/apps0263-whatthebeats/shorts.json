@@ -1,7 +1,19 @@
 {
  "channelId": "UCPRZkH5hILTzkIyfpj7y8wg",
- "count": 95,
+ "count": 87,
  "items": [
+  {
+   "id": "-GjspW1GZWM",
+   "title": "Sinc curve crosses the lines: Garage 132 BPM 🎧",
+   "sec": 21,
+   "at": "2026-11-08T12:00:35Z"
+  },
+  {
+   "id": "NeZpxOGg-i0",
+   "title": "Name this song (Level 4). One note is wrong and invisible. Wait for it 🎧",
+   "sec": 31,
+   "at": "2026-11-08T07:13:05Z"
+  },
   {
    "id": "2e0ebz6PAu4",
    "title": "Seven riffle shuffles mix a deck… Wait for the one card that won't move 🎧",
@@ -129,46 +141,10 @@
    "at": "2026-11-05T12:00:40Z"
   },
   {
-   "id": "dpiI4SDWjp8",
-   "title": "12 balls. 12 notes. Can they land together? 🎧",
-   "sec": 31,
-   "at": "2026-11-05T09:00:04Z"
-  },
-  {
-   "id": "Ul6m5EHsImM",
-   "title": "Hall of the Mountain King, built with blocks 🎧",
-   "sec": 31,
-   "at": "2026-11-05T03:23:44Z"
-  },
-  {
-   "id": "f18VsN_WIHU",
-   "title": "Vibrating things control the beat. Wait for the mosquito 🎧",
-   "sec": 31,
-   "at": "2026-11-04T22:11:58Z"
-  },
-  {
-   "id": "Ak_1peocC_A",
-   "title": "THE RHYTHM OF MATH: 4 formulas, 0 notes 🎧",
-   "sec": 31,
-   "at": "2026-11-04T22:00:08Z"
-  },
-  {
    "id": "Thjuk6jg7lY",
    "title": "3 moons, 1 hidden rule — why they never line up 🎧",
    "sec": 25,
    "at": "2026-11-04T20:00:19Z"
-  },
-  {
-   "id": "wV5jSxM0dt8",
-   "title": "Every sound here is a human mouth 🎧",
-   "sec": 31,
-   "at": "2026-11-04T10:24:30Z"
-  },
-  {
-   "id": "jLOP2xdTzTk",
-   "title": "Sound of Famous Curves: Drums Only 🎧",
-   "sec": 31,
-   "at": "2026-11-04T05:24:28Z"
   },
   {
    "id": "4cTrt-P3kYY",
@@ -253,6 +229,12 @@
    "title": "How a volcano erupts: its last 30 seconds, as math 🌋🔊",
    "sec": 31,
    "at": "2026-11-01T11:15:12Z"
+  },
+  {
+   "id": "XlfOiL_nqvk",
+   "title": "Sand, stardust, soap bubbles, confetti — 4 materials, 1 beat 🎧",
+   "sec": 21,
+   "at": "2026-10-31T23:44:29Z"
   },
   {
    "id": "o_X0hINSsSA",
@@ -345,28 +327,10 @@
    "at": "2026-10-27T23:29:02Z"
   },
   {
-   "id": "j-QXWW_Ttfk",
-   "title": "can you recognise this beat? - reverse play",
-   "sec": 59,
-   "at": "2026-10-27T22:00:25Z"
-  },
-  {
    "id": "wEcfWGhp0-8",
    "title": "27 takes 111 steps to fall to 1 — wait for the 9232 peak 🎧",
    "sec": 26,
    "at": "2026-10-27T20:29:05Z"
-  },
-  {
-   "id": "XMpDF_G47zw",
-   "title": "can you recognise this beat? - reverse play",
-   "sec": 59,
-   "at": "2026-10-27T19:56:57Z"
-  },
-  {
-   "id": "dIVelJw7nNc",
-   "title": "can you recognise this beat? - reverse play",
-   "sec": 58,
-   "at": "2026-10-27T17:56:48Z"
   },
   {
    "id": "cvyCk7-LP_w",
@@ -375,22 +339,10 @@
    "at": "2026-10-27T17:29:28Z"
   },
   {
-   "id": "1JqXfjLQJBo",
-   "title": "can you recognise this beat? - reverse play",
-   "sec": 59,
-   "at": "2026-10-27T15:55:50Z"
-  },
-  {
    "id": "-UBEPXgfUIk",
    "title": "One string, six harmonics — every zero-crossing is a beat 🎧",
    "sec": 21,
    "at": "2026-10-27T14:29:23Z"
-  },
-  {
-   "id": "qekAsYmMPGY",
-   "title": "Your heartbeat sets the tempo — 60 → 96 → 144 → 192 BPM, then flatline ⚡🎧",
-   "sec": 21,
-   "at": "2026-10-27T13:57:49Z"
   },
   {
    "id": "gQBK6wtTtMc",
