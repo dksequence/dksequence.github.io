@@ -1,7 +1,19 @@
 {
  "channelId": "UCPRZkH5hILTzkIyfpj7y8wg",
- "count": 91,
+ "count": 93,
  "items": [
+  {
+   "id": "2KN9XmWgTuE",
+   "title": "Fourier Square curve crosses the lines: Chiptune 150 BPM 🎧",
+   "sec": 21,
+   "at": "2026-11-08T20:00:13Z"
+  },
+  {
+   "id": "OiAKftbEbgk",
+   "title": "Ninjas make no sound… wait for the 5-second reveal 🥷🎧",
+   "sec": 21,
+   "at": "2026-11-08T19:09:58Z"
+  },
   {
    "id": "pci5TY4xeTk",
    "title": "Scrambled Cube, Solved on the Beat. Wait for the Last Turn 🎧",
@@ -123,12 +135,6 @@
    "at": "2026-11-06T04:00:22Z"
   },
   {
-   "id": "3pq6M5k7P4I",
-   "title": "Sound of Famous Numbers: Euler's e 🎧",
-   "sec": 31,
-   "at": "2026-11-05T21:00:22Z"
-  },
-  {
    "id": "ok77xSZ95NI",
    "title": "Why rockets need 3 stages — the math is a beat 🎧",
    "sec": 21,
@@ -145,6 +151,12 @@
    "title": "A tsunami slows from 198 to 10 m/s — hear the beat stretch 🎧",
    "sec": 21,
    "at": "2026-11-05T12:00:40Z"
+  },
+  {
+   "id": "f18VsN_WIHU",
+   "title": "Vibrating things control the beat. Wait for the mosquito 🎧",
+   "sec": 31,
+   "at": "2026-11-04T22:11:58Z"
   },
   {
    "id": "Ak_1peocC_A",
@@ -309,12 +321,6 @@
    "at": "2026-10-29T20:00:01Z"
   },
   {
-   "id": "N7qcS9YqGnQ",
-   "title": "Marbles Play Twinkle Twinkle Little Star, Then the Beat Drops 🎧",
-   "sec": 21,
-   "at": "2026-10-29T13:51:32Z"
-  },
-  {
    "id": "RZdL00HSHeY",
    "title": "One theory for why cicadas wait 13 and 17 years — hear the primes dodge 🎧",
    "sec": 27,
@@ -355,6 +361,12 @@
    "title": "Sunflower seeds, 137.5° apart — the arm turns them into a beat 🎧",
    "sec": 26,
    "at": "2026-10-27T17:29:28Z"
+  },
+  {
+   "id": "1JqXfjLQJBo",
+   "title": "can you recognise this beat? - reverse play",
+   "sec": 59,
+   "at": "2026-10-27T15:55:50Z"
   },
   {
    "id": "-UBEPXgfUIk",
