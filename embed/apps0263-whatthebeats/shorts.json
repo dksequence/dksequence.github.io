@@ -1,7 +1,13 @@
 {
  "channelId": "UCPRZkH5hILTzkIyfpj7y8wg",
- "count": 89,
+ "count": 91,
  "items": [
+  {
+   "id": "pci5TY4xeTk",
+   "title": "Scrambled Cube, Solved on the Beat. Wait for the Last Turn 🎧",
+   "sec": 31,
+   "at": "2026-11-08T16:28:32Z"
+  },
   {
    "id": "eYkwN_6_AI4",
    "title": "Let go of a trebuchet 60 ms early and the stone flies backward 🎧",
@@ -129,12 +135,6 @@
    "at": "2026-11-05T20:00:19Z"
   },
   {
-   "id": "WFblRmFUwSg",
-   "title": "THE SOUND OF MATH: √2. A waltz with one impossible kick 🎧",
-   "sec": 31,
-   "at": "2026-11-05T17:00:00Z"
-  },
-  {
    "id": "_jJ3bYacOe0",
    "title": "Bitcoin! Show me your Beat! The Box Breaks, the Dots Fly Up 🎆",
    "sec": 21,
@@ -145,6 +145,12 @@
    "title": "A tsunami slows from 198 to 10 m/s — hear the beat stretch 🎧",
    "sec": 21,
    "at": "2026-11-05T12:00:40Z"
+  },
+  {
+   "id": "Ak_1peocC_A",
+   "title": "THE RHYTHM OF MATH: 4 formulas, 0 notes 🎧",
+   "sec": 31,
+   "at": "2026-11-04T22:00:08Z"
   },
   {
    "id": "Thjuk6jg7lY",
@@ -355,6 +361,12 @@
    "title": "One string, six harmonics — every zero-crossing is a beat 🎧",
    "sec": 21,
    "at": "2026-10-27T14:29:23Z"
+  },
+  {
+   "id": "qekAsYmMPGY",
+   "title": "Your heartbeat sets the tempo — 60 → 96 → 144 → 192 BPM, then flatline ⚡🎧",
+   "sec": 21,
+   "at": "2026-10-27T13:57:49Z"
   },
   {
    "id": "gQBK6wtTtMc",
