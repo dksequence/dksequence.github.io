@@ -201,6 +201,22 @@
     .email-remove:hover { color:#fb7185; }
     .email-add-btn { background:var(--s2); border:1px solid var(--bd2); color:var(--sub); border-radius:8px; padding:7px 14px; font-size:12px; font-weight:700; cursor:pointer; width:100%; margin-top:4px; }
     .email-add-btn:hover { color:var(--text); background:var(--s3); }
+    /* [2026-11-09] 월 단위 기간·최근 받는 사람·발송 기록 */
+    .month-row { display:flex; align-items:center; gap:6px; margin-top:8px; font-size:12px; color:var(--sub); flex-wrap:wrap; }
+    .month-row input { background:var(--s2); border:1px solid var(--bd2); color:var(--text); border-radius:8px; padding:6px 8px; font-size:13px; }
+    .month-note { font-size:11px; color:var(--muted); margin-top:6px; line-height:1.5; }
+    .recent-wrap { display:flex; flex-wrap:wrap; gap:6px; margin:6px 0 8px; }
+    .recent-chip { background:var(--s2); border:1px solid var(--bd2); color:var(--sub); border-radius:999px; padding:5px 11px; font-size:12px; cursor:pointer; }
+    .recent-chip:hover { color:var(--text); border-color:var(--mc); }
+    .log-list { max-height:240px; overflow-y:auto; border:1px solid var(--bd2); border-radius:10px; }
+    .log-row { padding:9px 11px; border-bottom:1px solid var(--bd2); font-size:12px; line-height:1.5; }
+    .log-row:last-child { border-bottom:none; }
+    .log-top { display:flex; justify-content:space-between; gap:8px; color:var(--text); font-weight:700; }
+    .log-sub { color:var(--sub); word-break:break-all; }
+    .log-fail { color:#fb7185; }
+    .log-btns { display:flex; gap:6px; margin-top:6px; }
+    .log-btns button { background:var(--s2); border:1px solid var(--bd2); color:var(--text); border-radius:7px; padding:5px 10px; font-size:12px; font-weight:700; cursor:pointer; }
+    .log-btns button.resend { background:linear-gradient(135deg,#34d399,#38bdf8); color:#111; border:none; }
     .modal-defaults { display:flex; gap:8px; margin-top:10px; }
     .def-btn { flex:1; background:var(--s2); border:1px solid var(--bd2); color:var(--sub); border-radius:8px; padding:7px; font-size:11px; font-weight:700; cursor:pointer; }
     .def-btn:hover { color:var(--text); background:var(--s3); }
@@ -571,9 +587,17 @@
       <span>~</span>
       <input type="date" id="ef-to">
     </div>
+    <div class="month-row">
+      <span>월 단위</span>
+      <input type="month" id="ef-mfrom" onchange="applyMonthRange()">
+      <span>~</span>
+      <input type="month" id="ef-mto" onchange="applyMonthRange()">
+    </div>
+    <div class="month-note">여러 달을 고르면 한 통에 몰아서 보냅니다(월별 정산표 + 합계). 집계는 달 단위입니다.</div>
   </div>
   <div class="modal-section">
     <div class="modal-label">수신 이메일</div>
+    <div class="recent-wrap" id="email-recent"></div>
     <div id="email-list-wrap"></div>
     <button class="email-add-btn" onclick="addEmailInput()">+ 이메일 추가</button>
     <div class="modal-defaults">
@@ -585,6 +609,10 @@
   <div class="modal-footer">
     <button class="modal-cancel" onclick="closeEmailModal()">취소</button>
     <button class="modal-send" id="send-btn" onclick="doSendReport()">발송</button>
+  </div>
+  <div class="modal-section">
+    <div class="modal-label">📜 발송 기록 (누구에게·어느 기간)</div>
+    <div class="log-list" id="send-log"><div class="log-row log-sub">불러오는 중…</div></div>
   </div>
 </div>
 
@@ -1186,7 +1214,10 @@ function openEmailModal() {
   const p = _periodForMode();
   document.getElementById('ef-from').value = p.from;
   document.getElementById('ef-to').value   = p.to;
+  document.getElementById('ef-mfrom').value = p.from.substring(0, 7);
+  document.getElementById('ef-mto').value   = p.to.substring(0, 7);
   document.getElementById('send-status').textContent = '';
+  loadSendLog();
   document.getElementById('send-btn').disabled = false;
 
   // 기본값 이메일 불러오기(저장값 없으면 내장 디폴트 2개)
@@ -1246,44 +1277,117 @@ function loadEmailDefaults() {
   emails.forEach(e => _appendEmailRow(e));
 }
 
+// [2026-11-09] 월 단위 기간 → 시작월 1일 ~ 끝월 말일
+function applyMonthRange() {
+  const mf = document.getElementById('ef-mfrom').value;
+  let mt = document.getElementById('ef-mto').value || mf;
+  if (!mf) return;
+  if (mt < mf) { mt = mf; document.getElementById('ef-mto').value = mf; }
+  const [y, m] = mt.split('-').map(Number);
+  document.getElementById('ef-from').value = mf + '-01';
+  document.getElementById('ef-to').value   = mt + '-' + pad(new Date(y, m, 0).getDate());
+}
+
+function _gasJsonp(query, timeoutMs) {
+  return new Promise((resolve) => {
+    const cb  = 'gasCb_' + Date.now() + '_' + Math.floor(Math.random() * 1e6);
+    const tag = document.createElement('script');
+    let done = false;
+    const finish = (res) => { if (done) return; done = true; delete window[cb]; tag.remove(); resolve(res); };
+    window[cb] = finish;
+    tag.src = `${GAS_URL}?${query}&callback=${cb}`;
+    tag.onerror = () => finish({ ok: false, error: '네트워크 오류' });
+    document.head.appendChild(tag);
+    setTimeout(() => finish({ ok: false, error: '응답 시간 초과' }), timeoutMs || 30000);
+  });
+}
+
+function _monthsBetween(from, to) {
+  const a = from.substring(0, 7).split('-').map(Number), b = to.substring(0, 7).split('-').map(Number);
+  return (b[0] - a[0]) * 12 + (b[1] - a[1]) + 1;
+}
+
+async function _sendReport(from, to, emails) {
+  const btn = document.getElementById('send-btn');
+  const st  = document.getElementById('send-status');
+  btn.disabled = true;
+  const months = _monthsBetween(from, to);
+  st.textContent = months > 1 ? `발송 중... (${months}개월 몰아서)` : '발송 중...';
+  // 여러 달은 서버 집계가 길어 대기 시간을 늘린다
+  const res = await _gasJsonp(`action=sendMonthlyReport&dateFrom=${encodeURIComponent(from)}&dateTo=${encodeURIComponent(to)}&emails=${encodeURIComponent(emails.join(','))}`, 60000 + months * 20000);
+  btn.disabled = false;
+  if (res && res.ok) {
+    st.textContent = `발송 완료! (${emails.join(', ')})`;
+    loadSendLog();
+  } else {
+    st.textContent = '오류: ' + (res && res.error ? res.error : '알 수 없는 오류');
+    loadSendLog();
+  }
+  return res;
+}
+
 function doSendReport() {
   const from    = document.getElementById('ef-from').value;
   const to      = document.getElementById('ef-to').value;
   const inputs  = document.querySelectorAll('#email-list-wrap input');
   const emails  = [...inputs].map(i => i.value.trim()).filter(Boolean);
   if (!from || !to)         { document.getElementById('send-status').textContent = '기간을 입력하세요.'; return; }
+  if (from > to)            { document.getElementById('send-status').textContent = '시작일이 종료일보다 늦습니다.'; return; }
   if (emails.length === 0)  { document.getElementById('send-status').textContent = '이메일을 입력하세요.'; return; }
+  _sendReport(from, to, emails);
+}
 
-  const btn = document.getElementById('send-btn');
-  btn.disabled = true;
-  document.getElementById('send-status').textContent = '발송 중...';
+// [2026-11-09] 발송 기록(서버 '리포트발송로그') — 누구에게·어느 기간·지급액, 다시 보내기
+let _sendLogRows = [];
+function _escH(t) { return String(t == null ? '' : t).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+async function loadSendLog() {
+  const box = document.getElementById('send-log');
+  const res = await _gasJsonp('action=getReportSendLog&limit=50', 30000);
+  if (!res || !res.ok) { box.innerHTML = `<div class="log-row log-fail">기록을 불러오지 못했습니다: ${_escH(res && res.error)}</div>`; return; }
+  _sendLogRows = res.rows || [];
+  // 최근 받는 사람(중복 제거) — 눌러서 바로 추가
+  const seen = new Set(), recent = [];
+  _sendLogRows.forEach(r => String(r.emails || '').split(',').map(e => e.trim()).filter(Boolean).forEach(e => { if (!seen.has(e)) { seen.add(e); recent.push(e); } }));
+  document.getElementById('email-recent').innerHTML = recent.slice(0, 8).map(e => `<button class="recent-chip" onclick="addRecentEmail('${_escH(e)}')">+ ${_escH(e)}</button>`).join('');
+  if (!_sendLogRows.length) { box.innerHTML = '<div class="log-row log-sub">아직 기록이 없습니다. (2026-11-09 이후 발송부터 기록됩니다)</div>'; return; }
+  box.innerHTML = _sendLogRows.map((r, i) => {
+    const ok = String(r.result || '').indexOf('성공') === 0;
+    const period = `${_escH(r.dateFrom)} ~ ${_escH(r.dateTo)}` + (Number(r.months) > 1 ? ` (${_escH(r.months)}개월)` : '');
+    return `<div class="log-row">
+      <div class="log-top"><span>${_escH(r.sentAt)}</span><span class="${ok ? '' : 'log-fail'}">${ok ? '지급액 ₩' + _escH(r.pay) : _escH(r.result)}</span></div>
+      <div class="log-sub">기간 ${period} · ${_escH(r.count)}건</div>
+      <div class="log-sub">받는 사람: ${_escH(r.emails)}</div>
+      <div class="log-btns"><button onclick="fillFromLog(${i})">불러오기</button><button class="resend" onclick="resendFromLog(${i})">바로 다시 보내기</button></div>
+    </div>`;
+  }).join('');
+}
 
-  const cb  = 'gasSend_' + Date.now();
-  const tag = document.createElement('script');
-  window[cb] = (res) => {
-    delete window[cb]; tag.remove();
-    if (res && res.ok) {
-      document.getElementById('send-status').textContent = '발송 완료!';
-      setTimeout(closeEmailModal, 1500);
-    } else {
-      document.getElementById('send-status').textContent = '오류: ' + (res && res.error ? res.error : '알 수 없는 오류');
-      btn.disabled = false;
-    }
-  };
-  tag.src    = `${GAS_URL}?action=sendMonthlyReport&dateFrom=${encodeURIComponent(from)}&dateTo=${encodeURIComponent(to)}&emails=${encodeURIComponent(emails.join(','))}&callback=${cb}`;
-  tag.onerror = () => {
-    delete window[cb]; tag.remove();
-    document.getElementById('send-status').textContent = '네트워크 오류';
-    btn.disabled = false;
-  };
-  document.head.appendChild(tag);
-  setTimeout(() => {
-    if (window[cb]) {
-      delete window[cb]; tag.remove();
-      document.getElementById('send-status').textContent = '응답 시간 초과';
-      btn.disabled = false;
-    }
-  }, 30000);
+function addRecentEmail(e) {
+  const inputs = [...document.querySelectorAll('#email-list-wrap input')];
+  if (inputs.some(i => i.value.trim() === e)) return;
+  const empty = inputs.find(i => !i.value.trim());
+  if (empty) empty.value = e; else _appendEmailRow(e);
+}
+
+function fillFromLog(i) {
+  const r = _sendLogRows[i]; if (!r) return;
+  document.getElementById('ef-from').value  = r.dateFrom;
+  document.getElementById('ef-to').value    = r.dateTo;
+  document.getElementById('ef-mfrom').value = String(r.dateFrom).substring(0, 7);
+  document.getElementById('ef-mto').value   = String(r.dateTo).substring(0, 7);
+  const wrap = document.getElementById('email-list-wrap');
+  wrap.innerHTML = '';
+  String(r.emails || '').split(',').map(e => e.trim()).filter(Boolean).forEach(e => _appendEmailRow(e));
+  document.getElementById('send-status').textContent = '기록을 불러왔습니다. 확인 후 발송을 누르세요.';
+}
+
+function resendFromLog(i) {
+  const r = _sendLogRows[i]; if (!r) return;
+  const emails = String(r.emails || '').split(',').map(e => e.trim()).filter(Boolean);
+  if (!emails.length) return;
+  if (!confirm(`같은 내용으로 다시 보냅니다.\n기간: ${r.dateFrom} ~ ${r.dateTo}\n받는 사람: ${emails.join(', ')}`)) return;
+  fillFromLog(i);
+  _sendReport(r.dateFrom, r.dateTo, emails);
 }
 
 // ── 리포트 모달 ────────────────────────────────────────────────
