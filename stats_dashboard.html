@@ -1354,7 +1354,7 @@ async function loadSendLog() {
     const ok = String(r.result || '').indexOf('성공') === 0;
     const period = `${_escH(r.dateFrom)} ~ ${_escH(r.dateTo)}` + (Number(r.months) > 1 ? ` (${_escH(r.months)}개월)` : '');
     return `<div class="log-row">
-      <div class="log-top"><span>${_escH(r.sentAt)}</span><span class="${ok ? '' : 'log-fail'}">${ok ? '지급액 ₩' + _escH(r.pay) : _escH(r.result)}</span></div>
+      <div class="log-top"><span>${_escH(r.sentAt)}</span><span class="${ok ? '' : 'log-fail'}">${ok ? '지급액 ₩' + (Number(r.pay) || 0).toLocaleString() : _escH(r.result)}</span></div>
       <div class="log-sub">기간 ${period} · ${_escH(r.count)}건</div>
       <div class="log-sub">받는 사람: ${_escH(r.emails)}</div>
       <div class="log-btns"><button onclick="fillFromLog(${i})">불러오기</button><button class="resend" onclick="resendFromLog(${i})">바로 다시 보내기</button></div>
