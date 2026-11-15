@@ -138,3 +138,4 @@
 - [Korean Word 365](https://dksequence.com/apps/word365/): Learn a Korean word with a picture every day. Quizzes and daily reminders. (Education)
 - [DK Beer](https://dksequence.com/apps/dkbeer/): Tilt to pour beer, soju, whisky & wine. A real liquid simulator for friends. (Entertainment)
 - [Survival Runway](https://dksequence.com/apps/survivalrunway/): Enter your savings and monthly costs to see how many months you can last (Finance)
+- [Beat Spin](https://dksequence.com/apps/beatspin/): Unlock 70 spinners by leveling up. Flick, measure, and party to the beat (Casual)
