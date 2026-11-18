@@ -57,7 +57,7 @@
     <div class="badge">MEMENTO MORI</div>
     <h1>My Life Time</h1>
     <div class="meta">개인정보처리방침 · Privacy Policy<br>
-      <span class="muted" style="color:#8f97b4">최종 수정일 / Last updated: 2026-06-12 · DKsequence</span>
+      <span class="muted" style="color:#8f97b4">최종 수정일 / Last updated: 2026-11-18 · DKsequence</span>
     </div>
     <div class="toggle">
       <button id="btn-ko" class="active" onclick="setLang('ko')">한국어</button>
@@ -76,7 +76,7 @@
         <b>오직 사용자의 기기 내부에만 저장</b>되며 개발자에게 전송되지 않습니다.
         우리는 서버·계정·로그인이 없습니다. <b>단, 무료 제공을 위해 앱에는 Google AdMob
         광고가 포함</b>되며, 광고 제공·측정을 위해 Google이 광고 식별자 등 일부 정보를
-        수집·이용할 수 있습니다(아래 5항).</p>
+        수집·이용할 수 있습니다(아래 5항). 또한 앱 사용 통계를 위해 Google Firebase Analytics가 일부 정보를 수집할 수 있습니다(아래 5항).</p>
 
       <h2>2. 기기에 저장되는 정보 (콘텐츠 전송 없음)</h2>
       <p>앱은 기능 제공을 위해 다음을 <b>기기 로컬 저장소(앱 내부)</b>에만 보관합니다.</p>
@@ -91,19 +91,19 @@
 
       <h2>3. 권한</h2>
       <ul>
-        <li><b>알림(POST_NOTIFICATIONS)</b>: 기기 내 ‘오늘의 의미’ 일일 알림 표시용.
+        <li><b>알림(POST_NOTIFICATIONS)</b>: 기기 내 ‘오늘의 의미’ 알림(매일 또는 N일마다, 설정에서 변경·끔) 표시용.
           알림 내용은 기기에서 생성되며 외부로 전송되지 않습니다.</li>
         <li><b>부팅 완료 수신(RECEIVE_BOOT_COMPLETED)</b>: 재부팅 후 예약 알림을 복구하기 위함.</li>
       </ul>
 
       <h2>4. 네트워크</h2>
       <p>앱은 사용자가 입력한 개인정보를 우리 서버로 전송하지 않습니다. 다만
-        <b>광고 표시</b>와 <b>글꼴 표시(Google Fonts)</b>를 위해 네트워크 통신이
+        <b>광고 표시</b>, <b>앱 사용 통계 전송(Firebase Analytics)</b>, <b>글꼴 표시(Google Fonts)</b>를 위해 네트워크 통신이
         발생합니다. 글꼴은 파일 요청만 이뤄지며 개인정보가 전송되지 않습니다.</p>
 
-      <h2>5. 광고 / 제3자 (Google AdMob)</h2>
+      <h2>5. 광고·분석 / 제3자 (Google AdMob·Firebase Analytics)</h2>
       <ul>
-        <li>본 앱은 무료 제공을 위해 <b>Google AdMob</b> 광고(배너·전면)를 표시합니다.</li>
+        <li>본 앱은 무료 제공을 위해 <b>Google AdMob</b> 광고(배너·전면)를 표시합니다. AdMob 미디에이션을 통해 <b>Unity Ads</b>와 <b>Liftoff Monetize(Vungle)</b>가 광고 입찰에 참여하며, 각 사 정책에 따라 광고 식별자·기기 정보 등을 처리할 수 있습니다(<a href="https://unity.com/legal/privacy-policy">Unity</a> · <a href="https://liftoff.io/privacy-policy/">Liftoff</a>).</li>
         <li>광고 제공·게재 빈도 제한·측정·부정클릭 방지 등을 위해 Google은
           <b>광고 식별자(Advertising ID), 기기 정보, 대략적 위치(IP 기반),
           앱 상호작용 정보</b> 등을 수집·이용할 수 있으며, 이 데이터는
@@ -112,7 +112,7 @@
           <a href="https://policies.google.com/technologies/partner-sites">파트너 앱 데이터 이용</a>)</li>
         <li><b>맞춤 광고 거부·광고 ID 재설정</b>: 기기의 <i>설정 &gt; 개인정보 보호 &gt; 광고</i>에서
           광고 ID를 재설정하거나 맞춤 광고를 끌 수 있습니다.</li>
-        <li>광고 외 별도의 분석(애널리틱스) SDK는 사용하지 않습니다.</li>
+        <li><b>앱 사용 통계</b> — 앱 개선을 위해 <b>Google Firebase Analytics</b>가 앱 첫 실행·세션·사용 시간 같은 자동 수집 이벤트와 기기 정보(기종, OS 버전, 대략적인 국가·언어, 앱 인스턴스 ID)를 수집할 수 있습니다. 이름·이메일 등 개인을 식별하는 정보와 생년월일·버킷리스트·데드타임 기록 등 앱에 입력한 내용은 보내지 않습니다(<a href="https://firebase.google.com/support/privacy">안내</a>).</li>
       </ul>
 
       <h2>6. 아동</h2>
@@ -136,7 +136,7 @@
         records, etc.) is stored <b>only on your device</b> and is never sent to the
         developer. We have no server, account, or login. <b>However, to keep the app
         free, it includes Google AdMob ads</b>, and Google may collect and use certain
-        information (such as advertising identifiers) to serve and measure ads (see §5).</p>
+        information (such as advertising identifiers) to serve and measure ads (see §5). Google Firebase Analytics may also collect certain information for app usage statistics (see §5).</p>
 
       <h2>2. Information stored on your device (never transmitted)</h2>
       <p>For the app to work, the following is kept <b>only in local on-device storage</b>:</p>
@@ -151,8 +151,8 @@
 
       <h2>3. Permissions</h2>
       <ul>
-        <li><b>Notifications (POST_NOTIFICATIONS):</b> to show the local daily
-          “Today’s Meaning” notification. Notification content is generated on-device
+        <li><b>Notifications (POST_NOTIFICATIONS):</b> to show the local
+          “Today’s Meaning” notification (daily or every N days; adjustable or off in Settings). Notification content is generated on-device
           and is never transmitted.</li>
         <li><b>RECEIVE_BOOT_COMPLETED:</b> to restore the scheduled local notification
           after a reboot.</li>
@@ -160,13 +160,13 @@
 
       <h2>4. Network</h2>
       <p>The app does not send the personal information you enter to our servers.
-        Network communication does occur to <b>display ads</b> and to
+        Network communication does occur to <b>display ads</b>, to <b>send app usage statistics (Firebase Analytics)</b> and to
         <b>render fonts (Google Fonts)</b>. The font request transfers only a font
         file, no personal data.</p>
 
-      <h2>5. Ads / Third parties (Google AdMob)</h2>
+      <h2>5. Ads, analytics / Third parties (Google AdMob, Firebase Analytics)</h2>
       <ul>
-        <li>To keep the app free, it shows <b>Google AdMob</b> ads (banner and interstitial).</li>
+        <li>To keep the app free, it shows <b>Google AdMob</b> ads (banner and interstitial). Through AdMob mediation, <b>Unity Ads</b> and <b>Liftoff Monetize (Vungle)</b> take part in ad bidding and may process advertising identifiers and device information under their own policies (<a href="https://unity.com/legal/privacy-policy">Unity</a> · <a href="https://liftoff.io/privacy-policy/">Liftoff</a>).</li>
         <li>To serve, frequency-cap, measure, and protect against invalid activity,
           Google may collect and use the <b>Advertising ID, device information,
           approximate (IP-based) location, and app-interaction data</b>. This data is
@@ -175,7 +175,7 @@
           <a href="https://policies.google.com/technologies/partner-sites">How Google uses partner-app data</a>)</li>
         <li><b>Opt out / reset ad ID:</b> in your device <i>Settings &gt; Privacy &gt; Ads</i>
           you can reset your Advertising ID or turn off personalized ads.</li>
-        <li>No separate analytics SDK beyond advertising is used.</li>
+        <li><b>App usage statistics</b> — To improve the app, <b>Google Firebase Analytics</b> may collect automatic events such as first open, sessions and engagement time, together with device information (model, OS version, approximate country and language, app instance ID). Information that identifies you, such as your name or email, and content you enter in the app (such as date of birth, bucket list and dead-time records) are not sent (<a href="https://firebase.google.com/support/privacy">details</a>).</li>
       </ul>
 
       <h2>6. Children</h2>
@@ -193,9 +193,9 @@
   <footer>© 2026 DKsequence · My Life Time (com.dksequence.lifetime)</footer>
 
   <h2>데이터 보관 / Data retention</h2>
-  <p>이 앱이 만드는 기록은 <b>사용자의 기기 안에만</b> 저장됩니다. 개발자는 사용자의 기록을 서버로 받지 않으며 <b>따로 보관하지 않습니다</b>. 기기에 저장된 기록은 사용자가 앱에서 삭제하거나 앱을 제거할 때까지 남아 있고, 삭제하면 함께 사라집니다. 광고에 쓰이는 식별자는 Google 및 광고 파트너가 각자의 정책과 보관 기간에 따라 처리하며, 개발자가 보관하지 않습니다.</p>
-  <p>Records created by this app are stored <b>only on the user's device</b>. The developer does not receive them on any server and <b>does not retain them</b>. Data kept on the device remains until the user deletes it in the app or uninstalls the app, at which point it is removed with the app. Advertising identifiers used for ads are handled by Google and its advertising partners under their own policies and retention periods; the developer does not retain them.</p>
-  <p>このアプリが作る記録は<b>利用者の端末内にのみ</b>保存されます。開発者はサーバーで受け取らず、<b>別途保管しません</b>。端末内の記録は利用者が削除するかアプリを削除するまで残り、削除すると一緒に消えます。広告識別子は Google および広告パートナーが各自のポリシーと保存期間に従って扱い、開発者は保管しません。</p>
+  <p>이 앱이 만드는 기록은 <b>사용자의 기기 안에만</b> 저장됩니다. 개발자는 사용자의 기록을 서버로 받지 않으며 <b>따로 보관하지 않습니다</b>. 기기에 저장된 기록은 사용자가 앱에서 삭제하거나 앱을 제거할 때까지 남아 있고, 삭제하면 함께 사라집니다. 광고에 쓰이는 식별자와 앱 사용 통계(Firebase Analytics)는 Google 및 광고 파트너가 각자의 정책과 보관 기간에 따라 처리하며, 개발자가 보관하지 않습니다.</p>
+  <p>Records created by this app are stored <b>only on the user's device</b>. The developer does not receive them on any server and <b>does not retain them</b>. Data kept on the device remains until the user deletes it in the app or uninstalls the app, at which point it is removed with the app. Advertising identifiers used for ads and app usage statistics (Firebase Analytics) are handled by Google and its advertising partners under their own policies and retention periods; the developer does not retain them.</p>
+  <p>このアプリが作る記録は<b>利用者の端末内にのみ</b>保存されます。開発者はサーバーで受け取らず、<b>別途保管しません</b>。端末内の記録は利用者が削除するかアプリを削除するまで残り、削除すると一緒に消えます。広告識別子とアプリ利用統計（Firebase Analytics）は Google および広告パートナーが各自のポリシーと保存期間に従って扱い、開発者は保管しません。</p>
 </div>
 
 <script>
