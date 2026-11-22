@@ -4,7 +4,7 @@
 <style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:760px;margin:0 auto;padding:24px;line-height:1.7;color:#222}h1{font-size:1.5rem}h2{font-size:1.15rem;margin-top:1.8em}hr{margin:2.5em 0;border:none;border-top:1px solid #ddd}a{color:#1a6}</style>
 
 <h1>Tapboard 개인정보처리방침</h1>
-<p>최종 업데이트: 2026-09-13 · 앱: Tapboard(com.dksequence.tapboard) · 개발자: DKsequence(디케이시퀀스) · 문의: kitan98@gmail.com</p>
+<p>최종 업데이트: 2026-11-20 · 앱: Tapboard(com.dksequence.tapboard) · 개발자: DKsequence(디케이시퀀스) · 문의: kitan98@gmail.com</p>
 
 <h2>1. 수집하는 정보</h2>
 <p>이 앱은 이름·이메일·전화번호처럼 <b>개인을 식별할 수 있는 정보를 직접 수집하지 않습니다.</b> 계정 가입이나 로그인 절차가 없습니다.</p>
@@ -23,13 +23,16 @@
   <li><b>인터넷(INTERNET)·네트워크 상태(ACCESS_NETWORK_STATE)</b> — 광고를 내려받고 인앱 구매를 확인하는 데 사용합니다.</li>
   <li><b>광고 ID(AD_ID) 및 Android 광고 서비스(ACCESS_ADSERVICES_*)</b> — 광고 게재와 빈도 제한에 사용합니다.</li>
   <li><b>결제(BILLING)</b> — 광고 제거 구매에 사용합니다.</li>
+  <li><b>알림(POST_NOTIFICATIONS)·부팅 완료 수신(RECEIVE_BOOT_COMPLETED)</b> 권한은 7일 이상 앱을 열지 않았을 때 기기 안에서 만드는 알림 1회를 보내고 재부팅 뒤에도 유지하는 데 사용합니다. 알림 내용은 기기 안에서 만들어지며 외부로 전송되지 않고, 앱 설정에서 끌 수 있습니다.</li>
   <li><b>WAKE_LOCK·FOREGROUND_SERVICE·BIND_JOB_SERVICE</b> — 광고 SDK가 백그라운드 작업을 처리할 때 사용합니다. 위치·카메라·마이크·연락처 권한은 사용하지 않습니다.</li>
 </ul>
 
 <h2>4. 제3자 서비스</h2>
 <ul>
-  <li><b>Google AdMob</b> — 광고 게재. <a href="https://policies.google.com/technologies/partner-sites">Google 개인정보처리방침</a></li>
+  <li><b>Google AdMob</b> — 광고 게재. <a href="https://policies.google.com/technologies/partner-sites">Google 개인정보처리방침</a> AdMob 미디에이션을 통해 <b>Unity Ads</b>와 <b>Liftoff Monetize(Vungle)</b>가 광고 입찰에 참여하며, 각 사 정책에 따라 광고 식별자·기기 정보 등을 처리할 수 있습니다(<a href="https://unity.com/legal/privacy-policy">Unity</a> · <a href="https://liftoff.io/privacy-policy/">Liftoff</a>).</li>
   <li><b>Google Play 결제</b> — 광고 제거 구매 처리.</li>
+  <li><b>Google Play 인앱 리뷰</b> — 앱을 쓰는 중 적절한 시점에 Google Play가 평점 창을 표시할 수 있습니다. 평점 입력과 처리는 Google Play에서 이뤄지며, 앱은 평점·리뷰 내용을 받지 않습니다.</li>
+  <li><b>Google Firebase Analytics</b> — 앱 열기·화면 보기 같은 익명 사용 통계. 기기 식별자를 처리할 수 있습니다. 점수·진행 정보는 전송하지 않습니다.</li>
 </ul>
 <p>유럽 경제 지역·영국·스위스 사용자에게는 광고 개인 맞춤 설정에 대한 동의 창(UMP)이 표시됩니다.</p>
 
@@ -45,7 +48,7 @@
 <hr>
 
 <h1>Tapboard Privacy Policy</h1>
-<p>Last updated: 2026-09-13 · App: Tapboard (com.dksequence.tapboard) · Developer: DKsequence · Contact: kitan98@gmail.com</p>
+<p>Last updated: 2026-11-20 · App: Tapboard (com.dksequence.tapboard) · Developer: DKsequence · Contact: kitan98@gmail.com</p>
 
 <h2>1. Information we collect</h2>
 <p>This app does <b>not collect personally identifiable information</b> such as your name, email or phone number. There is no sign-up and no login.</p>
@@ -64,13 +67,16 @@
   <li><b>INTERNET, ACCESS_NETWORK_STATE</b> — to fetch ads and verify in-app purchases.</li>
   <li><b>AD_ID and Android ad services (ACCESS_ADSERVICES_*)</b> — for ad serving and frequency capping.</li>
   <li><b>BILLING</b> — for the ad-removal purchase.</li>
+  <li>The <b>notification (POST_NOTIFICATIONS) and boot-completed (RECEIVE_BOOT_COMPLETED)</b> permissions are used to send one reminder, created on your device after 7 or more days without opening the app, and to keep it across reboots. The notification content is generated on-device, is never transmitted, and can be turned off in the app settings.</li>
   <li><b>WAKE_LOCK, FOREGROUND_SERVICE, BIND_JOB_SERVICE</b> — used by the ads SDK for background tasks. The app does not use location, camera, microphone or contacts permissions.</li>
 </ul>
 
 <h2>4. Third-party services</h2>
 <ul>
-  <li><b>Google AdMob</b> — ad serving. <a href="https://policies.google.com/technologies/partner-sites">Google Privacy Policy</a></li>
+  <li><b>Google AdMob</b> — ad serving. <a href="https://policies.google.com/technologies/partner-sites">Google Privacy Policy</a> Through AdMob mediation, <b>Unity Ads</b> and <b>Liftoff Monetize (Vungle)</b> take part in ad bidding and may process advertising identifiers and device information under their own policies (<a href="https://unity.com/legal/privacy-policy">Unity</a> · <a href="https://liftoff.io/privacy-policy/">Liftoff</a>).</li>
   <li><b>Google Play Billing</b> — ad-removal purchase.</li>
+  <li><b>Google Play In-App Review</b> — at a suitable moment while you use the app, Google Play may show a rating prompt. Rating entry and processing happen in Google Play; the app does not receive your rating or review text.</li>
+  <li><b>Google Firebase Analytics</b> — anonymous usage statistics such as app opens and screen views; it may process a device identifier. Your scores and progress are never transmitted.</li>
 </ul>
 <p>Users in the EEA, the UK and Switzerland are shown a consent form (UMP) for ad personalisation.</p>
 
@@ -84,6 +90,6 @@
 <p>If this policy changes, the last-updated date on this page will change with it.</p>
 
   <h2>데이터 보관 / Data retention</h2>
-  <p>이 앱이 만드는 기록은 <b>사용자의 기기 안에만</b> 저장됩니다. 개발자는 사용자의 기록을 서버로 받지 않으며 <b>따로 보관하지 않습니다</b>. 기기에 저장된 기록은 사용자가 앱에서 지우거나 앱을 제거할 때까지 남아 있고, 삭제하면 함께 사라집니다. 광고에 쓰이는 식별자는 Google 및 광고 파트너가 각자의 정책과 보관 기간에 따라 처리하며, 개발자가 보관하지 않습니다.</p>
-  <p>Records created by this app are stored <b>only on the user's device</b>. The developer does not receive them on any server and <b>does not retain them</b>. Data kept on the device remains until the user clears it in the app or uninstalls the app, at which point it is removed. Advertising identifiers used for ads are handled by Google and its advertising partners under their own policies and retention periods; the developer does not retain them.</p>
-  <p>このアプリが作る記録は<b>利用者の端末内にのみ</b>保存されます。開発者はサーバーで受け取らず、<b>別途保管しません</b>。端末内の記録は利用者が削除するかアプリを削除するまで残り、削除すると一緒に消えます。広告識別子は Google および広告パートナーが各自のポリシーと保存期間に従って扱い、開発者は保管しません。</p>
+  <p>이 앱이 만드는 기록은 <b>사용자의 기기 안에만</b> 저장됩니다. 개발자는 사용자의 기록을 서버로 받지 않으며 <b>따로 보관하지 않습니다</b>. 기기에 저장된 기록은 사용자가 앱에서 지우거나 앱을 제거할 때까지 남아 있고, 삭제하면 함께 사라집니다. 광고에 쓰이는 식별자와 앱 사용 통계(Firebase Analytics)는 Google 및 광고 파트너가 각자의 정책과 보관 기간에 따라 처리하며, 개발자가 보관하지 않습니다.</p>
+  <p>Records created by this app are stored <b>only on the user's device</b>. The developer does not receive them on any server and <b>does not retain them</b>. Data kept on the device remains until the user clears it in the app or uninstalls the app, at which point it is removed. Advertising identifiers used for ads and app usage statistics (Firebase Analytics) are handled by Google and its advertising partners under their own policies and retention periods; the developer does not retain them.</p>
+  <p>このアプリが作る記録は<b>利用者の端末内にのみ</b>保存されます。開発者はサーバーで受け取らず、<b>別途保管しません</b>。端末内の記録は利用者が削除するかアプリを削除するまで残り、削除すると一緒に消えます。広告識別子とアプリ利用統計（Firebase Analytics）は Google および広告パートナーが各自のポリシーと保存期間に従って扱い、開発者は保管しません。</p>

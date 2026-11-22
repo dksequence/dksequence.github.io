@@ -11,7 +11,7 @@ td,th{border:1px solid #3A2A50;padding:8px;font-size:14px;text-align:left}
 a{color:#3DDC97} li{margin-left:18px} hr{border:0;border-top:1px solid #3A2A50;margin:26px 0}
 </style></head><body>
 <h1>개인정보처리방침 / Privacy Policy — WeatherScore</h1>
-<p>최종 수정일: 2026-08-09 · 사업자: 디케이시퀀스(DKsequence) · 문의: kitan98@gmail.com</p>
+<p>최종 수정일: 2026-11-20 · 사업자: 디케이시퀀스(DKsequence) · 문의: kitan98@gmail.com</p>
 <hr>
 <h2>한국어</h2>
 <h3>1. 수집하는 정보</h3>
@@ -31,19 +31,21 @@ a{color:#3DDC97} li{margin-left:18px} hr{border:0;border-top:1px solid #3A2A50;m
 <li><b>기상청(KMA, 대한민국)</b> — 공공데이터포털 (국내 이용 시)</li>
 <li><b>NOAA/NWS (미국)</b> — api.weather.gov (미국 이용 시)</li>
 <li><b>MeteoAlarm (EUMETNET)</b> — 유럽 기상특보</li>
-<li><b>Google AdMob</b> — 광고 제공</li>
+<li><b>Google AdMob</b> — 광고 제공. AdMob 미디에이션을 통해 <b>Unity Ads</b>와 <b>Liftoff Monetize(Vungle)</b>가 광고 입찰에 참여하며, 각 사 정책에 따라 광고 식별자·기기 정보 등을 처리할 수 있습니다(<a href="https://unity.com/legal/privacy-policy">Unity</a> · <a href="https://liftoff.io/privacy-policy/">Liftoff</a>).</li>
 <h3>3. 권한</h3>
 <table>
 <tr><th>권한</th><th>필수 여부</th><th>용도</th></tr>
 <tr><td>위치(정확한/대략적)</td><td><b>선택</b></td><td>현재 위치 날씨. 거부해도 도시를 직접 검색해 모든 기능을 쓸 수 있습니다</td></tr>
 <tr><td>인터넷</td><td>필수</td><td>예보 데이터 수신</td></tr>
+<tr><td>알림(POST_NOTIFICATIONS)·부팅 후 재예약(RECEIVE_BOOT_COMPLETED)</td><td><b>선택</b></td><td>앱을 7일 동안 열지 않았을 때 한 번 안내하는 <b>기기 내 로컬 알림</b>. 서버로 전송되지 않으며, 거부하거나 설정에서 끄면 알림이 오지 않습니다</td></tr>
 </table>
 <p><b>백그라운드 위치는 요청하지 않습니다.</b></p>
 <h3>4. 아동</h3>
 <p>만 13세 미만을 대상으로 하지 않으며, 아동의 개인정보를 알면서 수집하지 않습니다.</p>
 <h3>5. 광고</h3>
 <p>무료 버전은 Google AdMob 광고를 표시합니다. 앱 내 <b>광고 제거</b> 상품을 구매하면 광고가 표시되지 않습니다.</p>
-<p>AdMob의 데이터 처리는 Google 개인정보처리방침(policies.google.com/privacy)을 따릅니다.</p>
+<p>AdMob의 데이터 처리는 Google 개인정보처리방침(policies.google.com/privacy)을 따릅니다. AdMob 미디에이션을 통해 <b>Unity Ads</b>와 <b>Liftoff Monetize(Vungle)</b>가 광고 입찰에 참여하며, 각 사 정책에 따라 광고 식별자·기기 정보 등을 처리할 수 있습니다(<a href="https://unity.com/legal/privacy-policy">Unity</a> · <a href="https://liftoff.io/privacy-policy/">Liftoff</a>).</p>
+<p>앱 평가 요청은 Google Play 인앱 리뷰 창을 통해 이루어지며, 개발자는 입력 내용을 받지 않습니다.</p>
 <h3>6. 이용자의 권리</h3>
 <p>기기 설정에서 위치 권한을 언제든 철회할 수 있고, 앱 설정에서 저장된 기록을 삭제할 수 있으며,</p>
 <p>앱을 삭제하면 기기에 저장된 모든 데이터가 함께 삭제됩니다.</p>
@@ -64,10 +66,11 @@ a{color:#3DDC97} li{margin-left:18px} hr{border:0;border-top:1px solid #3A2A50;m
 <p><b>We do not operate a server.</b> None of the above is sent to us, and the developer cannot access it.</p>
 <h3>2. Third parties</h3>
 <p>Only your <b>coordinates</b> are sent to weather data providers: MET Norway (api.met.no), Korea Meteorological</p>
-<p>Administration (in Korea), NOAA/NWS (in the US), MeteoAlarm (Europe), and Google AdMob for ads.</p>
+<p>Administration (in Korea), NOAA/NWS (in the US), MeteoAlarm (Europe), and Google AdMob for ads. Through AdMob mediation, <b>Unity Ads</b> and <b>Liftoff Monetize (Vungle)</b> take part in ad bidding and may process advertising identifiers and device information under their own policies (<a href="https://unity.com/legal/privacy-policy">Unity</a> · <a href="https://liftoff.io/privacy-policy/">Liftoff</a>).</p>
 <h3>3. Permissions</h3>
 <p>Location is <b>optional</b> — you can search any city manually and use every feature without it.</p>
 <p><b>We never request background location.</b> Internet access is required to fetch forecasts.</p>
+<p>Notification (POST_NOTIFICATIONS) and re-schedule-after-boot (RECEIVE_BOOT_COMPLETED) permissions are <b>optional</b> and used only for a single <b>local, on-device reminder</b> if you have not opened the app for 7 days. It is not sent to any server; if you decline or turn it off in settings, no reminder is shown. Rating requests use the Google Play in-app review sheet; the developer does not receive what you enter.</p>
 <h3>4. Children</h3>
 <p>Not directed to children under 13. We do not knowingly collect data from children.</p>
 <h3>5. Ads and removal</h3>

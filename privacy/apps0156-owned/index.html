@@ -6,7 +6,7 @@
 </head><body>
 
 <h1>Owned 개인정보처리방침</h1>
-<p>최종 업데이트: 2026-08-10 · 개발자: DKsequence(디케이시퀀스)</p>
+<p>최종 업데이트: 2026-11-21 · 개발자: DKsequence(디케이시퀀스)</p>
 
 <h2>1. 수집하는 정보</h2>
 <p>이 앱은 이름·이메일·전화번호 같은 <b>개인을 식별할 수 있는 정보를 직접 수집하지 않습니다.</b> 계정 가입이나 로그인 절차가 없습니다.</p>
@@ -21,14 +21,15 @@
 <ul>
   <li><b>카메라</b> — 영수증·계약서·물건을 사용자가 직접 촬영할 때만 사용합니다. 촬영한 사진은 앱 안에만 저장됩니다.</li>
   <li><b>사진 선택</b> — 사용자가 고른 사진 한 장을 앱으로 가져올 때만 사용합니다. 갤러리 전체를 읽지 않습니다.</li>
-  <li><b>알림</b> — 보증 만료가 다가올 때 미리 알려주기 위해 사용합니다. 거부해도 앱의 다른 기능은 그대로 동작합니다.</li>
+  <li><b>알림(POST_NOTIFICATIONS)·부팅 완료 수신(RECEIVE_BOOT_COMPLETED)</b> — 보증 만료가 다가올 때 미리 알려주고, 7일 이상 앱을 열지 않았을 때 기기 안에서 만드는 알림 1회를 보내며, 재부팅 뒤에도 예약을 유지하는 데 사용합니다. 알림 내용은 기기 안에서 만들어지며 외부로 전송되지 않고, 앱 설정에서 7일 미사용 알림을 끌 수 있습니다. 거부해도 앱의 다른 기능은 그대로 동작합니다.</li>
 </ul>
 <p>이 앱은 위치·연락처·마이크 권한을 요구하지 않습니다.</p>
 
 <h2>3. 제3자 서비스</h2>
 <ul>
-  <li><b>Google AdMob</b> — 광고 게재 및 성과 측정. 광고 ID와 기기 정보를 처리할 수 있습니다. 정책: <a href="https://policies.google.com/privacy">policies.google.com/privacy</a></li>
+  <li><b>Google AdMob</b> — 광고 게재 및 성과 측정. 광고 ID와 기기 정보를 처리할 수 있습니다. 정책: <a href="https://policies.google.com/privacy">policies.google.com/privacy</a> AdMob 미디에이션을 통해 <b>Unity Ads</b>와 <b>Liftoff Monetize(Vungle)</b>가 광고 입찰에 참여하며, 각 사의 정책에 따라 광고 ID와 기기 정보를 처리할 수 있습니다(<a href="https://unity.com/legal/privacy-policy">Unity</a> · <a href="https://liftoff.io/privacy-policy/">Liftoff</a>).</li>
   <li><b>Google Play 결제</b> — 인앱 구매(광고 제거) 처리.</li>
+  <li><b>Google Play 인앱 리뷰</b> — 앱을 이용하는 중 적절한 때에 Google Play가 평점 요청 창을 표시할 수 있습니다. 평점 입력과 처리는 Google Play 안에서 이뤄지며, 앱은 평점이나 리뷰 내용을 전달받지 않습니다.</li>
   <li><b>Google Firebase Analytics</b> — 앱 실행 횟수·화면 이동 같은 익명 사용 통계 집계. 기기 식별자를 처리할 수 있으며, 사용자가 입력한 기록·사진·금액은 전송되지 않습니다.</li>
 </ul>
 <p>사용자가 입력한 기록과 사진은 위 서비스에 전달되지 않습니다.</p>
@@ -46,7 +47,7 @@
 <ul>
   <li>기기 설정에서 <b>광고 ID를 재설정하거나 맞춤 광고를 끌 수 있습니다.</b> (Android 설정 &gt; 개인정보 보호 &gt; 광고)</li>
   <li>보상형 광고는 사용자가 직접 선택했을 때만 재생됩니다.</li>
-  <li>알림은 기기 설정에서 언제든 끌 수 있습니다.</li>
+  <li>알림은 앱 설정이나 기기 설정에서 언제든 끌 수 있습니다.</li>
   <li>앱을 삭제하면 기기에 저장된 기록과 사진이 함께 삭제됩니다. 미리 내보낸 백업 파일은 사용자가 보관한 곳에 남습니다.</li>
 </ul>
 
@@ -59,7 +60,7 @@
 <hr>
 
 <h1>Owned — Privacy Policy</h1>
-<p>Last updated: 2026-08-10 · Developer: DKsequence</p>
+<p>Last updated: 2026-11-21 · Developer: DKsequence</p>
 
 <h2>1. Information We Collect</h2>
 <p>This app does <b>not directly collect personally identifiable information</b> such as your name, email address or phone number. There is no sign-up and no login.</p>
@@ -74,14 +75,15 @@
 <ul>
   <li><b>Camera</b> — used only when you choose to photograph a receipt, document or item. The photo is stored inside the app.</li>
   <li><b>Photo picker</b> — used only to bring in a photo you select. The app does not read your whole gallery.</li>
-  <li><b>Notifications</b> — used to remind you before a warranty ends. Declining keeps every other feature working.</li>
+  <li><b>Notifications (POST_NOTIFICATIONS) and boot-completed (RECEIVE_BOOT_COMPLETED)</b> — used to remind you before a warranty ends, to send one reminder created on your device after 7 or more days without opening the app, and to keep it across reboots. The notification content is generated on-device, is never transmitted, and the 7-day reminder can be turned off in the app settings. Declining keeps every other feature working.</li>
 </ul>
 <p>The app requests no location, contacts or microphone permission.</p>
 
 <h2>3. Third-Party Services</h2>
 <ul>
-  <li><b>Google AdMob</b> — ad delivery and measurement; may process your advertising ID and device information. Policy: <a href="https://policies.google.com/privacy">policies.google.com/privacy</a></li>
+  <li><b>Google AdMob</b> — ad delivery and measurement; may process your advertising ID and device information. Policy: <a href="https://policies.google.com/privacy">policies.google.com/privacy</a> Through AdMob mediation, <b>Unity Ads</b> and <b>Liftoff Monetize (Vungle)</b> take part in ad bidding and may process advertising identifiers and device information under their own policies (<a href="https://unity.com/legal/privacy-policy">Unity</a> · <a href="https://liftoff.io/privacy-policy/">Liftoff</a>).</li>
   <li><b>Google Play Billing</b> — processes the in-app purchase (ad removal).</li>
+  <li><b>Google Play In-App Review</b> — at a suitable moment while you use the app, Google Play may show a rating prompt. Rating entry and processing happen in Google Play; the app does not receive your rating or review text.</li>
   <li><b>Google Firebase Analytics</b> — anonymous usage statistics such as app opens and screen views. It may process a device identifier; the records, photos and amounts you enter are never transmitted.</li>
 </ul>
 <p>The records and photos you enter are not shared with these services.</p>
@@ -99,7 +101,7 @@
 <ul>
   <li>You can reset your advertising ID or opt out of personalized ads in your device settings (Android Settings &gt; Privacy &gt; Ads).</li>
   <li>Rewarded ads play only when you choose to watch one.</li>
-  <li>Notifications can be turned off at any time in device settings.</li>
+  <li>Notifications can be turned off at any time in the app settings or device settings.</li>
   <li>Uninstalling the app deletes the records and photos stored on the device. Backup files you exported earlier stay wherever you kept them.</li>
 </ul>
 

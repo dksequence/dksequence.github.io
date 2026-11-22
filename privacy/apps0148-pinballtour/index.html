@@ -34,7 +34,7 @@
   <header>
     <div class="badge">PINBALL WORLD TOUR</div>
     <h1>개인정보처리방침 / Privacy Policy</h1>
-    <div class="meta">com.dksequence.pinballtour &middot; DKsequence &middot; 최종 수정 2026-08-02</div>
+    <div class="meta">com.dksequence.pinballtour &middot; DKsequence &middot; 최종 수정 2026-11-20</div>
   </header>
   <div class="toggle">
     <button id="bko" class="active" onclick="sw('ko')">한국어</button>
@@ -46,7 +46,7 @@
 <ul><li><b>개발자가 개인정보를 직접 수집하지 않으며</b>, 진행도·설정값은 기기 내부에만 저장됩니다.</li>
 <li><b>로컬 저장</b>: 도시별 최고 점수, 해금한 테이블, 적립 포인트, 선택한 언어, 소리 설정, 광고 제거 구매 여부가 앱 내부 저장소에 보관되며 앱 삭제 시 함께 삭제됩니다.</li></ul>
 <h3>2. 광고 (Google AdMob)</h3>
-<ul><li>앱은 <b>Google AdMob</b> 광고를 표시합니다.</li>
+<ul><li>앱은 <b>Google AdMob</b> 광고를 표시합니다. AdMob 미디에이션을 통해 <b>Unity Ads</b>와 <b>Liftoff Monetize(Vungle)</b>가 광고 입찰에 참여하며, 각 사 정책에 따라 광고 식별자·기기 정보 등을 처리할 수 있습니다(<a href="https://unity.com/legal/privacy-policy">Unity</a> · <a href="https://liftoff.io/privacy-policy/">Liftoff</a>).</li>
 <li>AdMob은 광고 제공·측정을 위해 <b>광고 식별자(Advertising ID)</b> 등 기기 정보를 수집할 수 있으며, 이때 인터넷 연결이 사용됩니다.</li>
 <li>보상형 광고는 이용자가 버튼을 눌러 직접 선택했을 때만 재생됩니다.</li>
 <li>플레이 화면(플리퍼 조작 영역)에는 배너를 표시하지 않습니다.</li>
@@ -58,7 +58,10 @@
 <ul><li>'광고 제거 / 전체 테이블 열기' 상품을 제공합니다. 결제는 <b>Google Play가 처리</b>하며 개발자는 카드번호 등 결제수단 정보를 받지 않습니다.</li>
 <li>앱은 Google Play가 제공하는 구매 상태만 확인합니다.</li></ul>
 <h3>5. 제3자 제공</h3>
-<ul><li>위(Google AdMob, Google Play 결제) 외의 제3자 제공은 없습니다.</li></ul>
+<ul><li>위(Google AdMob과 미디에이션 파트너 Unity Ads·Liftoff Monetize, Google Firebase Analytics, Google Play 결제) 외의 제3자 제공은 없습니다.</li></ul>
+<h3>5-1. 알림 권한</h3>
+<ul><li>앱을 7일 동안 열지 않았을 때 한 번 안내하는 <b>기기 내 로컬 알림</b>을 위해 알림(POST_NOTIFICATIONS)·부팅 후 알림 재예약(RECEIVE_BOOT_COMPLETED) 권한을 사용합니다. 알림 내용은 기기 안에서만 만들어지며 서버로 전송되지 않습니다. 권한을 허용하지 않거나 타이틀 화면의 알림 아이콘으로 끄면 알림은 오지 않습니다.</li>
+<li>앱 평가 요청은 Google Play 인앱 리뷰 창을 통해 이루어지며, 개발자는 입력 내용을 받지 않습니다.</li></ul>
 <h3>6. 아동</h3>
 <ul><li>특정 연령을 대상으로 하지 않으며, 개발자가 아동의 개인정보를 직접 수집하지 않습니다.</li></ul>
 <h3>7. 보관·삭제</h3>
@@ -71,7 +74,7 @@
     <h3>1. Information we collect</h3>
 <ul><li><b>The developer collects no personal data.</b> Your high score per city, unlocked tables, earned points, chosen language, sound setting and remove-ads purchase state are stored <b>on your device only</b> and are deleted when you uninstall the app.</li></ul>
 <h3>2. Advertising (Google AdMob)</h3>
-<ul><li>The app shows <b>Google AdMob</b> ads.</li>
+<ul><li>The app shows <b>Google AdMob</b> ads. Through AdMob mediation, <b>Unity Ads</b> and <b>Liftoff Monetize (Vungle)</b> take part in ad bidding and may process advertising identifiers and device information under their own policies (<a href="https://unity.com/legal/privacy-policy">Unity</a> · <a href="https://liftoff.io/privacy-policy/">Liftoff</a>).</li>
 <li>AdMob may collect device information such as the <b>Advertising ID</b> to serve and measure ads, which uses an internet connection.</li>
 <li>Rewarded ads play only when you tap to watch one.</li>
 <li>No banner is placed on the playfield, where the flipper controls are.</li>
@@ -83,7 +86,10 @@
 <ul><li>A "Remove ads / unlock every table" product is offered. <b>Google Play processes the payment</b>; the developer never receives card or payment credentials.</li>
 <li>The app only reads the purchase state supplied by Google Play.</li></ul>
 <h3>5. Third parties</h3>
-<ul><li>No third parties other than Google AdMob and Google Play Billing.</li></ul>
+<ul><li>No third parties other than Google AdMob (including its mediation partners Unity Ads and Liftoff Monetize), Google Firebase Analytics and Google Play Billing.</li></ul>
+<h3>5-1. Notification permission</h3>
+<ul><li>The app uses the notification (POST_NOTIFICATIONS) and re-schedule-after-boot (RECEIVE_BOOT_COMPLETED) permissions for a single <b>local, on-device reminder</b> shown if you have not opened the app for 7 days. The reminder is created on your device and is not sent to any server. If you do not grant the permission, or turn it off with the bell icon on the title screen, no reminder is shown.</li>
+<li>Rating requests use the Google Play in-app review sheet; the developer does not receive what you enter.</li></ul>
 <h3>6. Children</h3>
 <ul><li>The app does not target a specific age group, and the developer does not knowingly collect data from children.</li></ul>
 <h3>7. Retention &amp; deletion</h3>

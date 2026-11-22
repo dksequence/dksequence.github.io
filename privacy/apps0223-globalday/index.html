@@ -4,7 +4,7 @@
 <style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:760px;margin:0 auto;padding:24px;line-height:1.7;color:#222}h1{font-size:1.5rem}h2{font-size:1.15rem;margin-top:1.8em}hr{margin:2.5em 0;border:none;border-top:1px solid #ddd}a{color:#1a6}</style>
 
 <h1>Day Alert 개인정보처리방침</h1>
-<p>최종 업데이트: 2026-09-28 · 앱: Day Alert(com.dksequence.globalday) · 개발자: DKsequence(디케이시퀀스) · 문의: dkseq7@gmail.com</p>
+<p>최종 업데이트: 2026-11-20 · 앱: Day Alert(com.dksequence.globalday) · 개발자: DKsequence(디케이시퀀스) · 문의: dkseq7@gmail.com</p>
 
 <h2>1. 이 앱이 하는 일</h2>
 <p>Day Alert는 매일 세계 각국의 기념일·국제일을 알려주는 앱입니다. 회원가입·로그인이 없습니다.</p>
@@ -14,13 +14,15 @@
   <li>개발자는 이용자의 개인정보를 직접 수집하지 않습니다. 표시(체크·하트 등) 기록, 내 기념일(생일 등), 알림·배경음악 설정은 이 기기 안에만 저장됩니다.</li>
 </ul>
 
-<h2>3. 알림</h2>
-<p>매일 알림을 표시하려면 기기의 알림 권한이 필요합니다. 알림 내용은 앱 안에 내장된 날짜별 데이터에서 가져오며, 서버로 전송되지 않습니다.</p>
+<h2>3. 알림·평점 요청</h2>
+<p>매일 알림과 «7일 동안 앱을 열지 않으면 한 번 알려 주는 알림»을 표시하려면 기기의 알림 권한(<code>POST_NOTIFICATIONS</code>)이 필요하고, 기기를 다시 켠 뒤 예약을 복원하기 위해 <code>RECEIVE_BOOT_COMPLETED</code> 권한을 사용합니다. 알림 내용은 앱 안에 내장된 데이터에서 가져오며 기기 안에서만 예약되고 서버로 전송되지 않습니다. 설정 화면의 스위치로 끌 수 있습니다. 또한 기념일을 저장한 뒤 등 좋은 순간에 가끔 Google Play 인앱 리뷰(평점 요청) 창을 띄울 수 있으며, 평점 입력과 처리는 Google Play 가 담당하고 앱은 평점 내용을 받지 않습니다.</p>
 
-<h2>4. 광고(Google AdMob)</h2>
+<h2>4. 광고·분석(Google AdMob · Firebase Analytics)</h2>
 <ul>
   <li>무료 제공을 위해 배너·전면·보상형 광고를 표시합니다.</li>
   <li>AdMob은 광고 제공·측정을 위해 광고 식별자(Advertising ID) 등 기기 정보를 수집할 수 있습니다(Google 정책).</li>
+  <li>AdMob 미디에이션을 통해 <b>Unity Ads</b>와 <b>Liftoff Monetize(Vungle)</b>가 광고 입찰에 참여하며, 각 사 정책에 따라 광고 식별자·기기 정보 등을 처리할 수 있습니다(<a href="https://unity.com/legal/privacy-policy">Unity</a> · <a href="https://liftoff.io/privacy-policy/">Liftoff</a>).</li>
+  <li><b>Firebase Analytics(분석):</b> 앱 개선을 위해 앱 사용 통계(화면 이용 등 앱 상호작용, 기기 식별자)를 수집할 수 있으며, 이름·이메일 등 개인을 식별하는 정보는 수집하지 않습니다(<a href="https://firebase.google.com/support/privacy">안내</a>).</li>
   <li>Google 정책: <a href="https://policies.google.com/privacy">https://policies.google.com/privacy</a> · 제어: 기기 설정 &gt; Google &gt; 광고.</li>
 </ul>
 
@@ -28,7 +30,7 @@
 <p>「광고 제거」 구매는 Google Play 결제로 처리됩니다. 결제 수단 정보는 Google이 처리하며 개발자는 접근하지 않습니다.</p>
 
 <h2>6. 제3자 제공</h2>
-<p>위의 Google AdMob·Google Play 결제 외에 이용자 정보를 제3자에게 제공하거나 판매하지 않습니다.</p>
+<p>위의 Google AdMob(미디에이션 파트너 Unity Ads·Liftoff Monetize 포함)·Firebase Analytics·Google Play 결제·Google Play 인앱 리뷰 외에 이용자 정보를 제3자에게 제공하거나 판매하지 않습니다.</p>
 
 <h2>7. 데이터 보관 / 삭제</h2>
 <ul>
@@ -45,7 +47,7 @@
 <hr>
 
 <h1>Day Alert Privacy Policy</h1>
-<p>Last updated: 2026-09-28 · App: Day Alert (com.dksequence.globalday) · Developer: DKsequence · Contact: dkseq7@gmail.com</p>
+<p>Last updated: 2026-11-20 · App: Day Alert (com.dksequence.globalday) · Developer: DKsequence · Contact: dkseq7@gmail.com</p>
 
 <h2>1. What the app does</h2>
 <p>Day Alert tells you every day about international observances and national days around the world. No sign-up or login is required.</p>
@@ -55,13 +57,15 @@
   <li>The developer does not directly collect your personal information. Your marks (check/heart/etc.), custom days (birthdays, etc.), and notification/music settings are stored on this device only.</li>
 </ul>
 
-<h2>3. Notifications</h2>
-<p>Showing the daily notification requires the device's notification permission. Notification content comes from data bundled in the app and is not sent to a server.</p>
+<h2>3. Notifications and rating prompt</h2>
+<p>Showing the daily notification and the one-time reminder after 7 days without opening the app requires the device's notification permission (<code>POST_NOTIFICATIONS</code>); the app also uses <code>RECEIVE_BOOT_COMPLETED</code> to restore the schedule after a device restart. Notification content comes from data bundled in the app, is scheduled on the device only, and is not sent to a server. You can turn it off with the switch in Settings. After good moments such as saving a custom day, the app may occasionally show the Google Play in-app review (rating) prompt; Google Play handles entering and processing the rating, and the app does not receive its content.</p>
 
-<h2>4. Ads (Google AdMob)</h2>
+<h2>4. Ads and analytics (Google AdMob, Firebase Analytics)</h2>
 <ul>
   <li>To keep the app free, we show banner, interstitial, and rewarded ads.</li>
   <li>AdMob may collect device information such as an advertising ID to deliver and measure ads, per Google's policy.</li>
+  <li>Through AdMob mediation, <b>Unity Ads</b> and <b>Liftoff Monetize (Vungle)</b> take part in ad bidding and may process advertising identifiers and device information under their own policies (<a href="https://unity.com/legal/privacy-policy">Unity</a> · <a href="https://liftoff.io/privacy-policy/">Liftoff</a>).</li>
+  <li><b>Firebase Analytics (analytics):</b> To improve the app, app usage statistics (app interactions such as screen use, and device identifiers) may be collected; information that identifies you, such as your name or email, is not collected (<a href="https://firebase.google.com/support/privacy">details</a>).</li>
   <li>Google's policy: <a href="https://policies.google.com/privacy">https://policies.google.com/privacy</a> · Control: Device Settings &gt; Google &gt; Ads.</li>
 </ul>
 
@@ -69,7 +73,7 @@
 <p>The "Remove ads" purchase is handled by Google Play billing. Google processes your payment details; the developer never has access to them.</p>
 
 <h2>6. Sharing with third parties</h2>
-<p>Apart from Google AdMob and Google Play billing above, we do not share or sell user information to third parties.</p>
+<p>Apart from Google AdMob (including its mediation partners Unity Ads and Liftoff Monetize), Firebase Analytics, Google Play billing and Google Play in-app review above, we do not share or sell user information to third parties.</p>
 
 <h2>7. Data retention and deletion</h2>
 <ul>

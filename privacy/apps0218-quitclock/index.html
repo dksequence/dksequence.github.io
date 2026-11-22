@@ -4,7 +4,7 @@
 <style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:760px;margin:0 auto;padding:24px;line-height:1.7;color:#222}h1{font-size:1.5rem}h2{font-size:1.15rem;margin-top:1.8em}hr{margin:2.5em 0;border:none;border-top:1px solid #ddd}a{color:#1a6}</style>
 
 <h1>QuitClock 개인정보처리방침</h1>
-<p>최종 업데이트: 2026-09-21 · 앱: QuitClock(com.dksequence.quitclock) · 개발자: DKsequence(디케이시퀀스) · 문의: contact@dksequence.com</p>
+<p>최종 업데이트: 2026-11-20 · 앱: QuitClock(com.dksequence.quitclock) · 개발자: DKsequence(디케이시퀀스) · 문의: contact@dksequence.com</p>
 
 <h2>1. 이 앱이 하는 일</h2>
 <p>QuitClock은 절제(금연·금주·기타 습관)를 시작한 시각부터 흐른 시간과 절약한 금액을 보여주는 도구입니다. 모든 계산과 저장은 기기 안에서 이뤄지며, 사용자가 입력한 정보를 서버로 보내지 않습니다.</p>
@@ -27,15 +27,15 @@
 <h2>5. 앱이 사용하는 권한</h2>
 <ul>
   <li><b>인터넷(INTERNET)</b> · <b>광고 ID</b> — 광고 게재와 인앱 구매(광고 제거)에 사용합니다.</li>
-  <li><b>알림(POST_NOTIFICATIONS)</b> — 마일스톤 도달 알림 표시에 사용하며, 설정에서 언제든 끌 수 있고 끄면 다시 표시되지 않습니다.</li>
+  <li><b>알림(POST_NOTIFICATIONS)</b> · <b>재부팅 완료(RECEIVE_BOOT_COMPLETED)</b> — 마일스톤 도달 알림과, 앱을 7일 동안 열지 않았을 때 기기 안에서 예약한 안내 알림(1회)을 표시하는 데 사용합니다(재부팅 뒤 예약 복원 포함). 설정에서 언제든 끌 수 있고 끄면 다시 표시되지 않습니다.</li>
   <li>그 외 권한(카메라·마이크·위치·연락처 등)을 요청하지 않습니다.</li>
 </ul>
 
 <h2>6. 제3자 서비스</h2>
 <ul>
-  <li><b>Google AdMob</b> — 광고 게재. 광고 식별자와 기기 정보를 처리합니다. <a href="https://policies.google.com/technologies/partner-sites">Google 개인정보처리방침</a></li>
+  <li><b>Google AdMob</b> — 광고 게재. 광고 식별자와 기기 정보를 처리합니다. <a href="https://policies.google.com/technologies/partner-sites">Google 개인정보처리방침</a> AdMob 미디에이션을 통해 <b>Unity Ads</b>와 <b>Liftoff Monetize(Vungle)</b>가 광고 입찰에 참여하며, 각 사 정책에 따라 광고 식별자·기기 정보 등을 처리할 수 있습니다(<a href="https://unity.com/legal/privacy-policy">Unity</a> · <a href="https://liftoff.io/privacy-policy/">Liftoff</a>).</li>
   <li><b>Google Play 결제</b> — 광고 제거 구매 처리. 앱은 구매 여부만 확인합니다.</li>
-  <li>사용 통계·분석(Analytics) SDK는 넣지 않았습니다.</li>
+  <li><b>Firebase Analytics(분석)</b> — 앱 개선을 위해 앱 사용 통계(화면 이용 등 앱 상호작용, 기기 식별자)를 수집할 수 있으며, 이름·이메일 등 개인을 식별하는 정보는 수집하지 않습니다(<a href="https://firebase.google.com/support/privacy">안내</a>).</li>
 </ul>
 <p>유럽 경제 지역·영국·스위스 사용자에게는 광고 개인 맞춤 설정에 대한 동의 창(UMP)이 표시됩니다.</p>
 
@@ -43,7 +43,7 @@
 <p>앱 안의 건강 회복 마일스톤 정보는 공개된 보건 자료를 인용한 일반적인 참고용 정보이며, 의학적 진단·치료·상담을 대신하지 않습니다.</p>
 
 <h2>8. 보관 기간과 삭제</h2>
-<p>이 앱이 저장하는 모든 정보는 기기 안에만 있으며, 앱을 삭제하면 함께 삭제됩니다. 개발자가 서버에 보관하는 사용자 데이터가 없어 별도의 삭제 요청 절차가 필요하지 않습니다.</p>
+<p>이 앱이 저장하는 모든 정보는 기기 안에만 있으며, 앱을 삭제하면 함께 삭제됩니다. 개발자가 서버에 보관하는 사용자 데이터가 없어 별도의 삭제 요청 절차가 필요하지 않습니다. 광고 식별자와 Firebase Analytics 이용 통계는 Google 및 광고 파트너가 각자의 정책과 보관 기간에 따라 처리하며, 개발자가 보관하지 않습니다.</p>
 
 <h2>9. 어린이</h2>
 <p>이 앱은 만 13세 미만 어린이를 대상으로 하지 않습니다. Designed for Families 프로그램에 참여하지 않습니다.</p>
@@ -54,7 +54,7 @@
 <hr>
 
 <h1>QuitClock Privacy Policy</h1>
-<p>Last updated: 2026-09-21 · App: QuitClock (com.dksequence.quitclock) · Developer: DKsequence · Contact: contact@dksequence.com</p>
+<p>Last updated: 2026-11-20 · App: QuitClock (com.dksequence.quitclock) · Developer: DKsequence · Contact: contact@dksequence.com</p>
 
 <h2>1. What this app does</h2>
 <p>QuitClock shows how much time has passed and how much money you have saved since you started quitting a habit (smoking, drinking, or one you define yourself). All calculations and storage happen on your device — nothing you enter is sent to a server.</p>
@@ -77,15 +77,15 @@
 <h2>5. Permissions</h2>
 <ul>
   <li><b>INTERNET</b> and <b>advertising ID</b> — for ad serving and the remove-ads in-app purchase.</li>
-  <li><b>POST_NOTIFICATIONS</b> — to show milestone notifications; you can turn this off at any time in Settings, and once off it will not show again.</li>
+  <li><b>POST_NOTIFICATIONS</b> and <b>RECEIVE_BOOT_COMPLETED</b> — to show milestone notifications and a single notice scheduled on your device if you have not opened the app for 7 days (including restoring that schedule after a restart); you can turn this off at any time in Settings, and once off it will not show again.</li>
   <li>No other permissions (camera, microphone, location, contacts, etc.) are requested.</li>
 </ul>
 
 <h2>6. Third-party services</h2>
 <ul>
-  <li><b>Google AdMob</b> — ad serving; processes the advertising identifier and device information. <a href="https://policies.google.com/technologies/partner-sites">Google Privacy Policy</a></li>
+  <li><b>Google AdMob</b> — ad serving; processes the advertising identifier and device information. <a href="https://policies.google.com/technologies/partner-sites">Google Privacy Policy</a> Through AdMob mediation, <b>Unity Ads</b> and <b>Liftoff Monetize (Vungle)</b> take part in ad bidding and may process advertising identifiers and device information under their own policies (<a href="https://unity.com/legal/privacy-policy">Unity</a> · <a href="https://liftoff.io/privacy-policy/">Liftoff</a>).</li>
   <li><b>Google Play Billing</b> — handles the remove-ads purchase; the app only checks whether it is owned.</li>
-  <li>No analytics SDK is included in this app.</li>
+  <li><b>Firebase Analytics (analytics)</b> — to improve the app, app usage statistics (app interactions such as screen use, and device identifiers) may be collected; information that identifies you, such as your name or email, is not collected (<a href="https://firebase.google.com/support/privacy">details</a>).</li>
 </ul>
 <p>Users in the EEA, the UK and Switzerland are shown a consent form (UMP) for ad personalisation.</p>
 
@@ -93,7 +93,7 @@
 <p>The health milestone information in the app is general reference material drawn from publicly available health sources. It is not medical advice, diagnosis, or treatment.</p>
 
 <h2>8. Retention and deletion</h2>
-<p>Everything this app stores stays on your device and is removed when you uninstall it. The developer keeps no user data on any server, so no separate deletion request is needed.</p>
+<p>Everything this app stores stays on your device and is removed when you uninstall it. The developer keeps no user data on any server, so no separate deletion request is needed. Advertising identifiers and Firebase Analytics usage statistics are handled by Google and its advertising partners under their own policies and retention periods; the developer does not retain them.</p>
 
 <h2>9. Children</h2>
 <p>This app is not directed to children under 13. It does not participate in the Designed for Families programme.</p>

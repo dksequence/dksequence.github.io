@@ -4,7 +4,7 @@
 <style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:760px;margin:0 auto;padding:24px;line-height:1.7;color:#222}h1{font-size:1.5rem}h2{font-size:1.15rem;margin-top:1.8em}hr{margin:2.5em 0;border:none;border-top:1px solid #ddd}a{color:#1a6}</style>
 
 <h1>SafeJot 개인정보처리방침</h1>
-<p>최종 업데이트: 2026-09-28 · 앱: SafeJot(com.dksequence.safejot) · 개발자: DKsequence(디케이시퀀스) · 문의: contact@dksequence.com</p>
+<p>최종 업데이트: 2026-11-21 · 앱: SafeJot(com.dksequence.safejot) · 개발자: DKsequence(디케이시퀀스) · 문의: contact@dksequence.com</p>
 
 <h2>1. 이 앱이 하는 일</h2>
 <p>SafeJot은 메모를 자동으로 저장하고, 이전 버전을 남기고, 삭제해도 30일간 휴지통에 보관하고, 사용자가 고른 폴더에 주기적으로 백업하는 로컬 전용 메모장입니다. 메모 내용·검색·정리(색상 태그·별점·왕관·폴더)·음성 첨부·백업까지 전부 이 기기 안에서 처리되며, 메모 내용을 개발자 서버로 전송하지 않습니다. 계정 가입·로그인·클라우드 동기화가 없습니다.</p>
@@ -34,14 +34,16 @@
   <li><b>인터넷(INTERNET)</b> · <b>광고 ID</b> · <b>결제(BILLING)</b> — 광고 게재와 인앱 구매(광고 제거)에 사용합니다.</li>
   <li><b>마이크(RECORD_AUDIO)</b> — 위 2항의 음성 첨부 기능.</li>
   <li><b>생체인증(USE_BIOMETRIC)</b> — 위 2항의 잠금 메모 열람.</li>
+  <li><b>알림(POST_NOTIFICATIONS)·부팅 완료 수신(RECEIVE_BOOT_COMPLETED)</b> 권한은 7일 이상 앱을 열지 않았을 때 기기 안에서 만드는 알림 1회를 보내고 재부팅 뒤에도 유지하는 데 사용합니다. 알림 내용은 기기 안에서 만들어지며 외부로 전송되지 않고, 앱 설정에서 끌 수 있습니다.</li>
   <li>그 외 권한을 요청하지 않습니다.</li>
 </ul>
 
 <h2>6. 제3자 서비스</h2>
 <ul>
-  <li><b>Google AdMob</b> — 광고 게재. 광고 식별자와 기기 정보를 처리합니다. <a href="https://policies.google.com/technologies/partner-sites">Google 개인정보처리방침</a></li>
+  <li><b>Google AdMob</b> — 광고 게재. 광고 식별자와 기기 정보를 처리합니다. <a href="https://policies.google.com/technologies/partner-sites">Google 개인정보처리방침</a> AdMob 미디에이션을 통해 <b>Unity Ads</b>와 <b>Liftoff Monetize(Vungle)</b>가 광고 입찰에 참여하며, 각 사 정책에 따라 광고 식별자·기기 정보 등을 처리할 수 있습니다(<a href="https://unity.com/legal/privacy-policy">Unity</a> · <a href="https://liftoff.io/privacy-policy/">Liftoff</a>).</li>
   <li><b>Google Play 결제</b> — 광고 제거 구매 처리. 앱은 구매 여부만 확인합니다.</li>
-  <li>사용 통계·분석(Analytics) SDK는 넣지 않았습니다.</li>
+  <li><b>Google Play 인앱 리뷰</b> — 앱을 쓰는 중 적절한 시점에 Google Play가 평점 창을 표시할 수 있습니다. 평점 입력과 처리는 Google Play에서 이뤄지며, 앱은 평점·리뷰 내용을 받지 않습니다.</li>
+  <li><b>Google Firebase Analytics</b> — 앱 열기·화면 보기 같은 익명 사용 통계. 기기 식별자를 처리할 수 있습니다. 메모·음성 내용은 전송하지 않습니다.</li>
 </ul>
 <p>유럽 경제 지역·영국·스위스 사용자에게는 광고 개인 맞춤 설정에 대한 동의 창(UMP)이 표시됩니다.</p>
 
@@ -57,7 +59,7 @@
 <hr>
 
 <h1>SafeJot Privacy Policy</h1>
-<p>Last updated: 2026-09-28 · App: SafeJot (com.dksequence.safejot) · Developer: DKsequence · Contact: contact@dksequence.com</p>
+<p>Last updated: 2026-11-21 · App: SafeJot (com.dksequence.safejot) · Developer: DKsequence · Contact: contact@dksequence.com</p>
 
 <h2>1. What this app does</h2>
 <p>SafeJot is a local-only note app that autosaves as you type, keeps prior versions, holds deleted notes in a 30-day trash, and periodically backs up to a folder you choose. Note content, search, organizing (color tags, star ratings, crown, folders), voice attachments and backups are all handled entirely on your device — your note content is never sent to a developer server. There is no account, sign-up or cloud sync.</p>
@@ -87,14 +89,16 @@
   <li><b>INTERNET</b>, <b>advertising ID</b> and <b>BILLING</b> — for ad serving and the remove-ads in-app purchase.</li>
   <li><b>RECORD_AUDIO</b> — for the voice attachment feature in section 2.</li>
   <li><b>USE_BIOMETRIC</b> — for unlocking locked notes in section 2.</li>
+  <li>The <b>notification (POST_NOTIFICATIONS) and boot-completed (RECEIVE_BOOT_COMPLETED)</b> permissions are used to send one reminder, created on your device after 7 or more days without opening the app, and to keep it across reboots. The notification content is generated on-device, is never transmitted, and can be turned off in the app settings.</li>
   <li>No other permissions are requested.</li>
 </ul>
 
 <h2>6. Third-party services</h2>
 <ul>
-  <li><b>Google AdMob</b> — ad serving; processes the advertising identifier and device information. <a href="https://policies.google.com/technologies/partner-sites">Google Privacy Policy</a></li>
+  <li><b>Google AdMob</b> — ad serving; processes the advertising identifier and device information. <a href="https://policies.google.com/technologies/partner-sites">Google Privacy Policy</a> Through AdMob mediation, <b>Unity Ads</b> and <b>Liftoff Monetize (Vungle)</b> take part in ad bidding and may process advertising identifiers and device information under their own policies (<a href="https://unity.com/legal/privacy-policy">Unity</a> · <a href="https://liftoff.io/privacy-policy/">Liftoff</a>).</li>
   <li><b>Google Play Billing</b> — handles the remove-ads purchase; the app only checks whether it is owned.</li>
-  <li>No analytics SDK is included in this app.</li>
+  <li><b>Google Play In-App Review</b> — at a suitable moment while you use the app, Google Play may show a rating prompt. Rating entry and processing happen in Google Play; the app does not receive your rating or review text.</li>
+  <li><b>Google Firebase Analytics</b> — anonymous usage statistics such as app opens and screen views; it may process a device identifier. Note content and voice clips are never transmitted.</li>
 </ul>
 <p>Users in the EEA, the UK and Switzerland are shown a consent form (UMP) for ad personalisation.</p>
 

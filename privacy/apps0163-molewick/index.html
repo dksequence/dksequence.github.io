@@ -11,7 +11,7 @@ td,th{border:1px solid #3B2D20;padding:8px;font-size:14px;text-align:left}
 a{color:#E9A23B} li{margin-left:18px} hr{border:0;border-top:1px solid #3B2D20;margin:26px 0}
 </style></head><body>
 <h1>개인정보처리방침 — Molewick</h1>
-<p><b>최종 수정일: 2026-08-09</b></p>
+<p><b>최종 수정일: 2026-11-21</b></p>
 <p>디케이시퀀스(DKsequence, 이하 "개발자")는 Molewick(이하 "본 앱")을 제공합니다.</p>
 <p>본 방침은 본 앱이 어떤 정보를 다루는지 설명합니다.</p>
 <h2>1. 개발자가 직접 수집하는 정보</h2>
@@ -20,11 +20,14 @@ a{color:#E9A23B} li{margin-left:18px} hr{border:0;border-top:1px solid #3B2D20;m
 <p><b>이용자의 기기 안에만 저장</b>되며 개발자에게 전달되지 않습니다.</p>
 <p>앱을 삭제하면 이 데이터는 기기에서 함께 삭제됩니다.</p>
 <h2>2. 제3자 서비스가 수집하는 정보</h2>
-<p>본 앱은 광고 게재와 이용 통계를 위해 아래 서비스를 사용합니다.</p>
+<p>본 앱은 광고 게재, 이용 통계, 평점 요청을 위해 아래 서비스를 사용합니다.</p>
 <p>이들 서비스는 각자의 방침에 따라 정보를 수집할 수 있습니다.</p>
 <table>
 <tr><th>서비스</th><th>목적</th><th>수집될 수 있는 정보</th></tr>
 <tr><td>Google AdMob</td><td>광고 게재·측정</td><td>광고 ID, 기기 정보, 대략적 위치(IP 기반), 앱 이용 데이터</td></tr>
+<tr><td>Unity Ads · Liftoff Monetize(Vungle) (AdMob 미디에이션)</td><td>광고 입찰 참여</td><td>광고 ID, 기기 정보 등(각 사 정책에 따름)</td></tr>
+<tr><td>Google Firebase Analytics</td><td>앱 열기·화면 보기 같은 익명 사용 통계</td><td>앱 인스턴스 ID, 기기 정보, 사용 이벤트(게임 진행 내용은 전송하지 않음)</td></tr>
+<tr><td>Google Play 인앱 리뷰</td><td>적절한 시점에 평점 창 표시</td><td>평점 입력과 처리는 Google Play에서 이뤄지며, 앱은 평점·리뷰 내용을 받지 않음</td></tr>
 <tr><td>Google Play 결제</td><td>광고 제거 구매 처리</td><td>구매 토큰, 주문 정보</td></tr>
 </table>
 <li>Google 개인정보처리방침: <a href="https://policies.google.com/privacy">https://policies.google.com/privacy</a></li>
@@ -41,6 +44,7 @@ a{color:#E9A23B} li{margin-left:18px} hr{border:0;border-top:1px solid #3B2D20;m
 <tr><td>AD_ID, ACCESS_ADSERVICES_*</td><td>Google AdMob 광고 식별자</td></tr>
 <tr><td>com.android.vending.BILLING</td><td>광고 제거 인앱 결제</td></tr>
 <tr><td>WAKE_LOCK, FOREGROUND_SERVICE</td><td>오디오 재생 라이브러리가 선언</td></tr>
+<tr><td>POST_NOTIFICATIONS, RECEIVE_BOOT_COMPLETED</td><td>7일 이상 앱을 열지 않았을 때 기기 안에서 만드는 알림 1회를 보내고 재부팅 뒤에도 유지(알림 내용은 외부로 전송되지 않으며 설정에서 끌 수 있음)</td></tr>
 </table>
 <p><b>카메라, 마이크, 위치, 연락처, 사진·저장소, 전화, 주소록에는 접근하지 않습니다.</b></p>
 <h2>5. 데이터 삭제</h2>

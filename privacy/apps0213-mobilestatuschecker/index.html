@@ -4,7 +4,7 @@
 <style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:760px;margin:0 auto;padding:24px;line-height:1.7;color:#222}h1{font-size:1.5rem}h2{font-size:1.15rem;margin-top:1.8em}hr{margin:2.5em 0;border:none;border-top:1px solid #ddd}a{color:#1a6}</style>
 
 <h1>Mobile Status Checker 개인정보처리방침</h1>
-<p>최종 업데이트: 2026-09-20 · 앱: Mobile Status Checker(com.dksequence.mobilestatuschecker) · 개발자: DKsequence(디케이시퀀스) · 문의: contact@dksequence.com</p>
+<p>최종 업데이트: 2026-11-20 · 앱: Mobile Status Checker(com.dksequence.mobilestatuschecker) · 개발자: DKsequence(디케이시퀀스) · 문의: contact@dksequence.com</p>
 
 <h2>1. 이 앱이 하는 일</h2>
 <p>Mobile Status Checker는 기기가 스스로 보고하는 하드웨어 사양(RAM·코어 수·칩셋·배터리 상태 등)을 공식 스펙과 대조하고, 실시간 모니터·벤치마크·화면/터치/스피커/마이크/진동/센서 검사 결과를 보여주는 진단 도구입니다.</p>
@@ -27,14 +27,16 @@
 <ul>
   <li><b>마이크(RECORD_AUDIO)</b> — 스피커·마이크 검사용. 처음 검사 화면을 열 때 허용을 묻고, 거부해도 다른 검사는 그대로 쓸 수 있습니다.</li>
   <li><b>진동(VIBRATE)</b> — 진동 검사용.</li>
+  <li><b>알림(POST_NOTIFICATIONS)</b> · <b>부팅 완료 수신(RECEIVE_BOOT_COMPLETED)</b> — 7일 이상 앱을 열지 않았을 때 기기 안에서 만드는 알림 1회를 보내고 재부팅 뒤에도 유지하는 데 사용합니다. 알림 내용은 기기 안에서 만들어지며 외부로 전송되지 않고, 앱 설정에서 끌 수 있습니다.</li>
   <li><b>인터넷(INTERNET)</b> · <b>네트워크 상태(ACCESS_NETWORK_STATE)</b> · <b>광고 ID(AD_ID)</b> · <b>결제(BILLING)</b> — 광고 게재, 앱 사용 통계, 광고 제거 구매에 사용합니다.</li>
 </ul>
 
 <h2>5. 제3자 서비스</h2>
 <ul>
-  <li><b>Google AdMob</b> — 광고 게재. 광고 식별자와 기기 정보를 처리합니다. <a href="https://policies.google.com/technologies/partner-sites">Google 개인정보처리방침</a></li>
+  <li><b>Google AdMob</b> — 광고 게재. 광고 식별자와 기기 정보를 처리합니다. <a href="https://policies.google.com/technologies/partner-sites">Google 개인정보처리방침</a> AdMob 미디에이션을 통해 <b>Unity Ads</b>와 <b>Liftoff Monetize(Vungle)</b>가 광고 입찰에 참여하며, 각 사 정책에 따라 광고 식별자·기기 정보 등을 처리할 수 있습니다(<a href="https://unity.com/legal/privacy-policy">Unity</a> · <a href="https://liftoff.io/privacy-policy/">Liftoff</a>).</li>
   <li><b>Firebase Analytics</b> — 앱 설치·실행 같은 익명 사용 통계. 마이크 녹음이나 하드웨어 상세 값은 포함되지 않습니다.</li>
   <li><b>Google Play 결제</b> — 광고 제거 구매 처리. 앱은 구매 여부만 확인합니다.</li>
+  <li><b>Google Play 인앱 리뷰</b> — 앱을 쓰는 중 적절한 시점에 Google Play가 평점 창을 표시할 수 있습니다. 평점 입력과 처리는 Google Play에서 이뤄지며, 앱은 평점·리뷰 내용을 받지 않습니다.</li>
 </ul>
 <p>유럽 경제 지역·영국·스위스 사용자에게는 광고 개인 맞춤 설정에 대한 동의 창(UMP)이 표시됩니다.</p>
 
@@ -53,7 +55,7 @@
 <hr>
 
 <h1>Mobile Status Checker Privacy Policy</h1>
-<p>Last updated: 2026-09-20 · App: Mobile Status Checker (com.dksequence.mobilestatuschecker) · Developer: DKsequence · Contact: contact@dksequence.com</p>
+<p>Last updated: 2026-11-20 · App: Mobile Status Checker (com.dksequence.mobilestatuschecker) · Developer: DKsequence · Contact: contact@dksequence.com</p>
 
 <h2>1. What this app does</h2>
 <p>Mobile Status Checker compares the hardware specs your device reports (RAM, core count, chipset, battery status, etc.) against official specifications, and shows real-time monitoring, benchmark scores, and screen / touch / speaker / microphone / vibration / sensor inspection results.</p>
@@ -76,14 +78,16 @@
 <ul>
   <li><b>RECORD_AUDIO</b> — for the speaker and microphone tests. You are asked the first time you open a test screen; other tests still work if you decline.</li>
   <li><b>VIBRATE</b> — for the vibration test.</li>
+  <li><b>POST_NOTIFICATIONS</b> and <b>RECEIVE_BOOT_COMPLETED</b> — used to show one reminder, created on your device after 7 or more days without opening the app, and to keep it across reboots. The notification content is generated on-device, never transmitted, and can be turned off in the app settings.</li>
   <li><b>INTERNET</b>, <b>ACCESS_NETWORK_STATE</b>, <b>AD_ID</b> and <b>BILLING</b> — for ads, app usage statistics and the ad-removal purchase.</li>
 </ul>
 
 <h2>5. Third-party services</h2>
 <ul>
-  <li><b>Google AdMob</b> — ad serving; processes the advertising identifier and device information. <a href="https://policies.google.com/technologies/partner-sites">Google Privacy Policy</a></li>
+  <li><b>Google AdMob</b> — ad serving; processes the advertising identifier and device information. <a href="https://policies.google.com/technologies/partner-sites">Google Privacy Policy</a> Through AdMob mediation, <b>Unity Ads</b> and <b>Liftoff Monetize (Vungle)</b> take part in ad bidding and may process advertising identifiers and device information under their own policies (<a href="https://unity.com/legal/privacy-policy">Unity</a> · <a href="https://liftoff.io/privacy-policy/">Liftoff</a>).</li>
   <li><b>Firebase Analytics</b> — anonymous usage statistics such as installs and app opens. It contains no microphone recordings or detailed hardware values.</li>
   <li><b>Google Play Billing</b> — ad-removal purchase; the app only checks whether it is owned.</li>
+  <li><b>Google Play In-App Review</b> — at a suitable moment while you use the app, Google Play may show a rating prompt. Rating entry and processing happen in Google Play; the app does not receive your rating or review text.</li>
 </ul>
 <p>Users in the EEA, the UK and Switzerland are shown a consent form (UMP) for ad personalisation.</p>
 

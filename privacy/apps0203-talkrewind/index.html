@@ -4,7 +4,7 @@
 <style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:760px;margin:0 auto;padding:24px;line-height:1.7;color:#222}h1{font-size:1.5rem}h2{font-size:1.15rem;margin-top:1.8em}hr{margin:2.5em 0;border:none;border-top:1px solid #ddd}a{color:#1a6}</style>
 
 <h1>Talkrewind 개인정보처리방침</h1>
-<p>최종 업데이트: 2026-09-14 · 앱: Talkrewind(com.dksequence.talkrewind) · 개발자: DKsequence(디케이시퀀스) · 문의: kitan98@gmail.com</p>
+<p>최종 업데이트: 2026-11-21 · 앱: Talkrewind(com.dksequence.talkrewind) · 개발자: DKsequence(디케이시퀀스) · 문의: kitan98@gmail.com</p>
 
 <h2>1. 이 앱이 하는 일</h2>
 <p>Talkrewind는 휴대폰에 도착한 <b>메신저 알림</b>(카카오톡·문자·텔레그램 등 지원 메신저)을 기기 안에 보관해, 원래 앱에서 메시지를 지우거나 대화방을 나간 뒤에도 다시 볼 수 있게 합니다. 이 기능은 사용자가 앱 안의 동의 화면에서 동의하고, Android 설정에서 <b>알림 접근 권한</b>을 직접 켠 경우에만 작동합니다.</p>
@@ -23,16 +23,17 @@
 <h2>4. 앱이 사용하는 권한</h2>
 <ul>
   <li><b>알림 접근(알림 리스너)</b> — 메신저 알림을 읽어 기기 안에 보관하는 핵심 기능에 사용합니다. 사용자가 설정에서 언제든 끌 수 있습니다.</li>
-  <li><b>알림 표시(POST_NOTIFICATIONS)</b> · <b>부팅 후 실행(RECEIVE_BOOT_COMPLETED)</b> — 기기를 다시 켠 뒤에도 보관 기능이 이어지게 합니다.</li>
+  <li><b>알림 표시(POST_NOTIFICATIONS)</b> · <b>부팅 후 실행(RECEIVE_BOOT_COMPLETED)</b> — 기기를 다시 켠 뒤에도 보관 기능이 이어지게 하고, 7일 이상 앱을 열지 않았을 때 기기 안에서 만드는 알림 1회를 보내 재부팅 뒤에도 유지하는 데 사용합니다. 이 알림 내용은 기기 안에서 만들어지며 외부로 전송되지 않고, 앱 설정에서 끌 수 있습니다.</li>
   <li><b>생체 인증</b> — 사용자가 켠 경우에만 지문·PIN 앱 잠금에 사용합니다.</li>
   <li><b>인터넷(INTERNET)</b> · <b>광고 ID(AD_ID)</b> · <b>결제(BILLING)</b> — 광고 게재, 앱 사용 통계, 광고 제거 구매에 사용합니다. 보관한 메시지 전송에는 쓰이지 않습니다.</li>
 </ul>
 
 <h2>5. 제3자 서비스</h2>
 <ul>
-  <li><b>Google AdMob</b> — 광고 게재. 광고 식별자와 기기 정보를 처리합니다. <a href="https://policies.google.com/technologies/partner-sites">Google 개인정보처리방침</a></li>
+  <li><b>Google AdMob</b> — 광고 게재. 광고 식별자와 기기 정보를 처리합니다. <a href="https://policies.google.com/technologies/partner-sites">Google 개인정보처리방침</a> AdMob 미디에이션을 통해 <b>Unity Ads</b>와 <b>Liftoff Monetize(Vungle)</b>가 광고 입찰에 참여하며, 각 사 정책에 따라 광고 식별자·기기 정보 등을 처리할 수 있습니다(<a href="https://unity.com/legal/privacy-policy">Unity</a> · <a href="https://liftoff.io/privacy-policy/">Liftoff</a>).</li>
   <li><b>Firebase Analytics</b> — 앱 설치·실행 같은 익명 사용 통계. 메시지·알림 내용은 포함되지 않습니다.</li>
   <li><b>Google Play 결제</b> — 광고 제거 구매 처리. 앱은 구매 여부만 확인합니다.</li>
+  <li><b>Google Play 인앱 리뷰</b> — 앱을 쓰는 중 적절한 시점에 Google Play가 평점 창을 표시할 수 있습니다. 평점 입력과 처리는 Google Play에서 이뤄지며, 앱은 평점·리뷰 내용을 받지 않습니다.</li>
 </ul>
 <p>유럽 경제 지역·영국·스위스 사용자에게는 광고 개인 맞춤 설정에 대한 동의 창(UMP)이 표시됩니다.</p>
 
@@ -51,7 +52,7 @@
 <hr>
 
 <h1>Talkrewind Privacy Policy</h1>
-<p>Last updated: 2026-09-14 · App: Talkrewind (com.dksequence.talkrewind) · Developer: DKsequence · Contact: kitan98@gmail.com</p>
+<p>Last updated: 2026-11-21 · App: Talkrewind (com.dksequence.talkrewind) · Developer: DKsequence · Contact: kitan98@gmail.com</p>
 
 <h2>1. What this app does</h2>
 <p>Talkrewind keeps the <b>messaging notifications</b> that arrive on your phone (KakaoTalk, SMS, Telegram and other supported messengers) on your device, so you can read a message again after it was deleted in the original app or after you left the chat. It works only after you agree on the in-app consent screen and turn on <b>notification access</b> yourself in Android settings.</p>
@@ -70,16 +71,17 @@
 <h2>4. Permissions</h2>
 <ul>
   <li><b>Notification access (notification listener)</b> — the core feature: reading messaging notifications and keeping them on your device. You can turn it off in settings at any time.</li>
-  <li><b>POST_NOTIFICATIONS</b> and <b>RECEIVE_BOOT_COMPLETED</b> — to keep the feature running after the device restarts.</li>
+  <li><b>POST_NOTIFICATIONS</b> and <b>RECEIVE_BOOT_COMPLETED</b> — to keep the feature running after the device restarts, and to send one reminder, created on your device after 7 or more days without opening the app, and keep it across reboots. The reminder content is generated on-device, is never transmitted, and can be turned off in the app settings.</li>
   <li><b>Biometrics</b> — used only for the fingerprint or PIN app lock, when you turn it on.</li>
   <li><b>INTERNET</b>, <b>AD_ID</b> and <b>BILLING</b> — for ads, app usage statistics and the ad-removal purchase. They are never used to send saved messages.</li>
 </ul>
 
 <h2>5. Third-party services</h2>
 <ul>
-  <li><b>Google AdMob</b> — ad serving; processes the advertising identifier and device information. <a href="https://policies.google.com/technologies/partner-sites">Google Privacy Policy</a></li>
+  <li><b>Google AdMob</b> — ad serving; processes the advertising identifier and device information. <a href="https://policies.google.com/technologies/partner-sites">Google Privacy Policy</a> Through AdMob mediation, <b>Unity Ads</b> and <b>Liftoff Monetize (Vungle)</b> take part in ad bidding and may process advertising identifiers and device information under their own policies (<a href="https://unity.com/legal/privacy-policy">Unity</a> · <a href="https://liftoff.io/privacy-policy/">Liftoff</a>).</li>
   <li><b>Firebase Analytics</b> — anonymous usage statistics such as installs and app opens. It contains no message or notification content.</li>
   <li><b>Google Play Billing</b> — ad-removal purchase; the app only checks whether it is owned.</li>
+  <li><b>Google Play In-App Review</b> — at a suitable moment while you use the app, Google Play may show a rating prompt. Rating entry and processing happen in Google Play; the app does not receive your rating or review text.</li>
 </ul>
 <p>Users in the EEA, the UK and Switzerland are shown a consent form (UMP) for ad personalisation.</p>
 

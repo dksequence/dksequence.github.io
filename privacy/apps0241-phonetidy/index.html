@@ -4,7 +4,7 @@
 <style>body{font-family:system-ui,'Malgun Gothic',sans-serif;max-width:760px;margin:0 auto;padding:24px;line-height:1.7;color:#222}h1{font-size:1.5rem}h2{font-size:1.15rem;margin-top:1.8em}hr{margin:2.5em 0;border:none;border-top:1px solid #ddd}a{color:#1a6}</style>
 
 <h1>내폰정리 개인정보처리방침</h1>
-<p>최종 업데이트: 2026-10-12 · 앱: 내폰정리(com.dksequence.phonetidy) · 개발자: DKsequence(디케이시퀀스) · 문의: dkseq7@gmail.com</p>
+<p>최종 업데이트: 2026-11-21 · 앱: 내폰정리(com.dksequence.phonetidy) · 개발자: DKsequence(디케이시퀀스) · 문의: dkseq7@gmail.com</p>
 
 <h2>1. 이 앱이 하는 일</h2>
 <p>휴대폰에 설치된 앱을 메신저·SNS·사진·게임 등 12개 그룹으로 자동 분류하고, 홈화면 위젯에 그룹 탭으로 보여 줍니다. 회원가입·로그인이 없습니다.</p>
@@ -12,7 +12,7 @@
 <h2>2. 읽는 정보와 처리 방식</h2>
 <ul>
   <li><b>설치된 앱 목록</b>(앱 이름·패키지명·아이콘)을 그룹을 만들기 위해 읽습니다. 이 목록은 <b>이 기기 안에서만 처리</b>되며, 개발자·개발자의 서버·그 밖의 어떤 곳으로도 보내지 않습니다.</li>
-  <li>앱은 특별한 권한을 요청하지 않습니다. 실행 가능한 앱 목록은 Android의 패키지 가시성(queries) 선언으로 읽으며, 모든 앱 목록을 조회하는 권한(QUERY_ALL_PACKAGES)은 사용하지 않습니다.</li>
+  <li>앱은 설치된 앱을 읽기 위한 특별한 권한을 요청하지 않습니다. 선택 기능인 «7일 이상 사용하지 않았을 때의 알림»(1회, 설정에서 끌 수 있음)을 위해 알림 권한(POST_NOTIFICATIONS, Android 13 이상에서 첫 사용 후 한 번 묻습니다)과 재부팅 뒤 예약을 되살리는 권한(RECEIVE_BOOT_COMPLETED)을 사용합니다. 이 알림은 기기 안에서만 예약되며 개발자의 서버를 거치지 않습니다. 실행 가능한 앱 목록은 Android의 패키지 가시성(queries) 선언으로 읽으며, 모든 앱 목록을 조회하는 권한(QUERY_ALL_PACKAGES)은 사용하지 않습니다.</li>
   <li><b>기기 안에만 저장되는 정보</b>: 사용자가 고정한 그룹(핀), 앱 언어, 프리미엄 이용 상태, 위젯 꾸미기 설정. 이 값들은 개발자의 서버로 전송되지 않습니다.</li>
 </ul>
 
@@ -20,6 +20,7 @@
 <ul>
   <li>앱의 첫 화면에 배너 광고를 표시하며, 사용자가 선택하면 보상형 영상 광고를 보여 줍니다. 홈화면 위젯 안에는 광고를 넣지 않습니다.</li>
   <li>Google 광고 SDK는 광고 제공·측정을 위해 광고 식별자(Advertising ID) 등 기기 정보를 수집할 수 있습니다(Google 정책). 동의가 필요한 지역(예: EEA)에서는 앱을 처음 열 때 Google의 사용자 메시지 플랫폼(UMP)이 동의 안내를 보여 줄 수 있습니다.</li>
+  <li>광고는 Google AdMob 미디에이션을 통해 제공되므로 광고 네트워크인 Unity Ads·Liftoff Monetize 도 각자의 정책에 따라 광고 식별자와 기기 정보를 광고 제공·측정에 처리할 수 있습니다. 앱은 가끔 Google Play 의 앱 내 리뷰 창을 띄울 수 있으며, 평점은 Google Play 가 처리하고 개발자는 그로부터 개인정보를 받지 않습니다.</li>
   <li>Google 정책: <a href="https://policies.google.com/privacy">https://policies.google.com/privacy</a> · 제어: 기기 설정 &gt; Google &gt; 광고.</li>
 </ul>
 
@@ -47,7 +48,7 @@
 <hr>
 
 <h1>PhoneTidy Privacy Policy</h1>
-<p>Last updated: 2026-10-12 · App: PhoneTidy (com.dksequence.phonetidy) · Developer: DKsequence · Contact: dkseq7@gmail.com</p>
+<p>Last updated: 2026-11-21 · App: PhoneTidy (com.dksequence.phonetidy) · Developer: DKsequence · Contact: dkseq7@gmail.com</p>
 
 <h2>1. What the app does</h2>
 <p>PhoneTidy sorts the apps installed on your phone into 12 groups (messaging, social, photo, games and more) and shows them as group tabs in a home screen widget. No sign-up or login is required.</p>
@@ -55,7 +56,7 @@
 <h2>2. Information read and how it is processed</h2>
 <ul>
   <li>The app reads the <b>list of installed apps</b> (app name, package name, icon) to build the groups. This list is <b>processed only on this device</b>. It is not sent to the developer, to the developer's servers, or anywhere else.</li>
-  <li>The app requests no special permissions. It reads launchable apps through Android package visibility (queries) declarations and does not use the permission that lists all installed apps (QUERY_ALL_PACKAGES).</li>
+  <li>The app requests no special permission to read your installed apps. For the optional reminder after 7 days away (sent once, can be turned off in Settings) it uses the notification permission (POST_NOTIFICATIONS, asked once after first use on Android 13 and later) and a permission to restore the schedule after a reboot (RECEIVE_BOOT_COMPLETED). The reminder is scheduled on the device only and does not pass through the developer's servers. It reads launchable apps through Android package visibility (queries) declarations and does not use the permission that lists all installed apps (QUERY_ALL_PACKAGES).</li>
   <li><b>Stored on the device only</b>: the groups you pinned, the app language, the Premium status and the widget decoration settings. These values are not sent to the developer's servers.</li>
 </ul>
 
@@ -63,6 +64,7 @@
 <ul>
   <li>The app shows a banner ad on its main screen and, if you choose, a rewarded video ad. Ads are never placed in the home screen widget.</li>
   <li>The Google ad SDK may collect device information such as an advertising ID to deliver and measure ads, per Google's policy. In regions where consent is required (for example the EEA), Google's User Messaging Platform may show a consent message the first time you open the app.</li>
+  <li>Ads are served through Google AdMob mediation, so the ad networks Unity Ads and Liftoff Monetize may also process an advertising ID and device information to deliver and measure ads, under their own policies. The app may occasionally show Google Play's in-app review prompt; ratings are handled by Google Play and the developer receives no personal information from it.</li>
   <li>Google's policy: <a href="https://policies.google.com/privacy">https://policies.google.com/privacy</a> · Control: Device Settings &gt; Google &gt; Ads.</li>
 </ul>
 
