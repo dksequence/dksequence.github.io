@@ -4,6 +4,17 @@
   var dev = $('dev'), timer = $('timer'), stage = $('stage'), stageIn = $('stage-in');
   if (!dev || !timer) return;
 
+  var KO = document.documentElement.lang === 'ko';
+  var T = KO ? {
+    lab: { idle: '\uc2a4\ud398\uc774\uc2a4 \ub204\ub974\uae30', hold: '\ub204\ub974\ub294 \uc911\u2026', ready: '\uc900\ube44 \uc644\ub8cc', running: '', stopped: '\uc644\ub8cc' },
+    hint: { idle: 'Space \ub97c \uae38\uac8c \ub204\ub974\uc138\uc694', hold: '\uacc4\uc18d \ub204\ub974\uc138\uc694\u2026', ready: '\ucd08\ub85d\uc0c9 \u2013 \ub5bc\uba74 \uc2dc\uc791', running: 'Space \ub97c \ub20c\ub7ec \uc815\uc9c0', stopped: '\uae30\ub85d \uc800\uc7a5\ub428' },
+    none: '\uc544\uc9c1 \uae30\ub85d\uc774 \uc5c6\uc2b5\ub2c8\ub2e4', on: '\ud6a8\uacfc\uc74c \ucf1c\uc9d0', off: '\ud6a8\uacfc\uc74c \uaebc\uc9d0'
+  } : {
+    lab: { idle: 'HOLD SPACE', hold: 'HOLD\u2026', ready: 'READY', running: '', stopped: 'DONE' },
+    hint: { idle: 'Hold Space', hold: 'Keep holding\u2026', ready: 'Green \u2013 release to start', running: 'Press Space to stop', stopped: 'Solve saved' },
+    none: 'No solves yet', on: 'Sound on', off: 'Sound off'
+  };
+
   var AD_AFTER = 5;          // 앱 설치 안내를 보여줄 풀이 횟수(페이지 방문당 1회)
   var READY_DELAY = 300;     // 앱 기본 준비 지연(0.3초)
 
@@ -75,7 +86,7 @@
     $('sN').textContent = n; setT('sA5', ao(5)); setT('sA12', ao(12)); setT('sA100', ao(100));
     $('solveno').textContent = '#' + (n + 1);
     var ol = $('recentlist'), h = '';
-    if (!n) h = '<li class="empty">No solves yet</li>';
+    if (!n) h = '<li class="empty">' + T.none + '</li>';
     for (i = n - 1; i >= 0 && i >= n - 8; i--) h += '<li><small>#' + (i + 1) + '</small>' + fmt(solves[i]) + '</li>';
     ol.innerHTML = h;
   }
@@ -84,8 +95,7 @@
   var view = 'home';         // home | rotating | timer
   var state = 'idle';        // idle | hold | ready | running | stopped
   var holdTimer = 0, t0 = 0, raf = 0, swallowUp = false, adShown = false, adPending = false;
-  var LAB = { idle: 'HOLD SPACE', hold: 'HOLD…', ready: 'READY', running: '', stopped: 'DONE' };
-  var HINT = { idle: 'Hold Space', hold: 'Keep holding…', ready: 'Green – release to start', running: 'Press Space to stop', stopped: 'Solve saved' };
+  var LAB = T.lab, HINT = T.hint;
 
   function setState(s) {
     state = s; timer.setAttribute('data-state', s);
@@ -174,7 +184,7 @@
   $('back').addEventListener('click', function () { this.blur(); closeTimer(); });
   $('sndbtn').addEventListener('click', function () {
     this.blur(); sndOn = !sndOn; this.classList.toggle('off', !sndOn);
-    this.setAttribute('aria-pressed', sndOn); this.setAttribute('aria-label', sndOn ? 'Sound on' : 'Sound off');
+    this.setAttribute('aria-pressed', sndOn); this.setAttribute('aria-label', sndOn ? T.on : T.off);
     if (sndOn) { audioInit(); sfx('ready'); }
   });
   $('resetbtn').addEventListener('click', function () {

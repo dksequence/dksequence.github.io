@@ -8,7 +8,7 @@
   </url>
   <url>
     <loc>https://dksequence.com/apps/</loc>
-    <lastmod>2026-11-16</lastmod>
+    <lastmod>2026-11-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -278,7 +278,7 @@
   </url>
   <url>
     <loc>https://dksequence.com/apps/ko/</loc>
-    <lastmod>2026-11-16</lastmod>
+    <lastmod>2026-11-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -1891,6 +1891,295 @@
       <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-zen-garden.jpg</image:loc>
       <image:title>TwoHand Cube Timer Zen Garden screen skin</image:title>
       <image:caption>Zen Garden</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://dksequence.com/cubetimer/ko/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/twohand-cube-timer-ko-home-screen-start-timer-events-skins.webp</image:loc>
+      <image:title>타이머 시작 버튼이 있는 TwoHand Cube Timer 홈 화면</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/twohand-cube-timer-ko-carbon-hardware-skin-two-pads-timer-screen.webp</image:loc>
+      <image:title>카본 하드웨어 스킨의 두 핸드 패드 타이머 화면: 스크램블, 큰 시간 표시, 최고 기록과 ao5</image:title>
+      <image:caption>Carbon Hardware 스킨: 두 개의 패드와 큰 시간 표시</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/twohand-cube-timer-ko-neon-skin-tap-to-stop-solve-saved.webp</image:loc>
+      <image:title>풀이 중 양쪽에 빛나는 육각형 패드가 있는 네온 스킨 화면</image:title>
+      <image:caption>Neon 스킨: 풀이 중 터치 한 번에 정지, 바로 기록</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/twohand-cube-timer-ko-screen-skins-collection.webp</image:loc>
+      <image:title>같은 8.42 기록을 보여 주는 여러 색상의 큐브 타이머 화면 스킨 모음</image:title>
+      <image:caption>화면 스킨: 타이머의 모양을 고르세요</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/twohand-cube-timer-ko-1v1-duel-mode-two-player-pads.webp</image:loc>
+      <image:title>파란 패드와 주황 패드, 먼저 3승 점수가 있는 1대1 대결 모드</image:title>
+      <image:caption>1대1 대결: 한 대의 폰, 두 사람, 먼저 3승</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/twohand-cube-timer-ko-records-screen-solve-times-progress-graph.webp</image:loc>
+      <image:title>최고, 평균, ao5, ao12, ao100, 진행 그래프와 풀이 목록이 있는 기록 화면</image:title>
+      <image:caption>기록: 통계, 진행 그래프, 풀이 목록</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-carbon-hardware.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Carbon Hardware 화면 스킨</image:title>
+      <image:caption>Carbon Hardware</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-brutal-mint.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Brutal Mint 화면 스킨</image:title>
+      <image:caption>Brutal Mint</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-retro-handheld.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Retro Handheld 화면 스킨</image:title>
+      <image:caption>Retro Handheld</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-arcade-cabinet.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Arcade Cabinet 화면 스킨</image:title>
+      <image:caption>Arcade Cabinet</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-aurora.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Aurora 화면 스킨</image:title>
+      <image:caption>Aurora</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-bauhaus.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Bauhaus 화면 스킨</image:title>
+      <image:caption>Bauhaus</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-toy-blocks.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Toy Blocks 화면 스킨</image:title>
+      <image:caption>Toy Blocks</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-blueprint.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Blueprint 화면 스킨</image:title>
+      <image:caption>Blueprint</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-candy-jelly.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Candy Jelly 화면 스킨</image:title>
+      <image:caption>Candy Jelly</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-chalkboard.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Chalkboard 화면 스킨</image:title>
+      <image:caption>Chalkboard</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-swiss-chrono.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Swiss Chrono 화면 스킨</image:title>
+      <image:caption>Swiss Chrono</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-comic-pop.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Comic Pop 화면 스킨</image:title>
+      <image:caption>Comic Pop</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-cube-face.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Cube Face 화면 스킨</image:title>
+      <image:caption>Cube Face</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-cyber-esports.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Cyber Esports 화면 스킨</image:title>
+      <image:caption>Cyber Esports</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-art-deco.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Art Deco 화면 스킨</image:title>
+      <image:caption>Art Deco</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-desert-dunes.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Desert Dunes 화면 스킨</image:title>
+      <image:caption>Desert Dunes</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-pastel-fluid.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Pastel Fluid 화면 스킨</image:title>
+      <image:caption>Pastel Fluid</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-mossy-forest.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Mossy Forest 화면 스킨</image:title>
+      <image:caption>Mossy Forest</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-holo-glass.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Holo Glass 화면 스킨</image:title>
+      <image:caption>Holo Glass</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-hud-dashboard.jpg</image:loc>
+      <image:title>TwoHand Cube Timer HUD Dashboard 화면 스킨</image:title>
+      <image:caption>HUD Dashboard</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-ink-hanji.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Ink Hanji 화면 스킨</image:title>
+      <image:caption>Ink Hanji</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-kraft-stamp.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Kraft Stamp 화면 스킨</image:title>
+      <image:caption>Kraft Stamp</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-lava-rock.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Lava Rock 화면 스킨</image:title>
+      <image:caption>Lava Rock</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-digital-watch.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Digital Watch 화면 스킨</image:title>
+      <image:caption>Digital Watch</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-marble-and-gold.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Marble &amp; Gold 화면 스킨</image:title>
+      <image:caption>Marble &amp; Gold</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-mission-control.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Mission Control 화면 스킨</image:title>
+      <image:caption>Mission Control</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-neon-sign.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Neon Sign 화면 스킨</image:title>
+      <image:caption>Neon Sign</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-nixie-tube.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Nixie Tube 화면 스킨</image:title>
+      <image:caption>Nixie Tube</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-graph-notebook.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Graph Notebook 화면 스킨</image:title>
+      <image:caption>Graph Notebook</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-deep-sea.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Deep Sea 화면 스킨</image:title>
+      <image:caption>Deep Sea</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-galaxy-orbit.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Galaxy Orbit 화면 스킨</image:title>
+      <image:caption>Galaxy Orbit</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-paper-cut.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Paper Cut 화면 스킨</image:title>
+      <image:caption>Paper Cut</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-circuit-board.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Circuit Board 화면 스킨</image:title>
+      <image:caption>Circuit Board</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-pit-wall-gp.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Pit Wall GP 화면 스킨</image:title>
+      <image:caption>Pit Wall GP</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-brutal-pop.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Brutal Pop 화면 스킨</image:title>
+      <image:caption>Brutal Pop</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-pixel-quest.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Pixel Quest 화면 스킨</image:title>
+      <image:caption>Pixel Quest</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-tube-radio.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Tube Radio 화면 스킨</image:title>
+      <image:caption>Tube Radio</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-sakura-night.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Sakura Night 화면 스킨</image:title>
+      <image:caption>Sakura Night</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-oscilloscope.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Oscilloscope 화면 스킨</image:title>
+      <image:caption>Oscilloscope</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-comp-mat-pro.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Comp Mat Pro 화면 스킨</image:title>
+      <image:caption>Comp Mat Pro</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-stadium-led.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Stadium LED 화면 스킨</image:title>
+      <image:caption>Stadium LED</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-brutal-stripe.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Brutal Stripe 화면 스킨</image:title>
+      <image:caption>Brutal Stripe</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-swiss-grid.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Swiss Grid 화면 스킨</image:title>
+      <image:caption>Swiss Grid</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-synthwave.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Synthwave 화면 스킨</image:title>
+      <image:caption>Synthwave</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-terminal.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Terminal 화면 스킨</image:title>
+      <image:caption>Terminal</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-ukiyo-wave.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Ukiyo Wave 화면 스킨</image:title>
+      <image:caption>Ukiyo Wave</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-vfd-display.jpg</image:loc>
+      <image:title>TwoHand Cube Timer VFD Display 화면 스킨</image:title>
+      <image:caption>VFD Display</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-vinyl-deck.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Vinyl Deck 화면 스킨</image:title>
+      <image:caption>Vinyl Deck</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-walnut-workshop.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Walnut Workshop 화면 스킨</image:title>
+      <image:caption>Walnut Workshop</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-zen-garden.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Zen Garden 화면 스킨</image:title>
+      <image:caption>Zen Garden</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/apps/media/twohandcubetimer/feature-ko.webp</image:loc>
+      <image:title>TwoHand Cube Timer 앱 대표 이미지</image:title>
     </image:image>
   </url>
   <url>
