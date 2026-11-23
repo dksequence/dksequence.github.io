@@ -1532,7 +1532,7 @@
   </url>
   <url>
     <loc>https://dksequence.com/apps/twohandcubetimer/</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -1610,12 +1610,16 @@
   </url>
   <url>
     <loc>https://dksequence.com/cubetimer/</loc>
-    <lastmod>2026-11-23</lastmod>
+    <lastmod>2026-11-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <image:image>
       <image:loc>https://dksequence.com/cubetimer/img/twohand-cube-timer-home-screen-start-timer-events-skins.webp</image:loc>
       <image:title>TwoHand Cube Timer home screen with the Start timer button</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/video/twohand-cube-timer-app-video-poster.jpg</image:loc>
+      <image:title>TwoHand Cube Timer app video thumbnail</image:title>
     </image:image>
     <image:image>
       <image:loc>https://dksequence.com/cubetimer/img/twohand-cube-timer-carbon-hardware-skin-two-pads-timer-screen.webp</image:loc>
@@ -1641,6 +1645,11 @@
       <image:loc>https://dksequence.com/cubetimer/img/twohand-cube-timer-records-screen-solve-times-progress-graph.webp</image:loc>
       <image:title>Records screen with best, mean, ao5, ao12 and ao100, a progress graph and the list of solves</image:title>
       <image:caption>Records: stats, progress graph and solve list</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/twohand-cube-timer-new-record-card-make-video.webp</image:loc>
+      <image:title>New Record card after a 3x3 solve with the options Choose a skin and Make video</image:title>
+      <image:caption>New Record card: choose a skin or make a video</image:caption>
     </image:image>
     <image:image>
       <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-carbon-hardware.jpg</image:loc>
@@ -1895,12 +1904,16 @@
   </url>
   <url>
     <loc>https://dksequence.com/cubetimer/ko/</loc>
-    <lastmod>2026-11-23</lastmod>
+    <lastmod>2026-11-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <image:image>
       <image:loc>https://dksequence.com/cubetimer/img/twohand-cube-timer-ko-home-screen-start-timer-events-skins.webp</image:loc>
       <image:title>타이머 시작 버튼이 있는 TwoHand Cube Timer 홈 화면</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/video/twohand-cube-timer-app-video-poster.jpg</image:loc>
+      <image:title>TwoHand Cube Timer 앱 소개 영상 썸네일</image:title>
     </image:image>
     <image:image>
       <image:loc>https://dksequence.com/cubetimer/img/twohand-cube-timer-ko-carbon-hardware-skin-two-pads-timer-screen.webp</image:loc>
@@ -1926,6 +1939,11 @@
       <image:loc>https://dksequence.com/cubetimer/img/twohand-cube-timer-ko-records-screen-solve-times-progress-graph.webp</image:loc>
       <image:title>최고, 평균, ao5, ao12, ao100, 진행 그래프와 풀이 목록이 있는 기록 화면</image:title>
       <image:caption>기록: 통계, 진행 그래프, 풀이 목록</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/twohand-cube-timer-ko-new-record-card-make-video.webp</image:loc>
+      <image:title>3x3 풀이 뒤 나타나는 신기록 카드: 스킨 고르기와 영상 만들기 선택</image:title>
+      <image:caption>신기록 카드: 스킨 고르기, 영상 만들기</image:caption>
     </image:image>
     <image:image>
       <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-carbon-hardware.jpg</image:loc>

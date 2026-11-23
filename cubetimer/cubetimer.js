@@ -220,5 +220,18 @@
     if (a) ev('cube_demo_play_click', { place: a.getAttribute('data-place') });
   });
 
+  /* ---------- 유튜브 영상: 클릭 시 플레이어 로드 ---------- */
+  (function () {
+    var box = $('appvideo'); if (!box) return;
+    var b = box.querySelector('.ytplay'); if (!b) return;
+    b.addEventListener('click', function () {
+      var f = document.createElement('iframe');
+      f.src = 'https://www.youtube-nocookie.com/embed/' + box.getAttribute('data-yt') + '?autoplay=1&rel=0&hl=' + (KO ? 'ko' : 'en');
+      f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.allowFullscreen = true;
+      f.title = 'TwoHand Cube Timer app video';
+      box.innerHTML = ''; box.appendChild(f); ev('cube_demo_video_play');
+    });
+  })();
+
   renderStats();
 })();
