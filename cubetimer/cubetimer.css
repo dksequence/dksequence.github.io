@@ -84,3 +84,8 @@ kbd{display:inline-block;font:700 .85em/1 Consolas,"Courier New",monospace;color
 .skins img{width:100%;height:auto;display:block;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:#111}
 .skins figcaption{margin-top:4px;color:#b5b5b5;font-size:11.5px;line-height:1.3}
 #appvideo{display:block;width:100%;max-width:1024px;height:auto;aspect-ratio:16/9;background:#000;border-radius:16px;border:1px solid rgba(255,255,255,.12)}
+.mphone{position:relative;width:min(330px,100%);margin:6px auto 0;border:2px solid #3a3a3e;border-radius:30px;overflow:hidden;background:#000}
+.mphone>img{display:block;width:100%;height:auto}
+.mover{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:20px;text-align:center;background:rgba(0,0,0,.66)}
+.mover p{margin:0;color:#fff;font-size:20px;font-weight:700;line-height:1.4}
+.mover .play img{height:60px;width:auto}
