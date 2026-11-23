@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://dksequence.com/</loc>
     <lastmod>2026-10-18</lastmod>
@@ -1460,7 +1460,7 @@
   </url>
   <url>
     <loc>https://dksequence.com/apps/tableroulette/</loc>
-    <lastmod>2026-11-04</lastmod>
+    <lastmod>2026-11-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -1607,6 +1607,291 @@
     <lastmod>2026-11-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://dksequence.com/cubetimer/</loc>
+    <lastmod>2026-11-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/twohand-cube-timer-home-screen-start-timer-events-skins.webp</image:loc>
+      <image:title>TwoHand Cube Timer home screen with the Start timer button</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/twohand-cube-timer-carbon-hardware-skin-two-pads-timer-screen.webp</image:loc>
+      <image:title>Timer screen with two hand pads in the Carbon Hardware skin: scramble, big time, best and ao5</image:title>
+      <image:caption>Carbon Hardware skin: two pads and a large time display</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/twohand-cube-timer-neon-skin-tap-to-stop-solve-saved.webp</image:loc>
+      <image:title>Neon skin with a glowing hexagon pad on each side while a solve is running</image:title>
+      <image:caption>Neon skin during a solve: tap to stop, solve saved</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/twohand-cube-timer-screen-skins-collection.webp</image:loc>
+      <image:title>Collection of colorful screen skins for the cube timer, each showing the same 8.42 time</image:title>
+      <image:caption>Screen skins: pick the look of your timer</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/twohand-cube-timer-1v1-duel-mode-two-player-pads.webp</image:loc>
+      <image:title>1v1 duel mode with a blue pad and an orange pad and a first-to-3 score</image:title>
+      <image:caption>1v1 duel: two players, one phone, first to 3</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/twohand-cube-timer-records-screen-solve-times-progress-graph.webp</image:loc>
+      <image:title>Records screen with best, mean, ao5, ao12 and ao100, a progress graph and the list of solves</image:title>
+      <image:caption>Records: stats, progress graph and solve list</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-carbon-hardware.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Carbon Hardware screen skin</image:title>
+      <image:caption>Carbon Hardware</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-brutal-mint.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Brutal Mint screen skin</image:title>
+      <image:caption>Brutal Mint</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-retro-handheld.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Retro Handheld screen skin</image:title>
+      <image:caption>Retro Handheld</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-arcade-cabinet.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Arcade Cabinet screen skin</image:title>
+      <image:caption>Arcade Cabinet</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-aurora.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Aurora screen skin</image:title>
+      <image:caption>Aurora</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-bauhaus.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Bauhaus screen skin</image:title>
+      <image:caption>Bauhaus</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-toy-blocks.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Toy Blocks screen skin</image:title>
+      <image:caption>Toy Blocks</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-blueprint.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Blueprint screen skin</image:title>
+      <image:caption>Blueprint</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-candy-jelly.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Candy Jelly screen skin</image:title>
+      <image:caption>Candy Jelly</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-chalkboard.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Chalkboard screen skin</image:title>
+      <image:caption>Chalkboard</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-swiss-chrono.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Swiss Chrono screen skin</image:title>
+      <image:caption>Swiss Chrono</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-comic-pop.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Comic Pop screen skin</image:title>
+      <image:caption>Comic Pop</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-cube-face.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Cube Face screen skin</image:title>
+      <image:caption>Cube Face</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-cyber-esports.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Cyber Esports screen skin</image:title>
+      <image:caption>Cyber Esports</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-art-deco.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Art Deco screen skin</image:title>
+      <image:caption>Art Deco</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-desert-dunes.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Desert Dunes screen skin</image:title>
+      <image:caption>Desert Dunes</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-pastel-fluid.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Pastel Fluid screen skin</image:title>
+      <image:caption>Pastel Fluid</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-mossy-forest.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Mossy Forest screen skin</image:title>
+      <image:caption>Mossy Forest</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-holo-glass.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Holo Glass screen skin</image:title>
+      <image:caption>Holo Glass</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-hud-dashboard.jpg</image:loc>
+      <image:title>TwoHand Cube Timer HUD Dashboard screen skin</image:title>
+      <image:caption>HUD Dashboard</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-ink-hanji.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Ink Hanji screen skin</image:title>
+      <image:caption>Ink Hanji</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-kraft-stamp.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Kraft Stamp screen skin</image:title>
+      <image:caption>Kraft Stamp</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-lava-rock.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Lava Rock screen skin</image:title>
+      <image:caption>Lava Rock</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-digital-watch.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Digital Watch screen skin</image:title>
+      <image:caption>Digital Watch</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-marble-and-gold.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Marble &amp; Gold screen skin</image:title>
+      <image:caption>Marble &amp; Gold</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-mission-control.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Mission Control screen skin</image:title>
+      <image:caption>Mission Control</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-neon-sign.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Neon Sign screen skin</image:title>
+      <image:caption>Neon Sign</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-nixie-tube.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Nixie Tube screen skin</image:title>
+      <image:caption>Nixie Tube</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-graph-notebook.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Graph Notebook screen skin</image:title>
+      <image:caption>Graph Notebook</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-deep-sea.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Deep Sea screen skin</image:title>
+      <image:caption>Deep Sea</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-galaxy-orbit.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Galaxy Orbit screen skin</image:title>
+      <image:caption>Galaxy Orbit</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-paper-cut.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Paper Cut screen skin</image:title>
+      <image:caption>Paper Cut</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-circuit-board.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Circuit Board screen skin</image:title>
+      <image:caption>Circuit Board</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-pit-wall-gp.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Pit Wall GP screen skin</image:title>
+      <image:caption>Pit Wall GP</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-brutal-pop.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Brutal Pop screen skin</image:title>
+      <image:caption>Brutal Pop</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-pixel-quest.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Pixel Quest screen skin</image:title>
+      <image:caption>Pixel Quest</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-tube-radio.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Tube Radio screen skin</image:title>
+      <image:caption>Tube Radio</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-sakura-night.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Sakura Night screen skin</image:title>
+      <image:caption>Sakura Night</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-oscilloscope.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Oscilloscope screen skin</image:title>
+      <image:caption>Oscilloscope</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-comp-mat-pro.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Comp Mat Pro screen skin</image:title>
+      <image:caption>Comp Mat Pro</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-stadium-led.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Stadium LED screen skin</image:title>
+      <image:caption>Stadium LED</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-brutal-stripe.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Brutal Stripe screen skin</image:title>
+      <image:caption>Brutal Stripe</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-swiss-grid.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Swiss Grid screen skin</image:title>
+      <image:caption>Swiss Grid</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-synthwave.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Synthwave screen skin</image:title>
+      <image:caption>Synthwave</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-terminal.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Terminal screen skin</image:title>
+      <image:caption>Terminal</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-ukiyo-wave.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Ukiyo Wave screen skin</image:title>
+      <image:caption>Ukiyo Wave</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-vfd-display.jpg</image:loc>
+      <image:title>TwoHand Cube Timer VFD Display screen skin</image:title>
+      <image:caption>VFD Display</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-vinyl-deck.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Vinyl Deck screen skin</image:title>
+      <image:caption>Vinyl Deck</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-walnut-workshop.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Walnut Workshop screen skin</image:title>
+      <image:caption>Walnut Workshop</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://dksequence.com/cubetimer/img/skins/twohand-cube-timer-skin-zen-garden.jpg</image:loc>
+      <image:title>TwoHand Cube Timer Zen Garden screen skin</image:title>
+      <image:caption>Zen Garden</image:caption>
+    </image:image>
   </url>
   <url>
     <loc>https://dksequence.com/camera.html</loc>
