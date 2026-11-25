@@ -74,9 +74,8 @@ table.sp th{background:var(--chip);font-size:13px}
 <body>
 <div id="lock"><form id="lf"><div class="lt">AVA SNS Marketing</div><input id="pin" type="password" inputmode="numeric" autocomplete="off" placeholder="비밀번호" autofocus><button type="submit">입장</button><div id="lerr"></div></form></div>
 <div id="app" hidden>
-<div class="top"><div class="in"><span class="brand">AVA SNS Marketing</span><a href="#home" id="nHome">Home</a><a href="#video" id="nVideo">영상</a><a href="#acc" id="nAcc">Acc Info</a><a href="#spray" id="nSpray">Spray</a></div></div>
+<div class="top"><div class="in"><span class="brand">AVA SNS Marketing</span><a href="#video" id="nVideo">영상</a><a href="#acc" id="nAcc">Acc Info</a><a href="#spray" id="nSpray">Spray</a></div></div>
 <div class="wrap">
-  <div id="pHome" class="home"><h1>AVA SNS Marketing</h1></div>
   <div id="pVideo" hidden>
     <div class="tabs" id="tabs"></div>
     <div class="bar" id="bar"></div>
@@ -105,7 +104,7 @@ var TABS=[];
 var LANGS=["전체","국문","영문","중문","일문"],curTab=0,curLang="전체";
 var $=function(i){return document.getElementById(i)};
 function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
-function drawTabs(){var el=$("tabs");el.innerHTML="";TABS.forEach(function(t,i){var b=document.createElement("button");b.innerHTML=esc(t.k+" · "+t.name)+"<small>"+esc(t.date)+" · "+t.items.length+"편</small>";if(i===curTab)b.className="on";b.onclick=function(){curTab=i;curLang="전체";drawVideo()};el.appendChild(b)})}
+function drawTabs(){var el=$("tabs");el.innerHTML="";TABS.forEach(function(t,i){var b=document.createElement("button");b.innerHTML=esc(t.label)+"<small>"+t.items.length+"편</small>";if(i===curTab)b.className="on";b.onclick=function(){curTab=i;curLang="전체";drawVideo()};el.appendChild(b)})}
 function drawBar(){var el=$("bar");el.innerHTML="";LANGS.forEach(function(l){var b=document.createElement("button");b.innerHTML=(FLAG[l]||"")+esc(l);if(l===curLang)b.className="on";b.onclick=function(){curLang=l;drawBar();drawGrid()};el.appendChild(b)})}
 function drawGrid(){stopAll();
  var g=$("grid");g.innerHTML="";
@@ -152,11 +151,10 @@ function drawSpray(){
   b.appendChild(tr)})
 }
 function route(){
- var h=(location.hash||"#home").replace("#","");
- ["home","video","acc","spray"].forEach(function(k){
-  var P={home:"pHome",video:"pVideo",acc:"pAcc",spray:"pSpray"}[k],N={home:"nHome",video:"nVideo",acc:"nAcc",spray:"nSpray"}[k];
-  $(P).hidden=(k!==h);$(N).className=(k===h?"on":"")});
- if(["home","video","acc","spray"].indexOf(h)<0){$("pHome").hidden=false;$("nHome").className="on"}
+ var h=(location.hash||"#video").replace("#","");
+ if(["video","acc","spray"].indexOf(h)<0)h="video";
+ var P={video:"pVideo",acc:"pAcc",spray:"pSpray"},N={video:"nVideo",acc:"nAcc",spray:"nSpray"};
+ ["video","acc","spray"].forEach(function(k){$(P[k]).hidden=(k!==h);$(N[k]).className=(k===h?"on":"")});
  if(h==="video"){curTab=0;curLang="전체";drawVideo()}
  if(h==="acc")drawAcc();
  if(h==="spray")drawSpray();
