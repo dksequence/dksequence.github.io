@@ -45,7 +45,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-app
 .acc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0 0 10px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
 .acc .em{font-weight:700;word-break:break-all}.acc .nm{color:var(--sub);font-size:13px}
 .acc .pl{margin-left:auto;display:flex;gap:12px;align-items:center}.acc .pl svg{width:38px;height:38px}.acc .pl span:first-child svg{width:48px;height:34px}
-.acc .pl span{display:flex;opacity:1}.acc .pl span.off{opacity:.75;filter:grayscale(1) brightness(1.9)}
+.acc .pl span{display:flex;opacity:1}.acc .pl span.off{opacity:.16;filter:grayscale(1)}
 .acc .mm{flex-basis:100%;color:var(--sub);font-size:12px}
 table.sp{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:14px}
 table.sp th,table.sp td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;word-break:break-all}
@@ -69,18 +69,33 @@ table.sp th{background:var(--chip);font-size:13px}
 #mv .x{position:absolute;right:-6px;top:-44px;border:0;background:none;color:#fff;font-size:30px;cursor:pointer;line-height:1}
 #mv .cap{position:absolute;left:0;top:-38px;color:#fff;font-weight:700}
 .vid{overflow:hidden}.vid.playing .th,.vid.playing .pb{display:none}
+.chips2{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.chips2 button{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:22px;padding:4px 12px 4px 5px;font-size:13px;cursor:pointer}
+.chips2 button img{width:28px;height:28px;border-radius:50%;object-fit:cover}
+.chips2 button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.chb{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;align-items:start}
+.chb .box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+.chb .box h3{margin:0 0 8px;font-size:14px;color:var(--sub);font-weight:700;display:flex;align-items:center;gap:8px}
+.chb .box img.pv{width:100%;border-radius:8px;display:block}
+.chb .t{white-space:pre-wrap;font-size:14px;line-height:1.55;margin:8px 0 0}
+.chb .lb{font-size:12px;color:var(--sub);margin:10px 0 2px}
+.chb .hd{display:flex;flex-wrap:wrap;gap:6px}
+.chb .hd span{background:var(--chip);border-radius:10px;padding:2px 9px;font-size:12px}
+.chb .left{display:flex;flex-direction:column;gap:16px}
+@media (max-width:760px){.chb{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div id="lock"><form id="lf"><div class="lt">AVA SNS Marketing</div><input id="pin" type="password" inputmode="numeric" autocomplete="off" placeholder="비밀번호" autofocus><button type="submit">입장</button><div id="lerr"></div></form></div>
 <div id="app" hidden>
-<div class="top"><div class="in"><span class="brand">AVA SNS Marketing</span><a href="#video" id="nVideo">영상</a><a href="#acc" id="nAcc">Acc Info</a><a href="#spray" id="nSpray">Spray</a></div></div>
+<div class="top"><div class="in"><span class="brand">AVA SNS Marketing</span><a href="#video" id="nVideo">영상</a><a href="#ch" id="nCh">채널</a><a href="#acc" id="nAcc">Acc Info</a><a href="#spray" id="nSpray">Spray</a></div></div>
 <div class="wrap">
   <div id="pVideo" hidden>
     <div class="tabs" id="tabs"></div>
     <div class="bar" id="bar"></div>
     <div class="grid" id="grid"></div>
   </div>
+  <div id="pCh" hidden><div class="chips2" id="chChips"></div><div id="chBody"></div></div>
   <div id="pAcc" hidden><div class="tbl" id="accList"></div></div>
   <div id="pSpray" hidden><table class="sp"><thead><tr><th>#</th><th>서비스</th><th>주소</th><th>역할</th><th>상태</th></tr></thead><tbody id="spBody"></tbody></table></div>
 </div>
@@ -94,10 +109,13 @@ var FLAG={
  "중문":'<svg width="22" height="15" viewBox="0 0 30 20"><rect width="30" height="20" fill="#de2910"/><g fill="#ffde00"><path d="M5 2l1.2 3.6h3.8l-3.1 2.2 1.2 3.6L5 9.2l-3.1 2.2 1.2-3.6L0 5.6h3.8z" transform="translate(1.5 0) scale(.9)"/><circle cx="10" cy="3" r=".9"/><circle cx="12" cy="5" r=".9"/><circle cx="12" cy="8" r=".9"/><circle cx="10" cy="10" r=".9"/></g></svg>',
  "일문":'<svg width="22" height="15" viewBox="0 0 30 20"><rect width="30" height="20" fill="#fff" stroke="#ccc" stroke-width=".6"/><circle cx="15" cy="10" r="6" fill="#bc002d"/></svg>'
 };
+var IGC=0;
+function igLogo(){var id='ig'+(++IGC);return '<svg width="17" height="17" viewBox="0 0 24 24"><defs><linearGradient id="'+id+'" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#fdc468"/><stop offset=".45" stop-color="#df4996"/><stop offset="1" stop-color="#4f5bd5"/></linearGradient></defs><rect width="24" height="24" rx="6.5" fill="url(#'+id+')"/><rect x="5" y="5" width="14" height="14" rx="4" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="3.4" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16.5" cy="7.5" r="1.1" fill="#fff"/></svg>'}
 var LOGO={
  yt:'<svg width="22" height="16" viewBox="0 0 24 17"><rect width="24" height="17" rx="4.5" fill="#f00"/><path d="M9.6 4.6v7.8l6.6-3.9z" fill="#fff"/></svg>',
- ig:'<svg width="17" height="17" viewBox="0 0 24 24"><defs><linearGradient id="ig" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#fdc468"/><stop offset=".45" stop-color="#df4996"/><stop offset="1" stop-color="#4f5bd5"/></linearGradient></defs><rect width="24" height="24" rx="6.5" fill="url(#ig)"/><rect x="5" y="5" width="14" height="14" rx="4" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="3.4" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16.5" cy="7.5" r="1.1" fill="#fff"/></svg>'
+ ig:''
 };
+Object.defineProperty(LOGO,'ig',{get:function(){return igLogo()}});
 /* 업로드 대상 플랫폼: 확정 전 기본값(유튜브·인스타). 채널별 조정은 CHPLAT. 영상은 구글드라이브 AVA 폴더. */
 var CHPLAT={};["디저트월드","혼밥일기","동네맛집탐정","야식러의하루","공백의기록","여행수집가","웃픈직장인","카페인중독일지","홈카페실험실","작은사치"].forEach(function(c){CHPLAT[c]=["yt","ig"]});
 var TABS=[];
@@ -150,12 +168,34 @@ function drawSpray(){
   tr.innerHTML='<td>'+(i+1)+'</td><td>'+esc(s.svc)+'</td><td>'+esc(s.addr)+'</td><td>'+esc(s.role)+'</td><td>'+esc(s.memo)+'</td>';
   b.appendChild(tr)})
 }
+var CHSEL=0;
+function loadCh(cb){
+ if(window.CHDATA){cb();return}
+ var s=document.createElement("script");s.src="ava_ch.enc.js";
+ s.onload=function(){crypto.subtle.decrypt({name:"AES-GCM",iv:b64(AVA_CH.i)},AVAKEY,b64(AVA_CH.c)).then(function(pt){window.CHDATA=JSON.parse(new TextDecoder().decode(pt));cb()})};
+ document.head.appendChild(s)}
+function drawCh(){
+ var cc=$("chChips"),cb=$("chBody");cc.innerHTML="";cb.innerHTML="<p class=\"tt\">불러오는 중…</p>";
+ loadCh(function(){
+  cc.innerHTML="";
+  window.CHDATA.forEach(function(c,i){var b=document.createElement("button");b.innerHTML='<img alt="" src="'+c.img.profile+'">'+FLAG[c.lang]+esc(c.ch);if(i===CHSEL)b.className="on";b.onclick=function(){CHSEL=i;drawCh()};cc.appendChild(b)});
+  var c=window.CHDATA[CHSEL];
+  function hs(a){return a.map(function(x){return "<span>"+esc(x)+"</span>"}).join("")}
+  cb.innerHTML='<div class="chb"><div class="left">'+
+   '<div class="box"><h3>'+LOGO.yt+'유튜브 채널 화면</h3><img class="pv" alt="" src="'+c.img.ytp+'">'+
+   '<div class="lb">채널 설명</div><p class="t">'+esc(c.yt.desc)+'</p>'+
+   '<div class="lb">핸들 후보</div><div class="hd">'+hs(c.yt.handles)+'</div></div>'+
+   '<div class="box"><h3>배너 원본</h3><img class="pv" alt="" src="'+c.img.banner+'"></div></div>'+
+   '<div class="box"><h3>'+LOGO.ig+'인스타그램 프로필</h3><img class="pv" alt="" src="'+c.img.igp+'">'+
+   '<div class="lb">소개글</div><p class="t">'+esc(c.ig.bio)+'</p>'+
+   '<div class="lb">사용자명 후보</div><div class="hd">'+hs(c.ig.users)+'</div></div></div>'})}
 function route(){
  var h=(location.hash||"#video").replace("#","");
- if(["video","acc","spray"].indexOf(h)<0)h="video";
- var P={video:"pVideo",acc:"pAcc",spray:"pSpray"},N={video:"nVideo",acc:"nAcc",spray:"nSpray"};
- ["video","acc","spray"].forEach(function(k){$(P[k]).hidden=(k!==h);$(N[k]).className=(k===h?"on":"")});
+ if(["video","ch","acc","spray"].indexOf(h)<0)h="video";
+ var P={video:"pVideo",ch:"pCh",acc:"pAcc",spray:"pSpray"},N={video:"nVideo",ch:"nCh",acc:"nAcc",spray:"nSpray"};
+ ["video","ch","acc","spray"].forEach(function(k){$(P[k]).hidden=(k!==h);$(N[k]).className=(k===h?"on":"")});
  if(h==="video"){curTab=0;curLang="전체";drawVideo()}
+ if(h==="ch")drawCh();
  if(h==="acc")drawAcc();
  if(h==="spray")drawSpray();
 }
@@ -164,7 +204,8 @@ async function deriveKey(pin){
  var enc=new TextEncoder(),base=await crypto.subtle.importKey("raw",enc.encode(pin),"PBKDF2",false,["deriveKey"]);
  return crypto.subtle.deriveKey({name:"PBKDF2",salt:b64(AVA_ENC.s),iterations:200000,hash:"SHA-256"},base,{name:"AES-GCM",length:256},true,["decrypt"]);
 }
-async function decryptWith(key){
+var AVAKEY=null;
+async function decryptWith(key){AVAKEY=key;
  var pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(AVA_ENC.i)},key,b64(AVA_ENC.c));
  var d=JSON.parse(new TextDecoder().decode(pt));
  window.ACCOUNTS=d.ACCOUNTS;window.SPRAY=d.SPRAY;TABS=d.TABS;
