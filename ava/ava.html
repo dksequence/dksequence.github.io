@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>AVA SNS Marketing</title>
+<style>
+:root{--bg:#fbf7ef;--card:#fff;--ink:#2b2220;--sub:#7a6d66;--line:#eadfd2;--accent:#e5304a;--chip:#f3ece1}
+@media (prefers-color-scheme:dark){:root{--bg:#1d1817;--card:#272120;--ink:#f3ebe4;--sub:#b3a59c;--line:#3a312e;--chip:#352d2a}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Malgun Gothic","Apple SD Gothic Neo",sans-serif}
+.top{border-bottom:1px solid var(--line);background:var(--card);position:sticky;top:0;z-index:5}
+.top .in{max-width:1200px;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:22px;height:52px}
+.top .brand{font-weight:800;font-size:17px;letter-spacing:.2px;margin-right:auto}
+.top a{color:var(--sub);text-decoration:none;font-size:15px;padding:15px 2px;border-bottom:2px solid transparent}
+.top a.on{color:var(--ink);font-weight:700;border-bottom-color:var(--accent)}
+.wrap{max-width:1200px;margin:0 auto;padding:22px 16px 70px}
+.home h1{font-size:34px;margin:60px 0 0;letter-spacing:.3px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.tabs button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:7px 14px;font-size:14px;cursor:pointer;text-align:left;line-height:1.3}
+.tabs button small{display:block;color:var(--sub);font-size:11px}
+.tabs button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.tabs button.on small{color:#ffe3e7}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.bar button{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:20px;padding:4px 12px;font-size:13px;cursor:pointer}
+.bar button.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(200px,100%),1fr));gap:14px}
+.card{min-width:0;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.vid{aspect-ratio:9/16;background:#000;position:relative}
+.vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vid .wait{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#cfc4bb;font-size:13px;text-align:center;padding:12px}
+.body{padding:9px 10px 11px;display:flex;flex-direction:column;gap:5px}
+.row1{display:flex;align-items:center;gap:6px;min-width:0}
+.row1 .flag{flex:none;display:flex}
+.row1 .ch{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.row1 .plat{margin-left:auto;display:flex;gap:4px;flex:none}
+.row2{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--sub)}
+.no{font-weight:700;color:var(--accent)}
+.chip{background:var(--chip);border-radius:10px;padding:1px 8px;font-size:12px;color:var(--ink)}
+.title{font-size:15px;font-weight:700;line-height:1.35}
+.tt{font-size:12px;color:var(--sub)}
+.desc{font-size:13px;margin:0}
+.sum{font-size:12px;color:var(--sub);margin:0;border-top:1px dashed var(--line);padding-top:5px}
+.acc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0 0 10px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.acc .em{font-weight:700;word-break:break-all}.acc .nm{color:var(--sub);font-size:13px}
+.acc .pl{margin-left:auto;display:flex;gap:12px;align-items:center}.acc .pl svg{width:38px;height:38px}.acc .pl span:first-child svg{width:48px;height:34px}
+.acc .pl span{display:flex;opacity:1}.acc .pl span.off{opacity:.75;filter:grayscale(1) brightness(1.9)}
+.acc .mm{flex-basis:100%;color:var(--sub);font-size:12px}
+table.sp{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:14px}
+table.sp th,table.sp td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;word-break:break-all}
+table.sp th{background:var(--chip);font-size:13px}
+@media (max-width:600px){table.sp{font-size:12px}table.sp th:nth-child(5),table.sp td:nth-child(5){display:none}}
+@media (max-width:600px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.home h1{font-size:28px}}
+#lock[hidden]{display:none}
+#lock{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:50}
+#lf{display:flex;flex-direction:column;gap:12px;width:min(280px,86vw);text-align:center}
+.lt{font-size:22px;font-weight:800;margin-bottom:6px}
+#pin{font-size:18px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);text-align:center;letter-spacing:4px}
+#lf button{font-size:16px;padding:10px;border:0;border-radius:10px;background:var(--accent);color:#fff;cursor:pointer}
+#lerr{min-height:18px;color:var(--accent);font-size:13px}
+</style>
+</head>
+<body>
+<div id="lock"><form id="lf"><div class="lt">AVA SNS Marketing</div><input id="pin" type="password" inputmode="numeric" autocomplete="off" placeholder="비밀번호" autofocus><button type="submit">입장</button><div id="lerr"></div></form></div>
+<div id="app" hidden>
+<div class="top"><div class="in"><span class="brand">AVA SNS Marketing</span><a href="#home" id="nHome">Home</a><a href="#video" id="nVideo">영상</a><a href="#acc" id="nAcc">Acc Info</a><a href="#spray" id="nSpray">Spray</a></div></div>
+<div class="wrap">
+  <div id="pHome" class="home"><h1>AVA SNS Marketing</h1></div>
+  <div id="pVideo" hidden>
+    <div class="tabs" id="tabs"></div>
+    <div class="bar" id="bar"></div>
+    <div class="grid" id="grid"></div>
+  </div>
+  <div id="pAcc" hidden><div class="tbl" id="accList"></div></div>
+  <div id="pSpray" hidden><table class="sp"><thead><tr><th>#</th><th>서비스</th><th>주소</th><th>역할</th><th>상태</th></tr></thead><tbody id="spBody"></tbody></table></div>
+</div>
+</div>
+<script src="ava_data.enc.js"></script>
+<script>
+var FLAG={
+ "국문":'<svg width="22" height="15" viewBox="0 0 30 20"><rect width="30" height="20" fill="#fff" stroke="#ccc" stroke-width=".6"/><path d="M10.2 10a4.8 4.8 0 0 1 9.6 0z" fill="#cd2e3a"/><path d="M19.8 10a4.8 4.8 0 0 1-9.6 0z" fill="#0047a0"/><g stroke="#111" stroke-width="1"><path d="M3.6 4.2l2.4-1.6M4.4 5.6l2.4-1.6M4.8 3.4l2.4 1.6"/><path d="M23 15.4l2.4 1.6M23.6 14l2.4 1.6M24 16.8l2.4-1.6"/><path d="M23.2 3.6l2.4-1.4M23.8 5l2.4-1.4M24.4 2.6l1.8 2.4"/><path d="M3.8 15.8l2.4-1.4M4.4 17l2.4-1.4M3.4 17.4l1.8-2.4"/></g></svg>',
+ "영문":'<svg width="22" height="15" viewBox="0 0 30 20"><rect width="30" height="20" fill="#fff"/><g fill="#b22234"><rect y="0" width="30" height="1.54"/><rect y="3.08" width="30" height="1.54"/><rect y="6.15" width="30" height="1.54"/><rect y="9.23" width="30" height="1.54"/><rect y="12.3" width="30" height="1.54"/><rect y="15.4" width="30" height="1.54"/><rect y="18.46" width="30" height="1.54"/></g><rect width="12" height="10.8" fill="#3c3b6e"/><g fill="#fff"><circle cx="2" cy="2" r=".6"/><circle cx="5" cy="2" r=".6"/><circle cx="8" cy="2" r=".6"/><circle cx="10.4" cy="2" r=".6"/><circle cx="3.5" cy="4.6" r=".6"/><circle cx="6.5" cy="4.6" r=".6"/><circle cx="9.5" cy="4.6" r=".6"/><circle cx="2" cy="7.2" r=".6"/><circle cx="5" cy="7.2" r=".6"/><circle cx="8" cy="7.2" r=".6"/><circle cx="10.4" cy="7.2" r=".6"/></g></svg>',
+ "중문":'<svg width="22" height="15" viewBox="0 0 30 20"><rect width="30" height="20" fill="#de2910"/><g fill="#ffde00"><path d="M5 2l1.2 3.6h3.8l-3.1 2.2 1.2 3.6L5 9.2l-3.1 2.2 1.2-3.6L0 5.6h3.8z" transform="translate(1.5 0) scale(.9)"/><circle cx="10" cy="3" r=".9"/><circle cx="12" cy="5" r=".9"/><circle cx="12" cy="8" r=".9"/><circle cx="10" cy="10" r=".9"/></g></svg>',
+ "일문":'<svg width="22" height="15" viewBox="0 0 30 20"><rect width="30" height="20" fill="#fff" stroke="#ccc" stroke-width=".6"/><circle cx="15" cy="10" r="6" fill="#bc002d"/></svg>'
+};
+var LOGO={
+ yt:'<svg width="22" height="16" viewBox="0 0 24 17"><rect width="24" height="17" rx="4.5" fill="#f00"/><path d="M9.6 4.6v7.8l6.6-3.9z" fill="#fff"/></svg>',
+ ig:'<svg width="17" height="17" viewBox="0 0 24 24"><defs><linearGradient id="ig" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#fdc468"/><stop offset=".45" stop-color="#df4996"/><stop offset="1" stop-color="#4f5bd5"/></linearGradient></defs><rect width="24" height="24" rx="6.5" fill="url(#ig)"/><rect x="5" y="5" width="14" height="14" rx="4" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="3.4" fill="none" stroke="#fff" stroke-width="1.8"/><circle cx="16.5" cy="7.5" r="1.1" fill="#fff"/></svg>'
+};
+/* 업로드 대상 플랫폼: 확정 전 기본값(유튜브·인스타). 채널별 조정은 CHPLAT. 영상은 구글드라이브 AVA 폴더. */
+var CHPLAT={};["디저트월드","혼밥일기","동네맛집탐정","야식러의하루","공백의기록","여행수집가","웃픈직장인","카페인중독일지","홈카페실험실","작은사치"].forEach(function(c){CHPLAT[c]=["yt","ig"]});
+var TABS=[];
+var LANGS=["전체","국문","영문","중문","일문"],curTab=0,curLang="전체";
+var $=function(i){return document.getElementById(i)};
+function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
+function drawTabs(){var el=$("tabs");el.innerHTML="";TABS.forEach(function(t,i){var b=document.createElement("button");b.innerHTML=esc(t.k+" · "+t.name)+"<small>"+esc(t.date)+" · "+t.items.length+"편</small>";if(i===curTab)b.className="on";b.onclick=function(){curTab=i;curLang="전체";drawVideo()};el.appendChild(b)})}
+function drawBar(){var el=$("bar");el.innerHTML="";LANGS.forEach(function(l){var b=document.createElement("button");b.innerHTML=(FLAG[l]||"")+esc(l);if(l===curLang)b.className="on";b.onclick=function(){curLang=l;drawBar();drawGrid()};el.appendChild(b)})}
+function drawGrid(){
+ var g=$("grid");g.innerHTML="";
+ TABS[curTab].items.filter(function(it){return curLang==="전체"||it.lang===curLang}).forEach(function(it){
+  var c=document.createElement("div");c.className="card";
+  var v=it.id?'<iframe src="https://drive.google.com/file/d/'+it.id+'/preview" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe>':'<div class="wait">영상 업로드 대기 중</div>';
+  var pl=(CHPLAT[it.ch]||[]).map(function(k){return LOGO[k]}).join("");
+  c.innerHTML='<div class="vid">'+v+'</div><div class="body">'+
+   '<div class="row1"><span class="flag">'+FLAG[it.lang]+'</span><span class="ch">'+esc(it.ch)+'</span><span class="plat">'+pl+'</span></div>'+
+   '<div class="row2"><span class="no">'+it.n+'</span><span class="chip">'+esc(it.cat)+'</span></div>'+
+   '<div class="title">'+esc(it.t)+'</div>'+
+   (it.tt?'<div class="tt">타이틀 · '+esc(it.tt)+'</div>':'')+
+   (it.d?'<p class="desc">'+esc(it.d)+'</p>':'')+(it.s?'<p class="sum">'+esc(it.s)+'</p>':'')+'</div>';
+  g.appendChild(c)})
+}
+function drawVideo(){drawTabs();drawBar();drawGrid()}
+LOGO.tt='<svg width="17" height="17" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#111" stroke="#6b6b6b" stroke-width="1"/><path d="M13 5v9.2a2.4 2.4 0 1 1-2.4-2.4" fill="none" stroke="#fff" stroke-width="2"/><path d="M13 5c.4 2 1.7 3.2 4 3.4" fill="none" stroke="#25f4ee" stroke-width="2"/></svg>';
+LOGO.xh='<svg width="17" height="17" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#ff2442"/><text x="12" y="16" text-anchor="middle" font-size="9" font-weight="700" fill="#fff" font-family="sans-serif">XHS</text></svg>';
+function drawAcc(){
+ var el=$("accList");el.innerHTML="";
+ (window.ACCOUNTS||[]).forEach(function(a){
+  var d=document.createElement("div");d.className="acc";
+  var pl=(a.plats||[]).map(function(p){return '<span class="'+(p.ok?"":"off")+'" title="'+esc(p.st)+'">'+LOGO[p.k]+'</span>'}).join("");
+  d.innerHTML='<div><div class="em">'+esc(a.email)+'</div><div class="nm">'+esc(a.name)+'</div></div><div class="pl">'+pl+'</div>';
+  el.appendChild(d)})
+}
+function drawSpray(){
+ var b=$("spBody");b.innerHTML="";
+ (window.SPRAY||[]).forEach(function(s,i){
+  var tr=document.createElement("tr");
+  tr.innerHTML='<td>'+(i+1)+'</td><td>'+esc(s.svc)+'</td><td>'+esc(s.addr)+'</td><td>'+esc(s.role)+'</td><td>'+esc(s.memo)+'</td>';
+  b.appendChild(tr)})
+}
+function route(){
+ var h=(location.hash||"#home").replace("#","");
+ ["home","video","acc","spray"].forEach(function(k){
+  var P={home:"pHome",video:"pVideo",acc:"pAcc",spray:"pSpray"}[k],N={home:"nHome",video:"nVideo",acc:"nAcc",spray:"nSpray"}[k];
+  $(P).hidden=(k!==h);$(N).className=(k===h?"on":"")});
+ if(["home","video","acc","spray"].indexOf(h)<0){$("pHome").hidden=false;$("nHome").className="on"}
+ if(h==="video"){curTab=0;curLang="전체";drawVideo()}
+ if(h==="acc")drawAcc();
+ if(h==="spray")drawSpray();
+}
+function b64(s){var r=atob(s),u=new Uint8Array(r.length);for(var i=0;i<r.length;i++)u[i]=r.charCodeAt(i);return u}
+async function unlock(pin){
+ var enc=new TextEncoder(),base=await crypto.subtle.importKey("raw",enc.encode(pin),"PBKDF2",false,["deriveKey"]);
+ var key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:b64(AVA_ENC.s),iterations:200000,hash:"SHA-256"},base,{name:"AES-GCM",length:256},false,["decrypt"]);
+ var pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(AVA_ENC.i)},key,b64(AVA_ENC.c));
+ var d=JSON.parse(new TextDecoder().decode(pt));
+ window.ACCOUNTS=d.ACCOUNTS;window.SPRAY=d.SPRAY;TABS=d.TABS;
+}
+function openApp(){$("lock").hidden=true;$("app").hidden=false;window.addEventListener("hashchange",route);route()}
+$("lf").onsubmit=function(e){e.preventDefault();var v=$("pin").value;$("lerr").textContent="";
+ unlock(v).then(function(){try{sessionStorage.setItem("ava_ok",v)}catch(x){}openApp()}).catch(function(){$("lerr").textContent="비밀번호가 맞지 않습니다";$("pin").value="";$("pin").focus()})};
+try{var sv=sessionStorage.getItem("ava_ok");if(sv)unlock(sv).then(openApp).catch(function(){})}catch(x){}
+</script>
+</body>
+</html>
