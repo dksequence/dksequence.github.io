@@ -189,9 +189,9 @@ function drawCh(){
    '<div class="lb">채널 설명</div><p class="t">'+esc(c.yt.desc)+'</p>'+
    '<div class="lb">핸들 후보</div><div class="hd">'+hs(c.yt.handles)+'</div></div>'+
    '<div class="box"><h3>배너 원본</h3><img class="pv" alt="" src="'+c.img.banner+'"></div></div>'+
-   '<div class="box"><h3>'+LOGO.ig+'인스타그램 프로필</h3><img class="pv" alt="" src="'+c.img.igp+'">'+
+   '<div class="left"><div class="box"><h3>'+LOGO.ig+'인스타그램 프로필</h3><img class="pv" alt="" src="'+c.img.igp+'">'+
    '<div class="lb">소개글</div><p class="t">'+esc(c.ig.bio)+'</p>'+
-   '<div class="lb">사용자명 후보</div><div class="hd">'+hs(c.ig.users)+'</div></div></div>'})}
+   '<div class="lb">사용자명 후보</div><div class="hd">'+hs(c.ig.users)+'</div></div>'+(c.tt?'<div class="box"><h3>'+LOGO.tt+'틱톡 프로필</h3><img class="pv" alt="" src="'+c.img.ttp+'">'+'<div class="lb">소개글</div><p class="t">'+esc(c.tt.bio)+'</p>'+'<div class="lb">사용자명 후보</div><div class="hd">'+hs(c.tt.users)+'</div></div>':'')+(c.xh?'<div class="box"><h3>'+LOGO.xh+'샤오홍슈 프로필</h3><img class="pv" alt="" src="'+c.img.xhp+'">'+'<div class="lb">소개글</div><p class="t">'+esc(c.xh.bio)+'</p>'+'<div class="lb">ID 후보</div><div class="hd">'+hs(c.xh.ids)+'</div></div>':'')+'</div></div>'})}
 function route(){
  var h=(location.hash||"#video").replace("#","");
  if(["video","ch","acc","spray"].indexOf(h)<0)h="video";
