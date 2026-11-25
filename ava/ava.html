@@ -59,6 +59,15 @@ table.sp th{background:var(--chip);font-size:13px}
 #pin{font-size:18px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);text-align:center;letter-spacing:4px}
 #lf button{font-size:16px;padding:10px;border:0;border-radius:10px;background:var(--accent);color:#fff;cursor:pointer}
 #lerr{min-height:18px;color:var(--accent);font-size:13px}
+.vid .th{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000}
+.vid .pb{position:absolute;inset:0;border:0;background:transparent;cursor:pointer}
+.vid .pb:after{content:"";position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;background:rgba(0,0,0,.55) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M9 6.5v11l9-5.5z'/%3E%3C/svg%3E") center/60% no-repeat}
+#mv{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:60;display:flex;align-items:center;justify-content:center}
+#mv[hidden]{display:none}
+#mv .box{position:relative;width:min(92vw,calc(86vh*9/16),420px);min-width:340px;aspect-ratio:9/16;background:#000}
+#mv iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+#mv .x{position:absolute;right:-6px;top:-44px;border:0;background:none;color:#fff;font-size:30px;cursor:pointer;line-height:1}
+#mv .cap{position:absolute;left:0;top:-38px;color:#fff;font-weight:700}
 </style>
 </head>
 <body>
@@ -76,6 +85,7 @@ table.sp th{background:var(--chip);font-size:13px}
   <div id="pSpray" hidden><table class="sp"><thead><tr><th>#</th><th>서비스</th><th>주소</th><th>역할</th><th>상태</th></tr></thead><tbody id="spBody"></tbody></table></div>
 </div>
 </div>
+<div id="mv" hidden><div class="box"><span class="cap" id="mcap"></span><button class="x" id="mx" aria-label="닫기">&times;</button><div id="mf" style="position:absolute;inset:0"></div></div></div>
 <script src="ava_data.enc.js"></script>
 <script>
 var FLAG={
@@ -100,7 +110,7 @@ function drawGrid(){
  var g=$("grid");g.innerHTML="";
  TABS[curTab].items.filter(function(it){return curLang==="전체"||it.lang===curLang}).forEach(function(it){
   var c=document.createElement("div");c.className="card";
-  var v=it.id?'<iframe src="https://drive.google.com/file/d/'+it.id+'/preview" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe>':'<div class="wait">영상 업로드 대기 중</div>';
+  var v=it.id?'<img class="th" loading="lazy" alt="" src="https://drive.google.com/thumbnail?id='+it.id+'&sz=w480"><button class="pb" aria-label="재생" data-id="'+it.id+'"></button>':'<div class="wait">영상 업로드 대기 중</div>';
   var pl=(CHPLAT[it.ch]||[]).map(function(k){return LOGO[k]}).join("");
   c.innerHTML='<div class="vid">'+v+'</div><div class="body">'+
    '<div class="row1"><span class="flag">'+FLAG[it.lang]+'</span><span class="ch">'+esc(it.ch)+'</span><span class="plat">'+pl+'</span></div>'+
@@ -108,8 +118,12 @@ function drawGrid(){
    '<div class="title">'+esc(it.t)+'</div>'+
    (it.tt?'<div class="tt">타이틀 · '+esc(it.tt)+'</div>':'')+
    (it.d?'<p class="desc">'+esc(it.d)+'</p>':'')+(it.s?'<p class="sum">'+esc(it.s)+'</p>':'')+'</div>';
+  var pbn=c.querySelector('.pb');if(pbn)pbn.onclick=function(){openVid(it.id,it.n)};
   g.appendChild(c)})
 }
+function openVid(id,n){$("mcap").textContent=n;$("mf").innerHTML='<iframe src="https://drive.google.com/file/d/'+id+'/preview" allow="autoplay; fullscreen" allowfullscreen></iframe>';$("mv").hidden=false}
+function closeVid(){$("mv").hidden=true;$("mf").innerHTML=""}
+$("mx").onclick=closeVid;$("mv").onclick=function(e){if(e.target===$("mv"))closeVid()};document.addEventListener("keydown",function(e){if(e.key==="Escape")closeVid()});
 function drawVideo(){drawTabs();drawBar();drawGrid()}
 LOGO.tt='<svg width="17" height="17" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#111" stroke="#6b6b6b" stroke-width="1"/><path d="M13 5v9.2a2.4 2.4 0 1 1-2.4-2.4" fill="none" stroke="#fff" stroke-width="2"/><path d="M13 5c.4 2 1.7 3.2 4 3.4" fill="none" stroke="#25f4ee" stroke-width="2"/></svg>';
 LOGO.xh='<svg width="17" height="17" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#ff2442"/><text x="12" y="16" text-anchor="middle" font-size="9" font-weight="700" fill="#fff" font-family="sans-serif">XHS</text></svg>';
@@ -139,17 +153,25 @@ function route(){
  if(h==="spray")drawSpray();
 }
 function b64(s){var r=atob(s),u=new Uint8Array(r.length);for(var i=0;i<r.length;i++)u[i]=r.charCodeAt(i);return u}
-async function unlock(pin){
+async function deriveKey(pin){
  var enc=new TextEncoder(),base=await crypto.subtle.importKey("raw",enc.encode(pin),"PBKDF2",false,["deriveKey"]);
- var key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:b64(AVA_ENC.s),iterations:200000,hash:"SHA-256"},base,{name:"AES-GCM",length:256},false,["decrypt"]);
+ return crypto.subtle.deriveKey({name:"PBKDF2",salt:b64(AVA_ENC.s),iterations:200000,hash:"SHA-256"},base,{name:"AES-GCM",length:256},true,["decrypt"]);
+}
+async function decryptWith(key){
  var pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(AVA_ENC.i)},key,b64(AVA_ENC.c));
  var d=JSON.parse(new TextDecoder().decode(pt));
  window.ACCOUNTS=d.ACCOUNTS;window.SPRAY=d.SPRAY;TABS=d.TABS;
 }
+async function unlock(pin){var key=await deriveKey(pin);await decryptWith(key);return key}
 function openApp(){$("lock").hidden=true;$("app").hidden=false;window.addEventListener("hashchange",route);route()}
+var KEYSTORE="ava_key_v1";
 $("lf").onsubmit=function(e){e.preventDefault();var v=$("pin").value;$("lerr").textContent="";
- unlock(v).then(function(){try{sessionStorage.setItem("ava_ok",v)}catch(x){}openApp()}).catch(function(){$("lerr").textContent="비밀번호가 맞지 않습니다";$("pin").value="";$("pin").focus()})};
-try{var sv=sessionStorage.getItem("ava_ok");if(sv)unlock(sv).then(openApp).catch(function(){})}catch(x){}
+ unlock(v).then(function(key){
+  try{crypto.subtle.exportKey("jwk",key).then(function(j){try{localStorage.setItem(KEYSTORE,JSON.stringify({s:AVA_ENC.s,k:j}))}catch(x){}})}catch(x){}
+  openApp()}).catch(function(){$("lerr").textContent="비밀번호가 맞지 않습니다";$("pin").value="";$("pin").focus()})};
+try{var st=JSON.parse(localStorage.getItem(KEYSTORE)||"null");
+ if(st&&st.s===AVA_ENC.s){crypto.subtle.importKey("jwk",st.k,{name:"AES-GCM"},false,["decrypt"]).then(decryptWith).then(openApp).catch(function(){try{localStorage.removeItem(KEYSTORE)}catch(x){}})}
+ else if(st){localStorage.removeItem(KEYSTORE)}}catch(x){}
 </script>
 </body>
 </html>
