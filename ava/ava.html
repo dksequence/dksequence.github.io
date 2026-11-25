@@ -150,8 +150,9 @@ function watchVid(v,id){if(!("IntersectionObserver" in window)){mountVid(v,id);r
 function stopAll(){var a=document.querySelectorAll(".vid iframe");for(var i=0;i<a.length;i++)a[i].parentNode.removeChild(a[i])}
 function fitIframes(){var a=document.querySelectorAll(".vid iframe");for(var i=0;i<a.length;i++){a[i].style.transform="scale("+(a[i].parentNode.clientWidth/405)+")"}}
 window.addEventListener("resize",fitIframes);
-/* 한 영상 재생 중 다른 영상을 누르면 이전 영상 정지: 드라이브 플레이어는 외부 도메인이라 직접 일시정지가 안 되어, 이전 플레이어를 다시 불러와 처음 화면으로 되돌림 */
-var LASTFR=null;window.addEventListener("blur",function(){setTimeout(function(){var a=document.activeElement;if(!a||a.tagName!=="IFRAME"||!a.closest||!a.closest(".vid"))return;if(LASTFR&&LASTFR!==a&&LASTFR.parentNode){var o=LASTFR;o.src=o.src}LASTFR=a},0)});
+/* 한 영상 재생 중 다른 영상을 누르면 이전 영상 정지: 드라이브 플레이어는 외부 도메인이라 직접 일시정지가 안 되어, 이전 플레이어를 다시 불러와 처음 화면으로 되돌림.
+   포커스가 영상 A에서 영상 B로 바로 넘어가면 blur 이벤트가 다시 안 뜨므로 0.15초마다 activeElement 를 확인함 */
+var LASTFR=null;setInterval(function(){var a=document.activeElement;if(!a||a.tagName!=="IFRAME"||!a.closest||!a.closest(".vid"))return;if(a===LASTFR)return;var o=LASTFR;LASTFR=a;if(o&&o.parentNode&&o!==a){var u=o.src;o.src="about:blank";setTimeout(function(){o.src=u},60)}},150);
 function drawVideo(){drawTabs();drawBar();drawGrid()}
 LOGO.tt='<svg width="17" height="17" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#111" stroke="#6b6b6b" stroke-width="1"/><path d="M13 5v9.2a2.4 2.4 0 1 1-2.4-2.4" fill="none" stroke="#fff" stroke-width="2"/><path d="M13 5c.4 2 1.7 3.2 4 3.4" fill="none" stroke="#25f4ee" stroke-width="2"/></svg>';
 LOGO.xh='<svg width="17" height="17" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#ff2442"/><text x="12" y="16" text-anchor="middle" font-size="9" font-weight="700" fill="#fff" font-family="sans-serif">XHS</text></svg>';
