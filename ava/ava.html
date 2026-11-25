@@ -68,6 +68,7 @@ table.sp th{background:var(--chip);font-size:13px}
 #mv iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 #mv .x{position:absolute;right:-6px;top:-44px;border:0;background:none;color:#fff;font-size:30px;cursor:pointer;line-height:1}
 #mv .cap{position:absolute;left:0;top:-38px;color:#fff;font-weight:700}
+.vid{overflow:hidden}.vid.playing .th,.vid.playing .pb{display:none}
 </style>
 </head>
 <body>
@@ -106,11 +107,11 @@ var $=function(i){return document.getElementById(i)};
 function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
 function drawTabs(){var el=$("tabs");el.innerHTML="";TABS.forEach(function(t,i){var b=document.createElement("button");b.innerHTML=esc(t.k+" · "+t.name)+"<small>"+esc(t.date)+" · "+t.items.length+"편</small>";if(i===curTab)b.className="on";b.onclick=function(){curTab=i;curLang="전체";drawVideo()};el.appendChild(b)})}
 function drawBar(){var el=$("bar");el.innerHTML="";LANGS.forEach(function(l){var b=document.createElement("button");b.innerHTML=(FLAG[l]||"")+esc(l);if(l===curLang)b.className="on";b.onclick=function(){curLang=l;drawBar();drawGrid()};el.appendChild(b)})}
-function drawGrid(){
+function drawGrid(){stopAll();
  var g=$("grid");g.innerHTML="";
  TABS[curTab].items.filter(function(it){return curLang==="전체"||it.lang===curLang}).forEach(function(it){
   var c=document.createElement("div");c.className="card";
-  var v=it.id?'<img class="th" loading="lazy" alt="" src="https://drive.google.com/thumbnail?id='+it.id+'&sz=w480"><button class="pb" aria-label="재생" data-id="'+it.id+'"></button>':'<div class="wait">영상 업로드 대기 중</div>';
+  var v=it.id?'<img class="th" loading="lazy" alt="" src="https://drive.google.com/thumbnail?id='+it.id+'&sz=w480">':'<div class="wait">영상 업로드 대기 중</div>';
   var pl=(CHPLAT[it.ch]||[]).map(function(k){return LOGO[k]}).join("");
   c.innerHTML='<div class="vid">'+v+'</div><div class="body">'+
    '<div class="row1"><span class="flag">'+FLAG[it.lang]+'</span><span class="ch">'+esc(it.ch)+'</span><span class="plat">'+pl+'</span></div>'+
@@ -118,12 +119,20 @@ function drawGrid(){
    '<div class="title">'+esc(it.t)+'</div>'+
    (it.tt?'<div class="tt">타이틀 · '+esc(it.tt)+'</div>':'')+
    (it.d?'<p class="desc">'+esc(it.d)+'</p>':'')+(it.s?'<p class="sum">'+esc(it.s)+'</p>':'')+'</div>';
-  var pbn=c.querySelector('.pb');if(pbn)pbn.onclick=function(){openVid(it.id,it.n)};
+  if(it.id)watchVid(c.querySelector('.vid'),it.id);
   g.appendChild(c)})
 }
 function openVid(id,n){$("mcap").textContent=n;$("mf").innerHTML='<iframe src="https://drive.google.com/file/d/'+id+'/preview" allow="autoplay; fullscreen" allowfullscreen></iframe>';$("mv").hidden=false}
 function closeVid(){$("mv").hidden=true;$("mf").innerHTML=""}
 $("mx").onclick=closeVid;$("mv").onclick=function(e){if(e.target===$("mv"))closeVid()};document.addEventListener("keydown",function(e){if(e.key==="Escape")closeVid()});
+var IO=null;
+function mountVid(v,id){if(v.querySelector("iframe"))return;var f=document.createElement("iframe");f.src="https://drive.google.com/file/d/"+id+"/preview";f.setAttribute("allow","autoplay; fullscreen");f.allowFullscreen=true;f.style.cssText="position:absolute;left:0;top:0;width:405px;height:720px;border:0;transform-origin:0 0;transform:scale("+(v.clientWidth/405)+")";v.appendChild(f);v.classList.add("playing")}
+function watchVid(v,id){if(!("IntersectionObserver" in window)){mountVid(v,id);return}
+ if(!IO)IO=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){IO.unobserve(e.target);mountVid(e.target,e.target.getAttribute("data-id"))}})},{rootMargin:"250px"});
+ v.setAttribute("data-id",id);IO.observe(v)}
+function stopAll(){var a=document.querySelectorAll(".vid iframe");for(var i=0;i<a.length;i++)a[i].parentNode.removeChild(a[i])}
+function fitIframes(){var a=document.querySelectorAll(".vid iframe");for(var i=0;i<a.length;i++){a[i].style.transform="scale("+(a[i].parentNode.clientWidth/405)+")"}}
+window.addEventListener("resize",fitIframes);
 function drawVideo(){drawTabs();drawBar();drawGrid()}
 LOGO.tt='<svg width="17" height="17" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#111" stroke="#6b6b6b" stroke-width="1"/><path d="M13 5v9.2a2.4 2.4 0 1 1-2.4-2.4" fill="none" stroke="#fff" stroke-width="2"/><path d="M13 5c.4 2 1.7 3.2 4 3.4" fill="none" stroke="#25f4ee" stroke-width="2"/></svg>';
 LOGO.xh='<svg width="17" height="17" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#ff2442"/><text x="12" y="16" text-anchor="middle" font-size="9" font-weight="700" fill="#fff" font-family="sans-serif">XHS</text></svg>';
