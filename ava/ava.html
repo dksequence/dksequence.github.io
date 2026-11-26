@@ -64,6 +64,13 @@ table.sp th{background:var(--chip);font-size:13px}
 .rv textarea{width:100%;box-sizing:border-box;min-height:58px;resize:vertical;border:1px solid var(--line);border-radius:8px;padding:7px 8px;font:inherit;font-size:14px;background:var(--bg);color:var(--ink)}
 .rv .mv{white-space:pre-wrap;word-break:break-word;font-size:13px;background:var(--chip);border-radius:8px;padding:7px 8px}
 .rv .mb{display:flex;justify-content:flex-end;gap:6px}.rv .mb button{padding:4px 14px;font-size:13px}
+.vsw{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-width:420px;margin:0 0 14px;background:var(--chip);padding:5px;border-radius:14px}
+.vsw button{border:0;background:transparent;color:var(--ink);border-radius:10px;padding:10px;font:inherit;font-size:17px;font-weight:800;cursor:pointer}
+.vsw button b{margin-left:8px;color:var(--sub);font-size:15px}.vsw button.on{background:var(--ink);color:var(--bg)}.vsw button.on b{color:var(--bg)}
+.chsel,.qbox{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:20px;padding:4px 12px;font:inherit;font-size:13px}.qbox{width:150px}
+.more{display:flex;justify-content:center;margin:18px 0}.more button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:22px;padding:10px 26px;font:inherit;font-weight:700;cursor:pointer}.more .empty{color:var(--sub);margin:30px 0}
+.rv .old{display:flex;flex-direction:column;gap:4px;align-items:flex-start}.rv .old .fx{background:#3b5bdb;color:#fff;border-radius:8px;padding:1px 8px;font-size:12px;font-weight:700}.rv .old .om{white-space:pre-wrap;word-break:break-word;font-size:12px;color:var(--sub);border-left:3px solid #3b5bdb;padding-left:7px}
+.rv .moved{display:flex;align-items:center;justify-content:space-between;gap:6px;background:var(--chip);border-radius:8px;padding:5px 8px;font-size:13px;font-weight:700}.rv .moved button{padding:3px 10px;font-size:12px}
 #lock[hidden]{display:none}
 #lock{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:50}
 #lf{display:flex;flex-direction:column;gap:12px;width:min(280px,86vw);text-align:center}
@@ -134,35 +141,36 @@ var TABS=[];
 var LANGS=["전체","국문","영문","중문","일문"],curTab=0,curLang="전체";
 var $=function(i){return document.getElementById(i)};
 function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
-function drawTabs(){var el=$("tabs");el.innerHTML="";TABS.forEach(function(t,i){var b=document.createElement("button");b.innerHTML=esc(t.label)+"<small>"+t.items.length+"편</small>";if(i===curTab)b.className="on";b.onclick=function(){curTab=i;curLang="전체";drawVideo()};el.appendChild(b)})}
-/* 고객 컨펌: 영상(드라이브 ID)별 승인/보류/메모. 영상이 새 파일로 교체되면 ID 가 달라져 다시 미확인 상태가 됨. 화면 갱신은 영상 재생이 끊기지 않게 컨펌 영역만 바꿈 */
-var REV={},REVOK=false,REVMSG="불러오는 중",DRAFT={},EDITING={};
+/* 영상 화면 = «검토중»(승인 전, 보류 포함) / «완료»(승인). 저장 후 카드는 바로 없애지 않고 «되돌리기»를 보여준 뒤, 다른 화면·탭·필터로 갈 때 옮김.
+   컨펌 기록은 드라이브 ID 기준. 수정본으로 교체되면 ID 가 달라져 검토중으로 돌아오고, 같은 영상 번호의 옛 기록을 «지난 요청»으로 보여줌. 상태 변경 때는 영상 재생이 끊기지 않게 컨펌 영역만 갱신 */
+var REV={},REVOK=false,REVMSG="불러오는 중",DRAFT={},EDITING={},STAY={},VIEW="rv",dType="전체",dCh="전체",dQ="",dN=24,PAGE=24;
+function isOk(it){var r=REV[it.id];return !!(r&&r.s==="ok")}
+function inView(it){return !!STAY[it.id]||(VIEW==="done"?isOk(it):!isOk(it))}
+function typeOf(tb){return tb.label.split("-")[0]}
+function allItems(){var a=[];TABS.forEach(function(tb){tb.items.forEach(function(it){a.push({it:it,tab:tb})})});return a}
+function prevOf(it){var best=null;for(var k in REV){var r=REV[k];if(k!==it.id&&r.n===it.n&&(r.s||r.m)){if(!best||String(r.mat||r.at||"")>String(best.mat||best.at||""))best=r}}return best}
 function api(body){body.k=window.REVIEW.k;return fetch(window.REVIEW.u,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(body)}).then(function(r){return r.json()}).then(function(j){if(!j.ok)throw new Error(j.err);return j.data})}
-function loadReviews(){if(!window.REVIEW)return;api({op:"list"}).then(function(d){REV=d;REVOK=true;REVMSG="";paintAll()}).catch(function(){REVMSG=REVOK?"":"컨펌 정보를 불러오지 못함. 새로고침 필요";paintAll()})}
-function shown(){return TABS[curTab].items.filter(function(it){return curLang==="전체"||it.lang===curLang})}
-function tabSum(t){var o=0,h=0;t.items.forEach(function(it){var r=REV[it.id];if(r&&r.s==="ok")o++;if(r&&r.s==="hold")h++});return t.items.length+"편"+(o?" · 승인 "+o:"")+(h?" · 보류 "+h:"")}
-function paintAll(){var a=document.querySelectorAll("#tabs button small");TABS.forEach(function(t,i){if(a[i])a[i].textContent=tabSum(t)});var c=document.querySelectorAll("#grid .card");for(var i=0;i<c.length;i++)paintRv(c[i]);var b=document.querySelectorAll("#bar .bk");for(var j=0;j<b.length;j++)b[j].disabled=!REVOK;var m=$("rst");if(m){m.textContent=REVMSG;m.className="rst"+(REVMSG.indexOf("못")>=0?" err":"")}}
-function paintRv(card){var id=card.getAttribute("data-rid");if(!id)return;var box=card.querySelector(".rv"),r=REV[id]||{s:"",m:""};
- card.classList.toggle("s-ok",r.s==="ok");card.classList.toggle("s-hold",r.s==="hold");
- var ae=document.activeElement;if(ae&&ae.tagName==="TEXTAREA"&&box.contains(ae)){var bs=box.querySelectorAll(".bt button");bs[0].className="ok"+(r.s==="ok"?" on":"");bs[1].className="hold"+(r.s==="hold"?" on":"");return}
- box.innerHTML="";var bt=document.createElement("div");bt.className="bt";
- [["ok","승인"],["hold","보류"]].forEach(function(p){var b=document.createElement("button");b.type="button";b.textContent=(r.s===p[0]?"✓ ":"")+p[1];b.className=p[0]+(r.s===p[0]?" on":"");b.disabled=!REVOK;b.onclick=function(){saveOne(card,{s:r.s===p[0]?"":p[0]},b)};bt.appendChild(b)});
- box.appendChild(bt);var mb=document.createElement("div");mb.className="mb";
- if(r.m&&!EDITING[id]){var v=document.createElement("div");v.className="mv";v.textContent=r.m;box.appendChild(v);var e=document.createElement("button");e.type="button";e.textContent="메모 수정";e.onclick=function(){EDITING[id]=true;DRAFT[id]=r.m;paintRv(card);card.querySelector("textarea").focus()};mb.appendChild(e)}
- else{var ta=document.createElement("textarea");ta.placeholder="메모 입력";ta.maxLength=1000;ta.value=DRAFT[id]!==undefined?DRAFT[id]:(r.m||"");ta.oninput=function(){DRAFT[id]=ta.value};box.appendChild(ta);
-  if(EDITING[id]){var x=document.createElement("button");x.type="button";x.textContent="취소";x.onclick=function(){delete EDITING[id];delete DRAFT[id];paintRv(card)};mb.appendChild(x)}
-  var s=document.createElement("button");s.type="button";s.textContent="메모 저장";s.disabled=!REVOK;s.onclick=function(){saveOne(card,{m:ta.value.trim()},s)};mb.appendChild(s)}
- box.appendChild(mb)}
-function saveOne(card,patch,btn){var id=card.getAttribute("data-rid");btn.disabled=true;btn.textContent="저장 중";var body={op:"set",id:id};if(patch.s!==undefined)body.s=patch.s;if(patch.m!==undefined)body.m=patch.m;
- api(body).then(function(d){REV[id]=d[id];if(patch.m!==undefined){delete EDITING[id];delete DRAFT[id];if(document.activeElement)document.activeElement.blur()}paintAll()}).catch(function(){alert("저장 실패. 인터넷 연결 확인 후 다시 시도 필요");paintAll()})}
-function saveBulk(s){var ids=shown().map(function(it){return it.id}).filter(Boolean);if(!ids.length)return;var nm=s==="ok"?"승인":"보류";
- if(!confirm(TABS[curTab].label+(curLang==="전체"?"":" ("+curLang+")")+" 영상 "+ids.length+"편을 모두 «"+nm+"» 처리할까요?"))return;
- REVMSG="저장 중";REVOK=false;paintAll();
- api({op:"bulk",ids:ids,s:s}).then(function(d){for(var k in d)REV[k]=d[k];REVOK=true;REVMSG="";paintAll()}).catch(function(){REVOK=true;REVMSG="";paintAll();alert("저장 실패. 다시 시도 필요")})}
-function drawBar(){var el=$("bar");el.innerHTML="";LANGS.forEach(function(l){var b=document.createElement("button");b.innerHTML=(FLAG[l]||"")+esc(l);if(l===curLang)b.className="on";b.onclick=function(){curLang=l;drawBar();drawGrid()};el.appendChild(b);if(l==="전체"){[["ok","전체 승인"],["hold","전체 보류"]].forEach(function(p){var x=document.createElement("button");x.type="button";x.className="bk "+p[0];x.textContent=p[1];x.disabled=!REVOK;x.onclick=function(){saveBulk(p[0])};el.appendChild(x)});var sp=document.createElement("span");sp.className="sep";el.appendChild(sp)}});var st=document.createElement("span");st.id="rst";st.className="rst";st.textContent=REVMSG;el.appendChild(st)}
-function drawGrid(){stopAll();
- var g=$("grid");g.innerHTML="";
- TABS[curTab].items.filter(function(it){return curLang==="전체"||it.lang===curLang}).forEach(function(it){
+function loadReviews(){if(!window.REVIEW){REVMSG="";return}api({op:"list"}).then(function(d){REV=d;REVOK=true;REVMSG="";if(!$("pVideo").hidden)drawVideo()}).catch(function(){REVMSG="컨펌 정보를 불러오지 못함. 새로고침 필요";paintAll()})}
+function reset(){STAY={};dN=PAGE}
+function mk(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e}
+function btn(txt,on,fn,cls){var b=mk("button",(cls?cls+" ":"")+(on?"on":""),txt);b.type="button";b.onclick=fn;return b}
+function visTabs(){return TABS.map(function(tb,i){return i}).filter(function(i){return TABS[i].items.some(inView)})}
+function shown(){var tb=TABS[curTab];return tb?tb.items.filter(function(it){return inView(it)&&(curLang==="전체"||it.lang===curLang)}):[]}
+function doneList(){return allItems().filter(function(x){var it=x.it;return inView(it)&&(dType==="전체"||typeOf(x.tab)===dType)&&(dCh==="전체"||it.ch===dCh)&&(curLang==="전체"||it.lang===curLang)&&(!dQ||it.n.toLowerCase().indexOf(dQ)>=0||String(it.t).toLowerCase().indexOf(dQ)>=0)}).sort(function(a,b){var x=String((REV[a.it.id]||{}).at||""),y=String((REV[b.it.id]||{}).at||"");return x<y?1:x>y?-1:(a.it.n<b.it.n?-1:1)})}
+function counts(){var a=allItems(),o=0;a.forEach(function(x){if(isOk(x.it))o++});return {rv:a.length-o,done:o}}
+function drawSwitch(){var el=$("vsw");if(!el){el=mk("div","vsw");el.id="vsw";$("tabs").parentNode.insertBefore(el,$("tabs"))}el.innerHTML="";var n=counts();[["rv","검토중",n.rv],["done","완료",n.done]].forEach(function(p){var b=btn(p[1],VIEW===p[0],function(){VIEW=p[0];curTab=0;curLang="전체";dType="전체";dCh="전체";dQ="";reset();drawVideo()});b.appendChild(mk("b","",String(p[2])));b.setAttribute("data-v",p[0]);el.appendChild(b)})}
+function tabSum(tb){var left=0,h=0;tb.items.forEach(function(it){if(!isOk(it))left++;var r=REV[it.id];if(r&&r.s==="hold")h++});return (left===tb.items.length?left+"편":"남은 "+left+"편")+(h?" · 보류 "+h:"")}
+function drawTabs(){var el=$("tabs");el.innerHTML="";
+ if(VIEW==="rv"){var v=visTabs();if(v.length&&v.indexOf(curTab)<0)curTab=v[0];v.forEach(function(i){var b=btn("",i===curTab,function(){curTab=i;curLang="전체";reset();drawVideo()});b.innerHTML=esc(TABS[i].label)+"<small></small>";b.setAttribute("data-ti",i);b.lastChild.textContent=tabSum(TABS[i]);el.appendChild(b)})}
+ else{var types=[],num={};allItems().forEach(function(x){if(!inView(x.it))return;var k=typeOf(x.tab);if(!num[k]){num[k]=0;types.push(k)}num[k]++});var tot=0;types.forEach(function(k){tot+=num[k]});if(dType!=="전체"&&!num[dType])dType="전체";
+  if(tot)["전체"].concat(types).forEach(function(k){var b=btn("",dType===k,function(){dType=k;reset();drawVideo()});b.innerHTML=esc(k)+"<small>"+(k==="전체"?tot:num[k])+"편</small>";el.appendChild(b)})}}
+function drawBar(){var el=$("bar");el.innerHTML="";
+ LANGS.forEach(function(l){var b=btn("",l===curLang,function(){curLang=l;reset();drawVideo()});b.innerHTML=(FLAG[l]||"")+esc(l);el.appendChild(b);
+  if(l==="전체"&&VIEW==="rv"){[["ok","전체 승인"],["hold","전체 보류"]].forEach(function(p){var x=btn(p[1],false,function(){saveBulk(p[0])},"bk "+p[0]);x.disabled=!REVOK;el.appendChild(x)});el.appendChild(mk("span","sep"))}});
+ if(VIEW==="done"){var sel=mk("select","chsel");var chs=["전체"];allItems().forEach(function(x){if(chs.indexOf(x.it.ch)<0)chs.push(x.it.ch)});chs.forEach(function(c){var o=mk("option","",c==="전체"?"전체 채널":c);o.value=c;sel.appendChild(o)});sel.value=dCh;sel.onchange=function(){dCh=sel.value;reset();drawVideo()};el.appendChild(sel);
+  var q=mk("input","qbox");q.type="search";q.placeholder="번호·제목 검색";q.value=dQ;q.oninput=function(){dQ=q.value.trim().toLowerCase();reset();drawGrid();paintAll()};el.appendChild(q)}
+ var st=mk("span","rst",REVMSG);st.id="rst";el.appendChild(st)}
+function cardEl(it){
   var c=document.createElement("div");c.className="card";
   var v=it.id?'<img class="th" loading="lazy" alt="" src="https://drive.google.com/thumbnail?id='+it.id+'&sz=w480">':'<div class="wait">영상 업로드 대기 중</div>';
   var pl=(CHPLAT[it.ch]||[]).map(function(k){return LOGO[k]}).join("");
@@ -172,10 +180,39 @@ function drawGrid(){stopAll();
    '<div class="title">'+esc(it.t)+'</div>'+
    (it.tt?'<div class="tt">타이틀 · '+esc(it.tt)+'</div>':'')+
    (it.d?'<p class="desc">'+esc(it.d)+'</p>':'')+(it.s?'<p class="sum">'+esc(it.s)+'</p>':'')+(it.id&&window.REVIEW?'<div class="rv"></div>':'')+'</div>';
-  if(it.id&&window.REVIEW){c.setAttribute('data-rid',it.id);paintRv(c)}
-  if(it.id)watchVid(c.querySelector('.vid'),it.id);
-  g.appendChild(c)})
-}
+  if(it.id&&window.REVIEW){c.setAttribute('data-rid',it.id);c.__it=it;paintRv(c)}
+  return c}
+function drawGrid(){stopAll();
+ var g=$("grid");g.innerHTML="";var more=$("more");if(!more){more=mk("div","more");more.id="more";g.parentNode.insertBefore(more,g.nextSibling)}more.innerHTML="";
+ var list=VIEW==="rv"?shown():doneList().map(function(x){return x.it});
+ var total=list.length;if(VIEW==="done")list=list.slice(0,dN);
+ list.forEach(function(it){var c=cardEl(it);if(it.id)watchVid(c.querySelector('.vid'),it.id);g.appendChild(c)});
+ if(!total)more.appendChild(mk("p","empty",VIEW==="rv"?"검토할 영상 없음":(counts().done?"조건에 맞는 영상 없음":"아직 승인한 영상 없음")));
+ else if(total>list.length)more.appendChild(btn("더 보기 ("+list.length+" / "+total+")",false,function(){var from=dN;dN+=PAGE;doneList().slice(from,dN).forEach(function(x){var c=cardEl(x.it);watchVid(c.querySelector('.vid'),x.it.id);g.appendChild(c)});var n=doneList().length;if(dN>=n)more.innerHTML="";else more.firstChild.textContent="더 보기 ("+dN+" / "+n+")"}))}
+function paintAll(){var n=counts(),s=document.querySelectorAll("#vsw button b");if(s.length===2){s[0].textContent=n.rv;s[1].textContent=n.done}
+ if(VIEW==="rv"){var a=document.querySelectorAll("#tabs button[data-ti]");for(var i=0;i<a.length;i++)a[i].lastChild.textContent=tabSum(TABS[+a[i].getAttribute("data-ti")])}
+ var c=document.querySelectorAll("#grid .card");for(var k=0;k<c.length;k++)paintRv(c[k]);var b=document.querySelectorAll("#bar .bk");for(var j=0;j<b.length;j++)b[j].disabled=!REVOK;var m=$("rst");if(m){m.textContent=REVMSG;m.className="rst"+(REVMSG.indexOf("못")>=0?" err":"")}}
+function paintRv(card){var id=card.getAttribute("data-rid");if(!id)return;var it=card.__it,box=card.querySelector(".rv"),r=REV[id]||{s:"",m:""},old=prevOf(it);
+ card.classList.toggle("s-ok",r.s==="ok");card.classList.toggle("s-hold",r.s==="hold");
+ var ae=document.activeElement;if(ae&&ae.tagName==="TEXTAREA"&&box.contains(ae)){var bs=box.querySelectorAll(".bt button");bs[0].className="ok"+(r.s==="ok"?" on":"");bs[1].className="hold"+(r.s==="hold"?" on":"");return}
+ box.innerHTML="";
+ if(old){var ob=mk("div","old");ob.appendChild(mk("span","fx","수정본"));if(old.m){ob.appendChild(mk("div","om","지난 요청: "+old.m))}box.appendChild(ob)}
+ if(STAY[id]&&(VIEW==="rv"?isOk(it):!isOk(it))){var mv=mk("div","moved");mv.appendChild(mk("span","",VIEW==="rv"?"완료로 이동":"검토중으로 이동"));var u=btn("되돌리기",false,function(){saveOne(card,{s:STAY[id].prev},u)});mv.appendChild(u);box.appendChild(mv)}
+ var bt=mk("div","bt");
+ [["ok","승인"],["hold","보류"]].forEach(function(p){var b=btn((r.s===p[0]?"✓ ":"")+p[1],r.s===p[0],function(){saveOne(card,{s:r.s===p[0]?"":p[0]},b)},p[0]);b.disabled=!REVOK;bt.appendChild(b)});
+ box.appendChild(bt);var mb=mk("div","mb");
+ if(r.m&&!EDITING[id]){box.appendChild(mk("div","mv",r.m));mb.appendChild(btn("메모 수정",false,function(){EDITING[id]=true;DRAFT[id]=r.m;paintRv(card);card.querySelector("textarea").focus()}))}
+ else{var ta=document.createElement("textarea");ta.placeholder="메모 입력";ta.maxLength=1000;ta.value=DRAFT[id]!==undefined?DRAFT[id]:(r.m||"");ta.oninput=function(){DRAFT[id]=ta.value};box.appendChild(ta);
+  if(EDITING[id])mb.appendChild(btn("취소",false,function(){delete EDITING[id];delete DRAFT[id];paintRv(card)}));
+  var s=btn("메모 저장",false,function(){saveOne(card,{m:ta.value.trim()},s)});s.disabled=!REVOK;mb.appendChild(s)}
+ box.appendChild(mb)}
+function mark(id,prev){var it=null;allItems().forEach(function(x){if(x.it.id===id)it=x.it});if(!it)return;var home=VIEW==="done"?isOk(it):!isOk(it);if(home)delete STAY[id];else if(!STAY[id])STAY[id]={prev:prev}}
+function saveOne(card,patch,b){var id=card.getAttribute("data-rid"),prev=(REV[id]||{}).s||"";b.disabled=true;b.textContent="저장 중";var body={op:"set",id:id,n:card.__it.n};if(patch.s!==undefined)body.s=patch.s;if(patch.m!==undefined)body.m=patch.m;
+ api(body).then(function(d){REV[id]=d[id];if(patch.s!==undefined)mark(id,prev);if(patch.m!==undefined){delete EDITING[id];delete DRAFT[id];if(document.activeElement)document.activeElement.blur()}paintAll()}).catch(function(){alert("저장 실패. 인터넷 연결 확인 후 다시 시도 필요");paintAll()})}
+function saveBulk(s){var list=shown().filter(function(it){return it.id});if(!list.length)return;var nm=s==="ok"?"승인":"보류",ids=list.map(function(it){return it.id}),ns={},prev={};list.forEach(function(it){ns[it.id]=it.n;prev[it.id]=(REV[it.id]||{}).s||""});
+ if(!confirm(TABS[curTab].label+(curLang==="전체"?"":" ("+curLang+")")+" 영상 "+ids.length+"편을 모두 «"+nm+"» 처리할까요?"))return;
+ REVMSG="저장 중";REVOK=false;paintAll();
+ api({op:"bulk",ids:ids,ns:ns,s:s}).then(function(d){for(var k in d){REV[k]=d[k];mark(k,prev[k])}REVOK=true;REVMSG="";paintAll()}).catch(function(){REVOK=true;REVMSG="";paintAll();alert("저장 실패. 다시 시도 필요")})}
 function openVid(id,n){$("mcap").textContent=n;$("mf").innerHTML='<iframe src="https://drive.google.com/file/d/'+id+'/preview" allow="autoplay; fullscreen" allowfullscreen></iframe>';$("mv").hidden=false}
 function closeVid(){$("mv").hidden=true;$("mf").innerHTML=""}
 $("mx").onclick=closeVid;$("mv").onclick=function(e){if(e.target===$("mv"))closeVid()};document.addEventListener("keydown",function(e){if(e.key==="Escape")closeVid()});
@@ -190,7 +227,7 @@ window.addEventListener("resize",fitIframes);
 /* 한 영상 재생 중 다른 영상을 누르면 이전 영상 정지: 드라이브 플레이어는 외부 도메인이라 직접 일시정지가 안 되어, 이전 플레이어를 다시 불러와 처음 화면으로 되돌림.
    포커스가 영상 A에서 영상 B로 바로 넘어가면 blur 이벤트가 다시 안 뜨므로 0.15초마다 activeElement 를 확인함 */
 var LASTFR=null;setInterval(function(){var a=document.activeElement;if(!a||a.tagName!=="IFRAME"||!a.closest||!a.closest(".vid"))return;if(a===LASTFR)return;var o=LASTFR;LASTFR=a;if(o&&o.parentNode&&o!==a){var u=o.src;o.src="about:blank";setTimeout(function(){o.src=u},60)}},150);
-function drawVideo(){drawTabs();drawBar();drawGrid();paintAll()}
+function drawVideo(){drawSwitch();drawTabs();drawBar();drawGrid();paintAll()}
 LOGO.tt='<svg width="17" height="17" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#111" stroke="#6b6b6b" stroke-width="1"/><path d="M13 5v9.2a2.4 2.4 0 1 1-2.4-2.4" fill="none" stroke="#fff" stroke-width="2"/><path d="M13 5c.4 2 1.7 3.2 4 3.4" fill="none" stroke="#25f4ee" stroke-width="2"/></svg>';
 LOGO.xh='<svg width="17" height="17" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#ff2442"/><text x="12" y="16" text-anchor="middle" font-size="9" font-weight="700" fill="#fff" font-family="sans-serif">XHS</text></svg>';
 function drawAcc(){
