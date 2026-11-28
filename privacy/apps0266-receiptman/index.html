@@ -10,18 +10,18 @@ code{background:#3a2f5e;padding:2px 6px;border-radius:6px;font-size:.9em}hr{bord
 .en{color:var(--mute);font-size:.95rem}ul{padding-left:20px}</style></head><body><div class="wrap">
 <h1>영수증콕 개인정보처리방침</h1>
 <div class="sub">앱: 영수증콕 (ReceiptMan) · <code>com.dksequence.receiptman</code> · 최종 수정일 2026-11-21 · 개발: DKSEQUENCE</div>
-<div class="card">영수증콕은 <b>회원가입·로그인이 없습니다.</b> 영수증 사진·지출 기록은 <b>사용자 기기 안에만</b> 저장되며, 자동 인식을 위해 촬영한 영수증 이미지만 추출 목적으로 외부 AI 서비스에 전송됩니다(아래 2항).</div>
+<div class="card">영수증콕은 <b>회원가입·로그인이 없습니다.</b> 영수증 사진·지출 기록은 <b>사용자 기기 안에만</b> 저장되며, 자동 인식을 위해 사용자가 담은 자료(영수증 이미지·PDF·공유한 결제 알림 글)만 추출 목적으로 외부 AI 서비스에 전송됩니다(아래 2항).</div>
 
 <h2>1. 앱이 기기 안에 저장하는 정보</h2>
 <ul>
 <li>지출 기록: 날짜, 금액, 상호명, 카테고리, 비고, 묶음(건) 이름·기간</li>
-<li>영수증 원본 이미지(기기 저장소 또는 앱 전용 폴더)</li>
+<li>영수증 원본 이미지·PDF(앱 전용 폴더)</li>
 <li>포인트(리워드), 구독 상태, 스킨·언어 설정</li>
 </ul>
 <p>위 정보는 <b>기기 안에서만</b> 저장·계산되며 개발자 서버로 전송·보관되지 않습니다. 설정에서 기록을 개별·일괄 삭제할 수 있고, 앱을 삭제하면 함께 지워집니다.</p>
 
 <h2>2. 영수증 자동 인식(AI) — 외부 전송 안내</h2>
-<p>「촬영」·「갤러리」로 불러온 영수증 이미지는 날짜·금액·상호명·카테고리를 자동으로 읽어내기 위해 <b>Anthropic Claude API</b>(미국 Anthropic, PBC)로 전송됩니다. 전송되는 것은 <b>그 영수증 이미지 1장</b>뿐이며, 다른 지출 기록이나 기기 식별 정보는 함께 보내지 않습니다. Anthropic은 자사 <a href="https://www.anthropic.com/legal/privacy">개인정보처리방침</a>에 따라 이 요청을 처리하며, 개발자는 Anthropic이 해당 이미지를 모델 학습에 사용하지 않도록 API(비학습) 경로로 호출합니다. 추출된 결과(날짜·금액·상호명·카테고리 텍스트)만 앱으로 돌아와 기기에 저장되고, 원본 이미지를 Anthropic이 보관하는지는 Anthropic의 정책을 따릅니다(개발자는 별도로 보관하지 않음). 「직접입력」으로 작성하면 이 전송이 일어나지 않습니다.</p>
+<p>「촬영」·「갤러리」·공유 버튼으로 담은 <b>영수증 이미지, PDF 파일, 또는 글(카드 승인 문자·이메일 본문 등)</b>은 날짜·금액·상호명·분류·결제수단·증빙유형·부가세를 읽어내기 위해 <b>Anthropic Claude API</b>(미국 Anthropic, PBC)로 전송됩니다. 한 번에 전송되는 것은 <b>그때 담은 자료 1건</b>뿐이며, 다른 지출 기록이나 기기 식별 정보는 함께 보내지 않습니다. 공유한 글이나 PDF에 이름·카드번호 일부 같은 정보가 들어 있으면 함께 전송되므로, 필요 없는 부분은 빼고 담아 주세요. Anthropic은 자사 <a href="https://www.anthropic.com/legal/privacy">개인정보처리방침</a>에 따라 이 요청을 처리하며, 개발자는 학습에 쓰이지 않는 API 경로로 호출합니다. 추출된 결과만 앱으로 돌아와 기기에 저장되고, 전송한 자료를 Anthropic이 보관하는지는 Anthropic의 정책을 따릅니다(개발자는 별도로 보관하지 않음). 공유한 글의 앞부분(최대 200자)은 해당 영수증의 메모로 기기에 저장됩니다. 「직접 입력」으로 작성하면 이 전송이 일어나지 않습니다.</p>
 
 <h2>3. 제출(공유) 기능</h2>
 <p>「제출하기」는 선택한 지출 기록을 기기 안에서 엑셀(.xlsx) 또는 PDF 파일로 만들어 <b>Android 공유 시트</b>로 넘깁니다. 실제 전송 여부·수신자(이메일·메신저 등)는 사용자가 공유 시트에서 직접 선택하며, 개발자는 이 과정에 관여하거나 파일을 전달받지 않습니다.</p>
@@ -43,7 +43,7 @@ code{background:#3a2f5e;padding:2px 6px;border-radius:6px;font-size:.9em}hr{bord
 <hr>
 <h2>Privacy Policy (English)</h2>
 <p class="en">ReceiptMan has no sign-up or login. Expense records and receipt photos are stored <b>only on your device</b>; they are not sent to or stored on the developer's servers. You can delete records individually or in bulk from the app, and uninstalling removes everything.</p>
-<p class="en"><b>Automatic receipt recognition (AI):</b> when you capture or pick a receipt photo, that single image is sent to the <b>Anthropic Claude API</b> (Anthropic, PBC, USA) to read the date, amount, merchant and category. Only that one receipt image is sent — no other expense records or device identifiers are included. Anthropic processes this under its own <a href="https://www.anthropic.com/legal/privacy">privacy policy</a>; the app calls a non-training API endpoint so the image is not used to train Anthropic's models. Only the extracted text (date/amount/merchant/category) is returned to the app and stored on your device; retention of the original image by Anthropic follows Anthropic's own policy (the developer does not keep a copy). Manual entry does not send any image.</p>
+<p class="en"><b>Automatic receipt recognition (AI):</b> when you add a receipt photo, a PDF, or shared text (such as a card payment message or e-mail body), that single item is sent to the <b>Anthropic Claude API</b> (Anthropic, PBC, USA) to read the date, amount, merchant, category, payment method, proof type and VAT. No other expense records or device identifiers are included. If the shared text or PDF contains a name or partial card number, it is sent as well, so remove anything you do not need before sharing. Anthropic processes this under its own <a href="https://www.anthropic.com/legal/privacy">privacy policy</a>; the app uses the API, whose data is not used to train Anthropic's models by default. Only the extracted result is returned to the app and stored on your device; retention by Anthropic follows Anthropic's own policy (the developer does not keep a copy). Up to 200 characters of shared text are saved on your device as the receipt note. Manual entry sends nothing.</p>
 <p class="en"><b>Submit (share):</b> "Submit" builds an Excel (.xlsx) or PDF file from your selected records on your device and hands it to the Android share sheet. Whether and to whom it is actually sent (email, messenger, etc.) is chosen by you in that share sheet; the developer is not involved and does not receive the file.</p>
 <p class="en"><b>Third parties:</b> Google AdMob may process an advertising ID, device information and approximate location (IP) to serve ads; ads are served through AdMob mediation, so Unity Ads and Liftoff Monetize may also process similar data under their own policies. A Google consent form (UMP) is shown in the EEA. Google Play Billing handles the monthly subscription (remove ads / auto point top-up); the developer does not receive payment details. Expense records and receipt images are not shared with ad or billing services.</p>
 <p class="en">Permissions: INTERNET (AI recognition, ads, billing), CAMERA (capturing receipts), media/storage access (picking receipts from the gallery), AD_ID (advertising identifier on Android 13+), POST_NOTIFICATIONS. No location or contacts permissions are used.</p>
