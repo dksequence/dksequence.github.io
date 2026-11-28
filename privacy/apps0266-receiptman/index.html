@@ -16,7 +16,7 @@ code{background:#3a2f5e;padding:2px 6px;border-radius:6px;font-size:.9em}hr{bord
 <ul>
 <li>지출 기록: 날짜, 금액, 상호명, 카테고리, 비고, 묶음(건) 이름·기간</li>
 <li>영수증 원본 이미지·PDF(앱 전용 폴더)</li>
-<li>포인트(리워드), 구독 상태, 스킨·언어 설정</li>
+<li>구독 상태, 스킨 설정, 상호별 분류 기억(기기 안에만 저장)</li>
 </ul>
 <p>위 정보는 <b>기기 안에서만</b> 저장·계산되며 개발자 서버로 전송·보관되지 않습니다. 설정에서 기록을 개별·일괄 삭제할 수 있고, 앱을 삭제하면 함께 지워집니다.</p>
 
@@ -27,7 +27,7 @@ code{background:#3a2f5e;padding:2px 6px;border-radius:6px;font-size:.9em}hr{bord
 <p>「제출하기」는 선택한 지출 기록을 기기 안에서 엑셀(.xlsx) 또는 PDF 파일로 만들어 <b>Android 공유 시트</b>로 넘깁니다. 실제 전송 여부·수신자(이메일·메신저 등)는 사용자가 공유 시트에서 직접 선택하며, 개발자는 이 과정에 관여하거나 파일을 전달받지 않습니다.</p>
 
 <h2>4. 제3자 서비스(광고·결제)</h2>
-<p><b>Google AdMob</b>이 광고를 보여 주기 위해 광고 식별자·기기 정보·대략적 위치(IP)를 수집·처리할 수 있습니다(<a href="https://policies.google.com/privacy">Google 개인정보처리방침</a>). 광고는 AdMob 미디에이션으로 제공되므로 광고 네트워크 <b>Unity Ads</b>·<b>Liftoff Monetize</b>도 각자의 정책에 따라 광고 식별자와 기기 정보를 처리할 수 있습니다. 유럽 경제 지역 사용자에게는 Google의 동의 안내(UMP)가 표시됩니다. <b>Google Play 결제</b>는 월 구독(광고 제거·포인트 자동 충전) 결제를 처리하며, 개발자는 결제 수단 정보를 받지 않습니다. 지출 기록·영수증 이미지는 광고·결제 서비스에 전달되지 않습니다.</p>
+<p><b>Google AdMob</b>이 광고를 보여 주기 위해 광고 식별자·기기 정보·대략적 위치(IP)를 수집·처리할 수 있습니다(<a href="https://policies.google.com/privacy">Google 개인정보처리방침</a>). 광고는 AdMob 미디에이션으로 제공되므로 광고 네트워크 <b>Unity Ads</b>·<b>Liftoff Monetize</b>도 각자의 정책에 따라 광고 식별자와 기기 정보를 처리할 수 있습니다. 유럽 경제 지역 사용자에게는 Google의 동의 안내(UMP)가 표시됩니다. <b>Google Play 결제</b>는 월 구독(광고 제거·전체 스킨) 결제를 처리하며, 개발자는 결제 수단 정보를 받지 않습니다. 지출 기록·영수증 이미지는 광고·결제 서비스에 전달되지 않습니다.</p>
 
 <h2>5. 권한</h2>
 <p><code>INTERNET</code>(AI 인식·광고·결제), <code>CAMERA</code>(영수증 촬영), <code>READ_MEDIA_IMAGES</code>/저장소 접근(갤러리에서 영수증 선택), <code>AD_ID</code>(Android 13 이상 광고 식별자), <code>POST_NOTIFICATIONS</code>(알림)만 사용합니다. 위치·연락처 등 다른 민감 권한은 사용하지 않습니다.</p>
@@ -45,7 +45,7 @@ code{background:#3a2f5e;padding:2px 6px;border-radius:6px;font-size:.9em}hr{bord
 <p class="en">ReceiptMan has no sign-up or login. Expense records and receipt photos are stored <b>only on your device</b>; they are not sent to or stored on the developer's servers. You can delete records individually or in bulk from the app, and uninstalling removes everything.</p>
 <p class="en"><b>Automatic receipt recognition (AI):</b> when you add a receipt photo, a PDF, or shared text (such as a card payment message or e-mail body), that single item is sent to the <b>Anthropic Claude API</b> (Anthropic, PBC, USA) to read the date, amount, merchant, category, payment method, proof type and VAT. No other expense records or device identifiers are included. If the shared text or PDF contains a name or partial card number, it is sent as well, so remove anything you do not need before sharing. Anthropic processes this under its own <a href="https://www.anthropic.com/legal/privacy">privacy policy</a>; the app uses the API, whose data is not used to train Anthropic's models by default. Only the extracted result is returned to the app and stored on your device; retention by Anthropic follows Anthropic's own policy (the developer does not keep a copy). Up to 200 characters of shared text are saved on your device as the receipt note. Manual entry sends nothing.</p>
 <p class="en"><b>Submit (share):</b> "Submit" builds an Excel (.xlsx) or PDF file from your selected records on your device and hands it to the Android share sheet. Whether and to whom it is actually sent (email, messenger, etc.) is chosen by you in that share sheet; the developer is not involved and does not receive the file.</p>
-<p class="en"><b>Third parties:</b> Google AdMob may process an advertising ID, device information and approximate location (IP) to serve ads; ads are served through AdMob mediation, so Unity Ads and Liftoff Monetize may also process similar data under their own policies. A Google consent form (UMP) is shown in the EEA. Google Play Billing handles the monthly subscription (remove ads / auto point top-up); the developer does not receive payment details. Expense records and receipt images are not shared with ad or billing services.</p>
+<p class="en"><b>Third parties:</b> Google AdMob may process an advertising ID, device information and approximate location (IP) to serve ads; ads are served through AdMob mediation, so Unity Ads and Liftoff Monetize may also process similar data under their own policies. A Google consent form (UMP) is shown in the EEA. Google Play Billing handles the monthly subscription (remove ads / all skins); the developer does not receive payment details. Expense records and receipt images are not shared with ad or billing services.</p>
 <p class="en">Permissions: INTERNET (AI recognition, ads, billing), CAMERA (capturing receipts), media/storage access (picking receipts from the gallery), AD_ID (advertising identifier on Android 13+), POST_NOTIFICATIONS. No location or contacts permissions are used.</p>
 <p class="en">This app is a general productivity tool for expense management and is not directed to children under 13. Data retention: records and receipt images are stored only on your device and are not retained by the developer; images sent to Anthropic for recognition are retained per Anthropic's own policy; advertising identifiers are handled by Google and its partners under their own policies. Contact: <a href="mailto:kitan98@gmail.com">kitan98@gmail.com</a>.</p>
 </div></body></html>
